@@ -1,5 +1,5 @@
-import array_utility as au
-from array_utility import sv
+import pyx.array_utility as au
+from pyx.array_utility import sv
 import sqlite3
 
 
