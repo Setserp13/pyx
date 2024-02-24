@@ -1,5 +1,5 @@
-import alpha.array_utility as au
-from alpha.array_utility import sv
+import array_utility as au
+from array_utility import sv
 import sqlite3
 
 
