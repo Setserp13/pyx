@@ -366,7 +366,7 @@ copy.deepcopy(x) deep copy"""
 
 
 
-import alpha.matrix_utility as mu
+import pyx.matrix_utility as mu
 
 def max_w(matrices):
 	return mu.map_columns(matrices, lambda x, i: reduce(au.map(x, lambda x, i: x.max_column), lambda total, currentValue: max(total, currentValue)))
