@@ -1,4 +1,4 @@
-from pyx.array_utilily import items
+from pyx.array_utility import items
 import pandas as pd
 from pyx.osx import wd
 from tkinter import filedialog
