@@ -13,7 +13,7 @@ def EmptyWorkbook():
 import math
 
 from pyx.array_utility import *
-from pyx.math.rect import contains2
+from pyx.mat.rect import contains2
 import pyx.array_utility as au
 
 
