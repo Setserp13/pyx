@@ -56,6 +56,8 @@ def find_rows(df, match, columns = None):
 	return result
 
 
+def readall(read, path_list, **kwargs): pd.concat([read(x, **kwargs) for x path_list])
+
 def read_excels(dir, **kwargs):
 	return pd.concat([pd.read_excel(os.path.join(dir, x), **kwargs) for x in os.listdir(dir) if x.endswith('.xlsx')])
 		
