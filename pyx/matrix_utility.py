@@ -29,7 +29,7 @@ def full(row_count, column_count, default_value):
 
 
 def max_len(list):
-	return au.reduce(au.map(list, lambda row, index: len(row)), lambda total, currentValue: max(total, currentValue))
+	return au.reduce([len(row) for row in list], lambda total, currentValue: max(total, currentValue))
 
 def transpose(arr):
 	"""if len(arr) == 0: return arr
