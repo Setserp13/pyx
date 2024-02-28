@@ -103,7 +103,7 @@ class BBox:
 
 
 
-"""
+
 def contains(min, max, value): return min <= value and value <= max
 
 def contains2(min, max, value):
@@ -117,4 +117,3 @@ def containsN(min, max, value):
 		if not contains(min[i], max[i], value[i]):
 			return false
 	return true
-"""
