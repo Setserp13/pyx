@@ -13,7 +13,7 @@ def funcvals(count, func): return list(map(lambda i: func(i), range(count)))
 #also works with dict
 def get_items(array, indices): return [lambda x: array[x] for x in indices]
 
-#def items(dict, keys): return { x: dict[x] for x in keys if x in dict }
+def items(dict, keys): return { x: dict[x] for x in keys if x in dict }
 
 def resize(array, new_size, default_value=None):
 	result = []
