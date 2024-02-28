@@ -1,6 +1,6 @@
-from alpha.dict_util import items
+from pyx.array_utilily import items
 import pandas as pd
-from alpha.osx import wd
+from pyx.osx import wd
 from tkinter import filedialog
 import inspect
 import xml.etree.ElementTree as ET
