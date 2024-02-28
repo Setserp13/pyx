@@ -12,9 +12,9 @@ def EmptyWorkbook():
 
 import math
 
-from alpha.array_utility import *
-from alpha.rect import contains2
-import alpha.array_utility as au
+from pyx.array_utility import *
+from pyx.math.rect import contains2
+import pyx.array_utility as au
 
 
 
@@ -170,7 +170,7 @@ def dfcpy(ws, df, min_row=1, min_col=1):
 	dfvalscpy(ws, df, min_row + 1, min_col)
 
 
-from alpha.array_utility import call
+from pyx.array_utility import call
 
 def map(df, ws, func, min_row=1, min_col=1):
 	for i in range(df.shape[0]):
