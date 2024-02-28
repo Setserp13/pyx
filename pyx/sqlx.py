@@ -1,5 +1,5 @@
-import alpha.array_utility as au
-from alpha.array_utility import sv
+import pyx.array_utility as au
+from pyx.array_utility import sv
 import sqlite3
 
 
@@ -151,15 +151,6 @@ class table:
 
 
 
-"""class Parent:
-    def __init__(self, arg1, arg2):
-        self.arg1 = arg1
-        self.arg2 = arg2
-
-class Child(Parent):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)"""
-
 
 
 def columns(cursor, table_name): return [x[1] for x in table_info(cursor, table_name)]
@@ -182,19 +173,22 @@ def inner_join(cursor, column_paths='*', tables=[], join_conditions=[], conditio
 	print(query)
 	return cursor.execute(query).fetchall()
 
-def select(cursor, table_name, column_names='*', condition='TRUE'): #return rows as a dict array
-	if column_names == '*':
-		cols = columns(cursor, table_name)
-	else:
-		cols = column_names.replace(' ', '').split(',')
-	rows = cursor.execute('SELECT ' + column_names + ' FROM ' + table_name + ' WHERE ' + condition).fetchall()
-	return [{cols[i]:y for i, y in enumerate(x)} for x in rows]
 
+def select(cursor, table_name, column_names='*', condition='TRUE'):
+	return cursor.execute('SELECT ' + column_names + ' FROM ' + table_name + ' WHERE ' + condition).fetchall()
 
+def to_column_list(cursor, table_name, column_names='*'):
+	return columns(cursor, table_name) if column_names == '*' else column_names.replace(' ', '').split(',')
 
-def select_all(cursor, table, columns="*", condition='TRUE'):
-	#print('SELECT ' + columns + ' FROM ' + table + ' WHERE ' + condition)
-	return cursor.execute('SELECT ' + columns + ' FROM ' + table + ' WHERE ' + condition).fetchall()
+def dict_list(columns, data): return [{columns[i]:y for i, y in enumerate(x)} for x in data]
+
+def select_as(constructor, cursor, table_name, column_names='*', condition='TRUE'): #returns each row as a dict
+	data = select(cursor, table_name, column_names, condition)
+	columns = to_column_list(cursor, table_name, column_names)
+	return constructor(columns=columns, data=data)
+
+#select_as(dict_list, cursor, table_name, column_names, condition) #Example
+
 
 
 
@@ -224,14 +218,16 @@ def insert_into(cursor, tb, obj):
 	query = f'INSERT INTO {tb} ({columns}) VALUES ({values})'
 	cursor.execute(query)
 
+
+
+#PANDAS + SQLITE3
+
+
+
 print('AAA')
 """
 print('BBB')
-def to_df(cursor, table, filename):
-	#print(columns(cursor, table))
-	data = select_all(cursor, table)
-	df = pd.DataFrame(data, columns=dbu.columns(cursor, table))
-	df.to_excel(filename)
+
 
 	
 
