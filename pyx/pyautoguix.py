@@ -3,7 +3,13 @@ import time
 import pandas as pd
 import datetime
 from inspect import isfunction
+import pyperclip
 
+
+
+def press(key, times=1):
+	for i in range(times):
+		pyautogui.press(key)
 
 def click(x, y, times=1):
 	pyautogui.moveTo(x, y)
@@ -55,6 +61,14 @@ def click_some(imgs, times=1):
 #pyautogui.size() #screen size
 #print(pyautogui.position())
 
+
+
+def typewrite(text):
+	print(text)
+	pyperclip.copy(text)
+	pyautogui.hotkey('ctrl', 'v')
+
+
 def run_sub(sub):
 	for x in sub:
 		if isinstance(x, list):
@@ -73,6 +87,7 @@ def run_sub(sub):
 			click(*pos, times)"""
 
 		elif isinstance(x, str):
+			#typewrite(x)
 			pyautogui.typewrite(x)
 		elif isinstance(x, int):
 			time.sleep(x)

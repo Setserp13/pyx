@@ -162,7 +162,8 @@ class Child(Parent):
 
 
 
-def columns(cursor, table_name): au.map(list(schema(cursor, table_name)), lambda x, i: x[1])
+def columns(cursor, table_name): return [x[1] for x in table_info(cursor, table_name)]
+
 
 #column_path = table_name.column_name
 def inner_join(cursor, column_paths='*', tables=[], join_conditions=[], condition='TRUE'):
