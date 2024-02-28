@@ -1,6 +1,6 @@
-from alpha.array_utility import call
+from pyx.array_utility import call
 import math
-import alpha.array_utility as au
+import pyx.array_utility as au
 
 def foreach(matrix, func):
 	for i in range(len(matrix)):
@@ -42,8 +42,7 @@ def transpose(arr):
 			result[i][j] = arr[j][i]
 	return result
 
-	
-import alpha.array_utility as au
+
 
 	
 
