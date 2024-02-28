@@ -369,7 +369,7 @@ copy.deepcopy(x) deep copy"""
 import pyx.matrix_utility as mu
 
 def max_w(matrices):
-	return mu.map_columns(matrices, lambda x, i: reduce(au.map(x, lambda x, i: x.max_column), lambda total, currentValue: max(total, currentValue)))
+	return mu.map_columns(matrices, lambda x, i: reduce([y.max_column for y in x], lambda total, currentValue: max(total, currentValue)))
 
 def max_h(matrices):
 	return au.map(matrices, lambda x, i: reduce([y.max_row for y in x], lambda total, currentValue: max(total, currentValue)))
