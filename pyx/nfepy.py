@@ -6,6 +6,9 @@ def search(root, match):
 	obj = root.find(re.sub('/(?!/)', '/ns:', match), { 'ns' : 'http://www.portalfiscal.inf.br/nfe' })
 	return '' if obj == None else obj.text
 
+def find(root, match):
+	return root.find(re.sub('/(?!/)', '/ns:', match), { 'ns' : 'http://www.portalfiscal.inf.br/nfe' })
+	
 def findall(root, match):
 	#print(re.sub('/(?!/)', '/ns:', match))
 	return root.findall(re.sub('/(?!/)', '/ns:', match), { 'ns' : 'http://www.portalfiscal.inf.br/nfe' })
