@@ -26,7 +26,6 @@ def to_str(i, digits=0):
 
 def to_distinct(path, naming='root (i)', digits=0):
 	result = path
-	print([os.path.root(path), os.path.ext(path)])
 	root, ext = os.path.splitext(path)
 	i = 1
 	while(os.path.exists(result)):
