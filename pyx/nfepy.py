@@ -2,9 +2,7 @@ import re
 import xml.etree.ElementTree as ET
 
 def search(root, match):
-	#print(re.sub('/(?!/)', '/ns:', match))
-	obj = find(root, match)
-	return '' if obj == None else obj.text
+	return getattr(find(root, match), 'text', None)
 
 def find(root, match):
 	return root.find(re.sub('/(?!/)', '/ns:', match), { 'ns' : 'http://www.portalfiscal.inf.br/nfe' })
