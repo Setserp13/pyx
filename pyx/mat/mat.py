@@ -57,7 +57,15 @@ def magnitude(v): return math.sqrt(sqr_magnitude(v))
 
 def sub(a, b): return map(lambda x, y: x - y, a, b)
 
-def distance(a, b): return magnitude(sub(a, b))
+def raised_norm(a, n): return np.sum(list(map(lambda x: abs(x) ** n, a)))
+
+def norm(a, n): return raised_norm(a, n) ** (1.0 / n)
+
+def raised_distance(a, b, n=2): return raised_norm(list(map(lambda x, y: y - x, a, b)), n)
+
+def distance(a, b, n=2): return raised_distance(a, b, n) ** (1.0 / n)
+
+#def distance(a, b): return magnitude(sub(a, b))
 
 @dispatch(list, list, float)
 def inverse_lerp(a, b, c): return distance(a, c) / distance(a, b) #NOT COMPLETE YET
