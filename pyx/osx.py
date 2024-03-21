@@ -8,6 +8,10 @@ def root(path): return os.path.splitext(path)[0]
 def filename(path): return os.path.splitext(os.path.basename(path))[0]
 def wd(__file__): return os.path.dirname(os.path.abspath(__file__))
 
+def set_filename(file, value):
+	dir = os.path.abspath(os.path.dirname(file))
+	os.rename(os.path.abspath(file), os.path.join(dir, value) + ext(file))
+
 def definitions(module): return [x for x in dir(module) if not hasattr(getattr(module, x), '__path__')]
 def submodules(module): return [x for x in dir(module) if hasattr(getattr(module, x), '__path__')]
 
