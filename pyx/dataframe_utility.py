@@ -52,7 +52,7 @@ def find_rows(df, match, columns = None):
 			if columns == None:            
 				result.append(row)
 			else:
-				result.append(list(au.map(columns, lambda x, i: row[x])))
+				result.append([row[x] for x in columns])#list(au.map(columns, lambda x, i: row[x])))
 	return result
 
 
