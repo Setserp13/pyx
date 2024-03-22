@@ -83,13 +83,17 @@ def seqsim(a, b):
 	return count / max(len(a), len(b))
 
 
-def open_file(path, encoding='utf-8'):
+def open_file(path, encoding='utf-8'): #read
 	with open(path, 'r', encoding=encoding) as file:
 		return file.read()
 
-def save_file(new_file, path, encoding='utf-8'):
+def save_file(new_file, path, encoding='utf-8'): #write
 	with open(path, 'w', encoding=encoding) as file:
 		file.write(new_file)
+
+def append(content, path, encoding='utf-8'):
+	with open(path, 'a', encoding=encoding) as file:
+		file.write(content)
 
 def mkdirs(path):
 	dirname = os.path.dirname(path)
