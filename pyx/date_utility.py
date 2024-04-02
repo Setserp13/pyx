@@ -38,3 +38,10 @@ def prev_month():
 	if today.month == 1:
 		return (today.year - 1, 12)
 	return (today.year, today.month - 1)
+
+def join(objs, on): #where len(objs) > 0
+	result = objs[0]
+	for i, x in enumerate(objs[1:], 1):
+		result = pd.merge(result, x, on=on, how='outer', suffixes=('', f'_{i}'))
+	return result
+
