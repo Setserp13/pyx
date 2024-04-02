@@ -147,6 +147,10 @@ def split(df, n, column, rels):
 	result.append(df)
 	return result
 
-
+def join(objs, on): #where len(objs) > 0
+	result = objs[0]
+	for i, x in enumerate(objs[1:], 1):
+		result = pd.merge(result, x, on=on, how='outer', suffixes=('', f'_{i}'))
+	return result
 
 
