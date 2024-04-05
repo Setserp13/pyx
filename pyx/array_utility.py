@@ -37,6 +37,11 @@ def find_index(array, match):
 		if call(match, x, i):
 			return i
 	return -1
+	
+def find(array, match):
+	index = find_index(array, match)
+	if index > -1:
+		return array[index]
 
 #find_last_index(array, match) = return find_index(reversed(array), match)
 
