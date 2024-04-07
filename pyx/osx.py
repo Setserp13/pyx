@@ -91,6 +91,11 @@ def save_file(new_file, path, encoding='utf-8'): #write
 	with open(path, 'w', encoding=encoding) as file:
 		file.write(new_file)
 
+def readb(file):
+	with open(file, 'rb') as f:
+		return f.read()
+
+
 def append(file, content, encoding='utf-8'):
 	with open(file, 'a', encoding=encoding) as f:
 		f.write(content)
