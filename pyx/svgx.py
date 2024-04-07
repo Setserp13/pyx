@@ -78,6 +78,36 @@ def remove_at(ls, i): return ls[:i] + ls[i+1:]
 def root_rects(rects): #Rects that are not subrects of another one in the list
 	return [x for i, x in enumerate(rects) if len(list(filter(lambda y: y.containsRect(x), remove_at(rects, i)))) == 0]
 
+
+def get_style_property(element, property_name):
+    style = element.get("style")
+    if style is not None:
+        styles = style.split(";")
+        for s in styles:
+            pair = s.split(":")
+            if len(pair) == 2 and pair[0].strip() == property_name:
+                return pair[1].strip()
+    return None
+
+
+def find_ancestor(self, match, dflt_value=None):
+	parent = self.getparent()
+	while parent is not None:
+		#print(parent.tag)
+		if match(parent):
+			return parent
+		parent = parent.getparent()
+	return dflt_value
+
+def islayer(self): return self.tag == '{http://www.w3.org/2000/svg}g' and self.get('{http://www.inkscape.org/namespaces/inkscape}groupmode', None) == 'layer'
+
+def layer_of(self):
+	return find_ancestor(self, lambda x: islayer(x))
+
+def ishidden(self):
+	return find_ancestor(self, lambda x: islayer(x) and get_style_property(x, 'display') == 'none') != None
+
+
 #pip install pipwin
 #pipwin install cairocffi
 #pip install cairosvg
@@ -88,6 +118,19 @@ import svgwrite
 from lxml import etree
 
 from io import BytesIO
+import base64
+
+def embed_images(svg_tree, svg_folder):
+	for image_element in svg_tree.findall(".//{http://www.w3.org/2000/svg}image"):
+		href = image_element.get("{http://www.w3.org/1999/xlink}href")
+		if href and not href.startswith("data:"):
+			image_path = os.path.join(svg_folder, href).replace('%20', ' ')
+			#print(image_path)
+			if os.path.exists(image_path):
+				image_data = readb(image_path)
+				encoded_image = base64.b64encode(image_data).decode("utf-8")
+				image_element.set("{http://www.w3.org/1999/xlink}href", f"data:image/png;base64,{encoded_image}")
+	return svg_tree
 
 def svg_to_png(tree, output_png, rect, dpi=10):
     root = tree.getroot()	
