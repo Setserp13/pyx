@@ -1,4 +1,5 @@
 import moviepy.editor as mp
+import pyx.osx as osx
 
 def merge_av(audio_path, video_path, output_path):
 	output_path = osx.to_distinct(output_path)
