@@ -89,7 +89,8 @@ from lxml import etree
 
 from io import BytesIO
 
-def svg_to_png(root, output_png, rect, dpi=10):
+def svg_to_png(tree, output_png, rect, dpi=10):
+    root = tree.getroot()	
     print(rect.to_tuple())
     if rect.size[0] < 1 or rect.size[1] < 1: return #'CUZ NO SIZE CAN BE LESSER THAN 1
 
