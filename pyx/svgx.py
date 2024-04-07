@@ -119,6 +119,7 @@ from lxml import etree
 
 from io import BytesIO
 import base64
+from pyx.osx import readb
 
 def embed_images(svg_tree, svg_folder):
 	for image_element in svg_tree.findall(".//{http://www.w3.org/2000/svg}image"):
