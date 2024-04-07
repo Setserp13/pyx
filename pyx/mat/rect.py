@@ -137,7 +137,7 @@ def aspect(size): return size[1] / size[0]	#Aspect ratio
 
 
 def set_aspect(size, value):
-	return (size[0], int(size[0] * value)) if size[1] / size[0] > value else (int(size[1] / value), size[1])
+	return (size[0], int(size[0] * value)) if aspect(size) > value else (int(size[1] / value), size[1])
 
 
 def fit(viewport, viewbox, scale_method='meet', align=(0.5, 0.5)): #scale_method in ['meet', 'slice']
