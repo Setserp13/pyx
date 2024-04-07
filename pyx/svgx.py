@@ -106,35 +106,3 @@ def svg_to_png(tree, output_png, rect, dpi=10):
 
     cairosvg.svg2png(file_obj=svg_buffer, write_to=output_png, output_width=rect.size[0], output_height=rect.size[1], dpi=dpi)
 
-
-
-
-
-
-
-if __name__ == "__main__":
-	#svg_path = filedialog.askopenfilename(initialdir=wd(__file__), filetypes=[('SVG', '.svg')])
-	svg_path = 'teste.svg'
-	tree = ET.parse(svg_path)
-	root = tree.getroot()
-
-	layers = [x for x in find_layers(root) if x.get('{http://www.inkscape.org/namespaces/inkscape}label', None) != 'Hidden']
-
-	#bboxes = get_bboxes(find_tags(root, 'rect')) #THIS WAY ONLY CONSIDER RECTS, IT IS MORE FAST
-	objs = reduce(lambda a, b: a + b, [find_tags(x, 'circle', 'ellipse', 'image', 'path', 'rect') for x in layers])
-	bboxes = get_bboxes(objs)
-
-	print(len(bboxes))
-
-
-	#print([x.to_tuple() for x in bboxes])
-
-	bboxes = root_rects(bboxes)
-	print(len(bboxes))
-
-
-	for i, x in enumerate(bboxes):
-		svg_to_png(root, os.path.join(wd(__file__), f'teste/Page {i+1}.png'), x)
-
-
-
