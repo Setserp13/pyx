@@ -178,6 +178,13 @@ def find(pattern, dir):
 			return os.path.join(dir, x)
 	return None
 
+def findr(pattern, dir):
+	for root, dirs, files in os.walk(dir):
+		for file in files + dirs:
+			if re.search(pattern, file) is not None:
+				return os.path.join(root, file)
+	return None
+
 import re
 
 def findall(pattern, dir):
