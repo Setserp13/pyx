@@ -70,7 +70,7 @@ def distance(a, b, n=2): return raised_distance(a, b, n) ** (1.0 / n)
 @dispatch(list, list, float)
 def inverse_lerp(a, b, c): return distance(a, c) / distance(a, b) #NOT COMPLETE YET
 
-@dispatch(Number, Number, float)
+@dispatch(Number, Number, Number)
 def inverse_lerp(a, b, c): return (c - a) / (b - a)
 
 
