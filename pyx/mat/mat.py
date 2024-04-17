@@ -74,7 +74,7 @@ def inverse_lerp(a, b, c): return distance(a, c) / distance(a, b) #NOT COMPLETE 
 def inverse_lerp(a, b, c): return (c - a) / (b - a)
 
 
-
+def mean(iterable): return sum(iterable) / len(iterable)
 
 
 
