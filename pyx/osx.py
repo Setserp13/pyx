@@ -119,7 +119,7 @@ def open_audio(path):
 	return AudioSegment.from_file(path, format=ext(path))
 
 def export_audio(audio, path):
-	os.makedirs(os.path.dirname(file_path), exist_ok=True)
+	os.makedirs(os.path.dirname(path), exist_ok=True)
 	audio.export(path, format=ext(path))
 
 
