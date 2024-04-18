@@ -107,13 +107,17 @@ def mkdirs(path):
 
 def split(path): return path.split(os.sep)
 
+def join(parts): return os.sep.join(parts)
+
+
+#print(split("C:\Users\diogo\Downloads"))
 
 def export_file(file, path, makedirs=False, export_method=save_file, **kwargs):
 	mkdirs(path)
 	export_method(file, path, **kwargs)
 
 
-print(split("\\aal-ws002\Incubatório\Etiquetas Diversas - Incubatório"))
+
 
 def open_audio(path):
 	return AudioSegment.from_file(path, format=ext(path)[1:])
