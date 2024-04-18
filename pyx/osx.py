@@ -116,11 +116,11 @@ def export_file(file, path, makedirs=False, export_method=save_file, **kwargs):
 print(split("\\aal-ws002\Incubatório\Etiquetas Diversas - Incubatório"))
 
 def open_audio(path):
-	return AudioSegment.from_file(path, format=ext(path))
+	return AudioSegment.from_file(path, format=ext(path)[1:])
 
 def export_audio(audio, path):
 	os.makedirs(os.path.dirname(path), exist_ok=True)
-	audio.export(path, format=ext(path))
+	audio.export(path, format=ext(path)[1:])
 
 
 """def export_text(text, file_path, encoding='utf-8'):
