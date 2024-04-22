@@ -195,7 +195,13 @@ def dfvalscpytransp(ws, df, min_row=1, min_col=1):
 from openpyxl.utils.cell import range_boundaries
 
 
-
+def merge_areas(ws, min_row, min_col, max_row, max_col):
+	result = []
+	for range in ws.merged_cells.ranges:
+		boundaries = range_boundaries(str(range))
+		if contains2([min_row, min_col], [max_row, max_col], [boundaries[1], boundaries[0]]) or contains2([min_row, min_col], [max_row, max_col], [boundaries[3], boundaries[2]]):
+			result.append([boundaries[1], boundaries[0], boundaries[3], boundaries[2]])
+	return result
 
 def merge_area(ws, row, col):
 	for range in ws.merged_cells.ranges:
