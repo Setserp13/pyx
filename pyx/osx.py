@@ -48,7 +48,7 @@ def remove_all(files):
 	for x in files:
 		os.remove(x)
 
-def clear(dir): remove_all(listdirabs(dir))
+def clear(dir): remove_all(ls(dir))
 
 
 
