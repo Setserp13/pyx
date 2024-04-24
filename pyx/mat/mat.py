@@ -41,6 +41,10 @@ def lerp(a, b, t):
 
 @dispatch(tuple, tuple, float)
 def lerp(a, b, t):
+	return tuple(map(lambda x, y: lerp(x, y, t), a, b))
+
+@dispatch(list, list, float)
+def lerp(a, b, t):
 	return tuple(map(lambda x, y: lerp(x, y, t), a, b))"""
 
 
