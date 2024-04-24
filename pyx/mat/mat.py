@@ -31,7 +31,9 @@ def ping_pong(t, length):
 	t = repeat(t, length * 2)
 	return length - abs(t - length)
 
-"""@dispatch(Number, Number, float)
+from typing import overload, Union
+
+@dispatch(Number, Number, float)
 def lerp(a, b, t):
 	return a * (1 - t) + b * t	#a + (b - a) * t
 
@@ -39,29 +41,17 @@ def lerp(a, b, t):
 def lerp(a, b, t):
 	return int(a * (1 - t) + b * t)
 
-@dispatch(tuple, tuple, float)
+@dispatch(Union[list, tuple], Union[list, tuple], float)
+def lerp(a, b, t):
+	return tuple(map(lambda x, y: lerp(x, y, t), a, b))
+	
+"""@dispatch(tuple, tuple, float)
 def lerp(a, b, t):
 	return tuple(map(lambda x, y: lerp(x, y, t), a, b))
 
 @dispatch(list, list, float)
 def lerp(a, b, t):
 	return tuple(map(lambda x, y: lerp(x, y, t), a, b))"""
-
-
-
-from typing import overload, Union
-
-@overload
-def lerp(a: Number, b: Number, t: float):
-	return a * (1 - t) + b * t	#a + (b - a) * t
-
-@overload
-def lerp(a: int, b: int, t: float):
-	return int(a * (1 - t) + b * t)
-
-@overload
-def lerp(a: Union[list, tuple], b: Union[list, tuple], t: float):
-	return tuple(map(lambda x, y: lerp(x, y, t), a, b))
 
 
 
