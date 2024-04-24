@@ -48,9 +48,7 @@ def open_all(ls, open, **kwargs):
 	return result
 	#return [y for y in [open(x, **kwargs) for x in ls] if y != None]
 
-def open_audios(path_list, **kwargs): return open_all(path_list, AudioSegment.from_file, **kwargs)
 
-def open_videos(path_list, **kwargs): return open_all(path_list, cv2.VideoCapture, **kwargs)
 
 def remove_all(files):
 	for x in files:
@@ -84,13 +82,13 @@ def seqsim(a, b):
 
 
 #REMOVE BOTH BELOW AFTER
-def open_file(path, encoding='utf-8'): #read
+"""def open_file(path, encoding='utf-8'): #read
 	with open(path, 'r', encoding=encoding) as file:
 		return file.read()
 
 def save_file(new_file, path, encoding='utf-8'): #write
 	with open(path, 'w', encoding=encoding) as file:
-		file.write(new_file)
+		file.write(new_file)"""
 
 
 
@@ -144,13 +142,6 @@ def export_file(file, path, makedirs=False, export_method=save_file, **kwargs):
 
 
 
-def open_audio(path):
-	return AudioSegment.from_file(path, format=ext(path)[1:])
-
-def export_audio(audio, path):
-	os.makedirs(os.path.dirname(path), exist_ok=True)
-	audio.export(path, format=ext(path)[1:])
-
 
 
 def find(pattern, dir):
@@ -198,10 +189,19 @@ def lsall(dirs, abs=True): return [ls(x, abs) for x in dirs]
 
 
 
+def open_audios(path_list, **kwargs): return open_all(path_list, open_audio, **kwargs)
 
+def open_videos(path_list, **kwargs): return open_all(path_list, cv2.VideoCapture, **kwargs)
 
-def open_audios_from(dir):
+def open_audio(path):
+	return AudioSegment.from_file(path, format=ext(path)[1:])
+
+def export_audio(audio, path):
+	os.makedirs(os.path.dirname(path), exist_ok=True)
+	audio.export(path, format=ext(path)[1:])
+
+"""def open_audios_from(dir):
 	return open_audios([os.path.join(dir, x) for x in os.listdir(dir) if x.endswith('.mp3') or x.endswith('.wav')])
 
 def open_videos_from(dir):
-	return open_videos([os.path.join(dir, x) for x in os.listdir(dir) if x.endswith('.mp4')])
+	return open_videos([os.path.join(dir, x) for x in os.listdir(dir) if x.endswith('.mp4')])"""
