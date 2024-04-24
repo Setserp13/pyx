@@ -31,7 +31,6 @@ def ping_pong(t, length):
 	t = repeat(t, length * 2)
 	return length - abs(t - length)
 
-from typing import overload, Union
 
 @dispatch(Number, Number, float)
 def lerp(a, b, t):
@@ -45,13 +44,13 @@ def lerp(a, b, t):
 def lerp(a, b, t):
 	return tuple(map(lambda x, y: lerp(x, y, t), a, b))
 	
-"""@dispatch(tuple, tuple, float)
+@dispatch(tuple, tuple, float)
 def lerp(a, b, t):
 	return tuple(map(lambda x, y: lerp(x, y, t), a, b))
 
 @dispatch(list, list, float)
 def lerp(a, b, t):
-	return tuple(map(lambda x, y: lerp(x, y, t), a, b))"""
+	return tuple(map(lambda x, y: lerp(x, y, t), a, b))
 
 
 
