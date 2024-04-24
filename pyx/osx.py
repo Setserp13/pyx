@@ -129,7 +129,7 @@ def join(parts): return os.sep.join(parts)
 
 #print(split("C:\Users\diogo\Downloads"))
 
-def export_file(file, path, makedirs=False, export_method=save_file, **kwargs):
+def export_file(file, path, makedirs=False, export_method=write, **kwargs):
 	mkdirs(path)
 	export_method(file, path, **kwargs)
 
