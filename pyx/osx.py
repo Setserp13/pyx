@@ -127,54 +127,6 @@ def export_audio(audio, path):
 	audio.export(path, format=ext(path)[1:])
 
 
-"""def export_text(text, file_path, encoding='utf-8'):
-	dirname = os.path.dirname(file_path)
-	if dirname != '':
-		os.makedirs(dirname, exist_ok=True)
-	with open(file_path, 'w', encoding=encoding) as file: file.write(text)
-
-def open_txt(file_path, encoding='utf-8'):
-	#print(file_path)
-	with open(file_path, 'r', encoding=encoding) as file:
-		return file.read()"""
-
-
-
-
-
-
-def first_ext(dir, ext):
-	for x in os.listdir(dir):
-		if x.endswith(ext):
-			return x
-	return None
-
-
-
-
-
-
-def endswithsome(s, values):
-	for x in values:
-		if s.endswith(x):
-			return True
-	return False
-
-
-
-from typing import overload
-
-@overload
-def find_files_by_extension(dir, ext :str):
-	find_files_by_extension(dir, [ext])
-
-@overload
-def find_files_by_extension(dir, ext :list):
-	#if not isinstance(ext, list):
-	#	ext = [ext]
-	return [os.path.join(dir, x) for x in os.listdir(dir) if endswithsome(x, ext)]
-
-
 
 def find(pattern, dir):
 	for x in os.listdir(dir):
