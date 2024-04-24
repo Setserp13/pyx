@@ -15,12 +15,6 @@ def set_filename(file, value):
 def definitions(module): return [x for x in dir(module) if not hasattr(getattr(module, x), '__path__')]
 def submodules(module): return [x for x in dir(module) if hasattr(getattr(module, x), '__path__')]
 
-#os.path.ext = lambda path: os.path.splitext(path)[1]
-
-#os.path.root = lambda path: os.path.splitext(path)[0]
-
-
-
 def clean_filename(filename):
 	valid_chars = "-_.() %s%s" % (string.ascii_letters, string.digits)
 	cleaned_filename = ''.join(c for c in filename if c in valid_chars)
