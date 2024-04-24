@@ -19,9 +19,9 @@ def get_frame(self, index):
 	retval, image = self.read()
 	return image
 
-"""cv2.VideoCapture.height = height
+cv2.VideoCapture.height = height
 cv2.VideoCapture.fps = fps
 cv2.VideoCapture.frame_count = frame_count
 cv2.VideoCapture.size = size
 cv2.VideoCapture.width = width
-cv2.VideoCapture.duration = duration"""
+cv2.VideoCapture.duration = duration
