@@ -90,7 +90,7 @@ def save_file(new_file, path, encoding='utf-8'): #write
 
 def read(file, encoding='utf-8'):
 	with open(file, 'r', encoding=encoding) as f:
-		return f.read(content)
+		return f.read()
 		
 def write(file, content, encoding='utf-8'):
 	with open(file, 'w', encoding=encoding) as f:
