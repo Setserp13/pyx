@@ -83,6 +83,7 @@ def seqsim(a, b):
 	return count / max(len(a), len(b))
 
 
+#REMOVE BOTH BELOW AFTER
 def open_file(path, encoding='utf-8'): #read
 	with open(path, 'r', encoding=encoding) as file:
 		return file.read()
@@ -91,14 +92,38 @@ def save_file(new_file, path, encoding='utf-8'): #write
 	with open(path, 'w', encoding=encoding) as file:
 		file.write(new_file)
 
+
+
+#TEXT FILE
+
+def read(file, encoding='utf-8'):
+	with open(file, 'r', encoding=encoding) as f:
+		return f.read(content)
+		
+def write(file, content, encoding='utf-8'):
+	with open(file, 'w', encoding=encoding) as f:
+		f.write(content)
+		
+def append(file, content, encoding='utf-8'):
+	with open(file, 'a', encoding=encoding) as f:
+		f.write(content)
+
+#BINARY FILE
+
 def readb(file):
 	with open(file, 'rb') as f:
 		return f.read()
 
-
-def append(file, content, encoding='utf-8'):
-	with open(file, 'a', encoding=encoding) as f:
+def writeb(file, content):
+	with open(file, 'wb') as f:
 		f.write(content)
+
+def appendb(file, content):
+	with open(file, 'ab') as f:
+		f.write(content)
+		
+
+
 
 def mkdirs(path):
 	dirname = os.path.dirname(path)
