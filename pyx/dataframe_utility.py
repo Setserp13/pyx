@@ -89,8 +89,7 @@ def absolute(df, key_columns, value_column, total):
 def resum(df, new_sum, col): #SET SUM
 	sum = df[col].sum()
 	df[col] = df[col].map(lambda x: math.floor((x / sum) * new_sum))
-	#df[col].iloc[0] += new_sum - df[col].sum()
-	df.loc[0, col] += new_sum - df[col].sum()
+	df[col].iloc[0] += new_sum - df[col].sum()
 	#print(f'SUM IS {df[col].sum()}, {sum}')
 	return df
 
