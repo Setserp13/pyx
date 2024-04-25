@@ -1,5 +1,3 @@
-from pydub import AudioSegment
-import cv2
 import os
 import string
 
@@ -169,7 +167,8 @@ def lsall(dirs, abs=True): return [ls(x, abs) for x in dirs]
 
 
 
-
+from pydub import AudioSegment
+import cv2
 
 def open_audios(path_list, **kwargs): return open_all(path_list, open_audio, **kwargs)
 
