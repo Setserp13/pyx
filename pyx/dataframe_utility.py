@@ -129,7 +129,7 @@ def pick(inventory, amount, column="OLDEGGS", rels=None):
 					result[i] = result[i].append(x, ignore_index=True)
 			else:
 				result[0] = result[0].append(row.copy(), ignore_index=True)
-				amount -= row[column]
+			amount -= row[column]
 		else:
 			result[1] = result[1].append(row.copy(), ignore_index=True)
 	return result
