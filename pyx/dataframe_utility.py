@@ -4,6 +4,7 @@ import pandas as pd
 import pyx.array_utility as au
 import os
 import math
+import numpy as np
 
 def select(df, columns, values):
 	match = True
