@@ -98,11 +98,42 @@ def resum(df, new_sum, col): #SET SUM
 
 
 
+def insert(df, index, other): return pd.concat([df.iloc[:index], other, df.iloc[index:]]).reset_index(drop=True)
 
+def insert_rows(df, index, *rows): return insert(df, index, pd.DataFrame(rows))
+
+def slice(total, *qtys): return list(qtys) + [total - sum(qtys)]
+
+def split_row(row, column, rels, *amount): #rels are columns dependent from column
+	weights = np.array(amount) / row[column]
+	data = { column: slice(row[column], *amount) }
+	rows = [row.copy() for x in data[column]]
+	for x in rels:
+		data[x] = slice(row[x], *np.floor(weights * row[x]))
+	for k in data:
+		for i, x in enumerate(data[k]):
+			rows[i][k] = x
+	return rows
+
+def split_row_inplace(df, index, column, rels, *amount): #rels are columns dependent from column
+	return insert_rows(df, index, *split_row(df.iloc[index], column, rels, *amount))
 
 #CUIDADO PARA NÃO REPETIR O NOME DAS VARIÁVEIS QUE ITERAM EM LOOPS ANINHADOS
-
 def pick(inventory, amount, column="OLDEGGS", rels=None):
+	result = [ pd.DataFrame(columns=inventory.columns), pd.DataFrame(columns=inventory.columns) ]
+	for i, row in inventory.iterrows():
+		if amount > 0:
+			if amount - row[column] < 0:
+				for i, x in enumerate(split_row(row, column, rels, amount)):
+					result[i] = result[i].append(x, ignore_index=True)
+			else:
+				result[0] = result[0].append(row.copy(), ignore_index=True)
+				amount -= row[column]
+		else:
+			result[1] = result[1].append(row.copy(), ignore_index=True)
+	return result
+	
+"""def pick(inventory, amount, column="OLDEGGS", rels=None):
 	result = [ pd.DataFrame(columns=inventory.columns),	pd.DataFrame(columns=inventory.columns) ]
 	for i in range(inventory.shape[0]):
 		row = inventory.iloc[[i]]
@@ -130,7 +161,7 @@ def pick(inventory, amount, column="OLDEGGS", rels=None):
 			result[1] = pd.concat([result[1], row])
 
 
-	return result
+	return result"""
 
 
 
