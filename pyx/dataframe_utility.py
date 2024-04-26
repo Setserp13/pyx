@@ -6,12 +6,20 @@ import os
 import math
 import numpy as np
 
-def select(df, columns, values):
+"""def select(df, columns, values):
 	match = True
 	for x in columns:
 		match = match & (df[x] == values[x])
 	#print(df[match])
-	return df[match]
+	return df[match]"""
+
+def select(df, columns, values):
+	mask = df[columns].eq([values[column] for column in columns]).all(axis=1)
+	return df[mask]
+
+def segment(df, columns):
+	return [select(df, columns, row) for index, row in df[columns].drop_duplicates().iterrows()]
+
 
 def foreach(df, columns, action): #action(df slice, column values)
 	for index, row in df[columns].drop_duplicates().iterrows():
@@ -165,7 +173,16 @@ def pick(inventory, amount, column="OLDEGGS", rels=None):
 	return result"""
 
 
-
+def split(df, vols, column, rels=None):
+	if not isinstance(vols, list):
+		vols = [math.floor(df[column].sum() / vols)] * (vols-1)
+	result = [df]
+	for i, x in enumerate(vols):
+		picked = pick(result[0], int(float(x)), 'EST_SALEABLE_QTY', ['EGGS'])
+		result[0] = picked[1]
+		result.insert(1, picked[0])
+	result.reverse()
+	return result
 
 
 
