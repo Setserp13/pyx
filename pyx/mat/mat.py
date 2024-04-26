@@ -7,7 +7,10 @@ import math
 def weights(values): return np.array(values) / sum(values)
 
 @dispatch(Number, Number)
-def floor(value, step): return math.floor(value / step) * step
+def floor(value, step): return math.floor(value / step) * step #returns the greatest multiple of step less than or equal to value
+
+@dispatch(Number, Number)
+def ceil(value, step): return math.ceil(value / step) * step #returns the smallest multiple of step greater than or equal to value
 
 @dispatch(Number, Number, Number)
 def clamp(value, min, max):
