@@ -166,17 +166,7 @@ def pick(inventory, amount, column="OLDEGGS", rels=None):
 
 
 
-def split(df, n, column, rels):
-	result = []
-	term = math.floor(df[column].sum() / n)
-	#print(term)
-	for i in range(n - 1):
-		picked = pick(df, term, column, rels)
-		result.append(picked[0])
-		df = picked[1]
-		#print(picked[1][column].sum())
-	result.append(df)
-	return result
+
 
 def join(objs, on): #where len(objs) > 0
 	result = objs[0]
