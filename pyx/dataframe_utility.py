@@ -128,6 +128,8 @@ def split_row(row, column, rels, *amount): #rels are columns dependent from colu
 def split_row_inplace(df, index, column, rels, *amount): #rels are columns dependent from column
 	return insert_rows(df, index, *split_row(df.iloc[index], column, rels, *amount))
 
+def append(df, row): return pd.concat([df, pd.DataFrame(row)], ignore_index=True)
+
 #CUIDADO PARA NÃO REPETIR O NOME DAS VARIÁVEIS QUE ITERAM EM LOOPS ANINHADOS
 def pick(inventory, amount, column="OLDEGGS", rels=None):
 	result = [ pd.DataFrame(columns=inventory.columns), pd.DataFrame(columns=inventory.columns) ]
@@ -135,14 +137,14 @@ def pick(inventory, amount, column="OLDEGGS", rels=None):
 		if amount > 0:
 			if amount - row[column] < 0:
 				for i, x in enumerate(split_row(row, column, rels, amount)):
-					result[i] = pd.concat([result[i], x], ignore_index=True)
+					result[i] = append(result[i], x)
 					#result[i] = result[i].append(x, ignore_index=True)
 			else:
-				result[0] = pd.concat([result[0], row.copy()], ignore_index=True)
+				result[0] = append(result[0], row.copy())
 				#result[0] = result[0].append(row.copy(), ignore_index=True)
 			amount -= row[column]
 		else:
-			result[1] = pd.concat([result[1], row.copy()], ignore_index=True)
+			result[1] = append(result[1], row.copy())
 			#result[1] = result[1].append(row.copy(), ignore_index=True)
 	return result
 	
