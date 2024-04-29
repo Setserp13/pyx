@@ -114,6 +114,7 @@ def insert_rows(df, index, *rows): return insert(df, index, pd.DataFrame(rows))
 def slice(total, *qtys): return list(qtys) + [total - sum(qtys)]
 
 def split_row(row, column, rels, *amount): #rels are columns dependent from column
+	rels = [] if rels == None else rels
 	weights = np.array(amount) / row[column]
 	data = { column: slice(row[column], *amount) }
 	rows = [row.copy() for x in data[column]]
