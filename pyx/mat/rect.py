@@ -150,3 +150,14 @@ def fit(viewport, viewbox, scale_method='meet', align=(0.5, 0.5)): #scale_method
 				valid = False			
 		if valid: return size
 
+
+def intersect(rect1, rect2): #where each rectangle is represented as a tuple (x, y, width, height)
+	x1 = max(rect1[0], rect2[0])
+	y1 = max(rect1[1], rect2[1])
+	x2 = min(rect1[0] + rect1[2], rect2[0] + rect2[2])
+	y2 = min(rect1[1] + rect1[3], rect2[1] + rect2[3])
+	# Check if there's an intersection
+	if x1 < x2 and y1 < y2:
+		return (x1, y1, x2 - x1, y2 - y1)
+	else:
+		return None
