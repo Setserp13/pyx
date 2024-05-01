@@ -14,6 +14,7 @@ import svgpathtools
 from svgpathtools import parse_path
 import svgutils.transform as sg
 import re
+from pyx.array_utility import items
 
 def get_floats(obj, *args): return [float(obj.get(x, None)) for x in args]
 
@@ -97,6 +98,10 @@ def get_style_property(element, property_name):
 	properties = strpdict(style)
 	#print(properties)
 	return properties[property_name] if property_name in properties else None
+
+def get_style_properties(element, *properties):
+	style = element.get('style', '')
+	return items(strpdict(style), properties)
 
 def set_style_property(element, property_name, property_value): #Set property or add it if not exists
 	style = element.get("style", "")
