@@ -13,16 +13,8 @@ def EmptyWorkbook():
 import math
 
 from pyx.array_utility import *
-from pyx.mat.rect import contains2
+from pyx.mat.rect import contains2, to_number
 import pyx.array_utility as au
-
-
-def letter_to_number(s):
-	try:
-		return sum(index_of("ABCDEFGHIJKLMNOPQRSTUVWXYZ", x) * (26 ** i) for i, x in enumerate(reversed(s)))
-	except:
-		print('Invalid str')
-
 
 """def letter_to_number(str):
 	result = 0
@@ -44,7 +36,7 @@ def letter_to_number(s):
 def cell_coord(address):
 	for i in range(len(address)):
 		if address[i].isnumeric():
-			return [int(address[i:]), letter_to_number(address[0:i]) + 1]
+			return [int(address[i:]), to_number(address[0:i]) + 1]#letter_to_number(address[0:i]) + 1]
 
 def range_coord(address):
 	min_cell, max_cell = address.split(":")
