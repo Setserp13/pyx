@@ -145,6 +145,7 @@ def batch(total, size): return [min(total - (i * size), size) for i in range(mat
 def to_number(s, digits='ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
 	try:
 		print(s)
+		s = [x for x in s]
 		print(sum(index_of(digits, x) * (26 ** i) for i, x in enumerate(reversed(s))))
 		return sum(index_of(digits, x) * (26 ** i) for i, x in enumerate(reversed(s)))
 	except:
