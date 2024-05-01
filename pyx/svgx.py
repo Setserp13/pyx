@@ -88,6 +88,7 @@ def strpdict(obj):
 		result[key.strip()] = value.strip()
 	return result
 
+def strfdict(obj): return ';'.join([f'{k}:obj[k]' for k in obj])
 
 
 def get_style_property(element, property_name):
@@ -103,14 +104,17 @@ def get_style_property(element, property_name):
                 return pair[1].strip()
     return None"""
 
-def set_style_property(element, property_name, property_value):
+def set_style_property(element, property_name, property_value): #Set property or add it if not exists
 	style = element.get("style", "")
-	style_properties = [prop.strip() for prop in style.split(";") if prop.strip()]
+	properties = strpdict(style)
+	properties[property_name] = property_value
+	element.set("style", strfdict(properties))
+	"""style_properties = [prop.strip() for prop in style.split(";") if prop.strip()]
 	#updated_style_properties = [prop for prop in style_properties if not prop.startswith(property_name)]
 	updated_style_properties = [prop for prop in style_properties if prop.split(':')[0].strip() != property_name]
 	updated_style_properties.append(f"{property_name}:{property_value}")
 	updated_style = ";".join(updated_style_properties)
-	element.set("style", updated_style)
+	element.set("style", updated_style)"""
 
 
 def find_ancestor(self, match, dflt_value=None):
