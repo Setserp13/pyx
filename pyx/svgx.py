@@ -137,6 +137,35 @@ def layer_of(self):
 def ishidden(self):
 	return find_ancestor(self, lambda x: islayer(x) and get_style_property(x, 'display') == 'none') != None
 
+def clip_image(root, obj, img_path):
+	parent = obj.getparent()
+	try:
+		#print(img_path)
+		img = Image.open(img_path)
+	except:
+		return print('Image not found')
+	img_path = os.path.basename(img_path)
+	scale_factor = max(*Vector.divide(get_bbox(obj).size, img.size))
+	img_size = Vector(*img.size) * scale_factor
+	clip_path_id = 'clipPath' + str(int(uuid.uuid4()))
+	obj_index = list(parent).index(obj)
+	parent.insert(obj_index, etree.Element('{http://www.w3.org/2000/svg}image', attrib={
+		'x': obj.get('x'),
+		'y': obj.get('y'),
+		'width': str(img_size[0]),
+		'height': str(img_size[1]),
+		'{http://www.w3.org/1999/xlink}href': img_path,
+		'clip-path': f'url(#{clip_path_id})'
+	}))
+	defs = root.find('.//{http://www.w3.org/2000/svg}defs')
+	clip_path = etree.Element('{http://www.w3.org/2000/svg}clipPath', attrib={'clipPathUnits': 'userSpaceOnUse', 'id': clip_path_id})
+	defs.append(clip_path)
+	clip_path.append(obj)
+
+
+
+
+
 
 #pip install pipwin
 #pipwin install cairocffi
