@@ -106,6 +106,7 @@ def get_style_property(element, property_name):
 
 def set_style_property(element, property_name, property_value): #Set property or add it if not exists
 	style = element.get("style", "")
+	print(style)
 	properties = strpdict(style)
 	properties[property_name] = property_value
 	element.set("style", strfdict(properties))
