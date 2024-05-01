@@ -17,9 +17,9 @@ from pyx.mat.rect import contains2
 import pyx.array_utility as au
 
 
-def letter_to_number(str):
+def letter_to_number(s):
 	try:
-		return sum([index_of("ABCDEFGHIJKLMNOPQRSTUVWXYZ", x) * (26 ** i) for i, x in enumerate(str)])
+		return sum([index_of("ABCDEFGHIJKLMNOPQRSTUVWXYZ", x) * (26 ** i) for i, x in enumerate(reversed(s))])
 	except:
 		print('Invalid str')
 
