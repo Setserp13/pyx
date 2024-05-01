@@ -13,7 +13,8 @@ def EmptyWorkbook():
 import math
 
 from pyx.array_utility import *
-from pyx.mat.rect import contains2, to_number
+from pyx.mat.rect import contains2
+from pyx.mat.mat import to_number
 import pyx.array_utility as au
 
 """def letter_to_number(str):
