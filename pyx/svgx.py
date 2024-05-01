@@ -81,15 +81,26 @@ def root_rects(rects): #Rects that are not subrects of another one in the list
 	return [x for i, x in enumerate(rects) if len(list(filter(lambda y: y.containsRect(x), remove_at(rects, i)))) == 0]
 
 
+def strpdict(obj):
+	result = {}
+	for item in obj.split(';')
+		key, value = item.split(':')
+		result[key.strip()] = value.strip()
+	return result
+
+
+
 def get_style_property(element, property_name):
-    style = element.get("style")
-    if style is not None:
+    style = element.get('style', '')
+    properties = strpdict(style)
+    properties['property_name'] if property_name in properties
+    """if style is not None:
         styles = style.split(";")
         for s in styles:
             pair = s.split(":")
             if len(pair) == 2 and pair[0].strip() == property_name:
                 return pair[1].strip()
-    return None
+    return None"""
 
 def set_style_property(element, property_name, property_value):
 	style = element.get("style", "")
