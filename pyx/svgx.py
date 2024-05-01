@@ -139,8 +139,8 @@ def ishidden(self):
 
 def clip_image(root, obj, img_path):
 	parent = obj.getparent()
+	#print(img_path)
 	try:
-		print(img_path)
 		img = Image.open(img_path)
 	except:
 		return print('Image not found')
