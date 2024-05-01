@@ -89,7 +89,7 @@ def strpdict(obj):
 		result[key.strip()] = value.strip()
 	return result
 
-def strfdict(obj): return ';'.join([f'{k}:obj[k]' for k in obj])
+def strfdict(obj): return ';'.join([f'{k}:{obj[k]}' for k in obj])
 
 
 def get_style_property(element, property_name):
