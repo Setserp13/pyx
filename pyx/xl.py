@@ -17,13 +17,19 @@ from pyx.mat.rect import contains2
 import pyx.array_utility as au
 
 
-
 def letter_to_number(str):
+	try:
+		return sum([index_of("ABCDEFGHIJKLMNOPQRSTUVWXYZ", x) * (26 ** i) for i, x in enumerate(str)])
+	except:
+		print('Invalid str')
+
+
+"""def letter_to_number(str):
 	result = 0
 	for i in range(len(str)):
 		idx = index_of("ABCDEFGHIJKLMNOPQRSTUVWXYZ", str[i])
 		result = result + idx * math.pow(26, i) if idx > -1 else print('Invalid str')#None
-	return int(result)
+	return int(result)"""
 
 """def letter_to_number(str):
 	result = 0
