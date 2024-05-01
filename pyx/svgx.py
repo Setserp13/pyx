@@ -93,8 +93,8 @@ def strpdict(obj):
 def get_style_property(element, property_name):
     style = element.get('style', '')
     properties = strpdict(style)
-    print(properties)
-    properties[property_name] if property_name in properties else None
+    #print(properties)
+    return properties[property_name] if property_name in properties else None
     """if style is not None:
         styles = style.split(";")
         for s in styles:
