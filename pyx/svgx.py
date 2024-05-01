@@ -83,7 +83,7 @@ def root_rects(rects): #Rects that are not subrects of another one in the list
 
 def strpdict(obj):
 	result = {}
-	for item in obj.split(';')
+	for item in obj.split(';'):
 		key, value = item.split(':')
 		result[key.strip()] = value.strip()
 	return result
