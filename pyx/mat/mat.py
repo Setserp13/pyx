@@ -142,6 +142,13 @@ def on_arc(n, r=1.0, start=0.0, size=2.0 * math.pi): #where start is the start a
 def batch(total, size): return [min(total - (i * size), size) for i in range(math.ceil(total / size))]
 
 
+def to_number(s, digits='ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
+	try:
+		return sum(index_of(digits, x) * (26 ** i) for i, x in enumerate(reversed(s)))
+	except:
+		print(f'ValueError: invalid literal: {s}')
+
+
 
 
 
