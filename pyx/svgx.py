@@ -5,7 +5,7 @@ from lxml import etree
 
 from pyx.mat.rect import *
 from pyx.mat.vector import *
-
+from PIL import Image
 import os
 from pyx.osx import wd
 import tkinter as tk
