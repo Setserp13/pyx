@@ -3,6 +3,7 @@ from numbers import Number
 import numpy as np
 import random
 import math
+from pyx.array_utility import index_of
 
 def weights(values): return np.array(values) / sum(values)
 
