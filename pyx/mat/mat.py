@@ -144,9 +144,10 @@ def batch(total, size): return [min(total - (i * size), size) for i in range(mat
 
 
 def to_number(s, digits='ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
-	return sum(index_of(digits, x) * (26 ** i) for i, x in enumerate(reversed(s)))
-	#except:
-	#	print(f'ValueError: invalid literal: {s}')
+	try:
+		return sum(index_of(digits, x) * (26 ** i) for i, x in enumerate(reversed(s)))
+	except:
+		print(f'ValueError: invalid literal: {s}')
 
 
 
