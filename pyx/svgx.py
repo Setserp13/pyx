@@ -112,6 +112,29 @@ def set_style_property(element, property_name, property_value): #Set property or
 	element.set("style", strfdict(properties))
 
 
+def extract_numbers(text):
+	numbers = re.findall(r'[-+]?\d*\.\d+|\d+', text)
+	return [float(x) if '.' in x else int(x) for x in numbers]
+
+def get_transform(obj):
+	transform = obj.get('transform', '')
+	result = {}
+	for x in ['translate', 'scale', 'rotate', 'skewX', 'skewY', 'matrix']:
+		if x in transform:
+			result[x] = extract_numbers(re.search(rf'{x}\((.*?)\)', transform).group(1))
+	return result
+
+def set_transform(obj, **kwargs): #Only translate, scale, rotate, skewX, skewY and matrix must be in kwargs
+	transform = get_transform(obj)
+	for k in kwargs:
+		if k in transform:
+			transform[k] = kwargs[k]
+	obj.set('transform', ' '.join([f"{k}({' '.join(str(x) for x in transform[k])})" for k in transform]))
+
+
+
+
+
 def find_ancestor(self, match, dflt_value=None):
 	parent = self.getparent()
 	while parent is not None:
