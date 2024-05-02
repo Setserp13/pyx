@@ -83,15 +83,15 @@ def root_rects(rects): #Rects that are not subrects of another one in the list
 	return [x for i, x in enumerate(rects) if len(list(filter(lambda y: y.containsRect(x), remove_at(rects, i)))) == 0]
 
 
-def strpdict(obj):
+def strpdict(obj, sep=[';', ':']):
 	result = {}
-	items = [] if obj == '' else obj.split(';')
+	items = [] if obj == '' else obj.split(sep[0])
 	for item in items:
-		key, value = item.split(':')
+		key, value = item.split(sep[1])
 		result[key.strip()] = value.strip()
 	return result
 
-def strfdict(obj): return ';'.join([f'{k}:{obj[k]}' for k in obj])
+def strfdict(obj, sep=[';', ':']): return sep[0].join([f'{k}{sep[1]}{obj[k]}' for k in obj])
 
 
 def get_style_property(element, property_name):
@@ -119,9 +119,10 @@ def extract_numbers(text):
 def get_transform(obj):
 	transform = obj.get('transform', '')
 	result = {}
-	for x in ['translate', 'scale', 'rotate', 'skewX', 'skewY', 'matrix']:
-		if x in transform:
-			result[x] = extract_numbers(re.search(rf'{x}\((.*?)\)', transform).group(1))
+	pattern = r'\b\w+\([^)]+'#\)'
+	for x in re.findall(pattern, transform):
+		key, value = x.split('(')
+		result[key] = extract_numbers(value)
 	return result
 
 def set_transform(obj, **kwargs): #Only translate, scale, rotate, skewX, skewY and matrix must be in kwargs
