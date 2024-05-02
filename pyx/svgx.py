@@ -128,8 +128,7 @@ def get_transform(obj):
 def set_transform(obj, **kwargs): #Only translate, scale, rotate, skewX, skewY and matrix must be in kwargs
 	transform = get_transform(obj)
 	for k in kwargs:
-		if k in transform:
-			transform[k] = kwargs[k]
+		transform[k] = kwargs[k]
 	obj.set('transform', ' '.join([f"{k}({' '.join(str(x) for x in transform[k])})" for k in transform]))
 
 
