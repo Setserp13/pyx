@@ -186,7 +186,41 @@ def clip_image(root, obj, img_path):
 	defs.append(clip_path)
 	clip_path.append(obj)
 
+def tspans(text): return text.findall('.//{http://www.w3.org/2000/svg}tspan')
 
+def lines(text): return [x for x in tspans(text) if x.get('{http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd}role', None) == 'line']
+
+def line_height(text):
+	font_size = float(get_style_property(text, 'font-size').replace('px', ''))
+	line_height = float(get_style_property(text, 'line-height'))
+	#print([font_size, line_height])
+	return font_size * line_height
+
+def add_line(text, amount=1):
+	line_count = len(lines(text))
+	lh = line_height(text)
+	for i in range(line_count, line_count + amount):
+		text.append(etree.Element('{http://www.w3.org/2000/svg}tspan', attrib={
+			'{http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd}role': 'line',
+			'style': strfdict(get_style_properties(text, 'text-align', 'text-anchor', 'stroke-width')),
+			'x': text.get('x'),
+			'y': str(float(text.get('y')) + lh * i),
+			'id': f"{text.get('id')}{i}"
+		}))
+
+def set_lines(text, text_lines):
+	lns = lines(text)
+	for x in lns[len(text_lines):len(lns)]:
+		text.remove(x)
+	add_line(text, len(text_lines) - len(lns))
+	for i, x in enumerate(lines(text)):
+		x.text = text_lines[i]
+
+def set_font_size(text, value): set_style_property(text, 'font-size', f'{value}px')
+
+def set_leading(text, value):
+	font_size = float(get_style_property(text, 'font-size').replace('px', ''))
+	set_style_property(text, 'line-height', str(1.0 + value / font_size))
 
 
 
