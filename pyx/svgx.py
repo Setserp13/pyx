@@ -186,6 +186,9 @@ def clip_image(root, obj, img_path):
 	defs.append(clip_path)
 	clip_path.append(obj)
 
+
+#TEXT
+
 def tspans(text): return text.findall('.//{http://www.w3.org/2000/svg}tspan')
 
 def lines(text): return [x for x in tspans(text) if x.get('{http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd}role', None) == 'line']
@@ -231,7 +234,6 @@ def set_leading(text, value):
 
 import cairosvg
 
-import svgwrite
 from lxml import etree
 
 from io import BytesIO
