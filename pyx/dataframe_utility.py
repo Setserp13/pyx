@@ -6,6 +6,8 @@ import os
 import math
 import numpy as np
 
+def isnull(value): return str(value) in ['None', 'NaN', 'NaT', 'none', 'nan', 'nat', ''] or pd.isnull(value)
+
 """def select(df, columns, values):
 	match = True
 	for x in columns:
