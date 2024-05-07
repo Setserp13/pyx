@@ -17,6 +17,13 @@ from pyx.mat.rect import contains2
 from pyx.mat.mat import to_number
 import pyx.array_utility as au
 
+
+thick = Side(border_style='thick', color="FF000000")
+thick_border = Border(left=thick, top=thick, right=thick, bottom=thick)
+thin = Side(border_style='thin', color="FF000000")
+thin_border = Border(left=thin, top=thin, right=thin, bottom=thin)
+
+
 """def letter_to_number(str):
 	result = 0
 	for i in range(len(str)):
@@ -449,10 +456,7 @@ def merge_range(ws, min_row, min_col, max_row, max_col, value, **style):
 def color_fill(color): return PatternFill(start_color=color, end_color=color, fill_type='solid')
 	
 
-thick = Side(border_style='thick', color="FF000000")
-thick_border = Border(left=thick, top=thick, right=thick, bottom=thick)
-thin = Side(border_style='thin', color="FF000000")
-thin_border = Border(left=thin, top=thin, right=thin, bottom=thin)
+
 
 def set_range_border(ws, min_row, min_col, max_row, max_col, outline=thick, inline=thin):
 	for i in range(min_row, max_row + 1):
