@@ -188,8 +188,8 @@ def wscpy(dst, src, min_row=1, min_col=1):
 def dfcpy(ws, df, min_row=1, min_col=1, header_outline=thick, header_inline=thin, outline=thick, inline=thin, **style):
 	set_row(ws, min_row, df.columns, min_col, **{ k.replace('header_', ''):style[k] for k in style if k.startswith('header_') })
 	set_rng(ws, df.values, min_row + 1, min_col, **{ k:style[k] for k in style if not k.startswith('header_') })
-	set_range_border(ws, min_row, min_col, min_row, min_col + len(df.columns), header_outline, header_inline)
-	set_range_border(ws, min_row + 1, min_col, min_row + 1 + df.shape[0], min_col + len(df.columns), outline, inline)
+	set_range_border(ws, min_row, min_col, min_row, min_col + len(df.columns) - 1, header_outline, header_inline)
+	set_range_border(ws, min_row + 1, min_col, min_row + df.shape[0], min_col + len(df.columns) - 1, outline, inline)
 	#dfvalscpy(ws, df, min_row + 1, min_col)
 
 
