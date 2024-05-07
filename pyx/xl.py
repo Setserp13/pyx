@@ -77,14 +77,23 @@ def translate_address(address, *translation): #[row_translation, col_translation
 
 
 
-def set_row(ws, row, arr, min_col=1, ignore_merge=True): #it considers merged cells
-	for i in range(len(arr)):
+def set_row(ws, row, arr, min_col=1, ignore_merge=True, **style): #it considers merged cells
+	for i in range(min_col, min_col + len(arr)):
+		try:
+			ws.cell(row, i).value = arr[i]
+			set_cell_style(ws.cell(row, j), **style)
+		except:
+			print('AttributeError: \'MergedCell\' object attribute \'value\' is read-only')
+		if not ignore_merge:
+			i += merge_area(ws, row, min_col)[3] - merge_area(ws, row, min_col)[1]
+			
+	"""for i in range(len(arr)):
 		try:
 			ws.cell(row, i + min_col).value = arr[i]
 		except:
 			print('AttributeError: \'MergedCell\' object attribute \'value\' is read-only')
 		if not ignore_merge:
-			min_col += merge_area(ws, row, min_col)[3] - merge_area(ws, row, min_col)[1]
+			min_col += merge_area(ws, row, min_col)[3] - merge_area(ws, row, min_col)[1]"""
 
 def set_col(ws, col, arr, min_row=1):
 	for i in range(len(arr)): ws.cell(i + min_row, col).value = arr[i]
@@ -165,9 +174,10 @@ def wscpy(dst, src, min_row=1, min_col=1):
 		#print(dvcopy)
 
 
-def dfcpy(ws, df, min_row=1, min_col=1):
-	set_row(ws, min_row, df.columns, min_col)
-	dfvalscpy(ws, df, min_row + 1, min_col)
+def dfcpy(ws, df, min_row=1, min_col=1, **style):
+	set_row(ws, min_row, df.columns, min_col, **style)
+	set_rng(ws, df.values, min_row + 1, min_col, **style)
+	#dfvalscpy(ws, df, min_row + 1, min_col)
 
 
 from pyx.array_utility import call
