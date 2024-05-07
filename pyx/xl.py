@@ -17,6 +17,10 @@ from pyx.mat.rect import contains2
 from pyx.mat.mat import to_number
 import pyx.array_utility as au
 
+from openpyxl.styles.borders import Border, Side
+from openpyxl.styles import Alignment, Border, Color, colors, Font, PatternFill
+
+
 
 thick = Side(border_style='thick', color="FF000000")
 thick_border = Border(left=thick, top=thick, right=thick, bottom=thick)
@@ -426,10 +430,7 @@ def paste_worksheet_matrix(ws, worksheet_matrix, spacing = 1):
 
 
 
-from openpyxl.styles.borders import Border, Side                
-from openpyxl.styles import Alignment
-from openpyxl.styles import Color, PatternFill, Font, Border
-from openpyxl.styles import colors
+
 
 
 
