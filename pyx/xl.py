@@ -78,14 +78,14 @@ def translate_address(address, *translation): #[row_translation, col_translation
 
 
 def set_row(ws, row, arr, min_col=1, ignore_merge=True, **style): #it considers merged cells
-	for i in range(min_col, min_col + len(arr)):
+	for i in range(len(arr)):
 		try:
-			ws.cell(row, i).value = arr[i]
-			set_cell_style(ws.cell(row, j), **style)
+			ws.cell(row, min_col+i).value = arr[i]
+			set_cell_style(ws.cell(row, min_col+i), **style)
 		except:
 			print('AttributeError: \'MergedCell\' object attribute \'value\' is read-only')
 		if not ignore_merge:
-			i += merge_area(ws, row, min_col)[3] - merge_area(ws, row, min_col)[1]
+			min_col += merge_area(ws, row, min_col)[3] - merge_area(ws, row, min_col)[1]
 			
 	"""for i in range(len(arr)):
 		try:
@@ -99,10 +99,10 @@ def set_col(ws, col, arr, min_row=1):
 	for i in range(len(arr)): ws.cell(i + min_row, col).value = arr[i]
 
 def set_rng(ws, mx, min_row=1, min_col=1, **style):
-	for i in range(min_row, min_row + len(mx)):
-		for j in range(min_col, min_col + len(mx[i])):
-			ws.cell(i, j).value = mx[i][j]
-			set_cell_style(ws.cell(i, j), **style)
+	for i in range(len(mx)):
+		for j in range(len(mx[i])):
+			ws.cell(min_row+i, min_col+j).value = mx[i][j]
+			set_cell_style(ws.cell(min_row+i, min_col+j), **style)
 
 def rng_to_list(ws, min_row, min_col, max_row, max_col):
 	result = []
