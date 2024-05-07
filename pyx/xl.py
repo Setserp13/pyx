@@ -116,8 +116,8 @@ def set_col(ws, col, arr, min_row=1, ignore_merge=True, scale=(1, 1), **style): 
 			ws.merge_cells(range_address(row, col, row + scale[0] - 1, col + scale[1] - 1))
 	for i in range(len(arr)):
 		try:
-			ws.cell(min_row+1, col).value = arr[i]
-			set_cell_style(ws.cell(min_row+1, col), **style)
+			ws.cell(min_row+i, col).value = arr[i]
+			set_cell_style(ws.cell(min_row+i, col), **style)
 		except:
 			print('AttributeError: \'MergedCell\' object attribute \'value\' is read-only')
 		if not ignore_merge:
