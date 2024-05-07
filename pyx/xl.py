@@ -174,9 +174,11 @@ def wscpy(dst, src, min_row=1, min_col=1):
 		#print(dvcopy)
 
 
-def dfcpy(ws, df, min_row=1, min_col=1, **style):
-	set_row(ws, min_row, df.columns, min_col, **style)
-	set_rng(ws, df.values, min_row + 1, min_col, **style)
+def dfcpy(ws, df, min_row=1, min_col=1, header_outline=thick, header_inline=thin, outline=thick, inline=thin, **style):
+	set_row(ws, min_row, df.columns, min_col, **{ k.replace('header_', ''):style[k] for k in style if k.startswith('header_') })
+	set_rng(ws, df.values, min_row + 1, min_col, **{ k:style[k] for k in style if not k.startswith('header_') })
+	set_range_border(ws, min_row, min_col, min_row, min_col + len(df.columns), header_outline, header_inline)
+	set_range_border(ws, min_row + 1, min_col, min_row + 1 + df.shape[0], min_col + len(df.columns), outline, inline)
 	#dfvalscpy(ws, df, min_row + 1, min_col)
 
 
