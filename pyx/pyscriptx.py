@@ -2,6 +2,11 @@ import io
 from js import document, File, Uint8Array, URL
 import pandas as pd
 
+async def to_bytes(file, **kwargs):
+	array_buf = Uint8Array.new(await file.arrayBuffer())
+	bytes = bytearray(array_buf)
+	return io.BytesIO(bytes)
+
 def download(file, filename):
 	url = URL.createObjectURL(file)
 	hidden_link = document.createElement("a")
