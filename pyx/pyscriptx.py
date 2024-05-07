@@ -1,5 +1,5 @@
 import io
-from js import File, Uint8Array, URL
+from js import document, File, Uint8Array, URL
 import pandas as pd
 
 def download(file, filename):
