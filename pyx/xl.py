@@ -101,7 +101,6 @@ def set_row(ws, row, arr, min_col=1, ignore_merge=True, scale=(1, 1), **style): 
 			print('AttributeError: \'MergedCell\' object attribute \'value\' is read-only')
 		if not ignore_merge:
 			min_col += merge_area(ws, row, min_col)[3] - merge_area(ws, row, min_col)[1]
-			
 	"""for i in range(len(arr)):
 		try:
 			ws.cell(row, i + min_col).value = arr[i]
@@ -110,8 +109,19 @@ def set_row(ws, row, arr, min_col=1, ignore_merge=True, scale=(1, 1), **style): 
 		if not ignore_merge:
 			min_col += merge_area(ws, row, min_col)[3] - merge_area(ws, row, min_col)[1]"""
 
-def set_col(ws, col, arr, min_row=1):
-	for i in range(len(arr)): ws.cell(i + min_row, col).value = arr[i]
+def set_col(ws, col, arr, min_row=1, ignore_merge=True, scale=(1, 1), **style): #it considers merged cells
+	if scale[0] > 1 or scale[1] > 1: #MERGE CELLS
+		for i in range(len(arr)):
+			row = min_row + i * scale[0]
+			ws.merge_cells(range_address(row, col, row + scale[0] - 1, col + scale[1] - 1))
+	for i in range(len(arr)):
+		try:
+			ws.cell(min_row+1, col).value = arr[i]
+			set_cell_style(ws.cell(min_row+1, col), **style)
+		except:
+			print('AttributeError: \'MergedCell\' object attribute \'value\' is read-only')
+		if not ignore_merge:
+			min_row += merge_area(ws, min_row, col)[2] - merge_area(ws, min_row, col)[0]
 
 def set_rng(ws, mx, min_row=1, min_col=1, **style):
 	for i in range(len(mx)):
