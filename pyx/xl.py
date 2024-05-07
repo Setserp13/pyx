@@ -88,7 +88,11 @@ def translate_address(address, *translation): #[row_translation, col_translation
 
 
 
-def set_row(ws, row, arr, min_col=1, ignore_merge=True, **style): #it considers merged cells
+def set_row(ws, row, arr, min_col=1, ignore_merge=True, scale=(1, 1), **style): #it considers merged cells
+	if scale[0] > 1 or scale[1] > 1: #MERGE CELLS
+		for i in range(len(arr)):
+			col = min_col + i * scale[1]
+			ws.merge_cells(range_address(row, col, row + scale[0] - 1, col + scale[1] - 1))
 	for i in range(len(arr)):
 		try:
 			ws.cell(row, min_col+i).value = arr[i]
