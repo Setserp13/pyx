@@ -89,10 +89,11 @@ def set_row(ws, row, arr, min_col=1, ignore_merge=True): #it considers merged ce
 def set_col(ws, col, arr, min_row=1):
 	for i in range(len(arr)): ws.cell(i + min_row, col).value = arr[i]
 
-def set_rng(ws, mx, min_row=1, min_col=1):
-	for i in range(len(mx)):
-		for j in range(len(mx[i])):
-			ws.cell(i + min_row, j + min_col).value = mx[i][j]
+def set_rng(ws, mx, min_row=1, min_col=1, **style):
+	for i in range(min_row, min_row + len(mx)):
+		for j in range(min_col, min_col + len(mx[i])):
+			ws.cell(i, j).value = mx[i][j]
+			set_cell_style(ws.cell(i, j), **style)
 
 def rng_to_list(ws, min_row, min_col, max_row, max_col):
 	result = []
