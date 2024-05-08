@@ -30,3 +30,12 @@ def to_txt(text, filename): #DOWNLOAD AS TXT
 	js_array.assign(my_stream.getbuffer())
 	file = File.new([js_array], filename, {type: "text/plain"})
 	download(file, filename)
+
+def save_excel(wb, filename): #DOWNLOAD AS EXCEL
+	with NamedTemporaryFile() as tmp:
+		wb.save(tmp.name)
+		tmp.seek(0)
+		bytes = tmp.read()
+		js_array = Uint8Array.new(bytes)
+		file = File.new([js_array], filename, {type: ".xlsx"})
+		download(file, filename)
