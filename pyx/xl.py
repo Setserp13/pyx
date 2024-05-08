@@ -379,6 +379,12 @@ def total_row(min_row, min_col, max_row, max_col, formula="SUM"):
 		result.append("=" + formula + "(" + range_address(min_row, j, max_row, j) + ")")
 	return result
 
+def add_total_column(ws, idx_col, val_col, r_col, min_row, max_row):
+	groups = groups_in_column(ws, idx_col, min_row, max_row)
+	for group in groups:
+		merge_range(ws, group[0], r_col, group[1], r_col, f'=SUM({range_address(group[0], val_col, group[1], val_col)})', border=thick_border)
+
+
 
 
 
