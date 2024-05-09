@@ -2,6 +2,7 @@ import io
 from js import document, File, Uint8Array, URL
 import pandas as pd
 from tempfile import NamedTemporaryFile
+import pyx.osx as osx
 
 async def to_bytes(file):
 	array_buf = Uint8Array.new(await file.arrayBuffer())
