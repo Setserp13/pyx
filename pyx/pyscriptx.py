@@ -35,9 +35,10 @@ def to_excel(df, filename): #DOWNLOAD AS EXCEL
 def to_txt(text, filename): #DOWNLOAD AS TXT
 	encoded_data = text.encode('utf-8')
 	my_stream = io.BytesIO(encoded_data)
-	js_array = Uint8Array.new(len(encoded_data))
-	js_array.assign(my_stream.getbuffer())
-	file = File.new([js_array], filename, {type: "text/plain"})
+	file = to_file(my_stream, filename)
+	#js_array = Uint8Array.new(len(encoded_data))
+	#js_array.assign(my_stream.getbuffer())
+	#file = File.new([js_array], filename, {type: "text/plain"})
 	download(file, filename)
 
 def save_excel(wb, filename): #DOWNLOAD AS EXCEL
