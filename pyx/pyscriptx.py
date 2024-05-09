@@ -3,11 +3,16 @@ from js import document, File, Uint8Array, URL
 import pandas as pd
 from tempfile import NamedTemporaryFile
 
-async def to_bytes(file, **kwargs):
+async def to_bytes(file):
 	array_buf = Uint8Array.new(await file.arrayBuffer())
 	bytes = bytearray(array_buf)
 	return io.BytesIO(bytes)
-
+	
+def to_file(bytes, filename):
+	bytes.seek(0)
+	js_array = Uint8Array.new(bytes.getbuffer())
+	return File.new([js_array], filename, ext(filename))	#{type: ".xlsx"})
+	
 def download(file, filename):
 	url = URL.createObjectURL(file)
 	hidden_link = document.createElement("a")
