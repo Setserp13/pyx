@@ -36,7 +36,7 @@ def to_txt(text, filename): #DOWNLOAD AS TXT
 	encoded_data = text.encode('utf-8')
 	my_stream = io.BytesIO(encoded_data)
 	file = to_file(my_stream, filename)
-	print('TO TEXT')
+	#print('TO TEXT')
 	#js_array = Uint8Array.new(len(encoded_data))
 	#js_array.assign(my_stream.getbuffer())
 	#file = File.new([js_array], filename, {type: "text/plain"})
