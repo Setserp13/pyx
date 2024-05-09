@@ -27,21 +27,13 @@ def to_excel(df, filename): #DOWNLOAD AS EXCEL
 	buffer = io.BytesIO()
 	with pd.ExcelWriter(buffer) as writer:
 		df.to_excel(writer)
-	print('AAA')
 	file = to_file(buffer, filename)
-	#buffer.seek(0)
-	#js_array = Uint8Array.new(buffer.getbuffer())
-	#file = File.new([js_array], filename, {type: ".xlsx"})
 	download(file, filename)	
 		
 def to_txt(text, filename): #DOWNLOAD AS TXT
 	encoded_data = text.encode('utf-8')
 	my_stream = io.BytesIO(encoded_data)
 	file = to_file(my_stream, filename)
-	#print('TO TEXT')
-	#js_array = Uint8Array.new(len(encoded_data))
-	#js_array.assign(my_stream.getbuffer())
-	#file = File.new([js_array], filename, {type: "text/plain"})
 	download(file, filename)
 
 def save_excel(wb, filename): #DOWNLOAD AS EXCEL
