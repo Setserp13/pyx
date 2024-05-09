@@ -25,9 +25,11 @@ def to_excel(df, filename): #DOWNLOAD AS EXCEL
 	buffer = io.BytesIO()
 	with pd.ExcelWriter(buffer) as writer:
 		df.to_excel(writer)
-	buffer.seek(0)
-	js_array = Uint8Array.new(buffer.getbuffer())
-	file = File.new([js_array], filename, {type: ".xlsx"})
+	print('AAA')
+	file = to_file(buffer, filename)
+	#buffer.seek(0)
+	#js_array = Uint8Array.new(buffer.getbuffer())
+	#file = File.new([js_array], filename, {type: ".xlsx"})
 	download(file, filename)	
 		
 def to_txt(text, filename): #DOWNLOAD AS TXT
