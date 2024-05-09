@@ -1,5 +1,6 @@
 import re
 import xml.etree.ElementTree as ET
+import pandas as pd
 
 def search(root, match):
 	return getattr(find(root, match), 'text', None)
@@ -60,3 +61,4 @@ def xmls2df(ls):
 	#columns = list(set.intersection(*[set(x.columns) for x in dfs]))
 	#dfs = [x[columns].sort_index(axis=1) for x in dfs]
 	df = pd.concat(dfs, axis=0, join='outer', ignore_index=True, sort=True)
+	return df
