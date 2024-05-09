@@ -11,7 +11,7 @@ async def to_bytes(file):
 def to_file(bytes, filename):
 	bytes.seek(0)
 	js_array = Uint8Array.new(bytes.getbuffer())
-	return File.new([js_array], filename, ext(filename))	#{type: ".xlsx"})
+	return File.new([js_array], filename, osx.ext(filename))	#{type: ".xlsx"})
 	
 def download(file, filename):
 	url = URL.createObjectURL(file)
