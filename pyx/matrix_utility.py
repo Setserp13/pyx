@@ -25,7 +25,7 @@ def funcvals(row_count, column_count, func):
 def full(row_count, column_count, default_value):
 	return funcvals(row_count, column_count, lambda i, j: default_value)
 
-
+def in_range(matrix, i, j): return i > -1 and i < len(matrix) and j > -1 and j < len(matrix[0])
 
 
 def max_len(list):
