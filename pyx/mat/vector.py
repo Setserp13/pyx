@@ -36,6 +36,9 @@ class Vector(tuple):
 	def divide(a, b):
 		return Vector(*tuple(map(lambda x, y: x / y, a, b)))
 
+	def floordiv(a, b):
+		return Vector(*tuple(map(lambda x, y: x // y, a, b)))
+		
 	def reduce(self, func, initialValue):
 		result = initialValue
 		for x in self: result = func(result, x)
