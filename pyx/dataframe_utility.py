@@ -50,6 +50,7 @@ def row_of(df, dict): #dict is like { column1: value1, ..., column2: value2 }
 	for i in range(df.shape[0]):
 		match = True
 		for key, value in dict.items():
+			print([df[key][i], value])
 			if df[key][i] != value:
 				match = False
 				break
