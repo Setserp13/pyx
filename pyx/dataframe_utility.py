@@ -47,9 +47,9 @@ def strall(obj):
 		strall(obj[x])
 
 def row_of(df, dict): #dict is like { column1: value1, ..., column2: value2 }
-	print(dict)
+	#print(dict)
 	for i in range(df.shape[0]):
-		print(df.iloc[i].to_dict())
+		#print(df.iloc[i].to_dict())
 		match = True
 		for key, value in dict.items():
 			if df[key][i] != value:
