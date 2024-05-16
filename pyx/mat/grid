@@ -1,0 +1,14 @@
+class Grid2:
+	def __init__(self, cellSize, offset=Vector(0,0), cellGap=Vector(0,0)):
+		self.cellSize = cellSize
+		self.offset = offset
+		self.cellGap = cellGap
+
+	def cellToPoint(self, value):
+		return self.offset + Vector.scale(self.cellSize + self.cellGap, value)
+
+	def pointToCell(self, value):
+		return Vector.floordiv((value - self.offset), self.cellSize + self.cellGap)
+	
+	def cell(self, i, j):
+		return Rect2(*self.cellToPoint(Vector(i,j)), *self.cellSize)
