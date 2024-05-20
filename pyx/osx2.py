@@ -7,7 +7,7 @@ def open_audios(path_list, **kwargs): return osx.open_all(path_list, open_audio,
 def open_videos(path_list, **kwargs): return osx.open_all(path_list, cv2.VideoCapture, **kwargs)
 
 def open_audio(path):
-	return AudioSegment.from_file(path, format=ext(path)[1:])
+	return AudioSegment.from_file(path, format=osx.ext(path)[1:])
 
 def export_audio(audio, path):
 	os.makedirs(os.path.dirname(path), exist_ok=True)
