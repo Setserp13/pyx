@@ -44,3 +44,24 @@ def save_excel(wb, filename): #DOWNLOAD AS EXCEL
 		js_array = Uint8Array.new(bytes)
 		file = File.new([js_array], filename, {type: ".xlsx"})
 		download(file, filename)
+
+def get_elements_by_id(*ids):
+	#print(ids)
+	return [document.getElementById(x) for x in ids]
+		
+def get_files_by_id(*ls, multiple=False):
+	#print(multiple)
+	return [x.files if multiple else x.files.item(0) if x.files.length > 0 else print(f'File {ls[i]} not found.') for i, x in enumerate(get_elements_by_id(*ls))]
+		
+async def get_file_bytes_by_id(*ls, multiple=False):
+	files = get_files_by_id(*ls, multiple=multiple)
+	result = []
+	for x in files:
+		if multiple:
+			result.append(await FileList2BytesIO(x))
+			"""row = []
+			for i in x.length:
+				row.append(await to_bytes(x.item(i)))
+			result.append(row)"""
+		result.append(await to_bytes(x))
+	return result
