@@ -63,5 +63,6 @@ async def get_file_bytes_by_id(*ls, multiple=False):
 			for i in x.length:
 				row.append(await to_bytes(x.item(i)))
 			result.append(row)"""
-		result.append(await to_bytes(x))
+		else:
+			result.append(await to_bytes(x))
 	return result
