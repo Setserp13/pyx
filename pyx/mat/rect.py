@@ -78,6 +78,12 @@ class Rect:
 		start = max(a.min[axis], b.min[axis])
 		stop = min(a.max[axis], b.max[axis])
 		return None if stop < start else (start, stop)
+		
+	def __add__(self, v): return Rect(self.min + v, self.size)
+	
+	def __sub__(self, v): return Rect(self.min - v, self.size)
+
+
 
 
 #SPECIALIZED
