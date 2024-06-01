@@ -54,7 +54,7 @@ class Rect:
 		return Rect(self.min.set(axis, value - (self.size[axis] * pivot)), self.size) #simplified
 
 	def minimumBounding(self, other):
-		return Rect.MinMax(min(self.min, other.min), max(self.max, other.max))
+		return Rect.MinMax(Vector.min(self.min, other.min), Vector.max(self.max, other.max))
 
 	def containsPoint(self, p):
 		for i in range(len(p)):
