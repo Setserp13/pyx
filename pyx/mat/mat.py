@@ -96,7 +96,8 @@ def random_range(start, stop):
 def random_range(start, stop):
 	return tuple(map(lambda x, y: random_range(x, y), start, stop))
 
-
+def rangef(start, stop, step):
+	return [start + step * i for i in range(math.ceil((stop - start) / step))]
 
 
 
