@@ -72,6 +72,7 @@ class Rect:
 		return Rect.MinMax(Vector(*Vector.max(a.min, b.min)), Vector(*Vector.min(a.max, b.max)))
 
 	def __str__(self): return f'min: {self.min}, size: {self.size}'
+	def __repr__(self): return f'min: {self.min}, size: {self.size}'
 
 	def axisIntersection(a, b, axis=0): # If the intervals overlap, return the intersection, else, return None
 		start = max(a.min[axis], b.min[axis])
