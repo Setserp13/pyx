@@ -1,4 +1,6 @@
 from pyx.mat.mat import rangef
+from pyx.mat.rect import Rect2
+from pyx.mat.vector import Vector
 
 class Grid2:
 	def __init__(self, cellSize, offset=Vector(0,0), cellGap=Vector(0,0)):
