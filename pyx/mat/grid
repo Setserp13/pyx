@@ -1,3 +1,5 @@
+from pyx.mat.mat import rangef
+
 class Grid2:
 	def __init__(self, cellSize, offset=Vector(0,0), cellGap=Vector(0,0)):
 		self.cellSize = cellSize
