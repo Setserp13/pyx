@@ -72,8 +72,8 @@ class Vector(tuple):
 
 	def lerp(a, b, t): return Vector.unclampedLerp(a, b, max(0, min(t, 1)))
 
-	def min(a, b): return tuple(map(lambda x, y: min(x, y), a, b))
-	def max(a, b): return tuple(map(lambda x, y: max(x, y), a, b))
+	def min(a, b): return Vector(*tuple(map(lambda x, y: min(x, y), a, b)))
+	def max(a, b): return Vector(*tuple(map(lambda x, y: max(x, y), a, b)))
 	#def clamp(val, min, max): return tuple(map(lambda x, y, z: clamp(x, y, z), val, min, max))
 
 
