@@ -14,3 +14,12 @@ class Grid2:
 	
 	def cell(self, i, j):
 		return Rect2(*self.cellToPoint(Vector(i,j)), *self.cellSize)
+
+	def byCellCount(size, cellCount): return grid2ByCellSize(size, Vector.divide(size, cellCount))
+
+	def byCellSize(size, cellSize):
+		result = []
+		for x in rangef(0, size[0], cellSize[0]):
+			for y in rangef(0, size[1], cellSize[1]):
+				result.append(Rect2(x, y, min(cellSize[0], size[0] - x), min(cellSize[1], size[1] - y)))
+		return result
