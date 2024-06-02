@@ -17,7 +17,7 @@ class Grid2:
 	def cell(self, i, j):
 		return Rect2(*self.cellToPoint(Vector(i,j)), *self.cellSize)
 
-	def byCellCount(size, cellCount): return grid2ByCellSize(size, Vector.divide(size, cellCount))
+	def byCellCount(size, cellCount): return Grid2.byCellSize(size, Vector.divide(size, cellCount))
 
 	def byCellSize(size, cellSize):
 		result = []
