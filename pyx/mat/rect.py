@@ -90,6 +90,22 @@ class Rect:
 
 def Rect2(x, y, width, height): return Rect(Vector(x, y), Vector(width, height))
 
+def absolute_padding(rect, l=0.0, r=0.0, d=0.0, u=0.0):
+	return Rect(rect.min + Vector(l, d), rect.size - Vector(l + r, d + u))
+
+def relative_padding(rect, l=0.0, r=0.0, d=0.0, u=0.0):
+	return absolute_padding(rect, l * rect.size[0], r * rect.size[0], d * rect.size[1], u * rect.size[1])
+
+def padding(rect, l=0.0, r=0.0, d=0.0, u=0.0, relative=True):
+	return relative_padding(rect, l, r, d, u) if relative else absolute_padding(rect, l, r, d, u)
+
+def positionBounds(rect, object_size, pivot=Vector(0.5, 0.5)):
+	l = object_size[0] * pivot[0]
+	r = object_size[0] - l
+	d = object_size[1] * pivot[1]
+	u = object_size[1] - d
+	return absolute_padding(rect, l, r, d, u)
+
 def bottom_left(rect): return rect.denormalizePoint(Vector(0, 0))
 def bottom_right(rect): return rect.denormalizePoint(Vector(0, 1))
 def top_left(rect): return rect.denormalizePoint(Vector(1, 0))
