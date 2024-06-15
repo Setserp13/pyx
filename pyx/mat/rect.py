@@ -172,13 +172,13 @@ def set_aspect(size, value):
 def fit(viewport, viewbox, scale_method='meet', align=(0.5, 0.5)): #scale_method in ['meet', 'slice']
 	for i in range(len(viewport)):
 		size = tuple(map(lambda x: int(x), set_size_component(viewbox, i, viewport[i])))
-		#print([viewport, viewbox, size])
+		print([viewport, viewbox, size])
 		valid = True
 		for j in range(len(viewport)):
 			if (viewport[j] < size[j] if scale_method == 'meet' else viewport[j] > size[j]):
 				valid = False			
 		if valid: return size
-
+	return viewport
 
 def intersect(rect1, rect2): #where each rectangle is represented as a tuple (x, y, width, height)
 	x1 = max(rect1[0], rect2[0])
