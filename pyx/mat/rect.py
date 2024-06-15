@@ -178,7 +178,7 @@ def fit(viewport, viewbox, scale_method='meet', align=(0.5, 0.5)): #scale_method
 			if (viewport[j] < size[j] if scale_method == 'meet' else viewport[j] > size[j]):
 				valid = False			
 		if valid: return size
-	return viewport
+	return size
 
 def intersect(rect1, rect2): #where each rectangle is represented as a tuple (x, y, width, height)
 	x1 = max(rect1[0], rect2[0])
