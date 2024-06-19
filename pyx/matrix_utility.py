@@ -14,8 +14,10 @@ def column(list, index): return [list[i][index] for i in range(len(list)) if ind
 def map(matrix):
 	result = []
 	for i in range(len(matrix)):
+		row = []
 		for j in range(len(matrix[i])):
 			result.append(call(func, matrix[i][j])
+		result.append(row)
 	return result
 
 def funcvals(row_count, column_count, func):
