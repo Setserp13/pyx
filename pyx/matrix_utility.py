@@ -11,7 +11,12 @@ def map_columns(list, func): return [func(column(list, i), i) for i in range(max
 
 def column(list, index): return [list[i][index] for i in range(len(list)) if index < len(list[i])]
 
-def map(array, func, start, stop, step): return [call(func, array[i], i) for i in indices(array, start, stop, step)]
+def map(matrix):
+	result = []
+	for i in range(len(matrix)):
+		for j in range(len(matrix[i])):
+			result.append(call(func, matrix[i][j])
+	return result
 
 def funcvals(row_count, column_count, func):
 	result = []
@@ -108,7 +113,7 @@ class MatrixLike:
 	def map(self, func):
 		result = []
 		for i in range(self.length()[0]):
-			for i in range(self.length()[1]):
+			for j in range(self.length()[1]):
 				result.append(call(func, self.getValue(i, j), i, j))
 		return result
 
