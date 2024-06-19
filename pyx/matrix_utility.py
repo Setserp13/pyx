@@ -11,7 +11,7 @@ def map_columns(list, func): return [func(column(list, i), i) for i in range(max
 
 def column(list, index): return [list[i][index] for i in range(len(list)) if index < len(list[i])]
 
-def map(matrix):
+def map(matrix, func):
 	result = []
 	for i in range(len(matrix)):
 		row = []
