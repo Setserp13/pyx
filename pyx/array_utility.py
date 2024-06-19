@@ -6,6 +6,8 @@ def any(pred, iterable): return len(list(filter(pred, iterable))) > 0
 
 def call(func, *args): return func(*resize(args, func.__code__.co_argcount))
 
+def map(array, func, start, stop, step): return [call(func, array[i], i) for i in indices(array, start, stop, step)]
+
 def foreach(array, func): return [call(func, x, i) for i, x in enumerate(array)]
 
 def funcvals(count, func): return list(map(lambda i: func(i), range(count)))
