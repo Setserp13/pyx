@@ -28,6 +28,8 @@ def foreach(df, columns, action): #action(df slice, column values)
 		#print(row)
 		action(select(df, columns, row), row)
 
+def rename(df, columns): return df.rename(columns={x: columns[i] for i, x in enumerate(df.columns)})
+
 #def segmentby(df, by):
 
 
