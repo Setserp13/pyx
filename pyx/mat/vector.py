@@ -100,7 +100,10 @@ class Vector3:
 
 from pyx.mat.mat import polar_to_cartesian
 
-def on_arc(n, r=1.0, center=Vector2.zero, start=0.0, size=2.0 * math.pi): #where start is the start angle and size is the angular size, using default start and size is equal to call on_circle
+def on_circle(n, r=1.0, center=Vector2.zero):
+	return [Vector(*polar_to_cartesian(r, 2.0 * math.pi * (i / n))) + center for i in range(n)]
+
+def on_arc(n, r=1.0, center=Vector2.zero, start=0.0, size=2.0 * math.pi): #where start is the start angle and size is the angular size, using default start and size is equal to call on_circle, n > 1
 	return [Vector(*polar_to_cartesian(r, start + size * (i / (n - 1)))) + center for i in range(n)]
 """
 #Set vector component i and preserve aspect ratio
