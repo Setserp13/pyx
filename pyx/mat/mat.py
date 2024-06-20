@@ -138,8 +138,7 @@ def cartesian_to_polar(x, y): return math.sqrt(x**2 + y**2), math.atan2(y, x)
 
 #POINT
 
-def on_arc(n, r=1.0, start=0.0, size=2.0 * math.pi): #where start is the start angle and size is the angular size, using default start and size is equal to call on_circle
-	return [polar_to_cartesian(r, start + size * (i / (n - 1))) for i in range(n)]
+
 
 def batch(total, size): return [min(total - (i * size), size) for i in range(math.ceil(total / size))]
 
