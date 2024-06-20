@@ -98,7 +98,10 @@ class Vector3:
 	back = Vector(0, 0, -1)
 	forward = Vector(0, 0, 1)
 
+from pyx.mat.mat import polar_to_cartesian
 
+def on_arc(n, r=1.0, center=Vector2.zero, start=0.0, size=2.0 * math.pi): #where start is the start angle and size is the angular size, using default start and size is equal to call on_circle
+	return [Vector(*polar_to_cartesian(r, start + size * (i / (n - 1)))) + center for i in range(n)]
 """
 #Set vector component i and preserve aspect ratio
 return vector * (value / vector[i])
