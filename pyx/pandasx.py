@@ -108,6 +108,25 @@ def resum(df, new_sum, col): #SET SUM
 	#print(f'SUM IS {df[col].sum()}, {sum}')
 	return df
 
+def resume(df, by, agg):
+	for x in by:
+		df[x] = df[x].map(lambda x: str(x))
+	lst = []
+
+	cur = df
+	
+	for i in range(len(by)-1,-1,-1):
+		cur = cur.groupby(by[:i+1]).agg(agg).reset_index()
+		lst.append(cur)
+
+	cur = cur.agg(agg)
+	cur = pd.DataFrame({k:[v] for k,v in cur.items()})
+	lst.append(cur)
+
+	result = pd.concat(lst).sort_values(by)
+	#result = result[by + list(agg.keys())]
+	return result.groupby(by, dropna=False).agg(agg)
+
 
 
 
