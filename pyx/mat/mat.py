@@ -5,6 +5,10 @@ import random
 import math
 from pyx.array_utility import index_of
 
+def arg(function, iterables, return_type=tuple):
+	#print(iterables)
+	return return_type(map(function, *iterables))
+
 def weights(values): return np.array(values) / sum(values)
 
 @dispatch(Number, Number)
