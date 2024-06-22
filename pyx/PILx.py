@@ -1,7 +1,7 @@
 from PIL import Image, ImageFont
 import pyx.mat.mat as mat
 
-def concat(lst, mode='RGBA', axis=0, equal_sized=False):
+def concat(lst, axis=0, equal_sized=False, mode='RGBA'):
 	cell_size = lst[0].size if equal_sized else mat.arg(max, [x.size for x in lst])
 	size = list(cell_size)
 	size[axis] *= len(lst)
