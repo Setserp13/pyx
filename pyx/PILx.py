@@ -1,5 +1,19 @@
 from PIL import ImageFont
+import pyx.mat.mat as mat
 
+def concat(lst, mode='RGBA', axis=0, equal_sized=False):
+	cell_size = lst[0].size if equal_sized else mat.arg(max, [x.size for x in lst])
+	size = list(cell_size)
+	size[axis] *= len(lst)
+	#print(size)
+	result = Image.new(mode, tuple(size))
+	for i, x in enumerate(lst):
+		pos = [0, 0]
+		pos[axis] = i * cell_size[axis]
+		print(pos)
+		result.paste(x, tuple(pos))
+	return result
+	
 def getsize(lines, font, font_size, leading=0):
 	font = ImageFont.truetype(font, font_size)
 	width = max(font.getsize(line)[0] for line in lines)
