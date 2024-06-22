@@ -16,7 +16,7 @@ from svgpathtools import parse_path
 import svgutils.transform as sg
 import re
 from pyx.array_utility import items
-from pyx.lxmlx import find_ancestor
+from pyx.lxmlx import find_ancestor, find
 
 def get_floats(obj, *args): return [float(obj.get(x, None)) for x in args]
 
@@ -138,14 +138,10 @@ def set_transform(obj, **kwargs): #Only translate, scale, rotate, skewX, skewY a
 
 
 
-def find_match(self, match, iter=etree._Element.iter):
-	for x in iter(self):
-		if match(x):
-			return x
-	return None
+
 
 def find_id(self, id):
-	return find_match(self, lambda x: 'id' in x.attrib and x.attrib['id'] == id)
+	return find(self, lambda x: 'id' in x.attrib and x.attrib['id'] == id)
 
 def islayer(self): return self.tag == '{http://www.w3.org/2000/svg}g' and self.get('{http://www.inkscape.org/namespaces/inkscape}groupmode', None) == 'layer'
 
