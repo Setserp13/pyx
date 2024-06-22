@@ -1,3 +1,4 @@
+import math
 from PIL import Image, ImageFont
 import pyx.mat.mat as mat
 
@@ -13,7 +14,24 @@ def concat(lst, axis=0, equal_sized=False, mode='RGBA'):
 		#print(pos)
 		result.paste(x, tuple(pos))
 	return result
-	
+
+#constraint_count = 1 with start_axis = 0 is equal to concat vertically and with start_axis = 1 is equal to concat horizontally
+def grid(lst, constraint_count, start_axis=0, equal_sized=False, mode='RGBA'):
+	cell_size = lst[0].size if equal_sized else mat.arg(max, [x.size for x in lst])
+	size = list(cell_size)
+	size[start_axis] *= constraint_count
+	axis2 = (start_axis+1)%2
+	size[axis2] *= math.ceil(len(lst) / constraint_count)
+	#print(size)
+	result = Image.new(mode, tuple(size))
+	for i, x in enumerate(lst):
+		pos = [0, 0]
+		pos[start_axis] = (i % constraint_count) * cell_size[start_axis]
+		pos[axis2] = (i // constraint_count) * cell_size[axis2]
+		#print(pos)
+		result.paste(x, tuple(pos))
+	return result
+
 def getsize(lines, font, font_size, leading=0):
 	font = ImageFont.truetype(font, font_size)
 	width = max(font.getsize(line)[0] for line in lines)
