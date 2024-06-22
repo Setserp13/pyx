@@ -16,6 +16,7 @@ from svgpathtools import parse_path
 import svgutils.transform as sg
 import re
 from pyx.array_utility import items
+from pyx.lxmlx import find_ancestor
 
 def get_floats(obj, *args): return [float(obj.get(x, None)) for x in args]
 
@@ -135,14 +136,7 @@ def set_transform(obj, **kwargs): #Only translate, scale, rotate, skewX, skewY a
 
 
 
-def find_ancestor(self, match, dflt_value=None):
-	parent = self.getparent()
-	while parent is not None:
-		#print(parent.tag)
-		if match(parent):
-			return parent
-		parent = parent.getparent()
-	return dflt_value
+
 
 def find_match(self, match, iter=etree._Element.iter):
 	for x in iter(self):
