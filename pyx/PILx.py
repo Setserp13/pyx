@@ -15,7 +15,7 @@ def concat(lst, axis=0, equal_sized=False, mode='RGBA'):
 		result.paste(x, tuple(pos))
 	return result
 
-#constraint_count = 1 with start_axis = 0 is equal to concat vertically and with start_axis = 1 is equal to concat horizontally
+#grid(lst, 1, 0) concats vertically and grid(lst, 1, 1) concats horizontally
 def grid(lst, constraint_count, start_axis=0, equal_sized=False, mode='RGBA'):
 	cell_size = lst[0].size if equal_sized else mat.arg(max, [x.size for x in lst])
 	size = list(cell_size)
