@@ -10,7 +10,7 @@ def concat(lst, mode='RGBA', axis=0, equal_sized=False):
 	for i, x in enumerate(lst):
 		pos = [0, 0]
 		pos[axis] = i * cell_size[axis]
-		print(pos)
+		#print(pos)
 		result.paste(x, tuple(pos))
 	return result
 	
