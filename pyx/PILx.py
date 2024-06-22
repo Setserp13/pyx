@@ -1,4 +1,4 @@
-from PIL import ImageFont
+from PIL import Image, ImageFont
 import pyx.mat.mat as mat
 
 def concat(lst, mode='RGBA', axis=0, equal_sized=False):
