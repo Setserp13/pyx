@@ -1,5 +1,10 @@
 import numpy as np
 
+def aabb(*args):
+	min = np.minimum.reduce(args)
+	max = np.maximum.reduce(args)
+	return rect.min_max(min, max)
+
 def lerp(a, b, t): return a * (1 - t) + b * t
 
 class rect:
@@ -30,10 +35,16 @@ class rect:
 	def denormalize_rect(self, value):
 		return rect(self.denormalize_point(value.min), self.denormalize_vector(value.size))
 
+	def clamp(self, point):
+		return np.minimum(np.maximum(self, rect.min), rect.max)
+
 	#STATIC
 	def center_size(center, size): return rect(center - size * 0.5, size)
 
 	def min_max(min, max): return rect(min, max - min)
+
+	def aabb(a, b):
+		return rect.min_max(np.minimum(a.min, b.min), np.maximum(a.max, b.max))
 
 class grid:
 	def __init__(self, cell_size, offset=None, cell_gap=None):
