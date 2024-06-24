@@ -21,12 +21,12 @@ def clean_filename(filename):
 def to_str(i, digits=0):
 	return max(digits - len(str(i)), 0) * '0' + str(i)
 
-def to_distinct(path, naming='root (i)', digits=0):
+def to_distinct(path, naming='root (%i)', digits=0):
 	result = path
 	root, ext = os.path.splitext(path)
 	i = 1
 	while(os.path.exists(result)):
-		result = naming.replace('i', to_str(i, digits)).replace('root', root) + ext
+		result = naming.replace('%i', to_str(i, digits)).replace('root', root) + ext
 		i += 1
 	return result
 
