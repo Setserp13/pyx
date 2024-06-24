@@ -1,5 +1,10 @@
 import math
 
+def swap(array, i, j):
+	aux = array[i]
+	array[i] = array[j]
+	array[j] = aux
+
 def all(pred, iterable): return len(list(filter(pred, iterable))) == len(iterable)
 
 def any(pred, iterable): return len(list(filter(pred, iterable))) > 0
