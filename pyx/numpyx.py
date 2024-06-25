@@ -1,9 +1,7 @@
 import numpy as np
 
-def aabb(*args):
-	min = np.minimum.reduce(args)
-	max = np.maximum.reduce(args)
-	return rect.min_max(min, max)
+def aabb(*points):
+	return rect.min_max(np.minimum.reduce(points), np.maximum.reduce(points))
 
 def clamp(point, min, max): return np.minimum(np.maximum(point, min), max)
 
