@@ -60,6 +60,10 @@ class rect:
 
 	def manhattan_distance(a, b): return sum(rect.distances(a, b))
 
+def rect2(x, y, width, height): return rect(np.array([x, y]), np.array([width, height]))
+
+def rect3(x, y, z, width, height, depth): return rect(np.array([x, y, z]), np.array([width, height, depth]))
+
 class grid:
 	def __init__(self, cell_size, offset=None, cell_gap=None):
 		self.cell_size = np.array(cell_size)
