@@ -51,6 +51,16 @@ class rect:
 	def aabb(a, b):
 		return rect.min_max(np.minimum(a.min, b.min), np.maximum(a.max, b.max))
 
+	def delta(a, b):
+		return [max(a.min[i] - b.max[i], b.min[i] - a.max[i], 0) for i in range(len(a.min))]
+
+	def chebyshev_distance(a, b): return max(delta(a, b))
+	
+	def distance(a, b): #euclidean distance
+		return sqrt(sum(x ** 2 for x in delta(a, b)))
+
+	def manhattan_distance(a, b): return sum(delta(a, b))
+
 class grid:
 	def __init__(self, cell_size, offset=None, cell_gap=None):
 		self.cell_size = np.array(cell_size)
