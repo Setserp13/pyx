@@ -15,6 +15,20 @@ def concat(lst, axis=0, equal_sized=False, mode='RGBA'):
 		result.paste(x, tuple(pos))
 	return result
 
+def slice(img, cell_count, axis=0):
+	size = img.size
+	cell_size = list(size)
+	cell_size[axis] = size[axis] // cell_count
+	result = []
+	for i in range(cell_count):
+		min = [0, 0]
+		max = list(size)
+		min[axis] = i * cell_size[axis]
+		max[axis] = (i+1) * cell_size[axis]
+		cur = img.crop((min[0], min[1], max[0], max[1]))
+		result.append(cur)	
+	return result
+
 #grid(lst, 1, 0) concats vertically and grid(lst, 1, 1) concats horizontally
 def grid(lst, constraint_count, start_axis=0, equal_sized=False, mode='RGBA'):
 	cell_size = lst[0].size if equal_sized else mat.arg(max, [x.size for x in lst])
