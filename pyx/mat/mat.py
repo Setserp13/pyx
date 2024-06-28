@@ -67,7 +67,7 @@ def magnitude(v): return math.sqrt(sqr_magnitude(v))
 
 def sub(a, b): return map(lambda x, y: x - y, a, b)
 
-def raised_norm(a, n): return np.sum(list(map(lambda x: abs(x) ** n, a)))
+def raised_norm(a, n): return sum(abs(x) ** n for x in a)
 
 def norm(a, n): return raised_norm(a, n) ** (1.0 / n)
 
