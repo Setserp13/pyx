@@ -60,6 +60,17 @@ class rect:
 
 	def manhattan_distance(a, b): return sum(rect.distances(a, b))
 
+	def padding(self, left, right, relative=False):
+		if relative:
+			left = rect.denormalize_vector(left)
+			right = rect.denormalize_vector(right)
+		return rect.min_max(rect.min + left, rect.max - right)
+
+	def bounds(self, obj_size, obj_pivot=None):
+		if obj_pivot == None:
+			obj_pivot = np.full(len(obj_size), 0.5)
+		return self.padding(obj_size * obj_pivot, obj_size * (1 - obj_pivot))
+
 def rect2(x, y, width, height): return rect(np.array([x, y]), np.array([width, height]))
 
 def rect3(x, y, z, width, height, depth): return rect(np.array([x, y, z]), np.array([width, height, depth]))
