@@ -1,3 +1,4 @@
+import math
 from multipledispatch import dispatch
 import numpy as np
 
@@ -19,10 +20,10 @@ def clamp(point, min, max): return np.minimum(np.maximum(point, min), max)
 def lerp(a, b, t): return a * (1 - t) + b * t
 
 
-def on_circle(n, r=1.0, center=Vector2.zero):
+def on_circle(n, r=1.0, center=np.zeros(2)):
 	return [np.array(polar_to_cartesian(r, 2.0 * math.pi * (i / n))) + center for i in range(n)]
 
-def on_arc(n, r=1.0, center=Vector2.zero, start=0.0, size=2.0 * math.pi):
+def on_arc(n, r=1.0, center=np.zeros(2), start=0.0, size=2.0 * math.pi):
 	return [np.array(polar_to_cartesian(r, start + size * (i / (n - 1)))) + center for i in range(n)]
 
 class rect:
