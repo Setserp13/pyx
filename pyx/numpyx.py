@@ -1,6 +1,7 @@
 import math
 from multipledispatch import dispatch
 import numpy as np
+from pyx.mat.mat import polar_to_cartesian
 
 def clamp(point, min, max): return np.minimum(np.maximum(point, min), max)
 
