@@ -3,11 +3,11 @@ from multipledispatch import dispatch
 import numpy as np
 
 #POINT-POINT AABB
-@dispatch(np.array, np.array)
+@dispatch(np.ndarray, np.ndarray)
 def aabb(a, b): return rect.min_max(np.minimum(a, b), np.maximum(a, b))
 
 #RECT-POINT AABB
-@dispatch(rect, np.array)
+@dispatch(rect, np.ndarray)
 def aabb(a, b): return rect.min_max(np.minimum(a.min, b), np.maximum(a.max, b))
 
 @dispatch(list)
