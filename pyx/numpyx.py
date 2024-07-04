@@ -2,18 +2,6 @@ import math
 from multipledispatch import dispatch
 import numpy as np
 
-#POINT-POINT AABB
-@dispatch(np.ndarray, np.ndarray)
-def aabb(a, b): return rect.min_max(np.minimum(a, b), np.maximum(a, b))
-
-#RECT-POINT AABB
-@dispatch(rect, np.ndarray)
-def aabb(a, b): return rect.min_max(np.minimum(a.min, b), np.maximum(a.max, b))
-
-@dispatch(list)
-def aabb(*points):
-	return rect.min_max(np.minimum.reduce(points), np.maximum.reduce(points))
-
 def clamp(point, min, max): return np.minimum(np.maximum(point, min), max)
 
 def lerp(a, b, t): return a * (1 - t) + b * t
@@ -120,3 +108,18 @@ class grid:
 				a[axis] = b[axis] = i
 				result.append([self.cell_min(a), self.cell_min(b)])
 		return result
+
+
+
+
+#POINT-POINT AABB
+@dispatch(np.ndarray, np.ndarray)
+def aabb(a, b): return rect.min_max(np.minimum(a, b), np.maximum(a, b))
+
+#RECT-POINT AABB
+@dispatch(rect, np.ndarray)
+def aabb(a, b): return rect.min_max(np.minimum(a.min, b), np.maximum(a.max, b))
+
+@dispatch(list)
+def aabb(*points):
+	return rect.min_max(np.minimum.reduce(points), np.maximum.reduce(points))
