@@ -10,8 +10,7 @@ def aabb(a, b): return rect.min_max(np.minimum(a, b), np.maximum(a, b))
 @dispatch(rect, np.array)
 def aabb(a, b): return rect.min_max(np.minimum(a.min, b), np.maximum(a.max, b))
 
-
-
+@dispatch(list)
 def aabb(*points):
 	return rect.min_max(np.minimum.reduce(points), np.maximum.reduce(points))
 
