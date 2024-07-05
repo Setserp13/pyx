@@ -78,6 +78,22 @@ class rect:
 			obj_pivot = np.full(len(obj_size), 0.5)
 		return self.padding(obj_size * obj_pivot, obj_size * (1 - obj_pivot))
 
+	def axis_intersection(a, b, axis=0):
+		start = max(a.min[axis], b.min[axis])
+		stop = min(a.max[axis], b.max[axis])
+		return None if stop < start else (start, stop)
+
+	def intersection(a, b):
+		start = np.array([])
+		stop = np.array([])
+		for i in range(len(a)):
+			interval = axis_intersection(a, b, i)
+			if interval is None:
+				return None
+			np.append(start, interval[0])
+			np.append(stop, interval[1])
+		return rect.min_max(start, stop)
+
 def rect2(x, y, width, height): return rect(np.array([x, y]), np.array([width, height]))
 
 def rect3(x, y, z, width, height, depth): return rect(np.array([x, y, z]), np.array([width, height, depth]))
