@@ -84,15 +84,15 @@ class rect:
 		return None if stop < start else (start, stop)
 
 	def intersection(a, b):
-		start = np.array([])
-		stop = np.array([])
+		start = []
+		stop = []
 		for i in range(len(a)):
 			interval = axis_intersection(a, b, i)
 			if interval is None:
 				return None
-			np.append(start, interval[0])
-			np.append(stop, interval[1])
-		return rect.min_max(start, stop)
+			start.append(interval[0])
+			stop.append(interval[1])
+		return rect.min_max(start, stop)	#np.array(start), np.array(stop))
 
 def rect2(x, y, width, height): return rect(np.array([x, y]), np.array([width, height]))
 
