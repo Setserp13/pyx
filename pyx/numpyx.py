@@ -94,6 +94,8 @@ class rect:
 			stop.append(interval[1])
 		return rect.min_max(start, stop)	#np.array(start), np.array(stop))
 
+	def asint(self): return rect(self.min.astype(int), self.size.astype(int))
+
 def rect2(x, y, width, height): return rect(np.array([x, y]), np.array([width, height]))
 
 def rect3(x, y, z, width, height, depth): return rect(np.array([x, y, z]), np.array([width, height, depth]))
