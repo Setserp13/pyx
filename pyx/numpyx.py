@@ -42,6 +42,9 @@ class rect:
 	def denormalize_rect(self, value):
 		return rect(self.denormalize_point(value.min), self.denormalize_vector(value.size))
 
+	def set_position(self, pivot, value): #pivot is normalized and value is not normalized
+		return rect(self.min + (value - self.denormalize_point(pivot)), self.size)
+
 	def clamp(self, point): return clamp(point, self.min, self.max)
 
 	def contains_point(self, point):
