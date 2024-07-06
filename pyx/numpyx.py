@@ -92,7 +92,7 @@ class rect:
 				return None
 			start.append(interval[0])
 			stop.append(interval[1])
-		return rect.min_max(start, stop)	#np.array(start), np.array(stop))
+		return rect.min_max(np.array(start), np.array(stop))
 
 	def asint(self): return rect(self.min.astype(int), self.size.astype(int))
 
