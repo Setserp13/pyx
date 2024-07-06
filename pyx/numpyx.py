@@ -87,7 +87,7 @@ class rect:
 		start = []
 		stop = []
 		for i in range(len(a.min)):
-			interval = axis_intersection(a, b, i)
+			interval = rect.axis_intersection(a, b, i)
 			if interval is None:
 				return None
 			start.append(interval[0])
