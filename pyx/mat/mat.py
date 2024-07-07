@@ -9,6 +9,8 @@ def arg(function, iterables, return_type=tuple):
 	#print(iterables)
 	return return_type(map(function, *iterables))
 
+def normalize(values): return np.array(values) / max(values)
+
 def weights(values): return np.array(values) / sum(values)
 
 @dispatch(Number, Number)
