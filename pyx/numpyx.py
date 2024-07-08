@@ -99,6 +99,8 @@ class rect:
 
 	def asint(self): return rect(self.min.astype(int), self.size.astype(int))
 
+	def volume(self): return np.prod(self.size)
+
 def rect2(x, y, width, height): return rect(np.array([x, y]), np.array([width, height]))
 
 def rect3(x, y, z, width, height, depth): return rect(np.array([x, y, z]), np.array([width, height, depth]))
