@@ -147,3 +147,30 @@ def aabb(a, b): return rect.min_max(np.minimum(a.min, b), np.maximum(a.max, b))
 @dispatch(list)
 def aabb(*points):
 	return rect.min_max(np.minimum.reduce(points), np.maximum.reduce(points))
+
+
+
+def normalize(x):
+	magnitude = np.linalg.norm(x)
+	return x if magnitude == 0 else x / magnitude
+
+def angle(a, b):
+	result = np.dot(a, b)
+	result /= np.linalg.norm(a) * np.linalg.norm(b)
+	result = np.clip(result, -1.0, 1.0)		# Clip the cosine value to the range [-1, 1] to avoid numerical errors
+	return np.arccos(result)
+
+def angle2(a, b):
+	dot_product = np.dot(a, b)
+	cross_product = np.cross(a, b)
+	angle = np.arctan2(cross_product, dot_product)[2]  # Gives the angle in radians
+	# Normalize the angle to [0, 2*pi]
+	#print(angle)
+	if angle < 0:
+		angle += 2 * np.pi
+	return angle
+
+def rotate(v, angle_rad):
+	rotation = np.exp(1j * angle_rad) # Create a complex number representing the rotation
+	result = rotation * complex(v[0], v[1])
+	return np.array([result.real, result.imag])
