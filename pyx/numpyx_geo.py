@@ -62,12 +62,15 @@ class chord(line):
 
 	def to_circle(self): return circle(self.center, self.radius)
 
-	def to_arc(self):
+	def to_arc(self, dir=-1): #dir = -1 is counterclockwise and dir = 1 is clockwise
 		circle = self.to_circle()
 		start_angle = circle.angle_of(self.start)
 		end_angle = circle.angle_of(self.end)
-		if end_angle < start_angle:
+		if end_angle < start_angle and dir == -1:
 			end_angle += 2 * np.pi
+		elif end_angle > start_angle and dir == 1:
+			#start_angle += 2 * np.pi
+			end_angle -= 2 * np.pi
 		return arc(self.center, self.radius, start_angle, end_angle)
 
 
