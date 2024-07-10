@@ -5,7 +5,20 @@ import re
 from functools import reduce
 from pyx.numpyx import *
 
+class ValueTrackers():
+	def __init__(self, **values):
+		self.values = {	k: ValueTracker(values[k]) for k in values }
 
+	def get_values(self):
+		return { k: self.values[k].get_value() for k in self.values }
+
+	def get_value(self, k):
+		#print([k, self.values[k].get_value()])
+		return self.values[k].get_value()
+
+	def move_to(self, k, v): return self.values[k].animate.move_to(v)
+
+def draw_at(mobject, x, y, **kwargs): return mobject(**kwargs).move_to(RIGHT * x + UP * y)
 
 def Tracer(scene, *path, dot_color=RED, stroke_width=4, stroke_color=RED, dissipating_time=None, rate_func=rate_functions.ease_in_out_quad):
 	dot = Dot(color=RED)
