@@ -65,3 +65,29 @@ class chord(line):
 	def to_arc(self):
 		circle = self.to_circle()
 		return arc(self.center, self.radius, circle.angle_of(self.start), circle.angle_of(self.end))
+
+
+
+def add_symmetrical_handles(vertices, handle_length=.1):
+	result = []
+	for i in range(len(vertices)):
+		u = vertices[i-1] - vertices[i]
+		v = vertices[(i+1)%len(vertices)] - vertices[i]
+		theta = npx.angle(u, v)
+		alpha = (PI - theta) * 0.5
+		result += [vertices[i] + rotate(u, -alpha) * handle_length, vertices[i], vertices[i] + rotate(v, alpha) * handle_length]
+	result = left_shift(result)
+	return result
+
+def truncate(vertices, length=.1):
+	result = []
+	for i in range(len(vertices)):
+		next = vertices[(i+1)%len(vertices)]
+		dir = normalize(next - vertices[i])
+		result += [vertices[i] + dir * length, next - dir * length]
+	return result
+
+
+def corners(rect): return [rect.denormalize_point(x) for x in [np.array([0,0]), np.array([0,1]), np.array([1,1]), np.array([1,0])]]
+
+
