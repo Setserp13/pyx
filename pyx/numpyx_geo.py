@@ -82,7 +82,7 @@ def add_symmetrical_handles(vertices, handle_length=.1):
 		v = vertices[(i+1)%len(vertices)] - vertices[i]
 		theta = npx.angle(u, v)
 		alpha = (np.pi - theta) * 0.5
-		result += [vertices[i] + rotate(u, -alpha) * handle_length, vertices[i], vertices[i] + rotate(v, alpha) * handle_length]
+		result += [vertices[i] + npx.rotate(u, -alpha) * handle_length, vertices[i], vertices[i] + rotate(v, alpha) * handle_length]
 	result = left_shift(result)
 	return result
 
