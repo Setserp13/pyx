@@ -90,7 +90,7 @@ def truncate(vertices, length=.1):
 	result = []
 	for i in range(len(vertices)):
 		next = vertices[(i+1)%len(vertices)]
-		dir = normalize(next - vertices[i])
+		dir = npx.normalize(next - vertices[i])
 		result += [vertices[i] + dir * length, next - dir * length]
 	return result
 
