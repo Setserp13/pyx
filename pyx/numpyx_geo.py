@@ -1,6 +1,7 @@
 import numpy as np
 import pyx.numpyx as npx
 import pyx.mat.mat as mat
+from pyx.collectionsx import left_shift
 
 class circle():
 	def __init__(self, center, radius):
@@ -82,7 +83,7 @@ def add_symmetrical_handles(vertices, handle_length=.1):
 		v = vertices[(i+1)%len(vertices)] - vertices[i]
 		theta = npx.angle(u, v)
 		alpha = (np.pi - theta) * 0.5
-		result += [vertices[i] + npx.rotate(u, -alpha) * handle_length, vertices[i], vertices[i] + rotate(v, alpha) * handle_length]
+		result += [vertices[i] + npx.rotate(u, -alpha) * handle_length, vertices[i], vertices[i] + npx.rotate(v, alpha) * handle_length]
 	result = left_shift(result)
 	return result
 
