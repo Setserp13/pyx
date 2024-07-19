@@ -153,7 +153,6 @@ def aabb(*points):
 from typing import Union
 #@dispatch(Number, Number, Number)
 
-@overload
 def contains(min, max, value) -> bool:
 	if all(isinstance(x, Number) for x in [min, max, value]):
 		return min <= value <= max
