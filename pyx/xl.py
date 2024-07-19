@@ -14,7 +14,7 @@ import math
 
 from pyx.array_utility import *
 #from pyx.mat.rect import contains2
-from pyx.numpyx import contains
+from pyx.numpyx import contains as contains2
 from pyx.mat.mat import to_number
 import pyx.array_utility as au
 
