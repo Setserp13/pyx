@@ -1,7 +1,9 @@
 import math
 from multipledispatch import dispatch
+from numbers import Number
 import numpy as np
 from pyx.mat.mat import polar_to_cartesian
+from typing import Union
 
 def clamp(point, min, max): return np.minimum(np.maximum(point, min), max)
 
@@ -147,6 +149,19 @@ def aabb(a, b): return rect.min_max(np.minimum(a.min, b), np.maximum(a.max, b))
 @dispatch(list)
 def aabb(*points):
 	return rect.min_max(np.minimum.reduce(points), np.maximum.reduce(points))
+
+
+@dispatch(Number, Number, Number)
+def contains(min: Number, max: Number, value: Number) -> bool:
+	return min <= value <= max
+
+@dispatch(Union[np.ndarray, list, tuple], Union[np.ndarray, list, tuple], Union[np.ndarray, list, tuple])
+def contains(min: Union[np.ndarray, list, tuple], max: Union[np.ndarray, list, tuple], value: Union[np.ndarray, list, tuple]) -> bool:
+	if len(min) != len(max) or len(min) != len(value):
+		raise ValueError("min, max, and value must have the same length")
+	return all(min[i] <= x <= max[i] for i, x in enumerate(value))
+
+
 
 
 
