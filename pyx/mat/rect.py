@@ -133,7 +133,7 @@ class BBox:
 
 
 
-def contains(min, max, value): return min <= value and value <= max
+"""def contains(min, max, value): return min <= value and value <= max
 
 def contains2(min, max, value):
 	return min[0] <= value[0] and value[0] <= max[0] and min[1] <= value[1] and value[1] <= max[1]
@@ -145,7 +145,7 @@ def containsN(min, max, value):
 	for i in range(len(min)):
 		if not contains(min[i], max[i], value[i]):
 			return false
-	return true
+	return true"""
 
 
 
