@@ -156,9 +156,9 @@ def contains(min: Number, max: Number, value: Number) -> bool:
 	return min <= value <= max
 
 
-@dispatch(tuple, tuple, tuple)
-@dispatch(np.ndarray, np.ndarray, np.ndarray)
-@dispatch(list, list, list)
+#@dispatch(tuple, tuple, tuple)
+#@dispatch(np.ndarray, np.ndarray, np.ndarray)
+#@dispatch(list, list, list)
 def contains(min, max, value) -> bool:
 	if len(min) != len(max) or len(min) != len(value):
 		raise ValueError("min, max, and value must have the same length")
