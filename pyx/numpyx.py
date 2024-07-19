@@ -3,7 +3,6 @@ from multipledispatch import dispatch
 from numbers import Number
 import numpy as np
 from pyx.mat.mat import polar_to_cartesian
-from typing import Union
 
 def clamp(point, min, max): return np.minimum(np.maximum(point, min), max)
 
