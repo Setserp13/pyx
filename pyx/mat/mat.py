@@ -49,12 +49,9 @@ def lerp(a, b, t):
 @dispatch(int, int, float)
 def lerp(a, b, t):
 	return int(a * (1 - t) + b * t)
-	
-@dispatch(tuple, tuple, float)
-def lerp(a, b, t):
-	return tuple(map(lambda x, y: lerp(x, y, t), a, b))
 
 @dispatch(list, list, float)
+@dispatch(tuple, tuple, float)
 def lerp(a, b, t):
 	return tuple(map(lambda x, y: lerp(x, y, t), a, b))
 
@@ -80,6 +77,8 @@ def distance(a, b, n=2): return raised_distance(a, b, n) ** (1.0 / n)
 #def distance(a, b): return magnitude(sub(a, b))
 
 @dispatch(list, list, float)
+@dispatch(tuple, tuple, float)
+
 def inverse_lerp(a, b, c): return distance(a, c) / distance(a, b) #NOT COMPLETE YET
 
 @dispatch(Number, Number, Number)
