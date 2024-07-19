@@ -168,7 +168,6 @@ def contains(min: Union[np.ndarray, list, tuple], max: Union[np.ndarray, list, t
 	if len(min) != len(max) or len(min) != len(value):
 		raise ValueError("min, max, and value must have the same length")
 	return all(min[i] <= x <= max[i] for i, x in enumerate(value))
-from functools import multidispatch
 
 @dispatch(Any, Any, Any)
 def contains(min: Any, max: Any, value: Any) -> bool:
