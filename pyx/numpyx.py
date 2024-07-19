@@ -161,7 +161,7 @@ def contains(min: Number, max: Number, value: Number) -> bool:
 #@dispatch(tuple, tuple, tuple)
 #@dispatch(np.ndarray, np.ndarray, np.ndarray)
 #@dispatch(list, list, list)
-from typing import Union
+from typing import Union, Any
 
 @overload
 def contains(min: Union[np.ndarray, list, tuple], max: Union[np.ndarray, list, tuple], value: Union[np.ndarray, list, tuple]) -> bool:
@@ -169,8 +169,9 @@ def contains(min: Union[np.ndarray, list, tuple], max: Union[np.ndarray, list, t
 		raise ValueError("min, max, and value must have the same length")
 	return all(min[i] <= x <= max[i] for i, x in enumerate(value))
 
-
-
+@multipledispatch
+def contains(min: Any, max: Any, value: Any) -> bool:
+	...
 
 
 def normalize(x):
