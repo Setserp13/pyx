@@ -156,8 +156,10 @@ def aabb(*points):
 def contains(min: Number, max: Number, value: Number) -> bool:
 	return min <= value <= max
 
-@dispatch(Union[np.ndarray, list, tuple], Union[np.ndarray, list, tuple], Union[np.ndarray, list, tuple])
-def contains(min: Union[np.ndarray, list, tuple], max: Union[np.ndarray, list, tuple], value: Union[np.ndarray, list, tuple]) -> bool:
+@dispatch(list, list, list)
+@dispatch(tuple, tuple, tuple)
+@dispatch(np.ndarray, np.ndarray, np.ndarray)
+def contains(min, max, value) -> bool:
 	if len(min) != len(max) or len(min) != len(value):
 		raise ValueError("min, max, and value must have the same length")
 	return all(min[i] <= x <= max[i] for i, x in enumerate(value))
