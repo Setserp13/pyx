@@ -150,8 +150,10 @@ def aabb(a, b): return rect.min_max(np.minimum(a.min, b), np.maximum(a.max, b))
 def aabb(*points):
 	return rect.min_max(np.minimum.reduce(points), np.maximum.reduce(points))
 
+from typing import overload
+#@dispatch(Number, Number, Number)
 
-@dispatch(Number, Number, Number)
+@overload
 def contains(min: Number, max: Number, value: Number) -> bool:
 	return min <= value <= max
 
@@ -161,6 +163,7 @@ def contains(min: Number, max: Number, value: Number) -> bool:
 #@dispatch(list, list, list)
 from typing import Union
 
+@overload
 def contains(min: Union[np.ndarray, list, tuple], max: Union[np.ndarray, list, tuple], value: Union[np.ndarray, list, tuple]) -> bool:
 	if len(min) != len(max) or len(min) != len(value):
 		raise ValueError("min, max, and value must have the same length")
