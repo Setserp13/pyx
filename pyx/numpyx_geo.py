@@ -76,14 +76,16 @@ class chord(line):
 
 
 
-def add_symmetrical_handles(vertices, handle_length=.1):
+def add_symmetrical_handles(vertices, handle_length=.1, closed=True):
 	result = []
-	for i in range(len(vertices)):
+	for i in range(len(vertices) - (0 if closed else 1)):
 		u = vertices[i-1] - vertices[i]
 		v = vertices[(i+1)%len(vertices)] - vertices[i]
 		theta = npx.angle(u, v)
 		alpha = (np.pi - theta) * 0.5
 		result += [vertices[i] + npx.rotate(u, -alpha) * handle_length, vertices[i], vertices[i] + npx.rotate(v, alpha) * handle_length]
+	if not closed:
+		result.append(vertices[-1])
 	result = left_shift(result)
 	return result
 
