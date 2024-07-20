@@ -20,7 +20,7 @@ class ValueTrackers():
 
 def draw_at(mobject, x, y, **kwargs): return mobject(**kwargs).move_to(RIGHT * x + UP * y)
 
-def cubic_beziergon(points):
+def cubic_beziergon(points): #cubic_composite_bezier
 	result = VMobject()
 	curves = [[], [], [], []]
 	for i in range(len(points) // 3):
@@ -30,15 +30,6 @@ def cubic_beziergon(points):
 	result.set_anchors_and_handles(*curves)
 	return result
 
-def cubic_composite_bezier(points):
-	result = VMobject()
-	curves = [[], [], [], []]
-	for i in range(len(points) // 3 - 3):
-		i3 = 3 * i
-		for j in range(4):
-			curves[j].append(points[(i3+j)%len(points)])
-	result.set_anchors_and_handles(*curves)
-	return result
 
 def Tracer(scene, *path, dot_color=RED, stroke_width=4, stroke_color=RED, dissipating_time=None, rate_func=rate_functions.ease_in_out_quad):
 	dot = Dot(color=RED)
