@@ -132,9 +132,14 @@ def line_segment_intersection(line, segment):
 	if t < 0 or t > 1: return None
 	return point
 
-def random_in_circle(radius, center):
+"""def random_in_circle(radius, center):
 	vector = polar_to_cartesian(random_range(0.0, radius), random_range(0.0, 2.0 * math.pi))
-	return tuple(map(lambda x, y: x + y, center, vector))
+	return tuple(map(lambda x, y: x + y, center, vector))"""
+def random_on_arc(r, start_angle, stop_angle): return polar_to_cartesian(r, random.uniform(start_angle, stop_angle))
+def random_in_arc(r, start_angle, stop_angle): return random_on_arc(random.uniform(0, r), start_angle, stop_angle)
+def random_on_circle(r): return random_on_arc(r, 0, 2 * math.pi)
+def random_in_circle(r): return random_on_circle(random.uniform(0, r))
+
 
 def polar_to_cartesian(r, theta): return r * math.cos(theta), r * math.sin(theta)
 def cartesian_to_polar(x, y): return math.sqrt(x**2 + y**2), math.atan2(y, x)
