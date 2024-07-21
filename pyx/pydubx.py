@@ -12,7 +12,7 @@ def remove_silence(audio, silence_threshold=-60, min_silence_len=50, margin=0):
     return concat(split_on_silence(audio, silence_threshold=silence_threshold, min_silence_len=min_silence_len, margin=margin))
 
 def strip_audio(audio, silence_threshold=-60, min_silence_len=50):#-40):
-    silent_ranges = silence.detect_silence(audio, silence_thresh=silence_threshold, min_silence_len=min_silence_len)
+    silent_ranges = silence.detect_silence(audio, silence_thresh=silence_threshold, min_silence_len=min_silence_len, margin=margin)
     #print(silent_ranges)
     if silent_ranges:
         start_trim = silent_ranges[0][1] if silent_ranges[0][0] == 0 else 0
@@ -20,7 +20,7 @@ def strip_audio(audio, silence_threshold=-60, min_silence_len=50):#-40):
     else:
         start_trim = 0
         end_trim = len(audio)
-    return audio[start_trim:end_trim]
+    return audio[max(start_trim - margin, 0):min(end_trim + margin, len(audio))]
 
 def split_on_silence(audio, silence_threshold=-30, min_silence_len=500, margin=0):
 	nonsilent_ranges = silence.detect_nonsilent(audio, silence_thresh=silence_threshold, min_silence_len=min_silence_len)
