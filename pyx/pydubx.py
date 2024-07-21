@@ -24,4 +24,4 @@ def strip_audio(audio, silence_threshold=-60, min_silence_len=50):#-40):
 
 def split_on_silence(audio, silence_threshold=-30, min_silence_len=500):
 	nonsilent_ranges = silence.detect_nonsilent(audio, silence_thresh=silence_threshold, min_silence_len=min_silence_len)
-	return [audio[x[0]:x[1] for x in nonsilent_ranges]
+	return [audio[x[0]:x[1]] for x in nonsilent_ranges]
