@@ -8,8 +8,8 @@ def overlay(ls): return functools.reduce(lambda a, b: a.overlay(b) if len(a) >= 
 
 def open_all(ls): return [AudioSegment.from_file(x) for x in ls]
 
-def remove_silence(audio, silence_threshold=-60, min_silence_len=50):
-    return concat(split_on_silence(audio, silence_threshold=silence_threshold, min_silence_len=min_silence_len))
+def remove_silence(audio, silence_threshold=-60, min_silence_len=50, margin=0):
+    return concat(split_on_silence(audio, silence_threshold=silence_threshold, min_silence_len=min_silence_len, margin=margin))
 
 def strip_audio(audio, silence_threshold=-60, min_silence_len=50):#-40):
     silent_ranges = silence.detect_silence(audio, silence_thresh=silence_threshold, min_silence_len=min_silence_len)
@@ -24,5 +24,5 @@ def strip_audio(audio, silence_threshold=-60, min_silence_len=50):#-40):
 
 def split_on_silence(audio, silence_threshold=-30, min_silence_len=500, margin=0):
 	nonsilent_ranges = silence.detect_nonsilent(audio, silence_thresh=silence_threshold, min_silence_len=min_silence_len)
-	x = [(max(x[0] - margin, 0), min(x[1] + margin, len(audio))) for x in nonsilent_ranges]
+	nonsilent_ranges = [(max(x[0] - margin, 0), min(x[1] + margin, len(audio))) for x in nonsilent_ranges]
 	return [audio[x[0]:x[1]] for x in nonsilent_ranges]
