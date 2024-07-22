@@ -208,4 +208,4 @@ def aspect(size): return size[1] / size[0]	#Aspect ratio
 
 def fit(viewport, viewbox, scale_method='meet'): #scale_method in ['meet', 'slice']
 	scale = viewport / viewbox
-	return viewbox * {'meet': min, 'slice': max}(scale)
+	return viewbox * {'meet': min, 'slice': max}[scale_method](scale)
