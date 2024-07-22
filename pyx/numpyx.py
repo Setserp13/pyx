@@ -193,13 +193,13 @@ def rotate(v, angle_rad):
 
 #SIZING
 
-def set_size_component(size, index, value, preserve_aspect = True):
+def set_size_component(size, index, value, preserve_aspect=True):
 	result = np.copy(size)
 	result[index] = value
 	if preserve_aspect:
 		scale = value / size[index]
-		size[:index] *= scale
-		size[index+1:] *= scale
+		result[:index] *= scale
+		result[index+1:] *= scale
 	return result
 
 def aspect(size): return size[1] / size[0]	#Aspect ratio
