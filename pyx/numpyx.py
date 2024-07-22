@@ -185,3 +185,37 @@ def rotate(v, angle_rad):
 	rotation = np.exp(1j * angle_rad) # Create a complex number representing the rotation
 	result = rotation * complex(v[0], v[1])
 	return np.array([result.real, result.imag])
+
+
+
+
+
+
+#SIZING
+
+def set_size_component(size, index, value, preserve_aspect = True):
+	result = size.copy()
+	result[index] = value
+	if preserve_aspect:
+		scale = value / size[index]
+		size[:index] *= scale
+		size[index+1:] *= scale
+	return result
+	
+def aspect(size): return size[1] / size[0]	#Aspect ratio
+
+
+def set_aspect(size, value):
+	return (size[0], int(size[0] * value)) if aspect(size) > value else (int(size[1] / value), size[1])
+
+
+def fit(viewport, viewbox, scale_method='meet', align=(0.5, 0.5)): #scale_method in ['meet', 'slice']
+	for i in range(len(viewport)):
+		size = tuple(map(lambda x: int(x), set_size_component(viewbox, i, viewport[i])))
+		#print([viewport, viewbox, size])
+		valid = True
+		for j in range(len(viewport)):
+			if (viewport[j] < size[j] if scale_method == 'meet' else viewport[j] > size[j]):
+				valid = False			
+		if valid: return size
+	return size
