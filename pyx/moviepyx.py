@@ -1,5 +1,6 @@
 import moviepy.editor as mp
 import pyx.osx as osx
+import os
 from pydub import AudioSegment, silence
 
 def merge_av(audio_path, video_path, output_path):
