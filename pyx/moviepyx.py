@@ -1,4 +1,5 @@
 import moviepy.editor as mp
+from moviepy.editor import VideoFileClip, AudioFileClip, concatenate_videoclips, CompositeVideoClip
 import pyx.osx as osx
 import os
 from pydub import AudioSegment, silence
