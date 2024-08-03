@@ -163,7 +163,6 @@ def clip_image(root, obj, img_path):
 	img_path = os.path.basename(img_path)
 	scale_factor = max(*Vector.divide(get_bbox(obj).size, img.size))
 	img_size = Vector(*img.size) * scale_factor
-	#clip_path_id = 'clipPath' + str(int(uuid.uuid4()))
 	obj_index = list(parent).index(obj)
 	image = etree.Element('{http://www.w3.org/2000/svg}image', attrib={
 		'x': obj.get('x'),
@@ -175,10 +174,6 @@ def clip_image(root, obj, img_path):
 	})
 	parent.insert(obj_index, image)
 	clip(image, obj)
-	"""defs = root.find('.//{http://www.w3.org/2000/svg}defs')
-	clip_path = etree.Element('{http://www.w3.org/2000/svg}clipPath', attrib={'clipPathUnits': 'userSpaceOnUse', 'id': clip_path_id})
-	defs.append(clip_path)
-	clip_path.append(obj)"""
 
 
 #TEXT
