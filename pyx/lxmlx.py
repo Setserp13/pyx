@@ -19,3 +19,5 @@ def find_ancestor(self, match, dflt_value=None):
 			return parent
 		parent = parent.getparent()
 	return dflt_value
+
+def get(obj, type, *args): return [type(obj.get(x)) for x in args]
