@@ -52,6 +52,14 @@ def getsize(lines, font, font_size, leading=0):
 	height = sum(font.getsize(line)[1] for line in lines) + leading * (len(lines) - 1)
 	return width, height
 
+def get_size(text, font, font_size):
+	image_font = ImageFont.truetype(font, font_size)
+	temp_image = Image.new("RGB", (1, 1))
+	draw = ImageDraw.Draw(temp_image)
+	bbox = draw.textbbox((0, 0), text, font=image_font)
+	return (bbox[2] - bbox[0], bbox[3] - bbox[1])
+
+
 """def wrap(line, width, font, font_size):
 	result = ['']
 	font = ImageFont.truetype(font, font_size)
@@ -65,13 +73,12 @@ def getsize(lines, font, font_size, leading=0):
 
 def wrap(line, width, font, font_size):
 	result = ['']
-	font = ImageFont.truetype(font, font_size)
 	for word in line.split():
 		if result[-1] == '':
 			result[-1] += word
 		else:
 			space = ' '
-			size = font.getsize(result[-1] + space + word)
+			size = get_size(result[-1] + space + word, font, font_size)
 			if size[0] > width:
 				result.append(word)
 			else:
