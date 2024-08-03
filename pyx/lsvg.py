@@ -10,3 +10,5 @@ def clip(obj, mask):
 		defs = etree.SubElement(root, '{http://www.w3.org/2000/svg}defs')
 	clip_path = etree.SubElement(defs, '{http://www.w3.org/2000/svg}clipPath', attrib={'clipPathUnits': 'userSpaceOnUse', 'id': clip_path_id})
 	clip_path.append(mask)
+
+def href(image): return image.get('{http://www.w3.org/1999/xlink}href', None)
