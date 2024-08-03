@@ -47,9 +47,8 @@ def grid(lst, constraint_count, start_axis=0, equal_sized=False, mode='RGBA'):
 	return result
 
 def getsize(lines, font, font_size, leading=0):
-	font = ImageFont.truetype(font, font_size)
-	width = max(font.getsize(line)[0] for line in lines)
-	height = sum(font.getsize(line)[1] for line in lines) + leading * (len(lines) - 1)
+	width = max(get_size(line, font, font_size)[0] for line in lines)
+	height = sum(get_size(line, font, font_size)[1] for line in lines) + leading * (len(lines) - 1)
 	return width, height
 
 def get_size(text, font, font_size):
@@ -58,18 +57,6 @@ def get_size(text, font, font_size):
 	draw = ImageDraw.Draw(temp_image)
 	bbox = draw.textbbox((0, 0), text, font=image_font)
 	return (bbox[2] - bbox[0], bbox[3] - bbox[1])
-
-
-"""def wrap(line, width, font, font_size):
-	result = ['']
-	font = ImageFont.truetype(font, font_size)
-	for x in line:
-		size = font.getsize(result[-1] + x)
-		if size[0] > width:
-			result.append(x)
-		else:
-			result[-1] += x
-	return result"""
 
 def wrap(line, width, font, font_size):
 	result = ['']
