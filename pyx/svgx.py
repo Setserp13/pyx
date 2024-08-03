@@ -169,8 +169,7 @@ def clip_image(root, obj, img_path):
 		'y': obj.get('y'),
 		'width': str(img_size[0]),
 		'height': str(img_size[1]),
-		'{http://www.w3.org/1999/xlink}href': img_path,
-		#'clip-path': f'url(#{clip_path_id})'
+		'{http://www.w3.org/1999/xlink}href': img_path
 	})
 	parent.insert(obj_index, image)
 	clip(image, obj)
