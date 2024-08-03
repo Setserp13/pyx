@@ -1,5 +1,5 @@
 import math
-from PIL import Image, ImageFont
+from PIL import Image, ImageFont, ImageDraw
 import pyx.mat.mat as mat
 
 def concat(lst, axis=0, equal_sized=False, mode='RGBA'):
