@@ -78,6 +78,10 @@ class rect:
 			right = rect.denormalize_vector(right)
 		return rect.min_max(rect.min + left, rect.max - right)
 
+	def expand(self, amount):
+		padding = -np.full(len(self.min), amount)
+		return self.padding(padding, padding)
+
 	def bounds(self, obj_size, obj_pivot=None):
 		if obj_pivot == None:
 			obj_pivot = np.full(len(obj_size), 0.5)
