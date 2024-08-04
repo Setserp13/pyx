@@ -25,3 +25,5 @@ def get(obj, type, *keys): return [type(obj.get(x)) for x in keys]
 def set(obj, **kwargs):
 	for k in kwargs:
 		obj.set(k, kwargs[k])
+
+def localname(tag): return tag.split('}')[-1] if '}' in tag else tag
