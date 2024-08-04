@@ -16,7 +16,7 @@ from svgpathtools import parse_path
 import svgutils.transform as sg
 import re
 from pyx.array_utility import items
-from pyx.lxmlx import find_ancestor, find
+from pyx.lxmlx import find_ancestor, find, localname
 
 def get_floats(obj, *args): return [float(obj.get(x, None)) for x in args]
 
@@ -55,9 +55,6 @@ def path_bbox(obj):
 	bbox = path.bbox()
 	sc = get_scale(obj)
 	return Rect.MinMax(Vector(bbox[0] * sc[0], bbox[2] * sc[1]), Vector(bbox[1] * sc[0], bbox[3] * sc[1]))
-
-
-def localname(tag): return tag.split('}')[-1] if '}' in tag else tag
 
 def get_bbox(obj): return {'circle': circle_bbox, 'ellipse': ellipse_bbox, 'image': rect_bbox, 'path': path_bbox, 'rect': rect_bbox}[localname(obj.tag)](obj)
 
