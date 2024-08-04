@@ -1,5 +1,6 @@
 import uuid
 from lxml import etree
+import pyx.numpyx as npx
 
 def clip(obj, mask):
 	root = obj.getroottree().getroot()
@@ -18,12 +19,10 @@ def rect_attrib(rct): return { 'x': str(rct.min[0]), 'y': str(rct.min[1]), 'widt
 def rect(parent, rct):
 	return etree.SubElement(parent, 'rect', **rect_attrib(rct), style="fill:none;stroke:black;stroke-width:1")
 
-class bbox:
-	def circle(cx, cy, r): return npx.rect2(cx - r, cy - r, r * 2, r * 2)
-	def ellipse(cx, cy, rx, ry): return npx.rect2(cx - rx, cy - ry, rx * 2, ry * 2)
 
-def circle_bbox(obj): return bbox.circle(*get(obj, float, 'cx', 'cy', 'r'))
 
-def ellipse_bbox(obj): return bbox.ellipse(*get(obj, float, 'cx', 'cy', 'rx', 'ry'))
+def circle_bbox(obj): return npx.bbox.circle(*get(obj, float, 'cx', 'cy', 'r'))
+
+def ellipse_bbox(obj): return npx.bbox.ellipse(*get(obj, float, 'cx', 'cy', 'rx', 'ry'))
 
 def rect_bbox(obj): return npx.rect2(*get(obj, float, 'x', 'y', 'width', 'height'))
