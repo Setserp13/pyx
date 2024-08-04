@@ -109,7 +109,7 @@ class rect:
 
 	def contains_rect_percent(self, other, percent=1.0):
 		inter = rect.intersection(self, other)
-		return False if inter is None else inter.volume() / other.volume()
+		return False if inter is None else inter.volume() / other.volume() >= percent
 
 def rect2(x, y, width, height): return rect(np.array([x, y]), np.array([width, height]))
 
