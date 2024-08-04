@@ -1,5 +1,6 @@
 import uuid
 from lxml import etree
+from pyx.lxmlx import *
 import pyx.numpyx as npx
 
 def clip(obj, mask):
