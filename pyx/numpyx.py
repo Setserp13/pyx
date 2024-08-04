@@ -111,6 +111,9 @@ class rect:
 		inter = rect.intersection(self, other)
 		return False if inter is None else inter.volume() / other.volume() >= percent
 
+	def subrects(self, ls, normalized=False):
+		return [self.normalize_rect(x) if normalized else x for x in ls if self.contains_rect(x)]
+
 def rect2(x, y, width, height): return rect(np.array([x, y]), np.array([width, height]))
 
 def rect3(x, y, z, width, height, depth): return rect(np.array([x, y, z]), np.array([width, height, depth]))
