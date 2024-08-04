@@ -19,8 +19,6 @@ def rect_attrib(rct): return { 'x': str(rct.min[0]), 'y': str(rct.min[1]), 'widt
 def rect(parent, rct):
 	return etree.SubElement(parent, 'rect', **rect_attrib(rct), style="fill:none;stroke:black;stroke-width:1")
 
-
-
 def circle_bbox(obj): return npx.bbox.circle(*get(obj, float, 'cx', 'cy', 'r'))
 
 def ellipse_bbox(obj): return npx.bbox.ellipse(*get(obj, float, 'cx', 'cy', 'rx', 'ry'))
