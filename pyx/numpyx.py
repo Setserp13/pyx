@@ -107,6 +107,10 @@ class rect:
 
 	def volume(self): return np.prod(self.size)
 
+	def contains_rect_percent(self, other, percent=1.0):
+		inter = rect.intersection(self, other)
+		return False if inter is None else inter.volume() / other.volume()
+
 def rect2(x, y, width, height): return rect(np.array([x, y]), np.array([width, height]))
 
 def rect3(x, y, z, width, height, depth): return rect(np.array([x, y, z]), np.array([width, height, depth]))
