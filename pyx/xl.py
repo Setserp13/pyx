@@ -201,7 +201,7 @@ def wscpy(dst, src, min_row=1, min_col=1):
 		#print(dvcopy)
 	for i in range(1, src.max_column+1):
 		index = get_column_letter(i)
-		print(index)
+		print(dst.column_dimensions[index].width, src.column_dimensions[index].width)
 		dst.column_dimensions[index].width = src.column_dimensions[index].width
 
 
