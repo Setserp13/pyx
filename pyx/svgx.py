@@ -99,9 +99,7 @@ def get_style_property(element, property):
 def get_style_properties(element, *properties): return items(get_style(element), properties)
 
 def set_style(element, **kwargs):
-	style = element.get("style", "")
-	#print(style)
-	style = strpdict(style)
+	style = get_style(element)
 	for k in kwargs:
 		style[k] = kwargs[k]
 	element.set("style", strfdict(properties))
