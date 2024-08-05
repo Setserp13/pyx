@@ -129,7 +129,7 @@ def clip_image(root, obj, img_path):
 	scale_factor = max(*Vector.divide(get_bbox(obj).size, img.size))
 	img_size = Vector(*img.size) * scale_factor
 	obj_index = list(parent).index(obj)
-	img = image(root, Rect2(*get(obj, float, 'x', 'y'), *img_size), img_path)
+	img = image(parent, Rect2(*get(obj, float, 'x', 'y'), *img_size), img_path)
 	parent.insert(obj_index, img)
 	"""image = etree.Element('{http://www.w3.org/2000/svg}image', attrib={
 		'x': obj.get('x'),
