@@ -141,7 +141,7 @@ def rng_to_list(ws, min_row, min_col, max_row, max_col):
 ###def horizontal_cell_stretch(ws, row, col, scale):
 	
 
-from copy import copy
+from copy import copy, deepcopy
 
 def stylecpy(dst, src):
 	if src.has_style: dst._style = copy(src._style)
@@ -155,11 +155,16 @@ def cellcpy(dst, src):
 	else:
 		dst.value = src.value
 	#style
-	for k in ['alignment', 'border', 'fill', 'font', 'number_format', 'protection']:
-		setattr(dst, k, deepcopy(getattr(src, k)))
+	dst.alignment = deepcopy(src.alignment)
+	dst.border = deepcopy(src.border)
+	dst.fill = deepcopy(src.fill)
+	dst.font = deepcopy(src.font)
+	dst.number_format = deepcopy(src.number_format)
+	dst.protection = deepcopy(src.protection)
+	#for k in ['alignment', 'border', 'fill', 'font', 'number_format', 'protection']:
+	#	setattr(dst, k, deepcopy(getattr(src, k)))
 
 
-from copy import deepcopy
 from openpyxl.worksheet.datavalidation import DataValidation
 from openpyxl.worksheet.cell_range import MultiCellRange
 
