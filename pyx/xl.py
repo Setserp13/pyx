@@ -156,7 +156,7 @@ def cellcpy(dst, src):
 		dst.value = src.value
 	#style
 	for k in ['alignment', 'border', 'fill', 'font', 'number_format', 'protection']:
-		setattr(dst, k, copy(getattr(src, k)))
+		setattr(dst, k, deepcopy(getattr(src, k)))
 
 
 from copy import deepcopy
