@@ -65,10 +65,6 @@ def find_bboxes(root, tag, get_bbox):
 	return [get_bbox(x) for x in root.findall(f'.//svg:{tag}', namespaces=ns)]
 
 
-#def find_tags(root, *tags): return [x for x in root.iter('*') if x.tag in ['{http://www.w3.org/2000/svg}' + f'{y}' for y in tags]]
-
-def find_tags(root, *tags): return [x for x in root.iter('*') if localname(x.tag) in tags]
-
 def find_layers(root):
 	ns = {'svg': 'http://www.w3.org/2000/svg', 'inkscape': 'http://www.inkscape.org/namespaces/inkscape'}
 	return [
