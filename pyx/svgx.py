@@ -33,7 +33,7 @@ def vertices(obj):
 		return [[float(y) for y in x.replace(' ', '').split(',')] for x in obj.get('d', '').split(' ')[1:-1]]
 
 
-def get_scale_from_transform(transform):
+"""def get_scale_from_transform(transform):
     if transform is None:
         return 1.0, 1.0  # Default scale factors for no transform
 
@@ -48,7 +48,7 @@ def get_scale_from_transform(transform):
 def get_scale(svg_element):
     transform_attr = svg_element.get('transform', None)
     
-    return get_scale_from_transform(transform_attr)
+    return get_scale_from_transform(transform_attr)"""
 
 def path_bbox(obj):
 	path = parse_path(obj.get('d', None))
