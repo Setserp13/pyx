@@ -155,14 +155,14 @@ def cellcpy(dst, src):
 	else:
 		dst.value = src.value
 	#style
-	dst.alignment = deepcopy(src.alignment)
+	"""dst.alignment = deepcopy(src.alignment)
 	dst.border = deepcopy(src.border)
 	dst.fill = deepcopy(src.fill)
 	dst.font = deepcopy(src.font)
 	dst.number_format = deepcopy(src.number_format)
-	dst.protection = deepcopy(src.protection)
-	#for k in ['alignment', 'border', 'fill', 'font', 'number_format', 'protection']:
-	#	setattr(dst, k, deepcopy(getattr(src, k)))
+	dst.protection = deepcopy(src.protection)"""
+	for k in ['alignment', 'border', 'fill', 'font', 'number_format', 'protection']:
+		setattr(dst, k, copy(getattr(src, k)))
 
 
 from openpyxl.worksheet.datavalidation import DataValidation
