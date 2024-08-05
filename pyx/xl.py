@@ -200,8 +200,9 @@ def wscpy(dst, src, min_row=1, min_col=1):
 			dvcopy.add(translate_address(address, min_row - 1, min_col - 1))
 		#print(dvcopy)
 	for i in range(1, src.max_column+1):
-		print(src.column_dimensions[get_column_letter(i)].width)
-		dst.column_dimensions[get_column_letter(i)].width = src.column_dimensions[get_column_letter(i)].width
+		index = get_column_letter(i)
+		print(index)
+		dst.column_dimensions[index].width = src.column_dimensions[index].width
 
 
 def dfcpy(ws, df, min_row=1, min_col=1, header_outline=thick, header_inline=thin, outline=thick, inline=thin, **style):
