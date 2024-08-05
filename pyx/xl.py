@@ -198,7 +198,7 @@ def wscpy(dst, src, min_row=1, min_col=1):
 		for address in str(dv.sqref).split(' '):
 			dvcopy.add(translate_address(address, min_row - 1, min_col - 1))
 		#print(dvcopy)
-	for i in range(0, src.max_column):
+	for i in range(1, src.max_column+1):
 		dst.column_dimensions[get_column_letter(i)].width = src.column_dimensions[get_column_letter(i)].width
 
 
