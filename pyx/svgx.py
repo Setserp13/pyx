@@ -102,7 +102,7 @@ def set_style(element, **kwargs):
 	style = get_style(element)
 	for k in kwargs:
 		style[k] = kwargs[k]
-	element.set("style", strfdict(properties))
+	element.set("style", strfdict(style))
 
 """def get_style_property(element, property_name):
 	style = element.get('style', '')
