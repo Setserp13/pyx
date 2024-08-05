@@ -202,7 +202,7 @@ def wscpy(dst, src, min_row=1, min_col=1):
 	for i in range(1, src.max_column+1):
 		index = get_column_letter(i)
 		#print(dst.column_dimensions[index].width, src.column_dimensions[index].width)
-		dst.column_dimensions[index].width = src.column_dimensions[index].width - 0.7109375
+		dst.column_dimensions[index].width = src.column_dimensions[index].width# - 0.7109375
 
 
 def dfcpy(ws, df, min_row=1, min_col=1, header_outline=thick, header_inline=thin, outline=thick, inline=thin, **style):
