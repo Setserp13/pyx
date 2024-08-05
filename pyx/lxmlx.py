@@ -27,3 +27,5 @@ def set(obj, **kwargs):
 		obj.set(k, kwargs[k])
 
 def localname(tag): return tag.split('}')[-1] if '}' in tag else tag
+
+def find_tags(root, *tags): return [x for x in root.iter('*') if localname(x.tag) in tags]
