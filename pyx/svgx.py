@@ -131,14 +131,6 @@ def clip_image(root, obj, img_path):
 	obj_index = list(parent).index(obj)
 	img = image(parent, Rect2(*get(obj, float, 'x', 'y'), *img_size), img_path)
 	parent.insert(obj_index, img)
-	"""image = etree.Element('{http://www.w3.org/2000/svg}image', attrib={
-		'x': obj.get('x'),
-		'y': obj.get('y'),
-		'width': str(img_size[0]),
-		'height': str(img_size[1]),
-		'{http://www.w3.org/1999/xlink}href': img_path
-	})
-	parent.insert(obj_index, image)"""
 	clip(img, obj)
 
 
