@@ -139,7 +139,7 @@ def clip_image(root, obj, img_path):
 		'{http://www.w3.org/1999/xlink}href': img_path
 	})
 	parent.insert(obj_index, image)"""
-	clip(image, obj)
+	clip(img, obj)
 
 
 #TEXT
