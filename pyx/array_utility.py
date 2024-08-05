@@ -18,7 +18,7 @@ def foreach(array, func): return [call(func, x, i) for i, x in enumerate(array)]
 def funcvals(count, func): return list(map(lambda i: func(i), range(count)))
 
 #also works with dict
-def get_items(array, indices): return [lambda x: array[x] for x in indices]
+def get_items(array, indices): return [array[x] for x in indices]
 
 def items(dict, keys): return { x: dict[x] for x in keys if x in dict }
 
