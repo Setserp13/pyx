@@ -1,6 +1,6 @@
 import xml.etree.ElementTree as ET
 from functools import reduce
-
+from pyx.lsvg import *
 from lxml import etree
 
 from pyx.mat.rect import *
