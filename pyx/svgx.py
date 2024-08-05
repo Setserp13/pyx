@@ -87,15 +87,16 @@ def strpdict(obj, sep=[';', ':']):
 
 def strfdict(obj, sep=[';', ':']): return sep[0].join([f'{k}{sep[1]}{obj[k]}' for k in obj])
 
-def get_style_property(element, property_name):
-	style = element.get('style', '')
-	properties = strpdict(style)
-	#print(properties)
-	return properties[property_name] if property_name in properties else None
 
-def get_style_properties(element, *properties):
-	style = element.get('style', '')
-	return items(strpdict(style), properties)
+def get_style(element): return strpdict(element.get('style', ''))
+
+def get_style_property(element, property):
+	try:
+		return get_style(element)[property]
+	except:
+		return None
+
+def get_style_properties(element, *properties): return items(get_style(element), properties)
 
 def set_style(element, **kwargs):
 	style = element.get("style", "")
