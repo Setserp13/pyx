@@ -21,7 +21,7 @@ def rect(parent, rct):
 	return etree.SubElement(parent, 'rect', **rect_attrib(rct), style="fill:none;stroke:black;stroke-width:1")
 
 def image(parent, rct, href):
-	return etree.SubElement(parent, '{http://www.w3.org/2000/svg}image', **rect_attrib(rct), '{http://www.w3.org/1999/xlink}href'=href)
+	return etree.SubElement(parent, '{http://www.w3.org/2000/svg}image', **rect_attrib(rct), **{{http://www.w3.org/1999/xlink}href': href})
 
 def circle_bbox(obj): return npx.bbox.circle(*get(obj, float, 'cx', 'cy', 'r'))
 
