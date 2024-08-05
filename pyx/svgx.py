@@ -18,13 +18,13 @@ import re
 from pyx.array_utility import items
 from pyx.lxmlx import find_ancestor, find, localname
 
-def get_floats(obj, *args): return [float(obj.get(x, None)) for x in args]
+"""def get_floats(obj, *args): return [float(obj.get(x, None)) for x in args]
 
 def circle_bbox(obj): return BBox.circle(*get_floats(obj, 'cx', 'cy', 'r'))
 
 def ellipse_bbox(obj): return BBox.ellipse(*get_floats(obj, 'cx', 'cy', 'rx', 'ry'))
 
-def rect_bbox(obj): return Rect2(*get_floats(obj, 'x', 'y', 'width', 'height')) #this also works with images
+def rect_bbox(obj): return Rect2(*get_floats(obj, 'x', 'y', 'width', 'height')) #this also works with images"""
 
 def vertices(obj):
 	if localname(obj.tag) == 'rect':
