@@ -18,37 +18,11 @@ import re
 from pyx.array_utility import items
 from pyx.lxmlx import find_ancestor, find, localname
 
-"""def get_floats(obj, *args): return [float(obj.get(x, None)) for x in args]
-
-def circle_bbox(obj): return BBox.circle(*get_floats(obj, 'cx', 'cy', 'r'))
-
-def ellipse_bbox(obj): return BBox.ellipse(*get_floats(obj, 'cx', 'cy', 'rx', 'ry'))
-
-def rect_bbox(obj): return Rect2(*get_floats(obj, 'x', 'y', 'width', 'height')) #this also works with images"""
-
 def vertices(obj):
 	if localname(obj.tag) == 'rect':
 		return [list(x) for x in corners(rect_bbox(obj))]
 	elif localname(obj.tag) == 'path':
 		return [[float(y) for y in x.replace(' ', '').split(',')] for x in obj.get('d', '').split(' ')[1:-1]]
-
-
-"""def get_scale_from_transform(transform):
-    if transform is None:
-        return 1.0, 1.0  # Default scale factors for no transform
-
-    match = re.search(r'scale\(([\d.]+),\s*([\d.]+)\)', transform)
-    if match:
-        return float(match.group(1)), float(match.group(2))
-    match = re.search(r'scale\(([\d.]+)\)', transform)
-    if match:
-        return float(match.group(1)), float(match.group(1))
-    return 1.0, 1.0
-
-def get_scale(svg_element):
-    transform_attr = svg_element.get('transform', None)
-    
-    return get_scale_from_transform(transform_attr)"""
 
 def path_bbox(obj):
 	path = parse_path(obj.get('d', None))
@@ -103,24 +77,6 @@ def set_style(element, **kwargs):
 	for k in kwargs:
 		style[k] = kwargs[k]
 	element.set("style", strfdict(style))
-
-"""def get_style_property(element, property_name):
-	style = element.get('style', '')
-	properties = strpdict(style)
-	#print(properties)
-	return properties[property_name] if property_name in properties else None
-
-def get_style_properties(element, *properties):
-	style = element.get('style', '')
-	return items(strpdict(style), properties)
-
-def set_style_property(element, property_name, property_value): #Set property or add it if not exists
-	style = element.get("style", "")
-	#print(style)
-	properties = strpdict(style)
-	properties[property_name] = property_value
-	element.set("style", strfdict(properties))"""
-
 
 def extract_numbers(text):
 	numbers = re.findall(r'[-+]?\d*\.\d+|\d+', text)
