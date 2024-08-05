@@ -207,8 +207,8 @@ def rotate(v, angle_rad):
 	return np.array([result.real, result.imag])
 
 class bbox:
-	def circle(cx, cy, r): return npx.rect2(cx - r, cy - r, r * 2, r * 2)
-	def ellipse(cx, cy, rx, ry): return npx.rect2(cx - rx, cy - ry, rx * 2, ry * 2)
+	def circle(cx, cy, r): return rect2(cx - r, cy - r, r * 2, r * 2)
+	def ellipse(cx, cy, rx, ry): return rect2(cx - rx, cy - ry, rx * 2, ry * 2)
 
 
 
