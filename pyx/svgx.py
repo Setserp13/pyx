@@ -87,8 +87,25 @@ def strpdict(obj, sep=[';', ':']):
 
 def strfdict(obj, sep=[';', ':']): return sep[0].join([f'{k}{sep[1]}{obj[k]}' for k in obj])
 
-
 def get_style_property(element, property_name):
+	style = element.get('style', '')
+	properties = strpdict(style)
+	#print(properties)
+	return properties[property_name] if property_name in properties else None
+
+def get_style_properties(element, *properties):
+	style = element.get('style', '')
+	return items(strpdict(style), properties)
+
+def set_style(element, **kwargs):
+	style = element.get("style", "")
+	#print(style)
+	style = strpdict(style)
+	for k in kwargs:
+		style[k] = kwargs[k]
+	element.set("style", strfdict(properties))
+
+"""def get_style_property(element, property_name):
 	style = element.get('style', '')
 	properties = strpdict(style)
 	#print(properties)
@@ -103,7 +120,7 @@ def set_style_property(element, property_name, property_value): #Set property or
 	#print(style)
 	properties = strpdict(style)
 	properties[property_name] = property_value
-	element.set("style", strfdict(properties))
+	element.set("style", strfdict(properties))"""
 
 
 def extract_numbers(text):
