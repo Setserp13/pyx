@@ -192,11 +192,11 @@ def wscpy(dst, src, min_row=1, min_col=1):
 			cellcpy(dst.cell(i + min_row, j + min_col), src.cell(i + 1, j + 1))
 			#dst.cell(i + min_row, j + min_col).value = src.cell(i + 1, j + 1).value
 			#stylecpy(dst.cell(i + min_row, j + min_col), src.cell(i + 1, j + 1))
-	dst.merged_cells = copy(src.merged_cells)
-	"""for merged_cell in src.merged_cells.ranges:
+	#dst.merged_cells = copy(src.merged_cells)
+	for merged_cell in src.merged_cells.ranges:
 		#print(merged_cell)
 		if ":" not in str(merged_cell): continue
-		dst.merge_cells(translate_range_address(str(merged_cell), min_row - 1, min_col - 1))"""
+		dst.merge_cells(translate_range_address(str(merged_cell), min_row - 1, min_col - 1))
 	for dv in src.data_validations.dataValidation:
 		dvcopy = deepcopy(dv)
 		dvcopy.sqref = MultiCellRange()
