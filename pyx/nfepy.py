@@ -20,8 +20,6 @@ def prods(root, tags=prodTags):
 		result.append({tags[j]: float(y.text) if '.' in y.text else y.text for j, y in enumerate(x)})
 	return result
 
-
-
 def get_leaf_paths(element, current_path="", paths=None):
 	if paths is None:
 		paths = []
@@ -32,10 +30,6 @@ def get_leaf_paths(element, current_path="", paths=None):
 		for child in element:
 			get_leaf_paths(child, path, paths)
 	return paths
-
-def strip_namespace(tag):
-	# Remove namespace if present
-	return tag.split('}')[-1] if '}' in tag else tag
 
 def xml2df(root):
 	root = find(root, './/infNFe')
