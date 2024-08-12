@@ -37,7 +37,7 @@ def leaf_paths(element, current_path=''): #returns all root-to-leaf paths
 	paths = []
 	path = f'{current_path}/{element.tag}' if current_path else element.tag
 	if len(element) == 0:  #is a leaf element
-		print(path)
+		#print(path)
 		paths.append(path)
 	else:
 		for child in element:
