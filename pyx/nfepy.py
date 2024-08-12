@@ -20,17 +20,6 @@ def prods(root, tags=prodTags):
 		result.append({tags[j]: float(y.text) if '.' in y.text else y.text for j, y in enumerate(x)})
 	return result
 
-"""def get_leaf_paths(element, current_path="", paths=None):
-	if paths is None:
-		paths = []
-	path = f"{current_path}/{element.tag}" if current_path else element.tag
-	if len(element) == 0:  # Leaf element
-		paths.append(path)
-	else:
-		for child in element:
-			get_leaf_paths(child, path, paths)
-	return paths"""
-
 import pyx.lxmlx as lxmlx
 
 def xml2df(root):
