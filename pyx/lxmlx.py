@@ -33,7 +33,7 @@ def find_tags(root, *tags): return [x for x in root.iter('*') if localname(x.tag
 def leaf_paths(element, current_path=''): #returns all root-to-leaf paths
 	paths = []
 	path = f'{current_path}/{element.tag}' if current_path else element.tag
-	if len(element) == 0:  # is a leaf element
+	if len(element) == 0:  #is a leaf element
 		print(path)
 		paths.append(path)
 	else:
