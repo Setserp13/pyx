@@ -20,7 +20,7 @@ def prods(root, tags=prodTags):
 		result.append({tags[j]: float(y.text) if '.' in y.text else y.text for j, y in enumerate(x)})
 	return result
 
-def get_leaf_paths(element, current_path="", paths=None):
+"""def get_leaf_paths(element, current_path="", paths=None):
 	if paths is None:
 		paths = []
 	path = f"{current_path}/{element.tag}" if current_path else element.tag
@@ -29,11 +29,13 @@ def get_leaf_paths(element, current_path="", paths=None):
 	else:
 		for child in element:
 			get_leaf_paths(child, path, paths)
-	return paths
+	return paths"""
+
+from pyx.lxmlx import leaf_paths
 
 def xml2df(root):
 	root = find(root, './/infNFe')
-	leaf_paths = get_leaf_paths(root)
+	leaf_paths = leaf_paths(root)#get_leaf_paths(root)
 	#leaf_paths = [path.replace('{http://www.portalfiscal.inf.br/nfe}', '') for path in leaf_paths]
 	leaf_paths = [path.split('infNFe/')[1] for path in leaf_paths]
 	leaf_paths = sorted(list(set(leaf_paths)))
