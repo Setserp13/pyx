@@ -31,11 +31,11 @@ def prods(root, tags=prodTags):
 			get_leaf_paths(child, path, paths)
 	return paths"""
 
-from pyx.lxmlx import leaf_paths
+import pyx.lxmlx import as lxmlx
 
 def xml2df(root):
 	root = find(root, './/infNFe')
-	leaf_paths = leaf_paths(root)#get_leaf_paths(root)
+	leaf_paths = lxmlx.leaf_paths(root)#get_leaf_paths(root)
 	#leaf_paths = [path.replace('{http://www.portalfiscal.inf.br/nfe}', '') for path in leaf_paths]
 	leaf_paths = [path.split('infNFe/')[1] for path in leaf_paths]
 	leaf_paths = sorted(list(set(leaf_paths)))
