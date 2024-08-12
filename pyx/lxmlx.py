@@ -11,6 +11,8 @@ def find(self, match, iter=etree._Element.iter): #find descendant by default
 			return x
 	return None
 
+def findall(self, match, iter=etree._Element.iter): return [x for x in iter(self) if match(x)] #find descendants by default
+	
 def find_ancestor(self, match, dflt_value=None):
 	parent = self.getparent()
 	while parent is not None:
@@ -28,7 +30,7 @@ def set(obj, **kwargs):
 
 def localname(tag): return tag.split('}')[-1] if '}' in tag else tag
 
-def find_tags(root, *tags): return find(root, lambda x: localname(x.tag) in tags)
+def find_tags(root, *tags): return findall(root, lambda x: localname(x.tag) in tags)
 #def find_tags(root, *tags): return [x for x in root.iter('*') if localname(x.tag) in tags]
 
 def leaf_paths(element, current_path=''): #returns all root-to-leaf paths
