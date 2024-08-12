@@ -29,3 +29,13 @@ def set(obj, **kwargs):
 def localname(tag): return tag.split('}')[-1] if '}' in tag else tag
 
 def find_tags(root, *tags): return [x for x in root.iter('*') if localname(x.tag) in tags]
+
+def leaf_paths(element, current_path=''): #returns all root-to-leaf paths
+	paths = []
+	path = f'{current_path}/{element.tag}' if current_path else element.tag
+	if len(element) == 0:  # is a leaf element
+		paths.append(path)
+	else:
+		for child in element:
+			paths += leaf_paths(child, path)
+	return paths
