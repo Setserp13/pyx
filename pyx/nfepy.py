@@ -31,7 +31,7 @@ def prods(root, tags=prodTags):
 			get_leaf_paths(child, path, paths)
 	return paths"""
 
-import pyx.lxmlx import as lxmlx
+import pyx.lxmlx as lxmlx
 
 def xml2df(root):
 	root = find(root, './/infNFe')
