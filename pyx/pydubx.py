@@ -11,7 +11,7 @@ def open_all(ls): return [AudioSegment.from_file(x) for x in ls]
 def remove_silence(audio, silence_threshold=-60, min_silence_len=50, margin=0):
     return concat(split_on_silence(audio, silence_threshold=silence_threshold, min_silence_len=min_silence_len, margin=margin))
 
-def strip_audio(audio, silence_threshold=-60, min_silence_len=50):#-40):
+def strip_audio(audio, silence_threshold=-60, min_silence_len=50, margin=0):#-40):
     silent_ranges = silence.detect_silence(audio, silence_thresh=silence_threshold, min_silence_len=min_silence_len, margin=margin)
     #print(silent_ranges)
     if silent_ranges:
