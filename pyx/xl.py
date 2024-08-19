@@ -536,7 +536,9 @@ def replace(ws, old_value, new_value, all=True):
 	for i in range(1, ws.max_row + 1):
 		for j in range(1, ws.max_column + 1):
 			if isinstance(ws.cell(i, j).value, str):
-				ws.cell(i, j).value = ws.cell(i, j).value.replace(old_value, new_value)
-				if not all:
-					return
+				#ws.cell(i, j).value = ws.cell(i, j).value.replace(old_value, new_value)
+				if old_value in ws.cell(i, j).value:
+					ws.cell(i, j).value = ws.cell(i, j).value.replace(old_value, new_value)
+					if not all:
+						return
 
