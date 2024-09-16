@@ -76,9 +76,9 @@ class rect:
 
 	def padding(self, left, right, relative=False):
 		if relative:
-			left = rect.denormalize_vector(left)
-			right = rect.denormalize_vector(right)
-		return rect.min_max(rect.min + left, rect.max - right)
+			left = self.denormalize_vector(left)
+			right = self.denormalize_vector(right)
+		return rect.min_max(self.min + left, self.max - right)
 
 	def expand(self, amount):
 		padding = -np.full(len(self.min), amount)
