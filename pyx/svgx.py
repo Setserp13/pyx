@@ -17,10 +17,11 @@ import svgutils.transform as sg
 import re
 from pyx.array_utility import items
 from pyx.lxmlx import find_ancestor, find, localname
+import pyx.numpyx as npx
 
 def vertices(obj):
 	if localname(obj.tag) == 'rect':
-		return [list(x) for x in corners(rect_bbox(obj))]
+		return [list(x) for x in npx.corners(rect_bbox(obj))]
 	elif localname(obj.tag) == 'path':
 		return [[float(y) for y in x.replace(' ', '').split(',')] for x in obj.get('d', '').split(' ')[1:-1]]
 
