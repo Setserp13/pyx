@@ -6,6 +6,9 @@ def root(path): return os.path.splitext(path)[0]
 def filename(path): return os.path.splitext(os.path.basename(path))[0]
 def wd(__file__): return os.path.dirname(os.path.abspath(__file__))
 
+# Clear the console output
+def clear(): os.system('cls' if os.name == 'nt' else 'clear')
+
 def set_filename(file, value):
 	dir = os.path.abspath(os.path.dirname(file))
 	os.rename(os.path.abspath(file), to_distinct(os.path.join(dir, value) + ext(file)))
