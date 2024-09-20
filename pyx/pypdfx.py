@@ -1,4 +1,4 @@
-from pypdf import PdfMerger
+from pypdf import PdfWriter
 
 def merge_pdfs(files, output):
 	merger = PdfWriter()
