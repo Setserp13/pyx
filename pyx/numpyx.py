@@ -4,7 +4,7 @@ from numbers import Number
 import numpy as np
 from pyx.mat.mat import polar_to_cartesian
 import itertools
-from pyx.collectionsx.Dict import items
+from pyx.collectionsx import List.items as items
 
 def clamp(point, min, max): return np.minimum(np.maximum(point, min), max)
 
