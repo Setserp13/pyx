@@ -4,7 +4,7 @@ from numbers import Number
 import numpy as np
 from pyx.mat.mat import polar_to_cartesian
 import itertools
-from pyx.collectionsx import List.items as items
+from pyx.collectionsx import List as ls
 
 def clamp(point, min, max): return np.minimum(np.maximum(point, min), max)
 
@@ -156,11 +156,11 @@ class grid:
 		return result
 
 	def cells(self, stop, start=np.zeros(2), swizzle=[0,1]):
-		start = items(start, swizzle)
-		stop = items(stop, swizzle)
+		start = ls.items(start, swizzle)
+		stop = ls.items(stop, swizzle)
 		ranges = [list(range(int(start[i]), int(stop[i]))) for i in range(len(start))]
 		indices = itertools.product(*ranges)
-		indices = [items(x, swizzle) for x in indices]
+		indices = [ls.items(x, swizzle) for x in indices]
 		return [self.cell(np.array(x)) for x in indices]
 
 
