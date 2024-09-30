@@ -131,7 +131,7 @@ def generateVideo(fps, width, height, frame_count, *clips, filename='output.mp4'
 	#print(clips)
 	out = cv2.VideoWriter(filename, fourcc, fps, (width, height), isColor=True)
 	out.set(cv2.CAP_PROP_BITRATE, 10000)
-	img = np.zeros((height, width, 4), dtype=np.uint8)
+	#img = np.zeros((height, width, 4), dtype=np.uint8)
 	for i in range(0, frame_count):
 		#print(str(i) + '/' + str(frame_count))
 		#img = np.zeros((height, width, 4), dtype=np.uint8)
@@ -144,7 +144,7 @@ def generateVideo(fps, width, height, frame_count, *clips, filename='output.mp4'
 			#img = x.update(img, t)
 			x.update(t, img)
 
-		if img.shape != shape: #PRESTA ATENÇÃO NISSO, POIS SE ESTE ERRO OCORRER, O FRAME NÃO SERÁ ADICIONADO NO VÍDEO, E HAVERÁ ADIANTAMENTO DAS PARTES POSTERIORES
+		if img.shape != shape: #PRESTA ATENÇÃO NISTO, POIS SE ESTE ERRO OCORRER, O FRAME NÃO SERÁ ADICIONADO NO VÍDEO E HAVERÁ O ADIANTAMENTO DAS PARTES POSTERIORES
 			print([img.shape, shape])
 		out.write(cv2.cvtColor(img, cv2.COLOR_RGBA2RGB))
 		#clear()
