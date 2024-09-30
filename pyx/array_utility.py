@@ -17,10 +17,7 @@ def foreach(array, func): return [call(func, x, i) for i, x in enumerate(array)]
 
 def funcvals(count, func): return list(map(lambda i: func(i), range(count)))
 
-#also works with dict
-def get_items(array, indices): return [array[x] for x in indices]
 
-def items(dict, keys): return { x: dict[x] for x in keys if x in dict }
 
 def resize(array, new_size, default_value=None):
 	result = []
@@ -34,8 +31,6 @@ def resize(array, new_size, default_value=None):
 #get_last(array, index) =  array[-index]
 #get_range(array, start, count) = array[start:start+count]
 
-def get(array, index, default_value=None):
-	return array[index] if in_range(array, index) else default_value
 
 def in_range(array, index): return index > -1 and index < len(array)
 
