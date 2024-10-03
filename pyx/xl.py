@@ -212,6 +212,7 @@ def wscpy(dst, src, min_row=1, min_col=1):
 	for i in range(1, src.max_column+1):
 		index = get_column_letter(i)
 		#print(dst.column_dimensions[index].width, src.column_dimensions[index].width)
+		print(index)
 		dst.column_dimensions[index].width = src.column_dimensions[index].width# - 0.7109375
 
 
