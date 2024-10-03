@@ -162,7 +162,12 @@ def cellcpy(dst, src):
 	dst.number_format = deepcopy(src.number_format)
 	dst.protection = deepcopy(src.protection)"""
 	for k in ['alignment', 'border', 'fill', 'font', 'number_format', 'protection']:
-		setattr(dst, k, copy(getattr(src, k, None)))
+		try:
+			setattr(dst, k, copy(getattr(src, k, None)))
+		except IndexError as e:
+			print(f"Skipping {k} due to IndexError: {e}")
+		except AttributeError as e:
+			print(f"Attribute {k} not found: {e}")
 
 
 from openpyxl.worksheet.datavalidation import DataValidation
