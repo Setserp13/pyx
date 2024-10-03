@@ -162,7 +162,7 @@ def cellcpy(dst, src):
 	dst.number_format = deepcopy(src.number_format)
 	dst.protection = deepcopy(src.protection)"""
 	for k in ['alignment', 'border', 'fill', 'font', 'number_format', 'protection']:
-		setattr(dst, k, copy(getattr(src, k)))
+		setattr(dst, k, copy(getattr(src, k, None)))
 
 
 from openpyxl.worksheet.datavalidation import DataValidation
