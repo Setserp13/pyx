@@ -15,6 +15,12 @@ def isnull(value): return str(value) in ['None', 'NaN', 'NaT', 'none', 'nan', 'n
 	#print(df[match])
 	return df[match]"""
 
+def fetchall(df, **where): #where is a dict of (column, value)
+	mask = df[where.keys()].eq([where[k] for k in where.keys()]).all(axis=1)
+	return df[mask]
+
+def fetchone(df, **where): return fetchall(df, **where).iloc[0]
+
 def select(df, columns, values):
 	mask = df[columns].eq([values[column] for column in columns]).all(axis=1)
 	return df[mask]
