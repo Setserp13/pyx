@@ -71,9 +71,6 @@ def set_style(element, **kwargs):
 		style[k] = kwargs[k]
 	element.set("style", rex.strfdict(style))
 
-def extract_numbers(text):
-	numbers = re.findall(r'[-+]?\d*\.\d+|\d+', text)
-	return [float(x) if '.' in x else int(x) for x in numbers]
 
 def get_transform(obj):
 	transform = obj.get('transform', '')
@@ -81,7 +78,7 @@ def get_transform(obj):
 	pattern = r'\b\w+\([^)]+'#\)'
 	for x in re.findall(pattern, transform):
 		key, value = x.split('(')
-		result[key] = extract_numbers(value)
+		result[key] = rex.findnumbers(value)
 	return result
 
 def set_transform(obj, **kwargs): #Only translate, scale, rotate, skewX, skewY and matrix must be in kwargs
