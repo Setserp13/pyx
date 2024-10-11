@@ -15,7 +15,7 @@ import svgpathtools
 from svgpathtools import parse_path
 import svgutils.transform as sg
 import re
-from pyx.collectionsx import List.items as items
+from pyx.collectionsx import List
 from pyx.lxmlx import find_ancestor, find, localname
 import pyx.numpyx as npx
 
@@ -54,8 +54,8 @@ def root_rects(rects): #Rects that are not subrects of another one in the list
 
 def strpdict(obj, sep=[';', ':']):
 	result = {}
-	items = [] if obj == '' else obj.split(sep[0])
-	for item in items:
+	List.items = [] if obj == '' else obj.split(sep[0])
+	for item in List.items:
 		key, value = item.split(sep[1])
 		result[key.strip()] = value.strip()
 	return result
@@ -71,7 +71,7 @@ def get_style_property(element, property):
 	except:
 		return None
 
-def get_style_properties(element, *properties): return items(get_style(element), properties)
+def get_style_properties(element, *properties): return List.items(get_style(element), properties)
 
 def set_style(element, **kwargs):
 	style = get_style(element)
