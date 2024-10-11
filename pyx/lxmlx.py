@@ -28,6 +28,8 @@ def find_ancestor(self, match, dflt_value=None):
 
 def get(obj, type, *keys): return [type(obj.get(x)) for x in keys]
 
+#def get(obj, **kwargs): return [kwargs[k](obj.get(k)) for k in kwargs]
+
 def set(obj, **kwargs):
 	for k in kwargs:
 		obj.set(k, str(kwargs[k]))
