@@ -159,7 +159,14 @@ def to_number(s, digits='ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
 		print(f'ValueError: invalid literal: {s}')
 
 
-
+def bezier(t, points):
+    """Calculate a point on a Bézier curve given a parameter t."""
+    n = len(points) - 1
+    point = np.zeros(2)
+    for i in range(n + 1):
+        binomial_coeff = np.math.comb(n, i)  # Binomial coefficient
+        point += (binomial_coeff * ((1 - t) ** (n - i)) * (t ** i)) * points[i]
+    return point
 
 
 
