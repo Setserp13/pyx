@@ -2,7 +2,7 @@ import xml.etree.ElementTree as ET
 from functools import reduce
 from pyx.lsvg import *
 from lxml import etree
-
+import pyx.rex as rex
 from pyx.mat.rect import *
 from pyx.mat.vector import *
 from PIL import Image
@@ -52,18 +52,10 @@ def root_rects(rects): #Rects that are not subrects of another one in the list
 	return [x for i, x in enumerate(rects) if len(list(filter(lambda y: y.containsRect(x), remove_at(rects, i)))) == 0]
 
 
-def strpdict(obj, sep=[';', ':']):
-	result = {}
-	List.items = [] if obj == '' else obj.split(sep[0])
-	for item in List.items:
-		key, value = item.split(sep[1])
-		result[key.strip()] = value.strip()
-	return result
-
-def strfdict(obj, sep=[';', ':']): return sep[0].join([f'{k}{sep[1]}{obj[k]}' for k in obj])
 
 
-def get_style(element): return strpdict(element.get('style', ''))
+
+def get_style(element): return rex.strpdict(element.get('style', ''))
 
 def get_style_property(element, property):
 	try:
@@ -77,7 +69,7 @@ def set_style(element, **kwargs):
 	style = get_style(element)
 	for k in kwargs:
 		style[k] = kwargs[k]
-	element.set("style", strfdict(style))
+	element.set("style", rex.strfdict(style))
 
 def extract_numbers(text):
 	numbers = re.findall(r'[-+]?\d*\.\d+|\d+', text)
