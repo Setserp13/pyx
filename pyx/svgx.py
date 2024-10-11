@@ -16,7 +16,7 @@ from svgpathtools import parse_path
 import svgutils.transform as sg
 import re
 from pyx.collectionsx import List
-from pyx.lxmlx import find_ancestor, find, localname
+from pyx.lxmlx import localname
 import pyx.numpyx as npx
 
 def vertices(obj):
