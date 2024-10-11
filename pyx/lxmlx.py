@@ -12,7 +12,11 @@ def find(self, match, iter=etree._Element.iter): #find descendant by default
 	return None
 
 def findall(self, match, iter=etree._Element.iter): return [x for x in iter(self) if match(x)] #find descendants by default
-	
+
+def fetchall(df, **where): return findall(self, lambda x: all(k in x.attrib and x.attrib[k] == where[k] for k in where))
+
+def fetchone(df, **where): return find(self, lambda x: all(k in x.attrib and x.attrib[k] == where[k] for k in where))
+
 def find_ancestor(self, match, dflt_value=None):
 	parent = self.getparent()
 	while parent is not None:
