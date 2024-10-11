@@ -16,7 +16,7 @@ from svgpathtools import parse_path
 import svgutils.transform as sg
 import re
 from pyx.collectionsx import List
-from pyx.lxmlx import find_ancestor, find, localname
+from pyx.lxmlx import find_ancestor, find, localname, findall
 import pyx.numpyx as npx
 
 def vertices(obj):
@@ -93,10 +93,12 @@ def set_transform(obj, **kwargs): #Only translate, scale, rotate, skewX, skewY a
 
 
 
+def fetchall(df, **where): return findall(self, lambda x: all(k in x.attrib and x.attrib[k] == where[k] for k in where))
 
+def fetchone(df, **where): return find(self, lambda x: all(k in x.attrib and x.attrib[k] == where[k] for k in where))
 
-def find_id(self, id):
-	return find(self, lambda x: 'id' in x.attrib and x.attrib['id'] == id)
+#def find_id(self, id):
+#	return find(self, lambda x: 'id' in x.attrib and x.attrib['id'] == id)
 
 def islayer(self): return self.tag == '{http://www.w3.org/2000/svg}g' and self.get('{http://www.inkscape.org/namespaces/inkscape}groupmode', None) == 'layer'
 
