@@ -15,7 +15,7 @@ import svgpathtools
 from svgpathtools import parse_path
 import svgutils.transform as sg
 import re
-from pyx.array_utility import items
+from pyx.collectionsx import List.items as items
 from pyx.lxmlx import find_ancestor, find, localname
 import pyx.numpyx as npx
 
