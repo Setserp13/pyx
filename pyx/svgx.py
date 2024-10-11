@@ -16,7 +16,7 @@ from svgpathtools import parse_path
 import svgutils.transform as sg
 import re
 from pyx.collectionsx import List
-from pyx.lxmlx import find_ancestor, find, localname, findall
+from pyx.lxmlx import find_ancestor, find, localname
 import pyx.numpyx as npx
 
 def vertices(obj):
@@ -86,16 +86,6 @@ def set_transform(obj, **kwargs): #Only translate, scale, rotate, skewX, skewY a
 	for k in kwargs:
 		transform[k] = kwargs[k]
 	obj.set('transform', ' '.join([f"{k}({' '.join(str(x) for x in transform[k])})" for k in transform]))
-
-
-
-
-
-
-
-def fetchall(df, **where): return findall(self, lambda x: all(k in x.attrib and x.attrib[k] == where[k] for k in where))
-
-def fetchone(df, **where): return find(self, lambda x: all(k in x.attrib and x.attrib[k] == where[k] for k in where))
 
 #def find_id(self, id):
 #	return find(self, lambda x: 'id' in x.attrib and x.attrib['id'] == id)
