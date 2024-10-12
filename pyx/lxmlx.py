@@ -5,6 +5,12 @@ def create_child(parent, tag, **kwargs):
 	parent.append(result)
 	return result
 
+def get_or_create(parent, tag, **kwargs):
+	result = parent.find('.//' + tag)
+	if result is None:
+		result = etree.SubElement(parent, tag, **kwargs)
+	return result
+
 def find(self, match, iter=etree._Element.iter): #find descendant by default
 	for x in iter(self):
 		if match(x):
