@@ -156,9 +156,9 @@ def batch(total, size): return [min(total - (i * size), size) for i in range(mat
 #0 1 2 10 11 12 20 21 22 100 ... #Base-3 Numeral System
 #0 1 2 00 01 02 10 11 12 20 21 22 000 ... #Alphabetic Enumeration (Spreadsheet-like)
 
-def to_number(s, digits='ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
+def to_number(s, alphabet='ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
 	try:
-		return sum(index_of(digits, x) * (26 ** i) for i, x in enumerate(reversed(s)))
+		return sum(index_of(alphabet, x) * (26 ** i) for i, x in enumerate(reversed(s)))
 	except:
 		print(f'ValueError: invalid literal: {s}')
 
