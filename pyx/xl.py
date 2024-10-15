@@ -28,24 +28,6 @@ thick_border = Border(left=thick, top=thick, right=thick, bottom=thick)
 thin = Side(border_style='thin', color="FF000000")
 thin_border = Border(left=thin, top=thin, right=thin, bottom=thin)
 
-
-"""def letter_to_number(str):
-	result = 0
-	for i in range(len(str)):
-		idx = index_of("ABCDEFGHIJKLMNOPQRSTUVWXYZ", str[i])
-		result = result + idx * math.pow(26, i) if idx > -1 else print('Invalid str')#None
-	return int(result)"""
-
-"""def letter_to_number(str):
-	result = 0
-	for i in range(len(str)):
-		try:
-			result += index_of("ABCDEFGHIJKLMNOPQRSTUVWXYZ", str[i]) * math.pow(26, i)
-		except:
-			print('Invalid str')
-	return int(result)"""
-
-
 def cell_coord(address):
 	for i in range(len(address)):
 		if address[i].isnumeric():
@@ -182,14 +164,6 @@ def concatws(objs):
 	return result
 
 
-"""def foreach(ws, action, min_row=1, min_col=1, max_row=None, max_col=None):
-	if max_row == None:
-		max_row = ws.max_row
-	elif max_col == None:
-		max_col = ws.max_col
-	for i in range(1, max_row + 1):
-		for j in range(1, max_column + 1):
-			action(ws.cell(i, j), i, j)"""
 
 def wscpy(dst, src, min_row=1, min_col=1):
 	for i in range(0, src.max_row):
@@ -403,32 +377,7 @@ def add_total_column(ws, idx_col, val_col, r_col, min_row, max_row):
 
 
 
-
-
-
-
-
-
-
-
-
-"""import copy
-copy.copy(x) shallow copy
-copy.deepcopy(x) deep copy"""
-
-
-
-
-
-
-
-
-
-
 #def size(ws): return [0, 0] if ws == None else [ws.max_row, ws.max_column]
-
-
-
 
 
 
