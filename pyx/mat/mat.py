@@ -152,6 +152,10 @@ def cartesian_to_polar(x, y): return math.sqrt(x**2 + y**2), math.atan2(y, x)
 def batch(total, size): return [min(total - (i * size), size) for i in range(math.ceil(total / size))]
 
 
+#{0 1 2}
+#0 1 2 10 11 12 20 21 22 100 ... #Base-3 Numeral System
+#0 1 2 00 01 02 10 11 12 20 21 22 000 ... #Alphabetic Enumeration (Spreadsheet-like)
+
 def to_number(s, digits='ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
 	try:
 		return sum(index_of(digits, x) * (26 ** i) for i, x in enumerate(reversed(s)))
