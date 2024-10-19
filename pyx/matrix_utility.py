@@ -20,7 +20,8 @@ def map(matrix, func):
 		result.append(row)
 	return result
 
-def funcvals(row_count, column_count, func):
+#def funcvals(row_count, column_count, func):
+def fromfunction(row_count, column_count, func):
 	result = []
 	for i in range(row_count):
 		row = []
@@ -30,7 +31,7 @@ def funcvals(row_count, column_count, func):
 	return result
 
 def full(row_count, column_count, default_value):
-	return funcvals(row_count, column_count, lambda i, j: default_value)
+	return fromfunction(row_count, column_count, lambda i, j: default_value)
 
 def in_range(matrix, i, j): return i > -1 and i < len(matrix) and j > -1 and j < len(matrix[0])
 
