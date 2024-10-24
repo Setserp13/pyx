@@ -1,6 +1,7 @@
 from pyx.mat.ease import Ease
 from pyx.mat.mat import *
 import cv2
+import math
 
 class Clip:
 	def __init__(self, start_time, duration, function):
@@ -123,6 +124,11 @@ class DictClip(Clip):
 	def fadeout(self, start_time, duration):
 		self.set_prop01('color', start_time, duration, lambda x, t: (x[0], x[1], x[2], int((1 - t) * 255)))
 
+def progressbar(i, total, size=50):
+	progress = i / (total - 1)
+	fill = math.floor(progress * size)
+	bar = '#' * fill + '_' * (size - fill)
+	print(f'{bar}{100*progress:.2f}% {i+1}/{total}', end='\r')	
 
 def generateVideo(fps, width, height, frame_count, *clips, filename='output.mp4'):
 	# Create video writer object
@@ -147,7 +153,6 @@ def generateVideo(fps, width, height, frame_count, *clips, filename='output.mp4'
 		if img.shape != shape: #PRESTA ATENÇÃO NISTO, POIS SE ESTE ERRO OCORRER, O FRAME NÃO SERÁ ADICIONADO NO VÍDEO E HAVERÁ O ADIANTAMENTO DAS PARTES POSTERIORES
 			print([img.shape, shape])
 		out.write(cv2.cvtColor(img, cv2.COLOR_RGBA2RGB))
-		#clear()
-		print(f'{i+1}/{frame_count}', end='\r')
+		progressbar(i, frame_count)
 	out.release()
 	return out
