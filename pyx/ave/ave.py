@@ -148,6 +148,6 @@ def generateVideo(fps, width, height, frame_count, *clips, filename='output.mp4'
 			print([img.shape, shape])
 		out.write(cv2.cvtColor(img, cv2.COLOR_RGBA2RGB))
 		#clear()
-		print(f'{i+1}/{frame_count}')
+		print(f'{i+1}/{frame_count}', end='\r')
 	out.release()
 	return out
