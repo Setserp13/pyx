@@ -73,7 +73,7 @@ class DictClip(Clip):
 		self.init = init
 		self.clips = [] if clips == None else clips
 		self.function = lambda t, *args: self.cfunc(t, *args)
-		print(self.clips, init)
+		#print(self.clips, init)
 		self.props = self.init
 
 	#SET PROP FUNC
