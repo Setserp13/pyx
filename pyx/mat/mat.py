@@ -51,6 +51,9 @@ def lerp(a, b, t):
 	return int(a * (1 - t) + b * t)
 
 @dispatch(list, list, float)
+def lerp(a, b, t):
+	return list(map(lambda x, y: lerp(x, y, t), a, b))
+
 @dispatch(tuple, tuple, float)
 def lerp(a, b, t):
 	return tuple(map(lambda x, y: lerp(x, y, t), a, b))
