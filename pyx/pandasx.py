@@ -25,8 +25,10 @@ def fetchall(df, **where): #where is a dict of (column, value)
 	mask = df[where.keys()].eq([where[k] for k in where.keys()]).all(axis=1)
 	return df[mask]
 
-def fetchone(df, **where): return fetchall(df, **where).iloc[0]
-
+def fetchone(df, **where):
+	result = fetchall(df, **where)
+	return None if result.empty else result.iloc[0]
+		
 def select(df, columns, values):
 	mask = df[columns].eq([values[column] for column in columns]).all(axis=1)
 	return df[mask]
@@ -60,7 +62,7 @@ def strall(obj):
 	for x in obj.columns:
 		strall(obj[x])
 
-def row_of(df, dict): #dict is like { column1: value1, ..., column2: value2 }
+"""def row_of(df, dict): #dict is like { column1: value1, ..., column2: value2 }
 	#print(dict)
 	for i in range(df.shape[0]):
 		#print(df.iloc[i].to_dict())
@@ -80,7 +82,7 @@ def find_rows(df, match, columns = None):
 				result.append(row)
 			else:
 				result.append([row[x] for x in columns])#list(au.map(columns, lambda x, i: row[x])))
-	return result
+	return result"""
 
 
 def readall(read, path_list, **kwargs): return pd.concat([read(x, **kwargs) for x in path_list])
