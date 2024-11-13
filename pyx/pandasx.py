@@ -242,4 +242,4 @@ from pyx.sqlx import table_names
 def read_db(con, table=None):
 	if table == None:
 		table = table_names(con)
-	return { x: pd.read_sql(f'SELECT * FROM {x}', con) for x in table }
+	return { x: pd.read_sql(f'SELECT * FROM [{x}]', con) for x in table }
