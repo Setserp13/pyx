@@ -19,7 +19,7 @@ def isnull(value): return str(value) in ['None', 'NaN', 'NaT', 'none', 'nan', 'n
 def to_workbook(path, **worksheets):
 	with pd.ExcelWriter(path) as writer:
 		for k in worksheets:
-			worksheets[k].to_excel(writer, sheet_name=k)
+			worksheets[k].to_excel(writer, sheet_name=k[:31])
 
 def fetchall(df, **where): #where is a dict of (column, value)
 	mask = df[where.keys()].eq([where[k] for k in where.keys()]).all(axis=1)
