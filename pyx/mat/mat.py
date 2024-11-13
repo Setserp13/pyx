@@ -16,7 +16,7 @@ def fiti(arr, total, distribute_remainder=False):
 		for i in range(remainder):
 			result[i] += 1
 	else:
-		result[0] += total - sum(result)
+		result[0] += remainder
 	return result
 
 def arg(function, iterables, return_type=tuple):
