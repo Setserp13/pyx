@@ -8,12 +8,12 @@ from pyx.array_utility import index_of
 def fitf(arr, total):
 	scale = total / sum(arr)
 	return [x * scale for x in arr]
-	
+
 def fiti(arr, total):
 	result = [math.floor(x) for x in fitf(arr, total)]
 	result[0] += total - sum(result)
 	return result
-	
+
 def arg(function, iterables, return_type=tuple):
 	#print(iterables)
 	return return_type(map(function, *iterables))
