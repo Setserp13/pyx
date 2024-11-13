@@ -19,7 +19,8 @@ class Object:
 
 class Validator(list):
 	def invoke(self, *args):
-		return len(filter(lambda x: not x(*args), self)) == 0
+		return all(x(*args) for x in self)
+		#return len(filter(lambda x: not x(*args), self)) == 0
 
 """class Child(Parent): #Example
     def __init__(self, *args, **kwargs):
