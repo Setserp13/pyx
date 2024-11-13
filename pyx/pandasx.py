@@ -123,6 +123,7 @@ def absolute(df, key_columns, value_column, total):
 	return result
 """
 
+
 def resum(df, new_sum, col): #SET SUM
 	sum = df[col].sum()
 	df[col] = df[col].map(lambda x: math.floor((x / sum) * new_sum))
