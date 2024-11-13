@@ -9,9 +9,14 @@ def fitf(arr, total):
 	scale = total / sum(arr)
 	return [x * scale for x in arr]
 
-def fiti(arr, total):
+def fiti(arr, total, distribute_remainder=False):
 	result = [math.floor(x) for x in fitf(arr, total)]
-	result[0] += total - sum(result)
+	remainder = total - sum(result)
+	if distribute_remainder:
+		for i in range(remainder):
+			result[i] += 1
+	else:
+		result[0] += total - sum(result)
 	return result
 
 def arg(function, iterables, return_type=tuple):
