@@ -109,7 +109,7 @@ def fillnext(df, columns):
 			if pd.isnull(df[col].iloc[i + 1]) or df[col].iloc[i + 1] == 0:
 				df[col].iloc[i + 1] = df[col].iloc[i]
 
-
+"""
 def weights(df, key_columns, value_column):
 	result = result.groupby(by=key_columns).sum(numeric_only = True).reset_index()
 	total = result[value_column].sum()
@@ -196,9 +196,7 @@ def pick(inventory, amount, column="OLDEGGS", rels=None):
 			#result[1] = result[1].append(row.copy(), ignore_index=True)
 	return result
 	
-"""
-
-def pick(inventory, amount, column="OLDEGGS", rels=None):
+"""def pick(inventory, amount, column="OLDEGGS", rels=None):
 	result = [ pd.DataFrame(columns=inventory.columns),	pd.DataFrame(columns=inventory.columns) ]
 	for i in range(inventory.shape[0]):
 		row = inventory.iloc[[i]]
