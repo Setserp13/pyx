@@ -95,13 +95,13 @@ def read_excels(dir, **kwargs):
 def read_csvs(dir, **kwargs):
 	return pd.concat([pd.read_csv(os.path.join(dir, x), **kwargs) for x in os.listdir(dir) if x.endswith('.csv')])
 
-"""def ffill(arr, isnull=lambda x: x is None): return [arr[i-1] if i > 0 and isnull(arr[i]) else arr[i] for i in range(len(arr))]
+def ffill(arr, isnull=lambda x: x is None): return [arr[i-1] if i > 0 and isnull(arr[i]) else arr[i] for i in range(len(arr))]
 
 def ffills(s): return pd.Series(ffill(s.tolist(), isnull=pd.isnull))
 
 def ffilldf(df):
 	for col in df.columns:
-		df[col] = ffills(df[col])"""
+		df[col] = ffills(df[col])
 
 def fillnext(df, columns):
 	for i in range(df.shape[0] - 1):
