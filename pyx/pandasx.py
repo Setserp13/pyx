@@ -107,7 +107,7 @@ def fillnext(df, columns):
 	for i in range(df.shape[0] - 1):
 		for col in columns:
 			if pd.isnull(df[col].iloc[i + 1]) or df[col].iloc[i + 1] == 0:
-				df[col].iloc[i + 1] = df[col].iloc[i]"""
+				df[col].iloc[i + 1] = df[col].iloc[i]
 
 
 def weights(df, key_columns, value_column):
