@@ -196,7 +196,9 @@ def pick(inventory, amount, column="OLDEGGS", rels=None):
 			#result[1] = result[1].append(row.copy(), ignore_index=True)
 	return result
 	
-"""def pick(inventory, amount, column="OLDEGGS", rels=None):
+"""
+
+def pick(inventory, amount, column="OLDEGGS", rels=None):
 	result = [ pd.DataFrame(columns=inventory.columns),	pd.DataFrame(columns=inventory.columns) ]
 	for i in range(inventory.shape[0]):
 		row = inventory.iloc[[i]]
