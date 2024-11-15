@@ -116,6 +116,22 @@ class rect:
 	def subrects(self, ls, normalized=False):
 		return [self.normalize_rect(x) if normalized else x for x in ls if self.contains_rect(x)]
 
+	def slice_by_cell_count(self, cell_count): return self.slice_by_cell_size(self.size / cell_count)
+
+	def slice_by_cell_size(self, cell_size):
+		cell_count = np.ceil(self.size / cell_size).astype(int)
+		result = []
+		for x in itertools.product(*[range(x) for x in cell_count]):
+			cell_min = self.min + np.array(x) * cell_size
+			cell_max = self.min + (np.array(x) + np.ones(len(x))) * cell_size
+			cell_max = np.minimum(cell_max, self.max)
+			result.append(rect.min_max(cell_min, cell_max))
+		return result
+
+
+
+
+
 def rect2(x, y, width, height): return rect(np.array([x, y]), np.array([width, height]))
 
 def rect3(x, y, z, width, height, depth): return rect(np.array([x, y, z]), np.array([width, height, depth]))
