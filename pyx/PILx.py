@@ -15,7 +15,16 @@ def concat(lst, axis=0, equal_sized=False, mode='RGBA'):
 		result.paste(x, tuple(pos))
 	return result
 
-def slice(img, cell_count, axis=0):
+import numpy as np
+import pyx.numpyx as npx
+
+def sprites(img, regions): return [img.crop((*x.min, *x.max)) for x in regions]
+
+def slice_by_cell_count(img, cell_count): return slice_by_cell_size(img, np.array(img.size) // np.array(cell_count))
+
+def slice_by_cell_size(img, cell_size): return sprites(img, npx.rect2(0,0,*img.size).slice_by_cell_size(np.array(cell_size)))
+
+"""def slice(img, cell_count, axis=0):
 	size = img.size
 	cell_size = list(size)
 	cell_size[axis] = size[axis] // cell_count
@@ -27,7 +36,7 @@ def slice(img, cell_count, axis=0):
 		max[axis] = (i+1) * cell_size[axis]
 		cur = img.crop((min[0], min[1], max[0], max[1]))
 		result.append(cur)	
-	return result
+	return result"""
 
 #grid(lst, 1, 0) concats vertically and grid(lst, 1, 1) concats horizontally
 def grid(lst, constraint_count, start_axis=0, equal_sized=False, mode='RGBA'):
