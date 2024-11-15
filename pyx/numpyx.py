@@ -128,6 +128,8 @@ class rect:
 			result.append(rect.min_max(cell_min, cell_max))
 		return result
 
+	def __repr__(self): return f'Min: {self.min}, Size: {self.size}, Max: {self.max}'
+
 	def __str__(self): return f'Min: {self.min}, Size: {self.size}, Max: {self.max}'
 
 
