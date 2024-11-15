@@ -249,6 +249,4 @@ def join(objs, on): #where len(objs) > 0
 from pyx.sqlx import table_names
 
 def read_db(con, table=None):
-	if table == None:
-		table = table_names(con)
-	return { x: pd.read_sql(f'SELECT * FROM [{x}]', con) for x in table }
+	return { x: pd.read_sql(f'SELECT * FROM [{x}]', con) for x in (table_names(con) if table == None else table) }
