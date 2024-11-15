@@ -30,9 +30,9 @@ def fetchone(df, **where):
 	result = fetchall(df, **where)
 	return None if result.empty else result.iloc[0]
 		
-def select(df, columns, values):
+"""def select(df, columns, values):
 	mask = df[columns].eq([values[column] for column in columns]).all(axis=1)
-	return df[mask]
+	return df[mask]"""
 
 def segment(df, columns):
 	return [select(df, columns, row) for index, row in df[columns].drop_duplicates().iterrows()]
