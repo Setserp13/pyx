@@ -120,12 +120,13 @@ class rect:
 
 	def slice_by_cell_size(self, cell_size):
 		cell_count = np.ceil(self.size / cell_size).astype(int)
-		result = []
+		"""result = []
 		for x in itertools.product(*[range(x) for x in cell_count]):
 			cell_min = self.min + np.array(x) * cell_size
 			cell_max = self.min + (np.array(x) + np.ones(len(x))) * cell_size
 			cell_max = np.minimum(cell_max, self.max)
-			result.append(rect.min_max(cell_min, cell_max))
+			result.append(rect.min_max(cell_min, cell_max))"""
+		return [ rect.min_max(x.min, np.minimum(x.max, self.max)) for x in grid(cell_size, offset=self.min).cells(cell_count)]
 		return result
 
 	def __repr__(self): return f'rect(min={self.min}, size={self.size}, max={self.max})'
