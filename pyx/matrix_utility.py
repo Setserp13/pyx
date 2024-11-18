@@ -5,7 +5,7 @@ import pyx.array_utility as au
 def foreach(matrix, func):
 	for i in range(len(matrix)):
 		for j in range(len(matrix[i])):
-			call(func, matrix[i], i, j)
+			call(func, matrix[i][j], i, j)
 
 def map_columns(list, func): return [func(column(list, i), i) for i in range(max_len(list))]
 
