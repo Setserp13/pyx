@@ -5,6 +5,8 @@ def srtftime(x): return x.strftime("%H:%M:%S,%f")[:-3]
 
 def srtptime(x): return datetime.strptime(x, "%H:%M:%S,%f").time()
 
+def total_second(x): return x.hour * 3600 + x.minute * 60 + x.second + x.microsecond / 1_000_000
+
 class SubRipTime():
 	def __init__(self, hours=0, minutes=0, seconds=0, milliseconds=0):
 		# hours: The hours as an integer greater than or equal to 0.
