@@ -1,5 +1,9 @@
-from datetime import time
+from datetime import time, datetime
 import pyx.osx as osx
+
+def srtftime(x): return x.strftime("%H:%M:%S,%f")[:-3]
+
+def srtptime(x): return datetime.strptime(x, "%H:%M:%S,%f").time()
 
 class SubRipTime():
 	def __init__(self, hours=0, minutes=0, seconds=0, milliseconds=0):
