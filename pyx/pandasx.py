@@ -41,7 +41,8 @@ def segment(df, columns):
 def foreach(df, columns, action): #action(df slice, column values)
 	for index, row in df[columns].drop_duplicates().iterrows():
 		#print(row)
-		action(select(df, columns, row), row)
+		#action(select(df, columns, row), row)
+		action(fetchall(df, **dict(zip(columns, row))), row)
 
 def rename(df, columns): return df.rename(columns={x: columns[i] for i, x in enumerate(df.columns)})
 
