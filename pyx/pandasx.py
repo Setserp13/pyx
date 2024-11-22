@@ -35,8 +35,8 @@ def fetchone(df, **where):
 	return df[mask]"""
 
 def segment(df, columns):
-	return [select(df, columns, row) for index, row in df[columns].drop_duplicates().iterrows()]
-
+	#return [select(df, columns, row) for index, row in df[columns].drop_duplicates().iterrows()]
+	return [fetchall(df, columns, row) for index, row in df[columns].drop_duplicates().iterrows()]
 
 def foreach(df, columns, action): #action(df slice, column values)
 	for index, row in df[columns].drop_duplicates().iterrows():
