@@ -72,7 +72,7 @@ class SubRipItem():
 	def strp(value):
 		index, interval, text = value.split('\n')
 		start, end = interval.split(' --> ')
-		return SubRipItem(index, SubRipTime.strptime(start), SubRipTime.strptime(end), text)
+		return SubRipItem(index, srtptime(start), srtptime(end), text)
 		#return SubRipItem(index, SubRipTime.strptime(start), SubRipTime.strptime(end), text)
 
 	def shift(self, hours=0, minutes=0, seconds=0, milliseconds=0):
