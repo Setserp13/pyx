@@ -7,9 +7,10 @@ def srtptime(x): return datetime.strptime(x, "%H:%M:%S,%f").time()
 
 def microsecond(x): return x.microsecond + 1_000_000 * (x.second + 60 * x.minute + 3600 * x.hour)
 
-def second(x): return microsecond(x) / 1_000_000	#x.hour * 3600 + x.minute * 60 + x.second + x.microsecond / 1_000_000
+def second(self): return microsecond(x) / 1_000_000
 
-class SubRipTime(time):
+
+class Time(time):
 	def __new__(self, hours=0, minutes=0, seconds=0, milliseconds=0):
 		millisecond = (hours * 3600 + minutes * 60 + seconds) * 1000 + milliseconds
 		second = millisecond // 1000
@@ -28,8 +29,7 @@ class SubRipTime(time):
 	def shift(self, hours=0, minutes=0, seconds=0, milliseconds=0):
 		return SubRipTime(self.hours + hours, self.minutes + minutes, self.seconds + seconds, self.milliseconds + milliseconds)
 
-	@property
-	def seconds(self): return second(self)
+
 
 """class SubRipTime():
 	def __init__(self, hours=0, minutes=0, seconds=0, milliseconds=0):
