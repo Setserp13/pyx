@@ -27,7 +27,7 @@ class SubRipTime(time):
 		return SubRipTime(self.hours + hours, self.minutes + minutes, self.seconds + seconds, self.milliseconds + milliseconds)
 
 	@property
-	def time(self): return x.hour * 3600 + x.minute * 60 + x.second + x.microsecond / 1_000_000
+	def time(self): return self.hour * 3600 + self.minute * 60 + self.second + self.microsecond / 1_000_000
 
 """class SubRipTime():
 	def __init__(self, hours=0, minutes=0, seconds=0, milliseconds=0):
