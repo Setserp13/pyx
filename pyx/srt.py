@@ -14,14 +14,14 @@ class SubRipTime(time):
 		minute = second // 60
 		return super().__new__(self, hour=minute // 60, minute=minute % 60, second=second % 60, microsecond=(millisecond % 1000) * 1000)
 
-	def strftime(self): return f"{self.hours:02d}:{self.minutes:02d}:{self.seconds:02d},{self.milliseconds:03d}"
+	"""def strftime(self): return f"{self.hours:02d}:{self.minutes:02d}:{self.seconds:02d},{self.milliseconds:03d}"
 
 	@staticmethod
 	def strptime(value):
 		# Assuming value is in the format HH:MM:SS,mmm
 		hours, minutes, seconds_milliseconds = value.split(':')
 		seconds, milliseconds = seconds_milliseconds.split(',')
-		return SubRipTime(int(hours), int(minutes), int(seconds), int(milliseconds))
+		return SubRipTime(int(hours), int(minutes), int(seconds), int(milliseconds))"""
 
 	def shift(self, hours=0, minutes=0, seconds=0, milliseconds=0):
 		return SubRipTime(self.hours + hours, self.minutes + minutes, self.seconds + seconds, self.milliseconds + milliseconds)
