@@ -5,9 +5,9 @@ def srtftime(x): return x.strftime("%H:%M:%S,%f")[:-3]
 
 def srtptime(x): return datetime.strptime(x, "%H:%M:%S,%f").time()
 
-def microsecond(x): return x.microsecond + 1_000_000 * (x.second + 60 * x.minute + 3600 * x.hour)
+def microseconds(x): return x.microsecond + 1_000_000 * (x.second + 60 * x.minute + 3600 * x.hour)
 
-def second(x): return microsecond(x) / 1_000_000
+def seconds(x): return microseconds(x) / 1_000_000
 
 
 class Time(time):
