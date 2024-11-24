@@ -9,18 +9,12 @@ def microseconds(x): return x.microsecond + 1_000_000 * (x.second + 60 * x.minut
 
 def seconds(x): return microseconds(x) / 1_000_000
 
-
 class Time(time):
 	def __new__(self, hours=0, minutes=0, seconds=0, milliseconds=0):
 		millisecond = (hours * 3600 + minutes * 60 + seconds) * 1000 + milliseconds
 		second = millisecond // 1000
 		minute = second // 60
 		return super().__new__(self, hour=minute // 60, minute=minute % 60, second=second % 60, microsecond=(millisecond % 1000) * 1000)
-
-	def shift(self, hours=0, minutes=0, seconds=0, milliseconds=0):
-		return SubRipTime(self.hours + hours, self.minutes + minutes, self.seconds + seconds, self.milliseconds + milliseconds)
-
-
 
 class SubRipItem():
 	def __init__(self, index, start, end, text):
