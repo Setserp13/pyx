@@ -17,48 +17,10 @@ class Time(time):
 		minute = second // 60
 		return super().__new__(self, hour=minute // 60, minute=minute % 60, second=second % 60, microsecond=(millisecond % 1000) * 1000)
 
-	"""def strftime(self): return f"{self.hours:02d}:{self.minutes:02d}:{self.seconds:02d},{self.milliseconds:03d}"
-
-	@staticmethod
-	def strptime(value):
-		# Assuming value is in the format HH:MM:SS,mmm
-		hours, minutes, seconds_milliseconds = value.split(':')
-		seconds, milliseconds = seconds_milliseconds.split(',')
-		return SubRipTime(int(hours), int(minutes), int(seconds), int(milliseconds))"""
-
 	def shift(self, hours=0, minutes=0, seconds=0, milliseconds=0):
 		return SubRipTime(self.hours + hours, self.minutes + minutes, self.seconds + seconds, self.milliseconds + milliseconds)
 
 
-
-"""class SubRipTime():
-	def __init__(self, hours=0, minutes=0, seconds=0, milliseconds=0):
-		# hours: The hours as an integer greater than or equal to 0.
-		# minutes: The minutes as an integer between 0 and 59.
-		# seconds: The seconds as an integer between 0 and 59.
-		# milliseconds: The milliseconds as an integer between 0 and 999
-		milliseconds = (hours * 3600 + minutes * 60 + seconds) * 1000 + milliseconds
-		seconds = milliseconds // 1000
-		self.milliseconds = milliseconds % 1000
-		minutes = seconds // 60
-		self.seconds = seconds % 60
-		self.hours = minutes // 60
-		self.minutes = minutes % 60
-
-	def strftime(self): return f"{self.hours:02d}:{self.minutes:02d}:{self.seconds:02d},{self.milliseconds:03d}"
-
-	@staticmethod
-	def strptime(value):
-		# Assuming value is in the format HH:MM:SS,mmm
-		hours, minutes, seconds_milliseconds = value.split(':')
-		seconds, milliseconds = seconds_milliseconds.split(',')
-		return SubRipTime(int(hours), int(minutes), int(seconds), int(milliseconds))
-
-	def shift(self, hours=0, minutes=0, seconds=0, milliseconds=0):
-		return SubRipTime(self.hours + hours, self.minutes + minutes, self.seconds + seconds, self.milliseconds + milliseconds)
-
-	@property
-	def time(self): return self.hours * 3600 + self.minutes * 60 + self.seconds + self.milliseconds / 1000"""
 
 class SubRipItem():
 	def __init__(self, index, start, end, text):
@@ -68,14 +30,12 @@ class SubRipItem():
 		self.text = text
 
 	def strf(self): return f'{self.index}\n{srtftime(self.start)} --> {srtftime(self.end)}\n{self.text}\n\n'
-	#def strf(self): return f'{self.index}\n{self.start.strftime()} --> {self.end.strftime()}\n{self.text}\n\n'
 		
 	@staticmethod
 	def strp(value):
 		index, interval, text = value.split('\n')
 		start, end = interval.split(' --> ')
 		return SubRipItem(index, srtptime(start), srtptime(end), text)
-		#return SubRipItem(index, SubRipTime.strptime(start), SubRipTime.strptime(end), text)
 
 	def shift(self, hours=0, minutes=0, seconds=0, milliseconds=0):
 		self.start = self.start.shift(hours, minutes, seconds, milliseconds)
