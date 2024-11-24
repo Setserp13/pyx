@@ -7,7 +7,7 @@ def srtptime(x): return datetime.strptime(x, "%H:%M:%S,%f").time()
 
 def microsecond(x): return x.microsecond + 1_000_000 * (x.second + 60 * x.minute + 3600 * x.hour)
 
-def second(self): return microsecond(x) / 1_000_000
+def second(x): return microsecond(x) / 1_000_000
 
 
 class Time(time):
