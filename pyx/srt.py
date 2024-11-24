@@ -1,4 +1,4 @@
-from datetime import time, datetime
+from datetime import datetime, time, timedelta
 import pyx.osx as osx
 
 def srtftime(x): return x.strftime("%H:%M:%S,%f")[:-3]
@@ -37,13 +37,13 @@ class SubRipItem():
 		start, end = interval.split(' --> ')
 		return SubRipItem(index, srtptime(start), srtptime(end), text)
 
-	def shift(self, hours=0, minutes=0, seconds=0, milliseconds=0):
-		self.start = self.start.shift(hours, minutes, seconds, milliseconds)
-		self.end = self.end.shift(hours, minutes, seconds, milliseconds)
+	def shift(self, **kwargs):	#hours, minutes, seconds, microseconds
+		self.start += timedelta(**kwargs)
+		self.end += timedelta(**kwargs)
 
-	def expand(self, hours=0, minutes=0, seconds=0, milliseconds=0):
-		self.start = self.start.shift(-hours, -minutes, -seconds, -milliseconds)
-		self.end = self.end.shift(hours, minutes, seconds, milliseconds)
+	def expand(self, **kwargs):
+		self.start -= timedelta(**kwargs)
+		self.end += timedelta(**kwargs)
 
 class SubRipFile(list):
 	def strf(self): return ''.join([x.strf() for x in self])
@@ -56,13 +56,13 @@ class SubRipFile(list):
 			result.append(SubRipItem.strp(x))
 		return result
 
-	def shift(self, hours=0, minutes=0, seconds=0, milliseconds=0):
+	def shift(self, **kwargs):
 		for x in self:
-			x.shift(hours, minutes, seconds, milliseconds)
+			x.shift(**kwargs)
 
-	def expand(self, hours=0, minutes=0, seconds=0, milliseconds=0):
+	def expand(self, **kwargs):
 		for x in self:
-			x.expand(hours, minutes, seconds, milliseconds)
+			x.expand(**kwargs)
 
 	def save(self, output_path, encoding='utf-8'):
 		#print(self.strf())
