@@ -106,9 +106,18 @@ def appendb(file, content):
 
 #JSON FILE
 
+def readjson(file, dflt_value=None, encoding='utf-8'):
+	try:
+		with open(file, 'r', encoding=encoding) as f:
+			return json.load(f)
+	except Exception as e:
+		print(f"Error: {e}")
+		return dflt_value
+
 def writejson(file, content, encoding='utf-8', ensure_ascii=False, indent='\t'):
 	with open(file, 'w', encoding=encoding) as f:
     		json.dump(content, f, ensure_ascii=ensure_ascii, indent=indent)
+
 
 
 
