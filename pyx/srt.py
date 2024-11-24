@@ -7,19 +7,12 @@ def srtptime(x): return datetime.strptime(x, "%H:%M:%S,%f").time()
 
 def total_second(x): return x.hour * 3600 + x.minute * 60 + x.second + x.microsecond / 1_000_000
 
-class SubRipTime():
+class SubRipTime(time):
 	def __init__(self, hours=0, minutes=0, seconds=0, milliseconds=0):
-		# hours: The hours as an integer greater than or equal to 0.
-		# minutes: The minutes as an integer between 0 and 59.
-		# seconds: The seconds as an integer between 0 and 59.
-		# milliseconds: The milliseconds as an integer between 0 and 999
-		milliseconds = (hours * 3600 + minutes * 60 + seconds) * 1000 + milliseconds
-		seconds = milliseconds // 1000
-		self.milliseconds = milliseconds % 1000
-		minutes = seconds // 60
-		self.seconds = seconds % 60
-		self.hours = minutes // 60
-		self.minutes = minutes % 60
+		millisecond = (hours * 3600 + minutes * 60 + seconds) * 1000 + milliseconds
+		second = millisecond // 1000
+		minute = second // 60
+		super().__init__(hour=minute // 60, minute=minute % 60, second=second % 60, microsecond=(millisecond % 1000) * 1000)
 
 	def strftime(self): return f"{self.hours:02d}:{self.minutes:02d}:{self.seconds:02d},{self.milliseconds:03d}"
 
@@ -34,7 +27,7 @@ class SubRipTime():
 		return SubRipTime(self.hours + hours, self.minutes + minutes, self.seconds + seconds, self.milliseconds + milliseconds)
 
 	@property
-	def time(self): return self.hours * 3600 + self.minutes * 60 + self.seconds + self.milliseconds / 1000
+	def time(self): return self.hour * 3600 + self.minute * 60 + self.second + self.microsecond / 1_000_000
 
 
 """class SubRipTime():
