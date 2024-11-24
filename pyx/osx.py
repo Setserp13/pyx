@@ -1,5 +1,6 @@
 import os
 import string
+import json
 
 def ext(path): return os.path.splitext(path)[1]
 def root(path): return os.path.splitext(path)[0]
@@ -102,7 +103,12 @@ def writeb(file, content):
 def appendb(file, content):
 	with open(file, 'ab') as f:
 		f.write(content)
-		
+
+#JSON FILE
+
+def writejson(file, content, encoding='utf-8', ensure_ascii=False, indent='\t'):
+	with open(file, 'w', encoding=encoding) as f:
+    		json.dump(content, f, ensure_ascii=ensure_ascii, indent=indent)
 
 
 
