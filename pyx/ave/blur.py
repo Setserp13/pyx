@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 def apply_box_blur(image, kernel_size=5):
-	return cv2.blur(image, (kernel_size, kernel_size))
+	return cv2.blur(image, (kernel_size, kernel_size)) if kernel_size > 0 else image
 
 def apply_gaussian_blur(image, kernel_size=(15, 15)): #nenhum valor no kernel_size pode ser par
 	return cv2.GaussianBlur(image, kernel_size, 0)
