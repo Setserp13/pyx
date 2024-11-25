@@ -1,3 +1,4 @@
+import ast
 from lxml import etree
 
 def create_child(parent, tag, **kwargs):
@@ -33,6 +34,8 @@ def find_ancestor(self, match, dflt_value=None):
 	return dflt_value
 
 def get(obj, type, *keys): return [type(obj.get(x)) for x in keys]
+
+#def get(obj, *keys): return [ast.literal_eval(obj.get(x)) for x in keys]
 
 #def get(obj, **kwargs): return [kwargs[k](obj.get(k)) for k in kwargs]
 
