@@ -5,6 +5,10 @@ import datetime
 import calendar
 import pyx.mat.mat as mat
 
+def auto_complete(ls, on_select=lambda e: print(e.control.selected_index, e.selection), **kwargs):
+    suggestions=[ft.AutoCompleteSuggestion(key=f'{x.lower()} {x.upper()}', value=x) for x in ls]
+    return ft.AutoComplete(suggestions=suggestions, on_select=on_select)
+
 # Function to find the closest match
 def closest_match(user_input, choices):
     matches = difflib.get_close_matches(user_input, choices, n=1, cutoff=0.1)
