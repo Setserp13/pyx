@@ -50,6 +50,8 @@ class rect:
 
 	def clamp(self, point): return clamp(point, self.min, self.max)
 
+	def clamp_rect(self, value): return rect.min_max(self.clamp(value.min), self.clamp(value.max))
+	
 	def contains_point(self, point):
 		return contains(self.min, self.max, point)
 		#return all(self.min[i] <= x and x <= self.max[i] for i, x in enumerate(point))
