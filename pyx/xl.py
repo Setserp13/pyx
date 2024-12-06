@@ -487,6 +487,21 @@ def set_range_border_by_group(ws, min_row, min_col, max_row, max_col, outline=th
 		set_range_border(ws, i, min_col, area[2], max_col, outline, inline)
 		i = area[2] + 1
 
+def find_address(ws, value):
+	for i in range(1, ws.max_row + 1):
+		for j in range(1, ws.max_column + 1):
+			if value == ws.cell(i, j).value:
+				return (i, j)
+	return None
+
+def find_addresses(ws, value):
+	result = []
+	for i in range(1, ws.max_row + 1):
+		for j in range(1, ws.max_column + 1):
+			if value == ws.cell(i, j).value:
+				result.append((i, j))
+	return result
+
 def replace(ws, old_value, new_value, all=True):
 	for i in range(1, ws.max_row + 1):
 		for j in range(1, ws.max_column + 1):
