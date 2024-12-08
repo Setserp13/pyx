@@ -5,6 +5,20 @@ import random
 import math
 from pyx.array_utility import index_of
 
+def hyperop(a, n, b): #a[n]b = a[n-1](a[n](b-1)), n>=1 #Hyperoperation
+    if n == 0: # Successor
+        return b + 1
+    elif n == 1: # Addition
+        return a + b
+    elif n == 2: # Multiplication
+        return a * b
+    elif n == 3: # Exponentiation
+        return a ** b
+    elif n > 3: # Tetration and beyond
+        if b == 0:
+            return 1  # Base case for n > 3
+        return hyperop(a, n - 1, hyperop(a, n, b - 1))
+
 def fitf(arr, total):
 	scale = total / sum(arr)
 	return [x * scale for x in arr]
