@@ -512,3 +512,6 @@ def replace(ws, old_value, new_value, all=True):
 					if not all:
 						return
 
+def  replace2(ws, **kwargs):
+	for k in kwargs:
+		replace(ws, k, kwargs[k])
