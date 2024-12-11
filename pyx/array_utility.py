@@ -39,7 +39,13 @@ def find_index(array, match):
 		if call(match, x, i):
 			return i
 	return -1
-	
+
+def find_last_index(array, match):
+	for i in range(len(array)-1, -1, -1):
+		if call(match, array[i], i):
+			return i
+	return -1
+
 def find(array, match):
 	index = find_index(array, match)
 	if index > -1:
@@ -58,7 +64,7 @@ def find_all(array, match): return get_items(array, find_indices(array, match))
 
 def index_of(array, item): return find_index(array, lambda x: x == item)
 
-#def last_index_of(array, item): return find_last_index(array, lambda x: x == item)
+def last_index_of(array, item): return find_last_index(array, lambda x: x == item)
 
 def indices_of(array, item): return find_indices(array, lambda x: x == item)
 
