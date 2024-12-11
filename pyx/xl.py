@@ -494,7 +494,7 @@ def find_address(ws, match):
 				return (i, j)
 	return None
 
-def find_addresses(ws, value, match = lambda a, b: return a == b):
+def find_addresses(ws, match):
 	result = []
 	for i in range(1, ws.max_row + 1):
 		for j in range(1, ws.max_column + 1):
