@@ -502,9 +502,9 @@ def find_addresses(ws, value, match = lambda a, b: return a == b):
 				result.append((i, j))
 	return result
 
-def address_of(ws, value): return find_address(ws, lambda x: return x.value == value)
+def address_of(ws, value): return find_address(ws, lambda x: x.value == value)
 
-def addresses_of(ws, value): return find_addresses(ws, lambda x: return x.value == value)
+def addresses_of(ws, value): return find_addresses(ws, lambda x: x.value == value)
 
 def replace(ws, old_value, new_value, all=True):
 	for i in range(1, ws.max_row + 1):
