@@ -519,3 +519,34 @@ def replace(ws, old_value, new_value, all=True):
 def  replace2(ws, **kwargs):
 	for k in kwargs:
 		replace(ws, k, kwargs[k])
+
+
+
+
+from pyx.array_utility import last_index_of
+
+def compare(column, id):
+	idx = last_index_of(id, '#')
+	if idx > 0:
+		#print(f'#{column}', id[:idx])
+		return f'#{column}' == id[:idx]
+	return False
+
+def fill_report(wb, template, df): #wb is the target workbook
+	ws = []
+	row_per_page = max(len(set([template.cell(*z).value for z in find_addresses(template, lambda y: compare(x, str(y.value)))])) for x in df.columns)
+	print(row_per_page)
+	page_count = math.ceil(df.shape[0] / row_per_page)
+	for i in range(page_count):
+		ws.append(wb.copy_worksheet(template))
+		ws[-1].title = f'Page {i+1}'
+
+	df = pdx.extend(df, [['-'] * len(df.columns)] * (row_per_page - (df.shape[0] % row_per_page)))
+
+	for i, x in df.iterrows():
+		page = math.floor(i / row_per_page)
+		row = i % row_per_page
+		for k in df.columns:
+			#print(x)
+			replace(ws[page], f'#{k}#{row+1}', str(x[k]))
+	return wb
