@@ -177,7 +177,11 @@ def split_row(row, column, rels, *amount): #rels are columns dependent from colu
 def split_row_inplace(df, index, column, rels, *amount): #rels are columns dependent from column
 	return insert_rows(df, index, *split_row(df.iloc[index], column, rels, *amount))
 
-def append(df, row): return pd.concat([df, pd.DataFrame([row])], ignore_index=True)
+#def append(df, row): return pd.concat([df, pd.DataFrame([row])], ignore_index=True)
+
+def extend(df, rows, columns=None): return pd.concat([df, pd.DataFrame(rows, columns=df.columns if columns is None else columns)], ignore_index=True)
+
+def append(df, row, columns=None): return extend(df, [row], columns)
 
 #CUIDADO PARA NÃO REPETIR O NOME DAS VARIÁVEIS QUE ITERAM EM LOOPS ANINHADOS
 def pick(inventory, amount, column="OLDEGGS", rels=None):
