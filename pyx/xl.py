@@ -524,6 +524,7 @@ def  replace2(ws, **kwargs):
 
 
 from pyx.array_utility import last_index_of
+import pyx.pandas as pdx
 
 def compare(column, id):
 	idx = last_index_of(id, '#')
