@@ -506,12 +506,13 @@ def address_of(ws, value): return find_address(ws, lambda x: x.value == value)
 
 def addresses_of(ws, value): return find_addresses(ws, lambda x: x.value == value)
 
-def replace(ws, old_value, new_value, all=True):
+def replace(ws, old_value, new_value, all=True, equals=lambda a, b: a == b): #lambda a, b: a in b
 	for i in range(1, ws.max_row + 1):
 		for j in range(1, ws.max_column + 1):
 			if isinstance(ws.cell(i, j).value, str):
 				#ws.cell(i, j).value = ws.cell(i, j).value.replace(old_value, new_value)
-				if old_value in ws.cell(i, j).value:
+				#if old_value in ws.cell(i, j).value:
+				if equals(old_value, ws.cell(i, j).value):
 					ws.cell(i, j).value = ws.cell(i, j).value.replace(old_value, new_value)
 					if not all:
 						return
