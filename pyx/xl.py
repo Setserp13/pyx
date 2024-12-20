@@ -543,12 +543,13 @@ def fill_report(wb, template, df): #wb is the target workbook
 		ws.append(wb.copy_worksheet(template))
 		ws[-1].title = f'Page {i+1}'
 
-	df = pdx.extend(df, [['-'] * len(df.columns)] * (row_per_page - (df.shape[0] % row_per_page)))
+	if df.shape[0] % row_per_page != 0:
+		df = pdx.extend(df, [['-'] * len(df.columns)] * (row_per_page - (df.shape[0] % row_per_page)))
 
 	for i, x in df.iterrows():
 		page = math.floor(i / row_per_page)
 		row = i % row_per_page
-		print([i, page, row_per_page])
+		#print([i, page, row_per_page])
 		for k in df.columns:
 			#print(x)
 			replace(ws[page], f'#{k}#{row+1}', str(x[k]))
