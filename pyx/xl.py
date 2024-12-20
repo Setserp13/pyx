@@ -548,6 +548,7 @@ def fill_report(wb, template, df): #wb is the target workbook
 	for i, x in df.iterrows():
 		page = math.floor(i / row_per_page)
 		row = i % row_per_page
+		print([i, page, row_per_page])
 		for k in df.columns:
 			#print(x)
 			replace(ws[page], f'#{k}#{row+1}', str(x[k]))
