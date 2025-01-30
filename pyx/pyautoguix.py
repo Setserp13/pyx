@@ -4,7 +4,7 @@ import pandas as pd
 import datetime
 from inspect import isfunction
 import pyperclip
-
+import keyboard
 
 
 def press(key, times=1):
@@ -88,7 +88,8 @@ def run_sub(sub):
 
 		elif isinstance(x, str):
 			#typewrite(x)
-			pyautogui.typewrite(x)
+			#pyautogui.typewrite(x)
+			keyboard.write(x)
 		elif isinstance(x, int):
 			time.sleep(x)
 		elif isfunction(x):
