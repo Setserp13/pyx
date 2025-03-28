@@ -1,3 +1,4 @@
+import random
 
 class Dict:
 	def items(dct, keys): return { x: dct[x] for x in keys if x in dct } #also works with list and tuple
