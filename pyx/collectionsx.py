@@ -8,6 +8,11 @@ class List:
 	def get(arr, index, dflt_value=None): return arr[index] if index in range(len(arr)) else dflt_value
 	
 
+def get_random(ls, count):
+	result = copy.copy(ls)
+	for i in range(len(ls) - count):
+		result.pop(random.randint(0, len(result)-1))
+	return result
 
 def lshift(arr, n=1): return arr[n:] + arr[:n]		#Left shift the array arr by n positions
 
