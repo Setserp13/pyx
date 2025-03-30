@@ -65,4 +65,13 @@ class SubRipFile(list):
 
 #print(SubRipFile.strp(osx.read('subs.srt')).strf())
 
+import pyx.rex as rex
+
+def create_subs(text, labels, start=0): #Text and labels must have the same number of lines. Start must be in seconds.
+	result = SubRipFile()
+	labels = [rex.findnumbers(x) for x in labels.split('\n')]
+	for i, x in enumerate(text.split('\n')):
+		#print(i)
+		result.append(SubRipItem(index=i+1, start=Time(milliseconds=int((start+labels[i][0])*1000)), end=Time(milliseconds=int((start+labels[i][1])*1000)), text=x))
+	return result
 	
