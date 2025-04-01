@@ -1,5 +1,6 @@
 import functools
 from pydub import AudioSegment, silence
+import pyx.rex as rex
 
 #AudioSegment.merge = lambda ls: functools.reduce(lambda x, y: x+y, ls)#, AudioSegment.silent(0))
 def concat(ls): return functools.reduce(lambda x, y: x+y, ls)#, AudioSegment.silent(0))
@@ -10,6 +11,8 @@ def open_all(ls): return [AudioSegment.from_file(x) for x in ls]
 
 def remove_silence(audio, silence_threshold=-60, min_silence_len=50, margin=0):
     return concat(split_on_silence(audio, silence_threshold=silence_threshold, min_silence_len=min_silence_len, margin=margin))
+
+def split(audio, label_track): return [audio[int(x[0] * 1000):int(x[1] * 1000)] for x in rex.to_label_track(label_track)]
 
 def strip_audio(audio, silence_threshold=-60, min_silence_len=50, margin=0):#-40):
     silent_ranges = silence.detect_silence(audio, silence_thresh=silence_threshold, min_silence_len=min_silence_len)
