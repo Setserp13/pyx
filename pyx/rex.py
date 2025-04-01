@@ -16,6 +16,7 @@ def strfdict(obj, sep=[';', ':']): return sep[0].join([f'{k}{sep[1]}{obj[k]}' fo
 
 def to_label_track(string):
 	result = [findnumbers(x) for x in string.split('\n')]
+	result = [x for x in result if len(x) == 2]
 	for i in range(len(result)):
 		#print(i)
 		if i < len(result) - 1:
