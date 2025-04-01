@@ -14,10 +14,11 @@ def strpdict(obj, sep=[';', ':']):
 
 def strfdict(obj, sep=[';', ':']): return sep[0].join([f'{k}{sep[1]}{obj[k]}' for k in obj])
 
-def to_intervals(string):
-	labels = [rex.findnumbers(x) for x in string.split('\n')]
-	for i, x in enumerate(text.split('\n')):
+def to_label_track(string):
+	result = [rex.findnumbers(x) for x in string.split('\n')]
+	for i in range(len(result)):
 		#print(i)
-		if i < len(labels) - 1:
-			if labels[i][0] == labels[i][1]:
-				labels[i][1] = labels[i+1][0]
+		if i < len(result) - 1:
+			if result[i][0] == result[i][1]:
+				result[i][1] = result[i+1][0]
+	return result
