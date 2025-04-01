@@ -69,12 +69,8 @@ import pyx.rex as rex
 
 def create_subs(text, labels, start=0): #Text and labels must have the same number of lines. Start must be in seconds.
 	result = SubRipFile()
-	labels = [rex.findnumbers(x) for x in labels.split('\n')]
+	labels = rex.to_label_track(labels)
 	for i, x in enumerate(text.split('\n')):
-		#print(i)
-		if i < len(labels) - 1:
-			if labels[i][0] == labels[i][1]:
-				labels[i][1] = labels[i+1][0]
 		result.append(SubRipItem(index=i+1, start=Time(milliseconds=int((start+labels[i][0])*1000)), end=Time(milliseconds=int((start+labels[i][1])*1000)), text=x))
 	return result
 	
