@@ -4,6 +4,10 @@ import re
 
 from functools import reduce
 from pyx.numpyx import *
+import numpy as np
+import pyx.numpyx as npx
+
+def frame_rect(): return npx.rect(np.array([-config.frame_width * 0.5, -config.frame_height * 0.5, 0.0]), np.array([config.frame_width, config.frame_height, 0.0]))
 
 class ValueTrackers():
 	def __init__(self, **values):
