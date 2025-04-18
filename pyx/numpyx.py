@@ -257,7 +257,9 @@ class bbox:
 	def ellipse(cx, cy, rx, ry): return rect2(cx - rx, cy - ry, rx * 2, ry * 2)
 
 
+def align_component(object, anchor, pivot, value, axis=0): return object.set_axis_position(pivot, anchor.denormalize_point_component(value, axis=axis), axis=axis)
 
+def axis_unit_vector(axis=0, dimension=3): return np.array([1.0 if i == axis else 0.0 for i in range(dimension)])
 
 #SIZING
 
