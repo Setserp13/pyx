@@ -11,7 +11,7 @@ def clamp(point, min, max): return np.minimum(np.maximum(point, min), max)
 def lerp(a, b, t): return a * (1 - t) + b * t
 
 
-def on_circle(n, r=1.0, center=np.zeros(2), start=0.0):
+def on_circle(n, r=1.0, center=np.zeros(2), start=0.0):	#regular polygon
 	return [np.array(polar_to_cartesian(r, start + 2.0 * math.pi * (i / n))) + center for i in range(n)]
 
 def on_arc(n, r=1.0, center=np.zeros(2), start=0.0, size=2.0 * math.pi):
