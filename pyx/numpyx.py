@@ -195,7 +195,7 @@ def aabb(a, b): return rect.min_max(np.minimum(a, b), np.maximum(a, b))
 def aabb(a, b): return rect.min_max(np.minimum(a.min, b), np.maximum(a.max, b))
 
 #RECT-RECT AABB
-@dispatch(rect, np.ndarray)
+@dispatch(rect, rect)
 def aabb(a, b): return rect.min_max(np.minimum(a.min, b.min), np.maximum(a.max, b.max))
 
 #@dispatch(list)
