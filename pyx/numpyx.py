@@ -194,9 +194,20 @@ def aabb(a, b): return rect.min_max(np.minimum(a, b), np.maximum(a, b))
 @dispatch(rect, np.ndarray)
 def aabb(a, b): return rect.min_max(np.minimum(a.min, b), np.maximum(a.max, b))
 
+#RECT-RECT AABB
+@dispatch(rect, np.ndarray)
+def aabb(a, b): return rect.min_max(np.minimum(a.min, b.min), np.maximum(a.max, b.max))
+
+#@dispatch(list)
+#def aabb(*points):
+#	return rect.min_max(np.minimum.reduce(points), np.maximum.reduce(points))
+
 @dispatch(list)
-def aabb(*points):
-	return rect.min_max(np.minimum.reduce(points), np.maximum.reduce(points))
+def aabb(*args): #args can contain np.ndarray and rect
+	result = aabb(args[0], args[1])
+	for i in range(2, len(args)):
+		result = aabb(result, args[i])
+	return result
 
 from typing import Union
 #@dispatch(Number, Number, Number)
