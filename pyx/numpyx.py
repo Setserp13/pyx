@@ -45,6 +45,11 @@ class rect:
 	def denormalize_rect(self, value):
 		return rect(self.denormalize_point(value.min), self.denormalize_vector(value.size))
 
+	def set_axis_position(self, pivot, value, axis=0): #pivot is normalized and value is not normalized
+		result = rect(self.min, self.size)
+		result.min[axis] += (value - (pivot * result.size[axis] + result.min[axis]))
+		return result
+		
 	def set_position(self, pivot, value): #pivot is normalized and value is not normalized
 		return rect(self.min + (value - self.denormalize_point(pivot)), self.size)
 
