@@ -32,8 +32,10 @@ class rect:
 	def max(self): return self.min + self.size
 
 	def normalize_point(self, value): return (value - self.min) / self.size
+	def normalize_point_component(self, value, axis=0): return (value - self.min[axis]) / self.size[axis]
 
 	def denormalize_point(self, value): return value * self.size + self.min
+	def denormalize_point_component(self, value, axis=0): return value * self.size[axis] + self.min[axis]
 
 	def normalize_vector(self, value): return value / self.size
 
@@ -47,7 +49,7 @@ class rect:
 
 	def set_axis_position(self, pivot, value, axis=0): #pivot is normalized and value is not normalized
 		result = rect(self.min, self.size)
-		result.min[axis] += (value - (pivot * result.size[axis] + result.min[axis]))
+		result.min[axis] += (value - result.denormalize_point_component(pivot, axis=axis))
 		return result
 		
 	def set_position(self, pivot, value): #pivot is normalized and value is not normalized
