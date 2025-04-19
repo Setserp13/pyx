@@ -1,4 +1,5 @@
 import xml.etree.ElementTree as ET
+from lxml import etree
 from functools import reduce
 from pyx.lsvg import *
 from lxml import etree
@@ -197,4 +198,8 @@ def svg_to_png(tree, output_png, rect, dpi=10):
     svg_buffer.seek(0)
 
     cairosvg.svg2png(file_obj=svg_buffer, write_to=output_png, output_width=rect.size[0], output_height=rect.size[1], dpi=dpi)
+
+def circle(cx, cy, r, **kwargs): return etree.Element("circle", cx=str(cx), cy=str(cy), r=str(r), **kwargs)
+
+def polyline(*points, **kwargs): return etree.Element("polyline", points=" ".join(f"{x[0]},{x[1]}" for x in points), **kwargs)
 
