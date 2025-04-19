@@ -201,5 +201,7 @@ def svg_to_png(tree, output_png, rect, dpi=10):
 
 def circle(cx, cy, r, **kwargs): return etree.Element("circle", cx=str(cx), cy=str(cy), r=str(r), **kwargs)
 
+def polygon(*points, **kwargs): return etree.Element("polygon", points=" ".join(f"{x[0]},{x[1]}" for x in points), **kwargs)
+
 def polyline(*points, **kwargs): return etree.Element("polyline", points=" ".join(f"{x[0]},{x[1]}" for x in points), **kwargs)
 
