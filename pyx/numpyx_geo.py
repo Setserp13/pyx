@@ -109,3 +109,26 @@ def truncate(vertices, length=.1):
 def corners(rect): return [rect.denormalize_point(x) for x in [np.array([0,0]), np.array([0,1]), np.array([1,1]), np.array([1,0])]]
 
 
+def regular_star_polygon(m, n, r=1.0, center=np.zeros(2), start=0.0):	#m = total number of vertices on the circle, n = step size (how many points to skip when drawing)
+	vertices = npx.on_circle(n=m, r=r, center=center, start=start)
+	return [vertices[(i * n) % m] for i in range(m)]
+
+def star(n, r=1.0, spoke_ratio=0.5, t=0.5, center=np.zeros(2), start=0.0):
+	vertices = npx.on_circle(n=n, r=r, center=center, start=start)
+	midpoints = npx.on_circle(n=n, r=r * spoke_ratio, center=center, start=start + (math.pi * 2.0 * t) / float(n))
+	result = []
+	for i in range(n):
+		result += [vertices[i], midpoints[i]]
+	return result
+
+def gear(n, r=1.0, spoke_ratio=0.5, t=0.25, u=0.75, center=np.zeros(2), start=0.0):
+	points = star(n=n, r=r, spoke_ratio=spoke_ratio, center=center, start=start)
+	result = []
+	for i in range(0, len(points), 2):
+		result += [
+			npx.lerp(points[i], points[(i - 1) % len(points)], t),
+			npx.lerp(points[i], points[i + 1], t),
+			npx.lerp(points[i + 1], points[i], t),
+			npx.lerp(points[i + 1], points[(i + 2) % len(points)], t),
+		]
+	return result
