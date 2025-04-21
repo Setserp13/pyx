@@ -6,6 +6,7 @@ from functools import reduce
 from pyx.numpyx import *
 import numpy as np
 import pyx.numpyx as npx
+from pyx.numpyx_geo import radar_chart
 
 def frame_rect(): return npx.rect(np.array([-config.frame_width * 0.5, -config.frame_height * 0.5, 0.0]), np.array([config.frame_width, config.frame_height, 0.0]))
 
@@ -158,3 +159,30 @@ def MathRes(scene, equations, transition=.1, wait=0, first=None, method=Transfor
 		scene.wait(wait)
 	return first
 
+class RadarChart(Group, radar_chart):
+	def __init__(self, axis_count, step_count, radius, color=WHITE, *mobjects, **kwargs):
+		Group.__init__(self, *mobjects, **kwargs)
+		radar_chart.__init__(self, axis_count, step_count, radius)
+
+		#TO 3D
+		self.axes = [fill(x, 3) for x in self.axes]
+		self.polygons = [fill(x, 3) for x in self.polygons]
+
+		self.add(*[Line(*x, color=color) for x in self.axes])
+		self.add(*[Polygon(*x, color=color) for x in self.polygons])
+
+	def get_data_polygon(self, values, color='#b4eaff'):
+		return Polygon(*[x + self.get_center() for x in self.data_polygon(values)], color=color).set_fill(color).set_opacity(0.5)
+
+def set_updater(obj, value):
+	obj.clear_updaters()
+	obj.add_updater(value)
+
+def Slide(mob, mode=1, direction=0, axis=0, rate_func=rate_functions.smooth): #mode = 0: out, mode = 1: in
+	start_end = [npx.align_component(get_rect(mob), frame_rect(), direction, 1 - direction).center, mob.get_center()]
+	mob.move_to(start_end[(mode+1)%2])
+	return mob.animate(rate_func=rate_func).move_to(start_end[mode])
+
+def Spiral(t_range, **kwargs): return ParametricFunction(lambda t: np.array([t * np.cos(t),  t * np.sin(t),  0]), t_range=t_range, **kwargs)
+
+def rotate(angular_speed=PI): return lambda mob, dt: mob.rotate(dt * angular_speed)
