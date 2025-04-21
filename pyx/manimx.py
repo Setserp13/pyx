@@ -231,8 +231,8 @@ class MyScene():	#that's a wrapper
 		self.end_time += duration
 		self.scene.wait(duration)
 	
-	def append_sound(self, audio):
-		self.audio_track.add(self.end_time, audio)
+	def append_sound(self, audio, delay=0.0):
+		self.audio_track.add(self.end_time + delay, audio)
 
 	def render(self):
 		audio_path = osx.to_distinct("Audio.wav")
