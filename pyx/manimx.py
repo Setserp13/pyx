@@ -202,3 +202,45 @@ def Arrange(objects, direction=RIGHT, buff=0):
 def get_rect(mobject): return npx.rect.center_size(mobject.get_center(), np.array([mobject.width, mobject.height, 0.0]))
 
 #def get_group_rect(group): return npx.aabb([get_rect(x) for x in group])
+
+
+
+
+import pyx.moviepyx as mpx
+import pyx.pydubx as pydubx
+
+class MyScene():	#that's a wrapper
+	def __init__(self, title='Scene'):
+		self.title = title
+		self.audio_track = pydubx.AudioChunks()
+		self.end_time = 0.0
+		self.scene = Scene()
+		self.construct()
+
+	def construct(self): pass
+
+	def add(self, *mobjects): self.scene.add(*mobjects)
+
+	def remove(self, *mobjects): self.scene.remove(*mobjects)
+
+	def play(self, *anims, run_time=1.0, **kwargs):
+		self.end_time += run_time
+		self.scene.play(*anims, run_time=run_time, **kwargs)
+
+	def wait(self, duration=1.0):
+		self.end_time += duration
+		self.scene.wait(duration)
+	
+	def append_sound(self, audio):
+		self.audio_track.add(self.end_time, audio)
+
+	def render(self):
+		dir = osx.wd(__file__)
+		audio_path = osx.to_distinct(os.path.join(dir, "Audio.wav"))
+		try:
+			self.scene.render()
+			self.audio_track.audio.export(audio_path, format="wav")
+			mpx.merge_av(audio_path, os.path.join(dir, fr'media\videos\{config.pixel_height}p{config.frame_rate}\Scene.mp4'), f'{self.title}.mp4')
+		finally:
+			if os.path.exists(audio_path):
+				os.remove(audio_path)
