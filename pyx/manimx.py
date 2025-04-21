@@ -179,7 +179,7 @@ def set_updater(obj, value):
 	obj.add_updater(value)
 
 def Slide(mob, mode=1, direction=0, axis=0, rate_func=rate_functions.smooth): #mode = 0: out, mode = 1: in
-	start_end = [npx.align_component(get_rect(mob), frame_rect(), direction, 1 - direction).center, mob.get_center()]
+	start_end = [npx.align_component(get_rect(mob), frame_rect(), direction, 1 - direction, axis=axis).center, mob.get_center()]
 	mob.move_to(start_end[(mode+1)%2])
 	return mob.animate(rate_func=rate_func).move_to(start_end[mode])
 
