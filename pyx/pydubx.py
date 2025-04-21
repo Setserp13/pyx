@@ -32,7 +32,7 @@ def split_on_silence(audio, silence_threshold=-30, min_silence_len=500, margin=0
 
 class AudioChunks():
 	def __init__(self):
-		self.items = [[0, AudioSegment.silent(0)]]
+		self.items = [[0, AudioSegment.silent(1000)]]
 
 	def add(self, start, audio):
 		self.items.append([start, audio])
