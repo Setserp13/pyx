@@ -205,7 +205,7 @@ def get_rect(mobject): return npx.rect.center_size(mobject.get_center(), np.arra
 
 
 
-
+import pyx.osx as osx
 import pyx.moviepyx as mpx
 import pyx.pydubx as pydubx
 
