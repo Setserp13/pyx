@@ -194,3 +194,11 @@ def fill(obj, length, filler=0):
 def Spiral(t_range, **kwargs): return ParametricFunction(lambda t: np.array([t * np.cos(t),  t * np.sin(t),  0]), t_range=t_range, **kwargs)
 
 def rotate(angular_speed=PI): return lambda mob, dt: mob.rotate(dt * angular_speed)
+
+def Arrange(objects, direction=RIGHT, buff=0):
+	for i in range(1, len(objects)):
+		objects[i].next_to(objects[i - 1], direction, buff=buff)
+
+def get_rect(mobject): return npx.rect.center_size(mobject.get_center(), np.array([mobject.width, mobject.height, 0.0]))
+
+def get_group_rect(group): return npx.aabb([get_rect(x) for x in group])
