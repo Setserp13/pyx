@@ -256,6 +256,7 @@ class bbox:
 	def circle(cx, cy, r): return rect2(cx - r, cy - r, r * 2, r * 2)
 	def ellipse(cx, cy, rx, ry): return rect2(cx - rx, cy - ry, rx * 2, ry * 2)
 
+def align(object, anchor, pivot, value): return object.set_position(pivot, anchor.denormalize_point(value))
 
 def align_component(object, anchor, pivot, value, axis=0): return object.set_axis_position(pivot, anchor.denormalize_point_component(value, axis=axis), axis=axis)
 
