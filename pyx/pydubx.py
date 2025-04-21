@@ -29,3 +29,14 @@ def split_on_silence(audio, silence_threshold=-30, min_silence_len=500, margin=0
 	nonsilent_ranges = silence.detect_nonsilent(audio, silence_thresh=silence_threshold, min_silence_len=min_silence_len)
 	nonsilent_ranges = [(max(x[0] - margin, 0), min(x[1] + margin, len(audio))) for x in nonsilent_ranges]
 	return [audio[x[0]:x[1]] for x in nonsilent_ranges]
+
+class AudioChunks():
+	def __init__(self):
+		self.items = []
+
+	def add(self, start, audio):
+		self.items.append([start, audio])
+
+	@property
+	def audio(self):
+		return overlay([AudioSegment.silent(int(1000 * x[0])) + x[1] for x in self.items])
