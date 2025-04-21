@@ -183,6 +183,14 @@ def Slide(mob, mode=1, direction=0, axis=0, rate_func=rate_functions.smooth): #m
 	mob.move_to(start_end[(mode+1)%2])
 	return mob.animate(rate_func=rate_func).move_to(start_end[mode])
 
+
+
+def fill(obj, length, filler=0):
+	if isinstance(obj, np.ndarray):
+		return np.append(obj, [filler] * (length - len(obj)))
+	return [fill(x, length, filler) for x in obj]
+
+
 def Spiral(t_range, **kwargs): return ParametricFunction(lambda t: np.array([t * np.cos(t),  t * np.sin(t),  0]), t_range=t_range, **kwargs)
 
 def rotate(angular_speed=PI): return lambda mob, dt: mob.rotate(dt * angular_speed)
