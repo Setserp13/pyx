@@ -132,3 +132,19 @@ def gear(n, r=1.0, spoke_ratio=0.5, t=0.25, u=0.75, center=np.zeros(2), start=0.
 			npx.lerp(points[i + 1], points[(i + 2) % len(points)], t),
 		]
 	return result
+
+class radar_chart:
+	def __init__(self, axis_count, step_count, radius, center=np.zeros(2)): #axes = spokes = radii
+		self.axes = [[center, x] for x in npx.on_circle(axis_count, r=radius, center=center)]
+		step = radius / step_count
+		self.polygons = [npx.on_circle(axis_count, r=step * (i + 1), center=center) for i in range(step_count)]
+	
+	@property
+	def axis_count(self): return len(self.axes)
+
+	@property
+	def step_count(self): return len(self.polygons)
+
+	def data_point(self, axis, value): return npx.lerp(*self.axes[axis], float(value) / float(self.step_count))
+	
+	def data_polygon(self, values): return [self.data_point(i, x) for i, x in enumerate(values)]
