@@ -201,4 +201,4 @@ def Arrange(objects, direction=RIGHT, buff=0):
 
 def get_rect(mobject): return npx.rect.center_size(mobject.get_center(), np.array([mobject.width, mobject.height, 0.0]))
 
-def get_group_rect(group): return npx.aabb([get_rect(x) for x in group])
+#def get_group_rect(group): return npx.aabb([get_rect(x) for x in group])
