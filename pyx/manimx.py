@@ -235,12 +235,11 @@ class MyScene():	#that's a wrapper
 		self.audio_track.add(self.end_time, audio)
 
 	def render(self):
-		dir = osx.wd(__file__)
-		audio_path = osx.to_distinct(os.path.join(dir, "Audio.wav"))
+		audio_path = osx.to_distinct("Audio.wav")
 		try:
 			self.scene.render()
 			self.audio_track.audio.export(audio_path, format="wav")
-			mpx.merge_av(audio_path, os.path.join(dir, fr'media\videos\{config.pixel_height}p{config.frame_rate}\Scene.mp4'), f'{self.title}.mp4')
+			mpx.merge_av(audio_path, fr'media\videos\{config.pixel_height}p{config.frame_rate}\Scene.mp4', f'{self.title}.mp4')
 		finally:
 			if os.path.exists(audio_path):
 				os.remove(audio_path)
