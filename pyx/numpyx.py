@@ -6,6 +6,11 @@ from pyx.mat.mat import polar_to_cartesian
 import itertools
 from pyx.collectionsx import List as ls
 
+def fill(obj, length, filler=0):
+	if isinstance(obj, np.ndarray):
+		return np.append(obj, [filler] * (length - len(obj)))
+	return [fill(x, length, filler) for x in obj]
+
 def clamp(point, min, max): return np.minimum(np.maximum(point, min), max)
 
 def lerp(a, b, t): return a * (1 - t) + b * t
