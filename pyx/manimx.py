@@ -165,8 +165,8 @@ class RadarChart(Group, radar_chart):
 		radar_chart.__init__(self, axis_count, step_count, radius)
 
 		#TO 3D
-		self.axes = [fill(x, 3) for x in self.axes]
-		self.polygons = [fill(x, 3) for x in self.polygons]
+		self.axes = [npx.fill(x, 3) for x in self.axes]
+		self.polygons = [npx.fill(x, 3) for x in self.polygons]
 
 		self.add(*[Line(*x, color=color) for x in self.axes])
 		self.add(*[Polygon(*x, color=color) for x in self.polygons])
