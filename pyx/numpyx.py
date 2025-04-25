@@ -147,7 +147,9 @@ class rect:
 
 	def __str__(self): return f'Min: {self.min}, Size: {self.size}, Max: {self.max}'
 
+	def __add__(self, vector): return rect(self.min + vector, self.size)
 
+	def __sub__(self, vector): return rect(self.min - vector, self.size)
 
 def rect2(x, y, width, height): return rect(np.array([x, y]), np.array([width, height]))
 
