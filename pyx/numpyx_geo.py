@@ -2,6 +2,7 @@ import numpy as np
 import pyx.numpyx as npx
 import pyx.mat.mat as mat
 from pyx.collectionsx import lshift
+import math
 
 class circle():
 	def __init__(self, center, radius):
