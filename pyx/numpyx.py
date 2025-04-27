@@ -289,3 +289,8 @@ def fit_scale(viewport, viewbox, scale_method='meet'):	#scale_method in ['meet',
 	return {'meet': min, 'slice': max}[scale_method](scale)	
 
 def fit(viewport, viewbox, scale_method='meet'): return viewbox * fit_scale(viewport, viewbox, scale_method)
+
+def rotate_2d(v, theta): #theta is in radians
+	x, y = v
+	c, s = math.cos(theta), math.sin(theta)
+	return np.array([x * c - y * s, x * s + y * c])
