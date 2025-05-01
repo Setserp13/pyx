@@ -149,3 +149,47 @@ class radar_chart:
 	def data_point(self, axis, value): return npx.lerp(*self.axes[axis], float(value) / float(self.step_count))
 	
 	def data_polygon(self, values): return [self.data_point(i, x) for i, x in enumerate(values)]
+
+
+
+
+
+class Mesh():
+	def __init__(self, vertices=None, faces=None):
+		self.vertices = vertices.copy() if vertices else []
+		self.faces = faces.copy() if faces else []
+
+	def get_face(self, i): return List.items(self.vertices, self.faces[i])
+
+	def get_faces(self): return [self.get_face(i) for i in range(len(self.faces))]
+
+	def to_obj(self, path):
+		lines = [f"v {x} {y} {z}" for x, y, z in self.vertices]
+		lines += [f"f {' '.join(str(i + 1) for i in face)}" for face in self.faces]
+		osx.write(path, '\n'.join(lines) + '\n')
+
+	def from_obj(self, path):
+		for line in osx.read(path).split('\n'):
+			if line.startswith('v '):
+				_, x, y, z = line.strip().split()
+				self.vertices.append([float(x), float(y), float(z)])
+			elif line.startswith('f '):
+				parts = line.strip().split()[1:]
+				# Suporta faces tipo: f 1 2 3 ou f 1/1 2/2 3/3
+				face = [int(p.split('/')[0]) - 1 for p in parts]
+				self.faces.append(face)
+		return self
+
+	def add_face(self, *vertices):
+		start_index = len(self.vertices)
+		self.vertices.extend(vertices)
+		self.faces.append(list(range(start_index, start_index + len(vertices))))
+
+	def extrude(self, dir, face):
+		face = self.get_face(face)
+		self.add_face(*[x + dir for x in face])
+		for x in polygon.edges(face):
+			self.add_face(x[0], x[1], x[1] + dir, x[0] + dir)
+
+class polygon:
+	def edges(p): return [[p[i], p[(i+1)%len(p)]] for i in range(len(p))]
