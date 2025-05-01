@@ -294,3 +294,23 @@ def rotate_2d(v, theta): #theta is in radians
 	x, y = v
 	c, s = math.cos(theta), math.sin(theta)
 	return np.array([x * c - y * s, x * s + y * c])
+
+
+def cartesian_to_spherical(x, y, z):
+	r = np.sqrt(x**2 + y**2 + z**2)
+	theta = np.arccos(z / r) if r != 0 else 0  # Inclinação
+	phi = np.arctan2(y, x)  # Azimute
+	return r, theta, phi
+
+def spherical_to_cartesian(r, theta, phi):
+	x = r * np.sin(theta) * np.cos(phi)
+	y = r * np.sin(theta) * np.sin(phi)
+	z = r * np.cos(theta)
+	return x, y, z
+
+def random_on_sphere(r): return spherical_to_cartesian(r, random.uniform(0, 2 * math.pi), random.uniform(0, 2 * math.pi))
+def random_in_sphere(r): return random_on_sphere(random.uniform(0, r))
+
+
+
+
