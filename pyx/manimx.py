@@ -240,3 +240,31 @@ class MyScene():	#that's a wrapper
 		finally:
 			if os.path.exists(audio_path):
 				os.remove(audio_path)
+
+
+
+class ImageScrolling1D:
+	def __init__(self, filename_or_array, image_count, velocity=-1, axis=0):
+		self.velocity = velocity
+		images = Group(*[ImageMobject(x) for x in [filename_or_array] * image_count])
+		for x in images:
+			x.height = config.frame_height
+		Arrange(images, direction=mat.sgn(velocity) * npx.axis_unit_vector(axis))
+		def update_images(mob, dt):
+			mob.shift(self.velocity * npx.axis_unit_vector(axis) * dt)
+            
+			for img in mob:
+				if get_rect(img).max[axis] < frame_rect().min[axis]:
+					center = npx.align_component(get_rect(img), get_rect(mob), 0.0, 1.0, axis=axis).center
+					#print('rect', get_rect(img))
+					img.move_to(center)
+				elif get_rect(img).min[axis] > frame_rect().max[axis]:
+					center = npx.align_component(get_rect(img), get_rect(mob), 1.0, 0.0, axis=axis).center
+					#print('rect', center)
+					img.move_to(center)
+		images.add_updater(update_images)	
+		self.images = images
+	
+	@property
+	def total_width(self): return self.images[0].width * len(self.images)
+
