@@ -5,6 +5,7 @@ import numpy as np
 from pyx.mat.mat import polar_to_cartesian
 import itertools
 from pyx.collectionsx import List as ls
+import random
 
 def fill(obj, length, filler=0):
 	if isinstance(obj, np.ndarray):
