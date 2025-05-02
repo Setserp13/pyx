@@ -171,7 +171,8 @@ def line_segment_intersection(line, segment):
 def random_on_arc(r, start_angle, stop_angle): return polar_to_cartesian(r, random.uniform(start_angle, stop_angle))
 def random_in_arc(r, start_angle, stop_angle): return random_on_arc(random.uniform(0, r), start_angle, stop_angle)
 def random_on_circle(r): return random_on_arc(r, 0, 2 * math.pi)
-def random_in_circle(r): return random_on_circle(random.uniform(0, r))
+def random_in_annulus(r, R): return random_on_circle(random.uniform(r, R))
+def random_in_circle(r): return random_on_annulus(0, r)
 
 
 def polar_to_cartesian(r, theta): return r * math.cos(theta), r * math.sin(theta)
