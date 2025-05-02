@@ -205,3 +205,10 @@ def polygon(*points, **kwargs): return etree.Element("polygon", points=" ".join(
 
 def polyline(*points, **kwargs): return etree.Element("polyline", points=" ".join(f"{x[0]},{x[1]}" for x in points), **kwargs)
 
+def rect(x, y, width, height, **kwargs): return etree.Element("rect", x=str(x), y=str(y), width=str(width), height=str(height), **kwargs)
+
+def g(*args):
+	result = etree.Element("g")
+	for x in args:
+		result.append(x)
+	return result
