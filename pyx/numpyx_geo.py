@@ -3,6 +3,7 @@ import pyx.numpyx as npx
 import pyx.mat.mat as mat
 from pyx.collectionsx import lshift
 import math
+import pyx.osx as osx
 
 class circle():
 	def __init__(self, center, radius):
