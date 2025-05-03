@@ -194,3 +194,70 @@ class Mesh():
 
 class polygon:
 	def edges(p): return [[p[i], p[(i+1)%len(p)]] for i in range(len(p))]
+
+	def s(n, R=1): return 2 * R * math.sin(math.pi/n)
+
+
+def prism_laterals(count, start_index1=0, start_index2=None): #closed
+	start_index2 = start_index1 + count if start_index2 is None else start_index2
+	return [[start_index1 + i, start_index1 + (i + 1) % count, start_index2 + (i + 1) % count, start_index2 + i] for i in range(count)]
+
+def pyramid_laterals(count, start_index=0, apex=None):
+	apex = start_index + count if apex is None else apex
+	return [[start_index + i, start_index + (i + 1) % count, apex] for i in range(count)]
+
+def antiprism_laterals(count, start_index1=0, start_index2=None): #closed
+	start_index2 = start_index1 + count if start_index2 is None else start_index2
+	result = [[start_index1 + i, start_index1 + (i + 1) % count, start_index2 + i] for i in range(count)]
+	result += [[start_index1 + (i + 1) % count, start_index2 + (i + 1) % count, start_index2 + i] for i in range(count)]
+	return result
+
+
+from numbers import Number
+
+def enlongated(*primitives, r=1, height=1, gyro=False, start_angle=None):
+	if isinstance(height, Number):
+		height = [height] * (len(primitives) - 1)
+	start_angle = [0] * len(primitives) if start_angle is None else start_angle
+	vertices = []
+	for i, x in enumerate(primitives):
+		if x > 1:
+			vertices += [np.array([y[0], sum(height[:i], start=0), y[1]]) for y in npx.on_circle(x, r=r, start=(math.pi/x) * start_angle[i])]
+		else:
+			vertices.append(np.array([0, sum(height[:i], start=0), 0]))
+	return vertices, enlongated_faces(*primitives, gyro=gyro)
+
+def enlongated_faces(*primitives, gyro=False): #primitives contains only n or 1
+	result = []
+	if primitives[0] > 1:
+		result.append(list(range(primitives[0])))
+	start_index = 0
+	for i in range(len(primitives) - 1):
+		m, n = primitives[i], primitives[i+1]
+		if m > 1 and n > 1:
+			result += antiprism_laterals(m, start_index) if gyro else prism_laterals(m, start_index)
+		elif m == 1:
+			result += pyramid_laterals(n, start_index + 1, start_index)
+		else:
+			result += pyramid_laterals(m, start_index, start_index + m)
+		start_index += m
+	if primitives[-1] > 1:
+		result.append(list(range(start_index, start_index + primitives[-1])))
+	#print(result)
+	return result
+
+def prism(count, r=1, height=1): return enlongated(count, count, r=r, height=height)
+
+def pyramid(count, r=1, height=1): return enlongated(count, 1, r=r, height=height)
+
+def bipyramid(count, r=1, height=1): return enlongated(1, count, 1, r=r, height=height)
+
+def antiprism(count, r=1, height=1): return enlongated(count, count, r=r, height=height, gyro=True, start_angle=[0,1])
+
+def elongated_pyramid(count, r=1, height=1): return enlongated(count, count, 1, r=r, height=height)
+
+def elongated_bipyramid(count, r=1, height=1): return enlongated(1, count, count, 1, r=r, height=height)
+
+def gyroelongated_pyramid(count, r=1, height=1): return enlongated(count, count, 1, r=r, height=height, gyro=True, start_angle=[0,1,0])
+
+def gyroelongated_bipyramid(count, r=1, height=1): return enlongated(1, count, count, 1, r=r, height=height, gyro=True, start_angle=[0,0,1,0])
