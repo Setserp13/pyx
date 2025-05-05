@@ -307,11 +307,11 @@ def spherical_to_cartesian(r, theta, phi):
 	x = r * np.sin(theta) * np.cos(phi)
 	y = r * np.sin(theta) * np.sin(phi)
 	z = r * np.cos(theta)
-	return x, y, z
+	return np.array([x, y, z])
 
 def random_on_sphere(r): return spherical_to_cartesian(r, random.uniform(0, 2 * math.pi), random.uniform(0, 2 * math.pi))
 def random_in_sphere(r): return random_on_sphere(random.uniform(0, r))
 
-
+def random_on_line(start, end): return lerp(start, end, random.uniform(0.0, 1.0))
 
 
