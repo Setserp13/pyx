@@ -316,7 +316,21 @@ class bezier:
 		derivative_points = [n * (p[i + 1] - p[i]) for i in range(n)]
 		return get_point(t, *derivative_points)
 
+def polygonal_points(s, n, r=1, centered=False):
+	result = []
+	result.append([np.zeros(2)])
+	for i in range(1, n):
+		v = npx.on_circle(s, r=r*i)
+		if not centered:
+			v = v[1:]
+		result += [polyline.subdivide(v, i, closed=centered)]
+	return result
 
+def radial_hexagonal_tiling(n=1, r=1):
+	result = []
+	for x in polygonal_points(6, n, r=a(6, R=r) * 2, centered=True):
+		result += [npx.on_circle(6, r=r, center=y, start=math.pi/6) for y in x]
+	return result
 
 
 
