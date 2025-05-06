@@ -100,14 +100,15 @@ def add_symmetrical_handles(vertices, handle_length=.1, closed=True):
 	result = lshift(result)
 	return result
 
-def truncate(vertices, length=.1):
-	result = []
-	for i in range(len(vertices)):
-		next = vertices[(i+1)%len(vertices)]
-		dir = npx.normalize(next - vertices[i])
-		result += [vertices[i] + dir * length, next - dir * length]
-	return result
 
+def truncate(vertices, t=.25, closed=True):
+	result = []
+	for x in polyline.edges(vertices, closed=closed):
+		result += [npx.lerp(x[0], x[1], t), npx.lerp(x[0], x[1], 1-t)]
+	if not closed:
+		result[0] = vertices[0]
+		result[-1] = vertices[-1]
+	return result
 
 def corners(rect): return [rect.denormalize_point(x) for x in [np.array([0,0]), np.array([0,1]), np.array([1,1]), np.array([1,0])]]
 
