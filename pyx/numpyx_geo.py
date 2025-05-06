@@ -190,12 +190,13 @@ class Mesh():
 	def extrude(self, dir, face):
 		face = self.get_face(face)
 		self.add_face(*[x + dir for x in face])
-		for x in polygon.edges(face):
+		for x in polyline.edges(face):
 			self.add_face(x[0], x[1], x[1] + dir, x[0] + dir)
 
-class polygon:
+class polyline:
 	def edges(p, closed=True): return [[p[i], p[(i+1)%len(p)]] for i in range(len(p - (0 if closed else 1)))]
-
+		
+class polygon:
 	def s(n, R=1): return 2 * R * math.sin(math.pi/n)
 
 
