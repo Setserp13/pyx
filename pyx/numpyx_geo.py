@@ -209,6 +209,14 @@ class polyline:
 			a = b
 		return None
 
+	def subdivide(vertices, n, closed=True):
+		result = []
+		for x in polyline.edges(vertices, closed=closed):
+			result += [npx.lerp(x[0], x[1], i / n) for i in range(n)]
+		if not closed:
+			result.append(vertices[-1])
+		return result
+
 
 class polygon:
 	def s(n, R=1): return 2 * R * math.sin(math.pi/n)
