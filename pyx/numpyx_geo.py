@@ -285,3 +285,40 @@ def elongated_bipyramid(count, r=1, height=1): return enlongated(1, count, count
 def gyroelongated_pyramid(count, r=1, height=1): return enlongated(count, count, 1, r=r, height=height, gyro=True, start_angle=[0,1,0])
 
 def gyroelongated_bipyramid(count, r=1, height=1): return enlongated(1, count, count, 1, r=r, height=height, gyro=True, start_angle=[0,0,1,0])
+
+
+
+
+
+class bezier:
+	def get_point(t, *p):
+		# Recursive Bézier evaluation (De Casteljau's algorithm)
+		if len(p) == 1:
+			return p[0]
+		else:
+			return (1 - t) * get_point(t, *p[:-1]) + t * get_point(t, *p[1:])
+
+		"""#Evaluate a Bézier curve at parameter t using Bernstein basis.
+		n = len(points) - 1
+		points = np.array(points)
+		point = np.zeros_like(points[0])
+		for i in range(n + 1):
+			binom = np.math.comb(n, i)
+			point += binom * ((1 - t) ** (n - i)) * (t ** i) * points[i]
+		return point"""
+	
+	def get_derivative(t, *p):
+		# Derivative of Bézier curve (based on differences between control points)
+		n = len(p) - 1
+		if n < 1:
+			raise ValueError("Need at least two points for a derivative")
+		derivative_points = [n * (p[i + 1] - p[i]) for i in range(n)]
+		return get_point(t, *derivative_points)
+
+
+
+
+
+
+
+
