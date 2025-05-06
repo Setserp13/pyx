@@ -195,7 +195,21 @@ class Mesh():
 
 class polyline:
 	def edges(p, closed=True): return [[p[i], p[(i+1)%len(p)]] for i in range(len(p) - (0 if closed else 1))]
-		
+
+	def perimeter(vertices, closed=True):
+		return sum([np.linalg.norm(x[0] - x[1]) for x in polyline.edges(vertices, closed=closed)])
+	
+	def point_from_proportion(t, vertices, closed=True):
+		p = perimeter(vertices)
+		a = 0.0
+		for x in polyline.edges(vertices, closed=closed):
+			b = a + np.linalg.norm(x[0] - x[1]) / p
+			if a <= t and t <= b:
+				return npx.lerp(x[0], x[1], (t - a) / (b - a))
+			a = b
+		return None
+
+
 class polygon:
 	def s(n, R=1): return 2 * R * math.sin(math.pi/n)
 
