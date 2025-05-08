@@ -16,6 +16,28 @@ class Time(time):
 		minute = second // 60
 		return super().__new__(self, hour=minute // 60, minute=minute % 60, second=second % 60, microsecond=(millisecond % 1000) * 1000)
 
+	def to_milliseconds(self):
+		return ((self.hour * 3600 + self.minute * 60 + self.second) * 1000 +
+		        self.microsecond // 1000)
+
+	def __add__(self, other):
+		if isinstance(other, Time):
+			total_ms = self.to_milliseconds() + other.to_milliseconds()
+		elif isinstance(other, int):
+			total_ms = self.to_milliseconds() + other  # assuming int = ms
+		else:
+			return NotImplemented
+		return Time(milliseconds=total_ms)
+
+	def __sub__(self, other):
+		if isinstance(other, Time):
+			total_ms = self.to_milliseconds() - other.to_milliseconds()
+		elif isinstance(other, int):
+			total_ms = self.to_milliseconds() - other
+		else:
+			return NotImplemented
+		return Time(milliseconds=total_ms)
+
 class SubRipItem():
 	def __init__(self, index, start, end, text):
 		self.index = index
