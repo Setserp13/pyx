@@ -38,6 +38,18 @@ class Time(time):
 			return NotImplemented
 		return Time(milliseconds=total_ms)
 
+	def __mul__(self, factor):
+		if isinstance(factor, (int, float)):
+			total_ms = int(self.to_milliseconds() * factor)
+			return Time(milliseconds=total_ms)
+		return NotImplemented
+
+	def __truediv__(self, divisor):
+		if isinstance(divisor, (int, float)):
+			total_ms = int(self.to_milliseconds() / divisor)
+			return Time(milliseconds=total_ms)
+		return NotImplemented
+
 class SubRipItem():
 	def __init__(self, index, start, end, text):
 		self.index = index
