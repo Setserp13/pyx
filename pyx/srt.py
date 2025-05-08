@@ -15,33 +15,22 @@ class Time(float):
 		return super().__new__(cls, total_seconds)
 
 	@property
-	def hour(self):
-		return int(self) // 3600
+	def hour(self): return int(self) // 3600
 
 	@property
-	def minute(self):
-		return (int(self) % 3600) // 60
+	def minute(self): return (int(self) % 3600) // 60
 
 	@property
-	def second(self):
-		return int(self) % 60
+	def second(self): return int(self) % 60
 
 	@property
-	def millisecond(self):
-		return int((self - int(self)) * 1000)
+	def millisecond(self): return int((self - int(self)) * 1000)
 
 	@property
-	def microsecond(self):
-		return int((self - int(self)) * 1_000_000)
+	def microsecond(self): return int((self - int(self)) * 1_000_000)
 		
 	@property
-	def time(self):
-		return time(
-			hour=self.hours,
-			minute=self.minutes,
-			second=self.seconds,
-			microsecond=self.milliseconds * 1000
-		)
+	def time(self): return time(hour=self.hour, minute=self.minute, second=self.second, microsecond=self.microsecond)
 
 	def __repr__(self):
 		return f"Time({self.hours:02}:{self.minutes:02}:{self.seconds:02}.{self.milliseconds:03})"
