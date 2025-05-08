@@ -9,7 +9,41 @@ def microseconds(x): return x.microsecond + 1_000_000 * (x.second + 60 * x.minut
 
 def seconds(x): return microseconds(x) / 1_000_000
 
-class Time(time):
+class Time(float):
+	def __new__(cls, hours=0, minutes=0, seconds=0, milliseconds=0):
+		total_seconds = hours * 3600 + minutes * 60 + seconds + milliseconds / 1000
+		return super().__new__(cls, total_seconds)
+
+	@property
+	def hours(self):
+		return int(self) // 3600
+
+	@property
+	def minutes(self):
+		return (int(self) % 3600) // 60
+
+	@property
+	def seconds(self):
+		return int(self) % 60
+
+	@property
+	def milliseconds(self):
+		return int((self - int(self)) * 1000)
+
+	@property
+	def time(self):
+		return time(
+			hour=self.hours,
+			minute=self.minutes,
+			second=self.seconds,
+			microsecond=self.milliseconds * 1000
+		)
+
+	def __repr__(self):
+		return f"Time({self.hours:02}:{self.minutes:02}:{self.seconds:02}.{self.milliseconds:03})"
+
+
+"""class Time(time):
 	def __new__(self, hours=0, minutes=0, seconds=0, milliseconds=0):
 		millisecond = (hours * 3600 + minutes * 60 + seconds) * 1000 + milliseconds
 		second = millisecond // 1000
@@ -48,7 +82,7 @@ class Time(time):
 		if isinstance(divisor, (int, float)):
 			total_ms = int(self.to_milliseconds() / divisor)
 			return Time(milliseconds=total_ms)
-		return NotImplemented
+		return NotImplemented"""
 
 class SubRipItem():
 	def __init__(self, index, start, end, text):
