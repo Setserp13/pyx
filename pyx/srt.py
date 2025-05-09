@@ -10,9 +10,9 @@ def microseconds(x): return x.microsecond + 1_000_000 * (x.second + 60 * x.minut
 def seconds(x): return microseconds(x) / 1_000_000
 
 class Time(float):
-	def __new__(cls, hours=0, minutes=0, seconds=0, milliseconds=0):
+	"""def __new__(cls, hours=0, minutes=0, seconds=0, milliseconds=0):
 		total_seconds = hours * 3600 + minutes * 60 + seconds + milliseconds / 1000
-		return super().__new__(cls, total_seconds)
+		return super().__new__(cls, total_seconds)"""
 
 	@property
 	def hour(self): return int(self) // 3600
