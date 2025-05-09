@@ -84,6 +84,9 @@ class SubRipItem(): #herde essa classe de uma classe mais genérica depois, torn
 		self.end = end
 		self.text = text
 
+	@property
+	sef duration(self): return self.end - self.start
+	
 	#def strf(self): return f'{self.index}\n{srtftime(self.start)} --> {srtftime(self.end)}\n{self.text}\n\n'
 	def strf(self): return f'{self.index}\n{srtftime(self.start.time)} --> {srtftime(self.end.time)}\n{self.text}\n\n'
 		
