@@ -32,8 +32,8 @@ class Time(float):
 	@property
 	def time(self): return time(hour=self.hour, minute=self.minute, second=self.second, microsecond=self.microsecond)
 
-	def __repr__(self):
-		return f"Time({self.hours:02}:{self.minutes:02}:{self.seconds:02}.{self.milliseconds:03})"
+	#def __repr__(self):
+	#	return f"Time({self.hours:02}:{self.minutes:02}:{self.seconds:02}.{self.milliseconds:03})"
 
 
 """class Time(time):
