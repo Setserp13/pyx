@@ -133,6 +133,7 @@ def create_subs(text, labels, start=0): #Text and labels must have the same numb
 	result = SubRipFile()
 	labels = rex.to_label_track(labels)
 	for i, x in enumerate(text.split('\n')):
-		result.append(SubRipItem(index=i+1, start=Time(milliseconds=int((start+labels[i][0])*1000)), end=Time(milliseconds=int((start+labels[i][1])*1000)), text=x))
+		result.append(SubRipItem(index=i+1, start=Time(start+labels[i][0]), end=Time(start+labels[i][1]), text=x))
+		#result.append(SubRipItem(index=i+1, start=Time(milliseconds=int((start+labels[i][0])*1000)), end=Time(milliseconds=int((start+labels[i][1])*1000)), text=x))
 	return result
 	
