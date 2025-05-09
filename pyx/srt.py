@@ -77,7 +77,7 @@ class Time(float):
 			return Time(milliseconds=total_ms)
 		return NotImplemented"""
 
-class SubRipItem():
+class SubRipItem(): #herde essa classe de uma classe mais genérica depois, tornando-a irmã de clipes de vídeo, imagens, audios, transições, efeitos e etc...
 	def __init__(self, index, start, end, text):
 		self.index = index
 		self.start = start
