@@ -51,3 +51,33 @@ def For(start, stop, step=None, func=None):
 			val += step[i]
 
 	recursive_loop([])
+
+def Map(start, stop=None, step=None, func=None):
+	start = np.array(start, dtype=int)
+	if stop is None:
+		stop = start
+		start = np.zeros_like(stop)
+	else:
+		stop = np.array(stop, dtype=int)
+
+	if step is None:
+		step = np.ones_like(start, dtype=int)
+	else:
+		step = np.array(step, dtype=int)
+
+	shape = ((stop - start + step - 1) // step).astype(int)
+	result = np.empty(shape, dtype=object)
+
+	def recurse(index, depth, out_view):
+		if depth == len(start):
+			out_view[...] = func(np.array(index))
+			return
+		i = start[depth]
+		s = 0
+		while i < stop[depth]:
+			recurse(index + [i], depth + 1, out_view[s])
+			i += step[depth]
+			s += 1
+
+	recurse([], 0, result)
+	return result
