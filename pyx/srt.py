@@ -4,6 +4,35 @@ import textwrap
 import pyx.mat.mat as mat
 import pyx.osx as osx
 
+def timing(items, start, duration):
+	ws = mat.weights([len(x.text) for x in items])
+	for i in range(len(items)):
+		items[i].start = Time(start)
+		start = items[i].end = Time(start + duration * ws[i])
+
+def words(text): return ''.join([c for c in text if c not in ',.:;']).split()	#text.split(' ')
+
+def sentences(text): return text.replace('\n', ' ').replace('  ', ' ').split('.')
+
+def split_item(item, split=words):
+	result = []
+	duration = item.end - item.start
+	if split == None:
+		texts = [item.text]
+	elif isinstance(split, int):
+		texts = textwrap.wrap(item.text, width=split)#=30)
+	else:
+		texts = split(item.text)
+	for i in range(len(texts)):
+		chunk = copy.deepcopy(item) #do it like that to preserve all the other properties
+		chunk.text = texts[i]
+		result.append(chunk)
+	timing(result, item.start, duration)
+	return result
+
+def split_subs(subs): return SubRipFile([y for x in subs for y in split_item(x)])
+
+
 def srtftime(x): return x.strftime("%H:%M:%S,%f")[:-3]
 
 def srtptime(x): return datetime.strptime(x, "%H:%M:%S,%f").time()
