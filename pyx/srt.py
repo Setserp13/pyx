@@ -35,6 +35,13 @@ class Time(float):
 	#def __repr__(self):
 	#	return f"Time({self.hours:02}:{self.minutes:02}:{self.seconds:02}.{self.milliseconds:03})"
 
+class TimeRange():
+	def __init__(self, start, end):
+		self.start = Time(start)
+		self.end = Time(end)
+
+	@property
+	def duration(self): return Time(self.end - self.start)
 
 """class Time(time):
 	def __new__(self, hours=0, minutes=0, seconds=0, milliseconds=0):
@@ -77,15 +84,16 @@ class Time(float):
 			return Time(milliseconds=total_ms)
 		return NotImplemented"""
 
-class SubRipItem(): #herde essa classe de uma classe mais genérica depois, tornando-a irmã de clipes de vídeo, imagens, audios, transições, efeitos e etc...
+class SubRipItem(TimeRange): #herde essa classe de uma classe mais genérica depois, tornando-a irmã de clipes de vídeo, imagens, audios, transições, efeitos e etc...
 	def __init__(self, index, start, end, text):
 		self.index = index
-		self.start = start
-		self.end = end
+		#self.start = start
+		#self.end = end
 		self.text = text
-
-	@property
-	def duration(self): return self.end - self.start
+		super().__init__(start, end)
+	
+	#@property
+	#def duration(self): return self.end - self.start
 	
 	#def strf(self): return f'{self.index}\n{srtftime(self.start)} --> {srtftime(self.end)}\n{self.text}\n\n'
 	def strf(self): return f'{self.index}\n{srtftime(self.start.time)} --> {srtftime(self.end.time)}\n{self.text}\n\n'
