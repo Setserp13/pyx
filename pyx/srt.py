@@ -14,8 +14,8 @@ class Time(float):
 		total_seconds = hours * 3600 + minutes * 60 + seconds + milliseconds / 1000
 		return super().__new__(cls, total_seconds)"""
 	
-	def from_time(hour=0, minute=0, second=0, microsecond=0):
-		total_seconds = hour * 3600 + minute * 60 + second + microsecond / 1_000_000
+	def from_time(hour=0, minute=0, second=0, millisecond=0, microsecond=0):
+		total_seconds = hour * 3600 + minute * 60 + second + millisecond / 1000 + microsecond / 1_000_000
 		return Time(total_seconds)
 	
 	@property
