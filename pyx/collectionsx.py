@@ -21,7 +21,15 @@ def lshift(arr, n=1): return arr[n:] + arr[:n]		#Left shift the array arr by n p
 
 def rshift(arr, n=1): return arr[-n:] + arr[:-n]	#Right shift the array arr by n positions
 
+class bag(list):	#each item in bag is a tuple like (item, count)
+	def to_list(self):
+		result = []
+		for x in self:
+			result += [x[0]] * x[1]
+		return result
 
+	def to_set(self): #return the underlying set
+		return [x[0] for x in self]
 
 def For(start, stop, step=None, func=None):
 	if func is None:
