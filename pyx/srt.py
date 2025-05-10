@@ -1,4 +1,7 @@
+import copy
 from datetime import datetime, time, timedelta
+import textwrap
+import pyx.mat.mat as mat
 import pyx.osx as osx
 
 def srtftime(x): return x.strftime("%H:%M:%S,%f")[:-3]
