@@ -1,5 +1,6 @@
 import copy
 import random
+import numpy as np
 
 class Dict:
 	def items(dct, keys): return { x: dct[x] for x in keys if x in dct } #also works with list and tuple
@@ -19,3 +20,26 @@ def get_random(ls, count):
 def lshift(arr, n=1): return arr[n:] + arr[:n]		#Left shift the array arr by n positions
 
 def rshift(arr, n=1): return arr[-n:] + arr[:-n]	#Right shift the array arr by n positions
+
+
+
+def For(start, stop, step=None, func=None):
+	if func is None:
+		raise ValueError("You must provide a function")
+
+	if step is None:
+		step = np.ones_like(start)
+	else:
+		step = np.array(step)
+
+	def recursive_loop(pos):
+		if len(pos) == len(start):
+			func(np.array(pos))
+			return
+		i = len(pos)
+		val = start[i]
+		while val < stop[i]:
+			recursive_loop(pos + [val])
+			val += step[i]
+
+	recursive_loop([])
