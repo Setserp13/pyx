@@ -54,31 +54,6 @@ def For(start, stop, step=None, func=None):
 
 from itertools import product
 
-"""def Map(start, stop=None, step=None, func=None):
-    start = np.array(start, dtype=int)
-    if stop is None:
-        stop = start
-        start = np.zeros_like(stop)
-    else:
-        stop = np.array(stop, dtype=int)
-
-    if step is None:
-        step = np.ones_like(start, dtype=int)
-    else:
-        step = np.array(step, dtype=int)
-
-    # Compute the shape of the result array
-    shape = ((stop - start + step - 1) // step).astype(int)
-    result = np.empty(shape, dtype=object)
-
-    # Generate all multi-indices using product
-    for offset in product(*[range(s) for s in shape]):
-        index = start + step * np.array(offset)
-        result[offset] = func(index)
-
-    return result"""
-
-
 def Map(start, stop=None, step=None, func=None):
     # Converte para listas de inteiros
     start = list(map(int, start))
