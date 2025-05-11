@@ -102,3 +102,58 @@ def palette(image):
 	image = np.asarray(image)
 	pixels = image.reshape(-1, image.shape[-1])
 	return list({tuple(p) for p in pixels})
+
+
+
+
+def resize(img, new_shape, interpolation=0):
+	return [
+		resize_nearest,
+		resize_bilinear
+	][interpolation](img, new_shape)
+
+def scale(img, value, interpolation=0): return resize(img, img.shape[:2] * np.array(value), interpolation=interpolation)
+
+def resize_nearest(img, new_shape):
+	h, w = new_shape.astype(int)
+	H, W = img.shape[:2]
+	y = (np.arange(h) * H / h).astype(int)
+	x = (np.arange(w) * W / w).astype(int)
+	return img[y[:, None], x]
+
+def resize_bilinear(img, new_shape):
+	h, w = new_shape.astype(int)
+	H, W = img.shape[:2]
+
+	# Target float coordinates
+	y = np.linspace(0, H - 1, h)
+	x = np.linspace(0, W - 1, w)
+
+	y0 = np.floor(y).astype(int)
+	x0 = np.floor(x).astype(int)
+
+	y1 = np.clip(y0 + 1, 0, H - 1)
+	x1 = np.clip(x0 + 1, 0, W - 1)
+
+	dy = (y - y0)[:, None]
+	dx = (x - x0)[None, :]
+
+	y0 = np.clip(y0, 0, H - 1)
+	x0 = np.clip(x0, 0, W - 1)
+
+	# Sample pixels
+	top_left     = img[y0[:, None], x0[None, :]]
+	top_right    = img[y0[:, None], x1[None, :]]
+	bottom_left  = img[y1[:, None], x0[None, :]]
+	bottom_right = img[y1[:, None], x1[None, :]]
+
+	# Reshape weights for broadcasting over channels
+	dx = dx[..., None]  # shape (1, w, 1)
+	dy = dy[..., None]  # shape (h, 1, 1)
+
+	# Bilinear interpolation
+	top    = top_left * (1 - dx) + top_right * dx
+	bottom = bottom_left * (1 - dx) + bottom_right * dx
+	result = top * (1 - dy) + bottom * dy
+
+	return result.astype(img.dtype)
