@@ -5,6 +5,8 @@ import random
 import math
 from pyx.array_utility import index_of
 
+def lcm(a, b): return abs(a * b) // math.gcd(a, b)
+
 def hyperop(a, n, b): #a[n]b = a[n-1](a[n](b-1)), n>=1 #Hyperoperation
     if n == 0: # Successor
         return b + 1
