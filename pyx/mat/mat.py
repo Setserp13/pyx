@@ -175,7 +175,7 @@ def random_in_annulus(r, R): return random_on_circle(random.uniform(r, R))
 def random_in_circle(r): return random_in_annulus(0, r)
 
 
-def polar_to_cartesian(r, theta): return r * math.cos(theta), r * math.sin(theta)
+def polar_to_cartesian(r, theta): return np.array([r * math.cos(theta), r * math.sin(theta)])
 def cartesian_to_polar(x, y): return np.array([math.sqrt(x**2 + y**2), math.atan2(y, x)])
 
 
