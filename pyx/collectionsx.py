@@ -92,6 +92,6 @@ def Map(start, stop=None, step=None, func=None):
     # Preenche o resultado com os valores
     for offset in product(*[range(s) for s in shape]):
         index = [start[i] + step[i] * offset[i] for i in range(len(start))]
-        set_value(result, offset, func(index))
+        set_value(result, offset, func(*index))	#index))
 
     return result
