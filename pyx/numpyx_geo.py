@@ -220,8 +220,11 @@ class polyline:
 
 
 class polygon:
-	def s(n, R=1): return 2 * R * math.sin(math.pi/n)
+	def a(n, R=1): return R * math.cos(math.pi/n)	#apothem
 
+	def R(n, a=1): return a / math.cos(math.pi/n)
+
+	def s(n, R=1): return 2 * R * math.sin(math.pi/n)
 
 def prism_laterals(count, start_index1=0, start_index2=None): #closed
 	start_index2 = start_index1 + count if start_index2 is None else start_index2
