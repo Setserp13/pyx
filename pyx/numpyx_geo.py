@@ -194,6 +194,23 @@ class Mesh():
 		for x in polyline.edges(face):
 			self.add_face(x[0], x[1], x[1] + dir, x[0] + dir)
 
+	def translate(self, vector):
+		self.vertices = [x + vector for x in self.vertices]
+
+	def scale(self, vector):
+		self.vertices = [x * vector for x in self.vertices]
+
+	@property
+	def bounds(self): return npx.aabb(self.vertices)
+
+	@property
+	def pivot(self): return self.bounds.normalize_point(np.zeros(3))
+
+	@pivot.setter
+	def pivot(self, value):	#pivot is normalized
+		self.translate(-self.bounds.denormalize_point(pivot))
+
+
 class polyline:
 	def edges(p, closed=True): return [[p[i], p[(i+1)%len(p)]] for i in range(len(p) - (0 if closed else 1))]
 
