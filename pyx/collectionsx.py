@@ -95,3 +95,12 @@ def Map(start, stop=None, step=None, func=None):
         set_value(result, offset, func(*index))	#index))
 
     return result
+
+def flatten(lst):
+	result = []
+	for item in lst:
+		if isinstance(item, list):
+			result.extend(flatten(item))
+		else:
+			result.append(item)
+	return result
