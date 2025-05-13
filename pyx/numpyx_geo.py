@@ -208,7 +208,7 @@ class Mesh():
 
 	@pivot.setter
 	def pivot(self, value):	#pivot is normalized
-		self.translate(-self.bounds.denormalize_point(pivot))
+		self.translate(-self.bounds.denormalize_point(value))
 
 
 class polyline:
