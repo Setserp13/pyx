@@ -307,7 +307,12 @@ def gyroelongated_pyramid(count, r=1, height=1): return enlongated(count, count,
 
 def gyroelongated_bipyramid(count, r=1, height=1): return enlongated(1, count, count, 1, r=r, height=height, gyro=True, start_angle=[0,0,1,0])
 
-
+def ring(count, r=1, R=2, height=1):
+	vertices = [np.array([pt[0], h, pt[1]]) for radius, h in product([r, R], [0, height]) for pt in npx.on_circle(count, r=radius)]
+	faces = []
+	for a, b in [(0, 1), (0, 2), (1, 3), (2, 3)]:
+		faces += prism_laterals(count, start_index1=count * a, start_index2=count * b)
+	return vertices, faces
 
 
 
