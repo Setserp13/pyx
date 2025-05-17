@@ -5,6 +5,7 @@ from pyx.collectionsx import lshift
 import math
 import pyx.osx as osx
 from pyx.collectionsx import List
+from itertools import product
 
 class circle():
 	def __init__(self, center, radius):
