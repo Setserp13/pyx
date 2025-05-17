@@ -113,10 +113,10 @@ def truncate(vertices, t=.25, closed=True):
 
 def corners(rect): return [rect.denormalize_point(x) for x in [np.array([0,0]), np.array([0,1]), np.array([1,1]), np.array([1,0])]]
 
-
-def regular_star_polygon(m, n, r=1.0, center=np.zeros(2), start=0.0):	#m = total number of vertices on the circle, n = step size (how many points to skip when drawing)
-	vertices = npx.on_circle(n=m, r=r, center=center, start=start)
-	return [vertices[(i * n) % m] for i in range(m)]
+#a regular polygon or a regular star polygon. #A regular polygram, as a general regular polygon, is denoted by its Schläfli symbol {p/q}, where p and q are relatively prime (they share no factors) and q ≥ 2
+def regular_polygram(p, q, r=1.0, center=np.zeros(2), start=0.0):	#p = total number of vertices on the circle, q = step size (how many points to skip when drawing)
+	vertices = npx.on_circle(n=p, r=r, center=center, start=start)
+	return [vertices[(i * q) % p] for i in range(p)]
 
 def star(n, r=1.0, spoke_ratio=0.5, t=0.5, center=np.zeros(2), start=0.0):
 	vertices = npx.on_circle(n=n, r=r, center=center, start=start)
