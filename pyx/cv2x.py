@@ -35,3 +35,8 @@ def lines(img, args, color=(255,255,255,255), thickness=1):
 
 def polyline(img, p, closed=True, color=(255,255,255,255), thickness=-1):
 	return lines(img, npxg.polyline.edges(p, closed=closed), color=color, thickness=thickness)
+
+def rects(img, rects, color=(255,255,255,255), thickness=-1):
+	for x in rects:
+		img = cv2.rectangle(img, x.min.astype(int), x.max.astype(int), color, thickness)
+	return img
