@@ -7,6 +7,14 @@ import pyx.osx as osx
 from pyx.collectionsx import List
 from itertools import product
 
+#In geometry, a set of points are said to be concyclic (or cocyclic) if they lie on a common circle. A polygon whose vertices are concyclic is called a cyclic polygon, and the circle is called its circumscribing circle or circumcircle.
+def cyclic_polygon(angles, r=1, center=np.zeros(2)):
+	return [mat.polar_to_cartesian(r, x) + center for x in angles]
+
+def radar_polygon(radii, center=np.zeros(2)):
+	angles = np.arrange(0.0, math.pi * 2.0, math.pi * 2.0 / len(radii))
+	return [mat.polar_to_cartesian(r, theta) + center for r, theta in zip(radii, angles)]
+
 class circle():
 	def __init__(self, center, radius):
 		self.center = np.array(center)
