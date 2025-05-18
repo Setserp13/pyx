@@ -25,3 +25,10 @@ cv2.VideoCapture.frame_count = frame_count
 cv2.VideoCapture.size = size
 cv2.VideoCapture.width = width
 cv2.VideoCapture.duration = duration
+
+from pyx.numpyx_geo import polyline
+
+def lines(img, p, closed=True, color=(255,255,255,255), thickness=-1):
+	for line in polyline.edges(p, closed=closed):
+		img = cv2.line(img, p[0].astype(int), p[1].astype(int), color=color, thickness=thickness)
+	return img
