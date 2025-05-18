@@ -26,7 +26,7 @@ cv2.VideoCapture.size = size
 cv2.VideoCapture.width = width
 cv2.VideoCapture.duration = duration
 
-from pyx.numpyx_geo import polyline
+import pyx.numpyx_geo as npxg
 
 def lines(img, args, color=(255,255,255,255), thickness=1):
 	for line in args:
@@ -34,4 +34,4 @@ def lines(img, args, color=(255,255,255,255), thickness=1):
 	return img
 
 def polyline(img, p, closed=True, color=(255,255,255,255), thickness=-1):
-	return lines(img, polyline.edges(p, closed=closed), color=color, thickness=thickness)
+	return lines(img, npxg.polyline.edges(p, closed=closed), color=color, thickness=thickness)
