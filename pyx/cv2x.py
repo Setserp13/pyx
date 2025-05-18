@@ -28,7 +28,10 @@ cv2.VideoCapture.duration = duration
 
 from pyx.numpyx_geo import polyline
 
-def polyline(img, p, closed=True, color=(255,255,255,255), thickness=-1):
-	for line in polyline.edges(p, closed=closed):
-		img = cv2.line(img, p[0].astype(int), p[1].astype(int), color=color, thickness=thickness)
+def lines(img, args, color=(255,255,255,255), thickness=1):
+	for line in args:
+		img = cv2.line(img, line[0].astype(int), line[1].astype(int), color=color, thickness=thickness)
 	return img
+
+def polyline(img, p, closed=True, color=(255,255,255,255), thickness=-1):
+	return lines(img, polyline.edges(p, closed=closed, color=color, thickness=thickness)
