@@ -156,3 +156,80 @@ def generateVideo(fps, width, height, frame_count, *clips, filename='output.mp4'
 		progressbar(i, frame_count)
 	out.release()
 	return out
+
+
+
+
+
+
+
+import imageio
+import numpy as np
+import os
+import cv2
+from tqdm import tqdm
+import subprocess
+
+def generateVideoWithAlpha(fps, width, height, frame_count, *clips, filename='output.mov'):
+	# Abre o writer com codec PNG e RGBA
+	writer = imageio.get_writer(
+		filename,
+		format='FFMPEG',
+		mode='I',
+		fps=fps,
+		codec='png',
+		output_params=['-pix_fmt', 'rgba']
+	)
+
+	#tmp_folder = "__temp_frames__"
+	#os.makedirs(tmp_folder, exist_ok=True)
+
+	print("Gerando frames com transparência...")
+	for i in tqdm(range(frame_count)):
+		t = i / fps
+		img = np.zeros((height, width, 4), dtype=np.uint8)
+		img[:, :] = (0, 0, 0, 0)  # fundo transparente	#img[:, :, :] = (0, 0, 0, 0)
+
+		for clip in clips:
+			clip.update(t, img)  # clip deve desenhar em RGBA
+
+		#frame_path = os.path.join(tmp_folder, f"frame_{i:05d}.png")
+		#imageio.imwrite(frame_path, img)
+		writer.append_data(img)
+
+	writer.close()
+	print("Codificando vídeo final com canal alfa...")
+
+	"""for clip in clips:
+		for i in tqdm(range(int(clip.start_time * fps), int(clip.end_time * fps))):
+			frame_path = os.path.join(tmp_folder, f"frame_{i:05d}.png")
+			frame = imageio.imread(frame_path)
+			t = i / fps
+			clip.update(t, frame)
+			imageio.imwrite(frame_path, frame)""" #IN CASE YOU WANNA WRITE CLIP BY CLIP
+
+	# Escreve os frames
+	"""for i in tqdm(range(frame_count)):
+		frame_path = os.path.join(tmp_folder, f"frame_{i:05d}.png")
+		frame = imageio.imread(frame_path)
+		writer.append_data(frame)
+	writer.close()
+
+	# Limpa os frames temporários
+	for f in os.listdir(tmp_folder):
+		os.remove(os.path.join(tmp_folder, f))
+	os.rmdir(tmp_folder)"""
+
+	print("Vídeo com transparência salvo como:", filename)
+
+def add_audio_to_video(video_path, audio_path, output_path):
+	subprocess.run([
+		"ffmpeg",
+		"-y",                      # overwrite if exists
+		"-i", video_path,
+		"-i", audio_path,
+		"-c:v", "copy",            # don't re-encode video
+		"-c:a", "aac",             # encode audio to AAC
+		"-shortest",               # stop when shortest stream ends
+		output_path
+	])
