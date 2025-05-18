@@ -12,7 +12,7 @@ def cyclic_polygon(angles, r=1, center=np.zeros(2)):
 	return [mat.polar_to_cartesian(r, x) + center for x in angles]
 
 def radar_polygon(radii, center=np.zeros(2)):
-	angles = np.arrange(0.0, math.pi * 2.0, math.pi * 2.0 / len(radii))
+	angles = np.arange(0.0, math.pi * 2.0, math.pi * 2.0 / len(radii))
 	return [mat.polar_to_cartesian(r, theta) + center for r, theta in zip(radii, angles)]
 
 class circle():
