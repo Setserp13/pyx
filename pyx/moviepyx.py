@@ -32,7 +32,25 @@ def remove_silence(video, silence_threshold=-60, min_silence_len=1500):
 		clips.append(clip)
 	return concatenate_videoclips(clips)
 
+def repeat_clip(clip, duration):
+	clip_duration = clip.duration
+	if clip_duration > duration:
+		return clip.subclip(0, duration)
+	elif clip_duration == duration:
+		return clip
+	else:
+		repeats = int(duration // clip_duration)
+		remainder = duration % clip_duration
+		clips = [clip] * repeats
+		if remainder > 0:
+			clips.append(clip.subclip(0, remainder))
+		return concatenate_videoclips(clips, method="compose")
 
+def overlay_videoclips(clips, duration=None):
+	duration = max([x.duration for x in clips]) if duration is None else duration
+	return CompositeVideoClip([x.set_start(0) for x in clips]).subclip(0, duration)
+
+def add_audio_to_video(video, audio): return video.set_audio(audio.subclip(0, video.duration))
 
 
 
