@@ -34,4 +34,4 @@ def lines(img, args, color=(255,255,255,255), thickness=1):
 	return img
 
 def polyline(img, p, closed=True, color=(255,255,255,255), thickness=-1):
-	return lines(img, polyline.edges(p, closed=closed, color=color, thickness=thickness)
+	return lines(img, polyline.edges(p, closed=closed), color=color, thickness=thickness)
