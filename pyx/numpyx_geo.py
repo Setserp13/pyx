@@ -356,4 +356,10 @@ def randomize2(vertices, r=.1): return [mat.random_in_circle(r) + x for x in ver
 def randomize3(vertices, r=.1): return [npx.random_in_sphere(r) + x for x in vertices]
 
 
-
+def bars(values, offset = np.zeros(2), width=1, axis=0, align=0):
+	result = []
+	for i, y in enumerate(values):
+		min = offset + np.array([i * width, -y * align])[[axis, 1 - axis]] #swizzle
+		size = np.array([width, y])[[axis, 1 - axis]]
+		result.append(npx.rect(min, size))
+	return result
