@@ -152,16 +152,18 @@ class rect:
 
 	def __sub__(self, vector): return rect(self.min - vector, self.size)
 
-def rect2(x, y, width, height): return rect(np.array([x, y]), np.array([width, height]))
+class rect2(rect):
+	def __init__(self, x, y, width, height):
+		super().__init__(np.array([x, y]), np.array([width, height]))
+
+	def bottom_left(rect): return rect.denormalize_point(np.array([0, 0]))
+	def bottom_right(rect): return rect.denormalize_point(np.array([0, 1]))
+	def top_left(rect): return rect.denormalize_point(np.array([1, 0]))
+	def top_right(rect): return rect.denormalize_point(np.array([1, 1]))
+	def corners(rect): return [bottom_left(rect), top_left(rect), top_right(rect), bottom_right(rect)]
+	def area(rect): return rect.size[0] * rect.size[1]
 
 def rect3(x, y, z, width, height, depth): return rect(np.array([x, y, z]), np.array([width, height, depth]))
-
-def bottom_left(rect): return rect.denormalize_point(np.array([0, 0]))
-def bottom_right(rect): return rect.denormalize_point(np.array([0, 1]))
-def top_left(rect): return rect.denormalize_point(np.array([1, 0]))
-def top_right(rect): return rect.denormalize_point(np.array([1, 1]))
-def corners(rect): return [bottom_left(rect), top_left(rect), top_right(rect), bottom_right(rect)]
-def area(rect): return rect.size[0] * rect.size[1]
 
 class grid:
 	def __init__(self, cell_size, offset=None, cell_gap=None):
