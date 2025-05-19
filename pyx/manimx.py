@@ -152,7 +152,7 @@ def MathRes(scene, equations, transition=.1, wait=0, first=None, method=Transfor
 	if first == None:
 		first = equations[0]
 		start_index = 1
-		scene.play(Write(first))
+		scene.play(Write(first), run_time=transition)
 	for i in range(start_index, len(equations)):
 		#print(equations[i])
 		scene.play(method(first, equations[i]), run_time=transition)
