@@ -236,7 +236,8 @@ class MyScene():	#that's a wrapper
 		try:
 			self.scene.render()
 			self.audio_track.audio.export(audio_path, format="wav")
-			mpx.merge_av(audio_path, fr'media\videos\{config.pixel_height}p{config.frame_rate}\Scene.mp4', f'{self.title}.mp4')
+			ext = 'mov' if config.transparent else 'mp4'
+			mpx.merge_av(audio_path, fr'media\videos\{config.pixel_height}p{config.frame_rate}\Scene.{ext}', f'{self.title}.mp4')
 		finally:
 			if os.path.exists(audio_path):
 				os.remove(audio_path)
