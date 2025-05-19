@@ -225,7 +225,7 @@ class polyline:
 		return sum([np.linalg.norm(x[0] - x[1]) for x in polyline.edges(vertices, closed=closed)])
 	
 	def point_from_proportion(t, vertices, closed=True):
-		p = perimeter(vertices, closed=closed)
+		p = polyline.perimeter(vertices, closed=closed)
 		a = 0.0
 		for x in polyline.edges(vertices, closed=closed):
 			b = a + np.linalg.norm(x[0] - x[1]) / p
