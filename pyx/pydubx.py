@@ -41,6 +41,11 @@ class AudioChunks():
 	def audio(self):
 		result = AudioSegment.silent(0)
 		for x in self.items:
-			result = overlay([result, AudioSegment.silent(int(1000 * x[0])) + x[1]])
+			start_ms = int(1000 * x[0])
+			end_ms = start_ms + len(x[1])
+			if end_ms > len(result):
+				result += AudioSegment.silent(end_ms - len(result))
+			result = result.overlay(x[1], position=start_ms)
+			#result = overlay([result, AudioSegment.silent(int(1000 * x[0])) + x[1]])
 		return result
 		#return overlay([AudioSegment.silent(int(1000 * x[0])) + x[1] for x in self.items])
