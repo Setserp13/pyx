@@ -39,4 +39,8 @@ class AudioChunks():
 
 	@property
 	def audio(self):
-		return overlay([AudioSegment.silent(int(1000 * x[0])) + x[1] for x in self.items])
+		result = AudioSegment.silent(0)
+		for x in self.items:
+			result += AudioSegment.silent(int(1000 * x[0])) + x[1]
+		return result
+		#return overlay([AudioSegment.silent(int(1000 * x[0])) + x[1] for x in self.items])
