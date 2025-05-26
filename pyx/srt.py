@@ -77,10 +77,10 @@ class TimeRange():
 		self.end = Time(end)
 
 	@end.setter
-	def end(value): self.duration = Time(value - self.start)
+	def end(self, value): self.duration = Time(value - self.start)
 
 	@property
-	def end(): return Time(self.start + self.duration)
+	def end(self): return Time(self.start + self.duration)
 	#@property
 	#def duration(self): return Time(self.end - self.start)
 
