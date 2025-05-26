@@ -128,6 +128,7 @@ def writejson(file, content, encoding='utf-8', ensure_ascii=False, indent='\t'):
 def mkdirs(path):
 	dirname = os.path.dirname(path)
 	os.makedirs(os.sep if dirname == '' else dirname, exist_ok=True)
+	return path
 #Makes all missing directories in the path
 
 def split(path): return path.split(os.sep)
