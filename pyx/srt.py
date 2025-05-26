@@ -74,7 +74,8 @@ class Time(float):
 class TimeRange():
 	def __init__(self, start, end):
 		self.start = Time(start)
-		self.end = Time(end)
+		self.duration = Time(end - start)
+		#self.end = Time(end)
 
 	@end.setter
 	def end(self, value): self.duration = Time(value - self.start)
