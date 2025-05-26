@@ -7,6 +7,10 @@ def root(path): return os.path.splitext(path)[0]
 def filename(path): return os.path.splitext(os.path.basename(path))[0]
 def wd(__file__): return os.path.dirname(os.path.abspath(__file__))
 
+def affix(path, prefix='', suffix=''):
+	basename = prefix + filename(path) + suffix + ext(path)
+	return os.path.join(os.path.dirname(path), basename)
+
 # Clear the console output
 def clear(): os.system('cls' if os.name == 'nt' else 'clear')
 
