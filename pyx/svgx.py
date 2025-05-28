@@ -209,6 +209,8 @@ def polyline(*points, **kwargs): return etree.Element("polyline", points=" ".joi
 
 def rect(x, y, width, height, **kwargs): return etree.Element("rect", x=str(x), y=str(y), width=str(width), height=str(height), **kwargs)
 
+def line(x1, y1, x2, y2, **kwargs): return etree.Element("line", x1=str(x1), y1=str(y1), x2=str(x2), y2=str(y2), **kwargs)
+
 def g(*args):
 	result = etree.Element("g")
 	for x in args:
