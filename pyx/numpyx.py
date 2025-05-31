@@ -17,7 +17,7 @@ def clamp(point, min, max): return np.minimum(np.maximum(point, min), max)
 def lerp(a, b, t): return a * (1 - t) + b * t
 
 @dispatch(np.ndarray, np.ndarray)
-def random_range(start, stop): return np.array(map(lambda x, y: random_range(x, y), start, stop))
+def random_range(start, stop): return np.array(list(map(lambda x, y: random_range(x, y), start, stop)))
 
 def on_circle(n, r=1.0, center=np.zeros(2), start=0.0):	#regular polygon
 	return [polar_to_cartesian(r, start + 2.0 * math.pi * (i / n)) + center for i in range(n)]
