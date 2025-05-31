@@ -16,6 +16,8 @@ def clamp(point, min, max): return np.minimum(np.maximum(point, min), max)
 
 def lerp(a, b, t): return a * (1 - t) + b * t
 
+@dispatch(np.ndarray, np.ndarray)
+def random_range(start, stop): return np.array(map(lambda x, y: random_range(x, y), start, stop))
 
 def on_circle(n, r=1.0, center=np.zeros(2), start=0.0):	#regular polygon
 	return [polar_to_cartesian(r, start + 2.0 * math.pi * (i / n)) + center for i in range(n)]
@@ -104,6 +106,8 @@ class rect:
 			obj_pivot = np.full(len(obj_size), 0.5)
 		return self.padding(obj_size * obj_pivot, obj_size * (1 - obj_pivot))
 
+	def random_point(self): return random_range(self.min, self.max)
+		
 	def axis_intersection(a, b, axis=0):
 		start = max(a.min[axis], b.min[axis])
 		stop = min(a.max[axis], b.max[axis])
