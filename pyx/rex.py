@@ -21,9 +21,11 @@ def to_label_track(string):
 	result = [[float(x[0]), float(x[1])] + x[2:] for x in result]
 	for i in range(len(result)):
 		#print(i)
-		if i < len(result) - 1:
-			if result[i][0] == result[i][1]:
+		if result[i][0] == result[i][1]:
+			if i < len(result) - 1:
 				result[i][1] = result[i+1][0]
+			else:
+				result = result[:len(result) - 1]
 	return result
 
 """def to_label_track(string):
