@@ -1,6 +1,15 @@
 import ast
 from lxml import etree
 
+def create_element(tag, text='', tail='', parent=None, children=[], **kwargs):
+	result = etree.Element(tag, **kwargs)
+	if parent is not None:
+		parent.append(result)
+	result.text = text
+	result.tail = tail
+	result.extend(children)
+	return result
+
 def create_child(parent, tag, **kwargs):
 	result = etree.Element(tag, **kwargs)
 	parent.append(result)
