@@ -242,6 +242,25 @@ class polyline:
 			result.append(vertices[-1])
 		return result
 
+	def incident_edges(vertices, vertex, closed=True): #vertex is an index
+		edges = [List.arange(vertices, 2, start=vertex - 1), List.arange(vertices, 2, start=vertex)]
+		if not closed:
+			if vertex == 0:
+				return edges[1:]
+			elif vertex == len(vertices) - 1:
+				return edges[:-1]
+		return edges
+
+	def normal(edge, outward=True):
+		v = edge[1] - edge[0]
+		normal = np.array([v[1], -v[0]]) if outward else np.array([-v[1], v[0]])
+		return npx.normalize(normal)
+	
+	def normals(vertices, outward=True, closed=True): return [normal(x, outward=outward) for x in polyline.edges(vertices, closed)]
+	
+	def vertex_normals(vertices, outward=True, closed=True):
+		return [npx.normalize(np.sum([normal(x) for x in incident_edges(vertices, i, closed=closed)], axis=0)) for i in range(len(vertices))]
+
 
 class polygon:
 	def a(n, R=1): return R * math.cos(math.pi/n)	#apothem
