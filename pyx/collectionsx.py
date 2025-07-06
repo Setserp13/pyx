@@ -9,6 +9,11 @@ class Dict:
 class List:
 	def items(arr, indices): return [arr[x] for x in indices if x in range(len(arr))] #also works with dict
 	def get(arr, index, dflt_value=None): return arr[index] if index in range(len(arr)) else dflt_value
+
+	#Return a k-cycle
+	def arange(ls, k, start=0): return [ls[(start + i) % len(ls)] for i in range(k)]
+
+	def aranges(ls, k, cycle=True): return [List.arange(ls, k, i) for i in range(len(ls) - (0 if cycle else k))]
 	
 
 def get_random(ls, count):
