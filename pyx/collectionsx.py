@@ -13,7 +13,7 @@ class List:
 	#Return a k-cycle
 	def arange(ls, k, start=0): return [ls[(start + i) % len(ls)] for i in range(k)]
 
-	def aranges(ls, k, cycle=True): return [List.arange(ls, k, i) for i in range(len(ls) - (0 if cycle else k))]
+	def aranges(ls, k, cycle=True): return [List.arange(ls, k, i) for i in range(len(ls) - (0 if cycle else (k - 1)))]
 	
 
 def get_random(ls, count):
