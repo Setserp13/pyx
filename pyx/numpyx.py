@@ -13,6 +13,12 @@ def fill(obj, length, filler=0):
 
 def clamp(point, min, max): return np.minimum(np.maximum(point, min), max)
 
+def clamp_magnitude(vector, max_magnitude):
+	current_magnitude = np.linalg.norm(vector)
+	if current_magnitude > max_magnitude:
+		vector = (vector / current_magnitude) * max_magnitude
+    	return vector
+
 def lerp(a, b, t): return a * (1 - t) + b * t
 
 def subdivide(a, b, n):
