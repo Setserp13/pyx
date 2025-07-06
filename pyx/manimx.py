@@ -147,17 +147,25 @@ def MathSeries(terms, operation='+'):
 	terms = [str(x) for x in terms]
 	return [MathTex(operation.join(terms[:i+1])) for i in range(len(terms))]
 
-def MathRes(scene, equations, transition=.1, wait=0, first=None, method=Transform):#TransformMatchingTex):
+def TransformChain(scene, mobs, transition=.1, wait=None, first=None, transform=Transform, create=Create, keep_position=True):
 	start_index = 0
-	if first == None:
-		first = equations[0]
+	if first is None:
+		first = mobs[0]
 		start_index = 1
-		scene.play(Write(first), run_time=transition)
-	for i in range(start_index, len(equations)):
-		#print(equations[i])
-		scene.play(method(first, equations[i]), run_time=transition)
-		scene.wait(wait)
+		if create is not None:
+			scene.play(create(first), run_time=transition)
+	for x in mobs[start_index:]:
+		if keep_position:
+			x.move_to(first.get_center())
+		#print(x)
+		scene.play(transform(first, x), run_time=transition)
+		if wait is not None:
+			scene.wait(wait)
 	return first
+
+def HighlightStroke(mob):
+	#return Succession(FadeIn(mob.set_stroke(width = 8)), mob.animate.set_stroke(width = 4))
+	return AnimationGroup(FadeIn(mob.set_stroke(width = 16)), mob.animate.set_stroke(width = 4))
 
 class RadarChart(Group, radar_chart):
 	def __init__(self, axis_count, step_count, radius, color=WHITE, *mobjects, **kwargs):
