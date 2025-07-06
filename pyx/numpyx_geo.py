@@ -219,9 +219,7 @@ class Mesh():
 
 
 class polyline:
-	def edges(p, closed=True):
-		return List.aranges(p, 2, cycle=closed)
-		#return [[p[i], p[(i+1)%len(p)]] for i in range(len(p) - (0 if closed else 1))]
+	def edges(p, closed=True): return List.aranges(p, 2, cycle=closed)
 
 	def perimeter(vertices, closed=True):
 		return sum([np.linalg.norm(x[0] - x[1]) for x in polyline.edges(vertices, closed=closed)])
