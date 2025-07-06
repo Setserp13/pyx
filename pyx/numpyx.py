@@ -317,6 +317,17 @@ def rotate_2d(v, theta): #theta is in radians
 	return np.array([x * c - y * s, x * s + y * c])
 
 
+def random_on_arc(r, start_angle, stop_angle): return polar_to_cartesian(r, random.uniform(start_angle, stop_angle))
+def random_in_arc(r, start_angle, stop_angle): return random_on_arc(random.uniform(0, r), start_angle, stop_angle)
+def random_on_circle(r): return random_on_arc(r, 0, 2 * math.pi)
+def random_in_annulus(r, R): return random_on_circle(random.uniform(r, R))
+def random_in_circle(r): return random_in_annulus(0, r)
+
+
+def polar_to_cartesian(r, theta): return np.array([r * math.cos(theta), r * math.sin(theta)])
+def cartesian_to_polar(x, y): return np.array([math.sqrt(x**2 + y**2), math.atan2(y, x)])
+
+
 def cartesian_to_spherical(x, y, z):
 	r = np.sqrt(x**2 + y**2 + z**2)
 	theta = np.arccos(z / r) if r != 0 else 0  # Inclinação
