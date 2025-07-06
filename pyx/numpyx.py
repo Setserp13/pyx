@@ -2,7 +2,6 @@ import math
 from multipledispatch import dispatch
 from numbers import Number
 import numpy as np
-from pyx.mat.mat import polar_to_cartesian
 import itertools
 from pyx.collectionsx import List as ls
 import random
