@@ -16,6 +16,16 @@ def clamp(point, min, max): return np.minimum(np.maximum(point, min), max)
 
 def lerp(a, b, t): return a * (1 - t) + b * t
 
+def subdivide(a, b, n):
+	if n == 1:
+		return [a]
+	return [lerp(a, b, i / (n - 1)) for i in range(n)]
+
+def linear_layout(n, offset=np.zeros(3), cell_size=np.ones(3), align=0.5):
+	size = cell_size * (n - 1)
+	offset -= size * align
+	return subdivide(offset, offset + size, n)
+
 @dispatch(np.ndarray, np.ndarray)
 def random_range(start, stop): return np.array(list(map(lambda x, y: random_range(x, y), start, stop)))
 
