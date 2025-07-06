@@ -261,13 +261,17 @@ class polyline:
 	def vertex_normals(vertices, outward=True, closed=True):
 		return [npx.normalize(np.sum([polyline.normal(x) for x in polyline.incident_edges(vertices, i, closed=closed)], axis=0)) for i in range(len(vertices))]
 
+	def internal_angle_sum(n): return math.pi * (n - 2)
 
+		
 class polygon:
 	def a(n, R=1): return R * math.cos(math.pi/n)	#apothem
 
 	def R(n, a=1): return a / math.cos(math.pi/n)
 
 	def s(n, R=1): return 2 * R * math.sin(math.pi/n)
+
+	def internal_angle(n): return polyline.internal_angle_sum(n) / n
 
 def prism_laterals(count, start_index1=0, start_index2=None): #closed
 	start_index2 = start_index1 + count if start_index2 is None else start_index2
