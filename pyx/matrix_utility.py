@@ -16,7 +16,7 @@ def map(matrix, func):
 	for i in range(len(matrix)):
 		row = []
 		for j in range(len(matrix[i])):
-			row.append(call(func, matrix[i][j]))
+			row.append(call(func, matrix[i][j], i, j))
 		result.append(row)
 	return result
 
