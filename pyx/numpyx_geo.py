@@ -253,13 +253,13 @@ class polyline:
 
 	def normal(edge, outward=True):
 		v = edge[1] - edge[0]
-		normal = np.array([v[1], -v[0]]) if outward else np.array([-v[1], v[0]])
-		return npx.normalize(normal)
+		result = np.array([v[1], -v[0]]) if outward else np.array([-v[1], v[0]])
+		return npx.normalize(result)
 	
-	def normals(vertices, outward=True, closed=True): return [normal(x, outward=outward) for x in polyline.edges(vertices, closed)]
+	def normals(vertices, outward=True, closed=True): return [polyline.normal(x, outward=outward) for x in polyline.edges(vertices, closed)]
 	
 	def vertex_normals(vertices, outward=True, closed=True):
-		return [npx.normalize(np.sum([normal(x) for x in incident_edges(vertices, i, closed=closed)], axis=0)) for i in range(len(vertices))]
+		return [npx.normalize(np.sum([polyline.normal(x) for x in polyline.incident_edges(vertices, i, closed=closed)], axis=0)) for i in range(len(vertices))]
 
 
 class polygon:
