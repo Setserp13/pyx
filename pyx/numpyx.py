@@ -17,7 +17,7 @@ def clamp_magnitude(vector, max_magnitude):
 	current_magnitude = np.linalg.norm(vector)
 	if current_magnitude > max_magnitude:
 		vector = (vector / current_magnitude) * max_magnitude
-    	return vector
+	return vector
 
 def lerp(a, b, t): return a * (1 - t) + b * t
 
