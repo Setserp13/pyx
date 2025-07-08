@@ -221,8 +221,13 @@ class Mesh():
 class polyline:
 	def edges(p, closed=True): return List.aranges(p, 2, cycle=closed)
 
-	def perimeter(vertices, closed=True):
-		return sum([np.linalg.norm(x[0] - x[1]) for x in polyline.edges(vertices, closed=closed)])
+	def lengths(vertices, closed=True):
+		return [np.linalg.norm(x[0] - x[1]) for x in polyline.edges(vertices, closed=closed)]
+	
+	def perimeter(vertices, closed=True): return sum(lengths(vertices, closed=closed))
+
+	def midpoints(vertices, closed=True):
+		return [np.mean(x, axis = 0) for x in polyline.edges(vertices, closed=closed)]
 	
 	def point_from_proportion(t, vertices, closed=True):
 		p = polyline.perimeter(vertices, closed=closed)
