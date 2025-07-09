@@ -268,6 +268,14 @@ class polyline:
 
 	def internal_angle_sum(n): return math.pi * (n - 2)
 
+	def perpendicular_bisector(edge):
+		mid = np.mean(edge, axis=0)
+		return [mid, mid + polyline.normal(edge, outward=False)]
+
+	def perpendicular_bisectors(vertices, closed=True):
+		return [polyline.perpendicular_bisector(x) for x in polyline.edges(vertices, closed=closed)]
+
+	def centroid(vertices): return np.mean(vertices, axis = 0)
 		
 class polygon:
 	def a(n, R=1): return R * math.cos(math.pi/n)	#apothem
