@@ -318,7 +318,7 @@ class triangle:
 		return result
 
 	def medians(vertices):
-		return zip(vertices, lshift(polyline.midpoints(vertices, closed=True)))
+		return list(zip(vertices, lshift(polyline.midpoints(vertices, closed=True))))
 	
 	def incenter(vertices):
 		A, B, C = vertices
