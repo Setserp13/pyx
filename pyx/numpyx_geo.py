@@ -275,6 +275,15 @@ class polyline:
 	def perpendicular_bisectors(vertices, closed=True):
 		return [polyline.perpendicular_bisector(x) for x in polyline.edges(vertices, closed=closed)]
 
+	def circumcenter(vertices):
+		m1, v1 = polyline.perpendicular_bisector(vertices[:2])
+		m2, v2 = polyline.perpendicular_bisector(vertices[1:3])
+	
+		A_mat = np.array([v1, -v2]).T
+		b_vec = m2 - m1
+		t = np.linalg.solve(A_mat, b_vec)
+		return m1 + t[0] * v1
+
 	def centroid(vertices): return np.mean(vertices, axis = 0)
 		
 class polygon:
@@ -285,6 +294,57 @@ class polygon:
 	def s(n, R=1): return 2 * R * math.sin(math.pi/n)
 
 	def internal_angle(n): return polyline.internal_angle_sum(n) / n
+
+
+class triangle:
+	def angle_bisectors(vertices):
+		result = []
+		for i in range(3):
+			A, B, C = List.arange(vertices, 3, i)
+			b = np.linalg.norm(C - A)
+			c = np.linalg.norm(A - B)
+			P = (B * b + C * c) / (b + c)
+			result.append([A, P])
+		return result
+	
+	def altitudes(vertices):
+		result = []
+		for i in range(3):
+			P, A, B = List.arange(vertices, 3, i)
+			AB = B - A
+			t = np.dot(P - A, AB) / np.dot(AB, AB)
+			foot = A + t * AB
+			result.append([P, foot])
+		return result
+
+	def medians(vertices):
+		return zip(vertices, lshift(polyline.midpoints(vertices, closed=True)))
+	
+	def incenter(vertices):
+		A, B, C = vertices
+		c, a, b = polyline.lengths(vertices, closed=True)
+		P = a + b + c
+		return (a*A + b*B + c*C) / P
+	
+
+
+	def orthocenter(vertices):
+		A, B, C = vertices
+		def altitude_line(p_vertex, p1, p2):
+			edge_vec = p2 - p1
+			perp_vec = np.array([-edge_vec[1], edge_vec[0]])
+			return p_vertex, perp_vec
+	
+		h1, d1 = altitude_line(A, B, C)
+		h2, d2 = altitude_line(B, A, C)
+	
+		A_mat = np.array([d1, -d2]).T
+		b_vec = h2 - h1
+		t = np.linalg.solve(A_mat, b_vec)
+		return h1 + t[0] * d1
+
+
+
 
 def prism_laterals(count, start_index1=0, start_index2=None): #closed
 	start_index2 = start_index1 + count if start_index2 is None else start_index2
