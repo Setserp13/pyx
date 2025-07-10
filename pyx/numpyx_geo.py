@@ -280,14 +280,15 @@ class polyline:
 	def perpendicular_bisectors(vertices, closed=True):
 		return [polyline.perpendicular_bisector(x) for x in polyline.edges(vertices, closed=closed)]
 
-	def circumcenter(vertices):
-		m1, v1 = polyline.perpendicular_bisector(vertices[:2])
+	def circumcenter(vertices, closed=True):
+		return mat.line_line_intersection(*perpendicular_bisectors(vertices, closed=closed)[:2])
+		"""m1, v1 = polyline.perpendicular_bisector(vertices[:2])
 		m2, v2 = polyline.perpendicular_bisector(vertices[1:3])
 	
 		A_mat = np.array([v1, -v2]).T
 		b_vec = m2 - m1
 		t = np.linalg.solve(A_mat, b_vec)
-		return m1 + t[0] * v1
+		return m1 + t[0] * v1"""
 
 	def centroid(vertices): return np.mean(vertices, axis = 0)
 		
