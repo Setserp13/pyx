@@ -281,7 +281,7 @@ class polyline:
 		return [polyline.perpendicular_bisector(x) for x in polyline.edges(vertices, closed=closed)]
 
 	def circumcenter(vertices, closed=True):
-		return mat.line_line_intersection(*perpendicular_bisectors(vertices, closed=closed)[:2])
+		return mat.line_line_intersection(*polyline.perpendicular_bisectors(vertices, closed=closed)[:2])
 		"""m1, v1 = polyline.perpendicular_bisector(vertices[:2])
 		m2, v2 = polyline.perpendicular_bisector(vertices[1:3])
 	
