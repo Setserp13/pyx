@@ -299,8 +299,7 @@ class polyline:
 	def segment_intersection(vertices, seg, closed=True): return [mat.segment_segment_intersection(x, seg) for x in polyline.edges(vertices, closed=closed)]
 
 	def contains_point(vertices, point):
-		n = len(vertices[0])
-		return len(polyline.ray_intersection(vertices, [np.zeros(n), np.ones(n)], closed=True)) % 2 == 1
+		return len(polyline.ray_intersection(vertices, [np.centroid(vertices), vertices[0]], closed=True)) % 2 == 1
 
 class polygon:
 	def a(n, R=1): return R * math.cos(math.pi/n)	#apothem
