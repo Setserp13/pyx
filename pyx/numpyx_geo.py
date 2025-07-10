@@ -55,6 +55,11 @@ class line():
 	@property #in XY-plane
 	def normal(self): return np.array([-self.direction[1], self.direction[0]] + list(self.direction[2:]))
 
+def point_on_line(line, point, tol=1e-8): #tol: tolerância numérica
+	line_vec = line[1] - line[0]
+	test_vec = point - line[0]
+	cross = np.cross(line_vec, test_vec)
+	return np.abs(cross) < tol
 
 class chord(line):
 	def __init__(self, start, end, theta):
