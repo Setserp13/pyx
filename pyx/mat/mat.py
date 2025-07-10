@@ -141,24 +141,6 @@ def slope(line):
 	delta = line[1] - line[0]
 	return delta[1] / delta[0] if delta[0] != 0 else float('inf')  # Avoid division by zero
 
-"""def line_line_intersection(line1, line2):
-    # Unpack the lines
-    (x1, y1), (x2, y2) = line1
-    (x3, y3), (x4, y4) = line2
-    
-    # Calculate slopes (m)
-    m1 = slope(line1)
-    m2 = slope(line2)
-    
-    # Check if lines are parallel
-    if m1 == m2:
-        return None  # No intersection, parallel lines
-    print(m1, m2)
-    # Calculate intersection point
-    x = (m1*x1 - m2*x3 + y3 - y1) / (m1 - m2)
-    y = m1 * (x - x1) + y1
-    
-    return x, y"""
 
 def line_line_intersection(line1, line2):
 	(x1, y1), (x2, y2) = line1
@@ -185,12 +167,52 @@ def line_line_intersection(line1, line2):
 
 	return x, y
 
-def line_segment_intersection(line, segment):
+def colinear_point_on_ray(ray, pt):
+	return np.dot(ray[1] - ray[0], pt - ray[0]) >= 0:	# Checa se projeta no mesmo sentido
+
+def colinear_point_on_segment(seg, pt):	# Checa se ponto está no segmento (entre A e B)
+	AB = seg[1] - seg[0]
+	AP = pt - seg[0]
+	dot1 = np.dot(AB, AP)
+	dot2 = np.dot(AB, AB)
+	return 0 <= dot1 <= dot2
+	
+def line_ray_intersection(line, ray):
+	pt = line_line_intersection(line, ray)	# Calcula interseção
+	if pt is None:
+		return None
+	return pt if colinear_point_on_ray(ray, pt) else None
+
+def line_segment_intersection(line, seg):
+	pt = line_line_intersection(line, seg)	# Calcula interseção
+	if pt is None:
+		return None
+	return pt if colinear_point_on_segment(seg, pt) else None
+
+def ray_ray_intersection(ray1, ray2):
+	pt = line_line_intersection(ray1, ray2)	# Calcula interseção
+	if pt is None:
+		return None
+	return pt if colinear_point_on_ray(ray1, pt) and colinear_point_on_ray(ray2, pt) else None
+
+def ray_segment_intersection(ray, seg):
+	pt = line_line_intersection(ray, seg)	# Calcula interseção
+	if pt is None:
+		return None
+	return pt if colinear_point_on_ray(ray, pt) and colinear_point_on_segment(seg, pt) else None
+
+def segment_segment_intersection(seg1, seg2):
+	pt = line_line_intersection(seg1, seg2)	# Calcula interseção
+	if pt is None:
+		return None
+	return pt if colinear_point_on_segment(seg1, pt) and colinear_point_on_segment(seg2, pt) else None
+
+"""def line_segment_intersection(line, segment):
 	point = line_line_intersection(line, segment)
 	if point == None: return None
 	t = inverse_lerp(segment[0], segment[1], point)
 	if t < 0 or t > 1: return None
-	return point
+	return point"""
 
 """def random_in_circle(radius, center):
 	vector = polar_to_cartesian(random_range(0.0, radius), random_range(0.0, 2.0 * math.pi))
