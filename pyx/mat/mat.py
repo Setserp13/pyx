@@ -141,7 +141,7 @@ def slope(line):
 	delta = line[1] - line[0]
 	return delta[1] / delta[0] if delta[0] != 0 else float('inf')  # Avoid division by zero
 
-def line_line_intersection(line1, line2):
+"""def line_line_intersection(line1, line2):
     # Unpack the lines
     (x1, y1), (x2, y2) = line1
     (x3, y3), (x4, y4) = line2
@@ -158,8 +158,32 @@ def line_line_intersection(line1, line2):
     x = (m1*x1 - m2*x3 + y3 - y1) / (m1 - m2)
     y = m1 * (x - x1) + y1
     
-    return x, y
+    return x, y"""
 
+def line_line_intersection(line1, line2):
+	(x1, y1), (x2, y2) = line1
+	(x3, y3), (x4, y4) = line2
+
+	# Coeficientes da equação geral da reta: Ax + By + C = 0
+	A1 = y2 - y1
+	B1 = x1 - x2
+	C1 = x2 * y1 - x1 * y2
+
+	A2 = y4 - y3
+	B2 = x3 - x4
+	C2 = x4 * y3 - x3 * y4
+
+	# Determinante
+	det = A1 * B2 - A2 * B1
+
+	if np.isclose(det, 0):
+		return None  # Retas paralelas ou coincidentes
+
+	# Fórmulas de Cramer
+	x = (B1 * C2 - B2 * C1) / det
+	y = (A2 * C1 - A1 * C2) / det
+
+	return x, y
 
 def line_segment_intersection(line, segment):
 	point = line_line_intersection(line, segment)
