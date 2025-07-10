@@ -177,14 +177,14 @@ def colinear_point_on_segment(seg, pt):	# Checa se ponto está no segmento (entr
 	dot2 = np.dot(AB, AB)
 	return 0 <= dot1 <= dot2
 	
-def line_ray_intersection(line, ray):
-	pt = line_line_intersection(line, ray)	# Calcula interseção
+def ray_line_intersection(ray, line):
+	pt = line_line_intersection(ray, line)	# Calcula interseção
 	if pt is None:
 		return None
 	return pt if colinear_point_on_ray(ray, pt) else None
 
-def line_segment_intersection(line, seg):
-	pt = line_line_intersection(line, seg)	# Calcula interseção
+def segment_line_intersection(seg, line):
+	pt = line_line_intersection(seg, line)	# Calcula interseção
 	if pt is None:
 		return None
 	return pt if colinear_point_on_segment(seg, pt) else None
@@ -195,8 +195,8 @@ def ray_ray_intersection(ray1, ray2):
 		return None
 	return pt if colinear_point_on_ray(ray1, pt) and colinear_point_on_ray(ray2, pt) else None
 
-def ray_segment_intersection(ray, seg):
-	pt = line_line_intersection(ray, seg)	# Calcula interseção
+def segment_ray_intersection(seg, ray):
+	pt = line_line_intersection(seg, ray)	# Calcula interseção
 	if pt is None:
 		return None
 	return pt if colinear_point_on_ray(ray, pt) and colinear_point_on_segment(seg, pt) else None
