@@ -153,7 +153,7 @@ def line_line_intersection(line1, line2):
     # Check if lines are parallel
     if m1 == m2:
         return None  # No intersection, parallel lines
-    
+    print(m1, m2)
     # Calculate intersection point
     x = (m1*x1 - m2*x3 + y3 - y1) / (m1 - m2)
     y = m1 * (x - x1) + y1
