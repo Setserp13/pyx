@@ -291,7 +291,13 @@ class polyline:
 		return m1 + t[0] * v1"""
 
 	def centroid(vertices): return np.mean(vertices, axis = 0)
-		
+
+	def line_intersection(vertices, line): return [mat.segment_line_intersection(x, line) for x in polyline.edges(vertices)]
+
+	def ray_intersection(vertices, ray): return [mat.segment_ray_intersection(x, ray) for x in polyline.edges(vertices)]
+
+	def segment_intersection(vertices, seg): return [mat.segment_segment_intersection(x, seg) for x in polyline.edges(vertices)]
+
 class polygon:
 	def a(n, R=1): return R * math.cos(math.pi/n)	#apothem
 
