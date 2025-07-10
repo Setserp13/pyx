@@ -137,7 +137,9 @@ def random_range(start, stop):
 def rangef(start, stop, step):
 	return [start + step * i for i in range(math.ceil((stop - start) / step))]
 
-
+def slope(line):
+	delta = line[1] - line[0]
+	return delta[1] / delta[0] if delta[0] != 0 else float('inf')  # Avoid division by zero
 
 def line_line_intersection(line1, line2):
     # Unpack the lines
@@ -145,8 +147,8 @@ def line_line_intersection(line1, line2):
     (x3, y3), (x4, y4) = line2
     
     # Calculate slopes (m)
-    m1 = (y2 - y1) / (x2 - x1) if x2 - x1 != 0 else float('inf')  # Avoid division by zero
-    m2 = (y4 - y3) / (x4 - x3) if x4 - x3 != 0 else float('inf')  # Avoid division by zero
+    m1 = slope(line1)
+    m2 = slope(line2)
     
     # Check if lines are parallel
     if m1 == m2:
