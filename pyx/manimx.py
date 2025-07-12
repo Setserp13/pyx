@@ -23,6 +23,11 @@ class ValueTrackers():
 
 	def move_to(self, k, v): return self.values[k].animate.move_to(v)
 
+def Lines(*args, **kwargs): return [Line(*x, **kwargs) for x in npx.fill(args, 3)]
+
+def Angle2(line1, line2, start_radius, radius_step, count, **kwargs):
+	return VGroup(*[Angle(line1, line2, radius=start_radius + radius_step * i, **kwargs) for i in range(count)])
+
 def draw_at(mobject, x, y, **kwargs): return mobject(**kwargs).move_to(RIGHT * x + UP * y)
 
 def cubic_beziergon(points): #cubic_composite_bezier
