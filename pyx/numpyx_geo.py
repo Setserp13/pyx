@@ -232,7 +232,9 @@ class polyline(list):
 
 	def angles(vertices): return [vertices.angle(i) for i in range(len(vertices))]
 	
-	def angle_size(vertices, index): return npx.angle(*vertices.angle(index))
+	def angle_size(vertices, index):
+		angle = vertices.angle(index)
+		return npx.angle(angle[0][1] - angle[0][0], angle[1][1] - angle[1][0])
 	
 	def lengths(vertices, closed=True):
 		return [np.linalg.norm(x[0] - x[1]) for x in polyline.edges(vertices, closed=closed)]
