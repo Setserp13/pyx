@@ -168,7 +168,7 @@ def line_line_intersection(line1, line2):
 	return x, y
 
 def colinear_point_on_ray(ray, pt):
-	return np.dot(ray[1] - ray[0], pt - ray[0]) >= 0:	# Checa se projeta no mesmo sentido
+	return np.dot(ray[1] - ray[0], pt - ray[0]) >= 0	# Checa se projeta no mesmo sentido
 
 def colinear_point_on_segment(seg, pt):	# Checa se ponto está no segmento (entre A e B)
 	AB = seg[1] - seg[0]
