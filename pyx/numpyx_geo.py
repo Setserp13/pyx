@@ -226,6 +226,14 @@ class Mesh():
 class polyline(list):
 	def edges(p, closed=True): return List.aranges(p, 2, cycle=closed)
 
+	def edge(vertices, index): return [vertices[index], vertices[(index + 1) % len(vertices)]]
+	
+	def angle(vertices, index): return [vertices.edge(index), list(reversed(vertices.edge((index - 1) % len(vertices))))]
+
+	#def angles(vertices): return [vertices.angle(i) for i in range(len(vertices))]
+	
+	def angle_size(vertices, index): return npx.angle(*vertices.angle(index))
+	
 	def lengths(vertices, closed=True):
 		return [np.linalg.norm(x[0] - x[1]) for x in polyline.edges(vertices, closed=closed)]
 	
