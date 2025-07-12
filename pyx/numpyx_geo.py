@@ -223,7 +223,7 @@ class Mesh():
 		self.translate(-self.bounds.denormalize_point(value))
 
 
-class polyline:
+class polyline(list):
 	def edges(p, closed=True): return List.aranges(p, 2, cycle=closed)
 
 	def lengths(vertices, closed=True):
@@ -311,7 +311,7 @@ class polygon:
 	def internal_angle(n): return polyline.internal_angle_sum(n) / n
 
 
-class triangle:
+class triangle(polyline):
 	def angle_bisectors(vertices):
 		result = []
 		for i in range(3):
