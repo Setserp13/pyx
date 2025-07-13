@@ -251,9 +251,9 @@ class polyline(list):
 	def edge(vertices, index): return [vertices[index], vertices[(index + 1) % len(vertices)]]
 	
 	#def angle(vertices, index): return [vertices.edge(index), list(reversed(vertices.edge((index - 1) % len(vertices))))]
-	def angle(vertices, index): return angle(List.arange(vertices, 3, start=index - 1))
+	def vertex_angle(vertices, index): return angle(List.arange(vertices, 3, start=index - 1))
 	
-	def angles(vertices): return [vertices.angle(i) for i in range(len(vertices))]
+	def vertex_angles(vertices): return [vertices.vertex_angle(i) for i in range(len(vertices))]
 	
 	"""def angle_size(vertices, index):
 		angle = vertices.angle(index)
