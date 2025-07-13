@@ -38,7 +38,7 @@ class arc(circle):
 		t = mat.clamp01(t)
 		return self.get_point(mat.lerp(self.start, self.end, t))
 
-class line():
+"""class line():
 	def __init__(self, start, end):
 		self.start = np.array(start)
 		self.end = np.array(end)
@@ -51,6 +51,22 @@ class line():
 
 	@property
 	def midpoint(self): return (self.start + self.end) * 0.5
+
+	@property #in XY-plane
+	def normal(self): return np.array([-self.direction[1], self.direction[0]] + list(self.direction[2:]))"""
+
+class line(list):
+	@property
+	def vector(self): return self[1] - self[0]
+	
+	@property
+	def length(self): return np.linalg.norm(self.vector)
+
+	@property
+	def direction(self): return npx.normalize(self.vector)
+
+	@property
+	def midpoint(self): return np.mean(self, axis=0)
 
 	@property #in XY-plane
 	def normal(self): return np.array([-self.direction[1], self.direction[0]] + list(self.direction[2:]))
@@ -222,19 +238,26 @@ class Mesh():
 	def pivot(self, value):	#pivot is normalized
 		self.translate(-self.bounds.denormalize_point(value))
 
+class angle(list):
+	def rays(self): return [line(self[1], self[0]), line(self[1], self[2])]
 
+	def vectors(self): return [x.vector for x in self.rays()]
+
+	def size(self): return npx.angle(*self.vectors())
+	
 class polyline(list):
 	def edges(p, closed=True): return List.aranges(p, 2, cycle=closed)
 
 	def edge(vertices, index): return [vertices[index], vertices[(index + 1) % len(vertices)]]
 	
-	def angle(vertices, index): return [vertices.edge(index), list(reversed(vertices.edge((index - 1) % len(vertices))))]
-
+	#def angle(vertices, index): return [vertices.edge(index), list(reversed(vertices.edge((index - 1) % len(vertices))))]
+	def angle(vertices, index): return angle(List.arange(vertices, 3, start=index - 1))
+	
 	def angles(vertices): return [vertices.angle(i) for i in range(len(vertices))]
 	
-	def angle_size(vertices, index):
+	"""def angle_size(vertices, index):
 		angle = vertices.angle(index)
-		return npx.angle(angle[0][1] - angle[0][0], angle[1][1] - angle[1][0])
+		return npx.angle(angle[0][1] - angle[0][0], angle[1][1] - angle[1][0])"""
 	
 	def lengths(vertices, closed=True):
 		return [np.linalg.norm(x[0] - x[1]) for x in polyline.edges(vertices, closed=closed)]
