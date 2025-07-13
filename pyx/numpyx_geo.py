@@ -239,7 +239,7 @@ class Mesh():
 		self.translate(-self.bounds.denormalize_point(value))
 
 class angle(list):
-	def rays(self): return [line([self[1], self[0]]), line([self[1], self[2]])]
+	def rays(self): return [line([self[1], self[2]]), line([self[1], self[0]])]
 
 	def vectors(self): return [x.vector for x in self.rays()]
 
