@@ -352,6 +352,87 @@ class polyline(list):
 	def contains_point(vertices, point):
 		return len(polyline.ray_intersection(vertices, [np.centroid(vertices), vertices[0]], closed=True)) % 2 == 1
 
+	def is_clockwise(polygon):
+		sum = 0
+		for i in range(len(polygon)):
+			x1, y1 = polygon[i]
+			x2, y2 = polygon[(i + 1) % len(polygon)]
+			sum += (x2 - x1) * (y2 + y1)
+		return sum > 0
+
+	def area(vertices):
+		area = 0.0
+		n = len(vertices)
+		for i in range(n):
+			x1, y1 = vertices[i]
+			x2, y2 = vertices[(i + 1) % n]
+			area += (x1 * y2 - x2 * y1)
+		return abs(area) * 0.5
+	
+	def contains_point(polygon, point):
+		x, y = point
+		inside = False
+		n = len(polygon)
+		for i in range(n):
+			x0, y0 = polygon[i]
+			x1, y1 = polygon[(i + 1) % n]
+			# Check if point is within y bounds of the edge and to the left of it
+			if (y0 > y) != (y1 > y):
+				x_intersect = (x1 - x0) * (y - y0) / (y1 - y0 + 1e-12) + x0
+				if x < x_intersect:
+					inside = not inside
+		return inside
+	
+	def triangulate(vertices):
+		n = len(vertices)
+		if n < 3:
+			return []
+	
+		indices = list(range(n))
+		if is_clockwise(vertices):
+			indices.reverse()
+	
+		triangles = []
+	
+		while len(indices) > 3:
+			found_ear = False
+			for i in range(len(indices)):
+				i0 = indices[i % len(indices)]
+				i1 = indices[(i + 1) % len(indices)]
+				i2 = indices[(i + 2) % len(indices)]
+	
+				triangle = polyline([vertices[i0], vertices[i1], vertices[i2]])
+	
+				if triangle.area() <= 0:
+					continue  # Not a convex corner
+	
+				# Check if any other point is inside triangle
+				ear_found = True
+				for j in indices:
+					if j in (i0, i1, i2):
+						continue
+					if triangle.contains_point(vertices[j]):
+						ear_found = False
+						break
+	
+				if ear_found:
+					triangles.append([i0, i1, i2])
+					del indices[(i + 1) % len(indices)]
+					found_ear = True
+					break
+	
+			if not found_ear:
+				# Possibly degenerate or self-intersecting
+				break
+	
+		triangles.append(indices)
+		return triangles
+
+
+
+
+
+
 class polygon:
 	def a(n, R=1): return R * math.cos(math.pi/n)	#apothem
 
