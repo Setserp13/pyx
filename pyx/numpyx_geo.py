@@ -320,7 +320,7 @@ class polyline(list):
 	def normals(vertices, outward=True, closed=True): return [polyline.normal(x, outward=outward) for x in polyline.edges(vertices, closed)]
 	
 	def vertex_normals(vertices, outward=True, closed=True):
-		return [npx.normalize(np.sum([polyline.normal(x, outward=outward, closed=closed) for x in polyline.incident_edges(vertices, i, closed=closed)], axis=0)) for i in range(len(vertices))]
+		return [npx.normalize(np.sum([polyline.normal(x, outward=outward) for x in polyline.incident_edges(vertices, i, closed=closed)], axis=0)) for i in range(len(vertices))]
 
 	def internal_angle_sum(n): return math.pi * (n - 2)
 
