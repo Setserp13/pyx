@@ -189,7 +189,7 @@ class Mesh():
 	def __init__(self, vertices=None, faces=None, uvs=None):
 		self.vertices = vertices.copy() if vertices else []
 		self.faces = faces.copy() if faces else []
-		self.uvs = uvs.copy() if faces else []
+		self.uvs = uvs.copy() if uvs else []
 
 	def get_face(self, i): return List.items(self.vertices, self.faces[i])
 
