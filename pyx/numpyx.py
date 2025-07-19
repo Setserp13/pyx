@@ -27,7 +27,7 @@ def subdivide(a, b, n):
 	return [lerp(a, b, i / (n - 1)) for i in range(n)]
 
 def linear_layout(n, offset=np.zeros(3), dir=np.array([1, 0, 0]), cell_size=1, align=0.5):
-	dir = npx.normalize(dir)
+	dir = normalize(dir)
 	size = cell_size * (n - 1)
 	offset = offset - size * align * dir
 	return subdivide(offset, offset + size * dir, n)
