@@ -180,6 +180,12 @@ class rect2(rect):
 	def bottom_right(rect): return rect.denormalize_point(np.array([0, 1]))
 	def top_left(rect): return rect.denormalize_point(np.array([1, 0]))
 	def top_right(rect): return rect.denormalize_point(np.array([1, 1]))
+
+	def left(rect): return [rect2.bottom_left(rect), rect2.top_left(rect)]
+	def right(rect): return [rect2.bottom_right(rect), rect2.top_right(rect)]
+	def bottom(rect): return [rect2.bottom_left(rect), rect2.bottom_right(rect)]
+	def top(rect): return [rect2.top_left(rect), rect2.top_right(rect)]
+
 	def corners(rect): return [rect2.bottom_left(rect), rect2.top_left(rect), rect2.top_right(rect), rect2.bottom_right(rect)]
 	def area(rect): return rect.size[0] * rect.size[1]
 	def cut(rect, t, axis=0, expand=0):
