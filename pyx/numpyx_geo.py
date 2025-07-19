@@ -186,9 +186,10 @@ class radar_chart:
 
 
 class Mesh():
-	def __init__(self, vertices=None, faces=None):
+	def __init__(self, vertices=None, faces=None, uvs=None):
 		self.vertices = vertices.copy() if vertices else []
 		self.faces = faces.copy() if faces else []
+		self.uvs = uvs.copy() if faces else []
 
 	def get_face(self, i): return List.items(self.vertices, self.faces[i])
 
@@ -196,21 +197,38 @@ class Mesh():
 
 	def to_obj(self, path):
 		lines = [f"v {x} {y} {z}" for x, y, z in self.vertices]
-		lines += [f"f {' '.join(str(i + 1) for i in face)}" for face in self.faces]
+		if self.uvs is not None:
+			lines += [f"vt {u} {v}" for u, v in self.uvs]
+			lines += ["f " + " ".join(f"{i+1}/{i+1}" for i in face) for face in self.faces]
+		else:
+			lines += [f"f {' '.join(str(i + 1) for i in face)}" for face in self.faces]
 		osx.write(path, '\n'.join(lines) + '\n')
 
-	def from_obj(self, path):
+	def from_obj(path):
+		vertices = []
+		uvs = []
+		faces = []
 		for line in osx.read(path).split('\n'):
 			if line.startswith('v '):
 				_, x, y, z = line.strip().split()
-				self.vertices.append([float(x), float(y), float(z)])
+				vertices.append([float(x), float(y), float(z)])
+			elif line.startswith('vt '):
+				_, u, v = line.strip().split()
+				uvs.append([float(u), float(v)])
 			elif line.startswith('f '):
 				parts = line.strip().split()[1:]
-				# Suporta faces tipo: f 1 2 3 ou f 1/1 2/2 3/3
-				face = [int(p.split('/')[0]) - 1 for p in parts]
-				self.faces.append(face)
-		return self
-
+				face = []
+				for p in parts:
+					tokens = p.split('/')
+					vertex_index = int(tokens[0]) - 1
+					face.append(vertex_index)
+					# Optional: If you want to store UV indices separately, you can do:
+					# if len(tokens) > 1 and tokens[1]:
+					#     uv_index = int(tokens[1]) - 1
+					#     self.face_uv_indices.append(uv_index)
+				faces.append(face)
+		return Mesh(vertices, faces, uvs)
+	
 	def add_face(self, *vertices):
 		start_index = len(self.vertices)
 		self.vertices.extend(vertices)
