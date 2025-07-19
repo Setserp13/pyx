@@ -44,9 +44,9 @@ class Node:
 					result.append(x)
 		return result
 
-	def appendChild(self, value): value.setParent(self)
+	def append(self, value): value.setParent(self)	#append a child
 
-	def removeChild(self, value): value.setParent(None)
+	def remove(self, value): value.setParent(None)	#remove a child
 
 	def isRoot(self): return self.parent == None
 
