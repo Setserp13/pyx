@@ -252,9 +252,16 @@ class Mesh():
 	@property
 	def pivot(self): return self.bounds.normalize_point(np.zeros(3))
 
-	@pivot.setter
-	def pivot(self, value):	#pivot is normalized
-		self.translate(-self.bounds.denormalize_point(value))
+	@pivot.setter	#pivot is normalized
+	def pivot(self, value): self.translate(-self.bounds.denormalize_point(value))
+
+	def merge(*args):
+		vertices = []
+		faces = []
+		for x in args:
+			faces += [[len(vertices) + z for z in y] for y in x.faces]
+			vertices += x.vertices
+		return Mesh(vertices, faces)
 
 class angle(list):
 	def rays(self): return [line([self[1], self[2]]), line([self[1], self[0]])]
