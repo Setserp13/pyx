@@ -197,7 +197,7 @@ class Mesh():
 
 	def to_obj(self, path):
 		lines = [f"v {x} {y} {z}" for x, y, z in self.vertices]
-		if self.uvs is not None:
+		if self.uvs is not None and len(self.uvs) > 0:
 			lines += [f"vt {u} {v}" for u, v in self.uvs]
 			lines += ["f " + " ".join(f"{i+1}/{i+1}" for i in face) for face in self.faces]
 		else:
