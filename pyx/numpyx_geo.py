@@ -389,7 +389,7 @@ class polyline(list):
 			return []
 	
 		indices = list(range(n))
-		if is_clockwise(vertices):
+		if polyline.is_clockwise(vertices):
 			indices.reverse()
 	
 		triangles = []
