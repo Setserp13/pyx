@@ -26,10 +26,11 @@ def subdivide(a, b, n):
 		return [a]
 	return [lerp(a, b, i / (n - 1)) for i in range(n)]
 
-def linear_layout(n, offset=np.zeros(3), cell_size=np.ones(3), align=0.5):
+def linear_layout(n, offset=np.zeros(3), dir=np.array([1, 0, 0]), cell_size=1, align=0.5):
+	dir = npx.normalize(dir)
 	size = cell_size * (n - 1)
-	offset -= size * align
-	return subdivide(offset, offset + size, n)
+	offset = offset - size * align * dir
+	return subdivide(offset, offset + size * dir, n)
 
 @dispatch(np.ndarray, np.ndarray)
 def random_range(start, stop): return np.array(list(map(lambda x, y: random_range(x, y), start, stop)))
