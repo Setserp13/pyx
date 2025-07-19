@@ -428,7 +428,13 @@ class polyline(list):
 		triangles.append(indices)
 		return triangles
 
-
+	def to_stroke(v, width=1, closed=False):
+		inward_normals = polyline.vertex_normals(v, outward=False, closed=closed)
+		outward_normals = polyline.vertex_normals(v, outward=True, closed=closed)
+		for i, x in enumerate(v):
+			inward_normals[i] = inward_normals[i] * width + x
+			outward_normals[i] = outward_normals[i] * width + x
+		return polyline(inward_normals + list(reversed(outward_normals)))
 
 
 
