@@ -358,3 +358,14 @@ def random_in_sphere(r): return random_on_sphere(random.uniform(0, r))
 def random_on_line(start, end): return lerp(start, end, random.uniform(0.0, 1.0))
 
 
+
+def find_indices(array, match, max_dim=None):
+	shape = array.shape if max_dim is None else array.shape[:max_dim]
+	result = []
+	for idx in itertools.product(*(range(s) for s in shape)):
+		# Expand idx with full slices for remaining dimensions
+		slicing = idx + (Ellipsis,)
+		value = array[slicing]
+		if match(value):
+			result.append(np.array(idx))
+	return result
