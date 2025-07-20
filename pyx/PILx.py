@@ -101,8 +101,8 @@ def best_fit(line, size, font, leading=0, max_font_size=300):
 def palette(image):
 	image = np.asarray(image)
 	pixels = image.reshape(-1, image.shape[-1])
-	return list({tuple(p) for p in pixels})
-
+	#return list({tuple(p) for p in pixels})
+	return np.unique(pixels, axis=0)
 
 
 
