@@ -605,7 +605,7 @@ class bezier:
 		return get_point(t, *derivative_points)
 
 
-def randomize2(vertices, r=.1): return [mat.random_in_circle(r) + x for x in vertices]
+def randomize2(vertices, r=.1): return [npx.random_in_circle(r) + x for x in vertices]
 
 def randomize3(vertices, r=.1): return [npx.random_in_sphere(r) + x for x in vertices]
 
