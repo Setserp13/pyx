@@ -107,10 +107,10 @@ def clip_image(root, obj, img_path):
 	except:
 		return print('Image not found')
 	img_path = os.path.basename(img_path)
-	scale_factor = max(np.array(get_bbox(obj).size) / np.array(img.size)))
+	scale_factor = max(np.array(get_bbox(obj).size) / np.array(img.size))
 	img_size = np.array(img.size) * scale_factor
 	obj_index = list(parent).index(obj)
-	img = image(parent, Rect2(*get(obj, float, 'x', 'y'), *img_size), img_path)
+	img = image(parent, npx.rect2(*get(obj, float, 'x', 'y'), *img_size), img_path)
 	parent.insert(obj_index, img)
 	clip(img, obj)
 
