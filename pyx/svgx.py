@@ -4,8 +4,6 @@ from functools import reduce
 from pyx.lsvg import *
 from lxml import etree
 import pyx.rex as rex
-from pyx.mat.rect import *
-from pyx.mat.vector import *
 from PIL import Image
 import uuid
 import os
@@ -30,7 +28,7 @@ def path_bbox(obj):
 	path = parse_path(obj.get('d', None))
 	bbox = path.bbox()
 	sc = get_scale(obj)
-	return Rect.MinMax(Vector(bbox[0] * sc[0], bbox[2] * sc[1]), Vector(bbox[1] * sc[0], bbox[3] * sc[1]))
+	return npx.rect.min_max(np.array([bbox[0] * sc[0], bbox[2] * sc[1]]), np.array([bbox[1] * sc[0], bbox[3] * sc[1]]))
 
 def get_bbox(obj): return {'circle': circle_bbox, 'ellipse': ellipse_bbox, 'image': rect_bbox, 'path': path_bbox, 'rect': rect_bbox}[localname(obj.tag)](obj)
 
@@ -109,8 +107,8 @@ def clip_image(root, obj, img_path):
 	except:
 		return print('Image not found')
 	img_path = os.path.basename(img_path)
-	scale_factor = max(*Vector.divide(get_bbox(obj).size, img.size))
-	img_size = Vector(*img.size) * scale_factor
+	scale_factor = max(np.array(get_bbox(obj).size) / np.array(img.size)))
+	img_size = np.array(img.size) * scale_factor
 	obj_index = list(parent).index(obj)
 	img = image(parent, Rect2(*get(obj, float, 'x', 'y'), *img_size), img_path)
 	parent.insert(obj_index, img)
