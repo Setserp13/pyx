@@ -178,6 +178,17 @@ class rect:
 
 	def __sub__(self, vector): return rect(self.min - vector, self.size)
 
+	def axis_scale(self, value, pivot=0.5, axis=0):
+		delta = value - self.size[axis]
+		self.min[axis] -= delta * pivot
+		self.size[axis] = value
+	
+	def scale(self, value, pivot=np.full(2, 0.5)):
+		delta = value - self.size
+		self.min -= delta * pivot
+		self.size = value
+
+
 class rect2(rect):
 	def __init__(self, x, y, width, height):
 		super().__init__(np.array([x, y]), np.array([width, height]))
