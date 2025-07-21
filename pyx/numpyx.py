@@ -193,8 +193,8 @@ class rect2(rect):
 	def corners(rect): return [rect2.bottom_left(rect), rect2.top_left(rect), rect2.top_right(rect), rect2.bottom_right(rect)]
 	def area(rect): return rect.size[0] * rect.size[1]
 	def cut(rect, t, axis=0, expand=0):
-		u = axis_unit_vector(axis, 2) * t
-		v = axis_unit_vector(1 - axis, 2)
+		u = ei(axis, 2) * t
+		v = ei(1 - axis, 2)
 		return [rect.denormalize_point(u + v * 0) - v * expand, rect.denormalize_point(u + v) + v * expand]
 
 def rect3(x, y, z, width, height, depth): return rect(np.array([x, y, z]), np.array([width, height, depth]))
