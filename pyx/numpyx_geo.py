@@ -404,21 +404,19 @@ class polyline(list):
 		while len(indices) > 3:
 			found_ear = False
 			for i in range(len(indices)):
-				i0 = indices[i % len(indices)]
+				i0 = indices[i]
 				i1 = indices[(i + 1) % len(indices)]
 				i2 = indices[(i + 2) % len(indices)]
 	
-				triangle = polyline([vertices[i0], vertices[i1], vertices[i2]])
+				tri = [vertices[i0], vertices[i1], vertices[i2]]
+				if polyline.area(tri) <= 0:
+					continue
 	
-				if triangle.area() <= 0:
-					continue  # Not a convex corner
-	
-				# Check if any other point is inside triangle
 				ear_found = True
 				for j in indices:
 					if j in (i0, i1, i2):
 						continue
-					if triangle.contains_point(vertices[j]):
+					if polyline.contains_point(tri, vertices[j]):
 						ear_found = False
 						break
 	
@@ -429,11 +427,13 @@ class polyline(list):
 					break
 	
 			if not found_ear:
-				# Possibly degenerate or self-intersecting
-				break
+				break  # Polígono pode estar com interseções ou ser degenerado
 	
-		triangles.append(indices)
+		if len(indices) == 3:
+			triangles.append(indices)
+	
 		return triangles
+
 
 	def to_stroke(v, width=1, closed=False):
 		inward_normals = polyline.vertex_normals(v, outward=False, closed=closed)
