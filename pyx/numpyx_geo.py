@@ -369,58 +369,25 @@ class polyline(list):
 			sum += (x2 - x1) * (y2 + y1)
 		return sum > 0
 
-	def area(polygon):
-		total = 0.0
-		n = len(polygon)
+	def area(vertices):
+		area = 0.0
+		n = len(vertices)
 		for i in range(n):
-			x1, y1 = polygon[i]
-			x2, y2 = polygon[(i + 1) % n]
-			total += x1 * y2 - x2 * y1
-		return abs(total) * 0.5
-	
-	def is_colinear(a, b, c, epsilon=EPSILON):
-		# Área do triângulo formada pelos 3 pontos (cross product 2D)
-		return abs((b[0] - a[0]) * (c[1] - a[1]) - 
-		           (b[1] - a[1]) * (c[0] - a[0])) < epsilon
-	
-	def is_convex(prev, curr, next_, orientation):
-		if polyline.is_colinear(prev, curr, next_):
-			return False  # ignora vértices colineares
-		# Produto vetorial
-		dx1 = curr[0] - prev[0]
-		dy1 = curr[1] - prev[1]
-		dx2 = next_[0] - curr[0]
-		dy2 = next_[1] - curr[1]
-		cross = dx1 * dy2 - dy1 * dx2
-		return (cross > 0) if orientation > 0 else (cross < 0)
-	
-	def point_on_edge(p, a, b, epsilon=EPSILON):
-		# Verifica se p está na borda entre a e b
-		ap = np.array(p) - np.array(a)
-		ab = np.array(b) - np.array(a)
-		cross = np.cross(ap, ab)
-		if abs(cross) > epsilon:
-			return False
-		dot = np.dot(ap, ab)
-		if dot < 0 or dot > np.dot(ab, ab):
-			return False
-		return True
+			x1, y1 = vertices[i]
+			x2, y2 = vertices[(i + 1) % n]
+			area += (x1 * y2 - x2 * y1)
+		return abs(area) * 0.5
 	
 	def contains_point(polygon, point):
 		x, y = point
 		inside = False
 		n = len(polygon)
 		for i in range(n):
-			a = polygon[i]
-			b = polygon[(i + 1) % n]
-	
-			if polyline.point_on_edge(point, a, b):
-				return False  # ponto na borda => não consideramos dentro
-	
-			x0, y0 = a
-			x1, y1 = b
+			x0, y0 = polygon[i]
+			x1, y1 = polygon[(i + 1) % n]
+			# Check if point is within y bounds of the edge and to the left of it
 			if (y0 > y) != (y1 > y):
-				x_intersect = (x1 - x0) * (y - y0) / ((y1 - y0) + EPSILON) + x0
+				x_intersect = (x1 - x0) * (y - y0) / (y1 - y0 + 1e-12) + x0
 				if x < x_intersect:
 					inside = not inside
 		return inside
