@@ -48,16 +48,18 @@ class rect:
 
 	@property
 	def center(self): return self.min + self.extents
-
 	@center.setter
-	def center(self, value):
-		self.min = value - self.extents
+	def center(self, value): self.min = value - self.extents
 	
 	@property
 	def extents(self): return self.size * 0.5
-
+	@extents.setter
+	def extents(self, value): self.size = value * 2
+	
 	@property
 	def max(self): return self.min + self.size
+	@max.setter
+	def max(self, value): self.min = value - self.size
 
 	def normalize_point(self, value): return (value - self.min) / self.size
 	def normalize_point_component(self, value, axis=0): return (value - self.min[axis]) / self.size[axis]
