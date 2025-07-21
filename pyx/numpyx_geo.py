@@ -384,7 +384,7 @@ class polyline(list):
 		           (b[1] - a[1]) * (c[0] - a[0])) < epsilon
 	
 	def is_convex(prev, curr, next_, orientation):
-		if is_colinear(prev, curr, next_):
+		if polyline.is_colinear(prev, curr, next_):
 			return False  # ignora vértices colineares
 		# Produto vetorial
 		dx1 = curr[0] - prev[0]
@@ -414,7 +414,7 @@ class polyline(list):
 			a = polygon[i]
 			b = polygon[(i + 1) % n]
 	
-			if point_on_edge(point, a, b):
+			if polyline.point_on_edge(point, a, b):
 				return False  # ponto na borda => não consideramos dentro
 	
 			x0, y0 = a
