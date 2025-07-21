@@ -49,6 +49,10 @@ class rect:
 	@property
 	def center(self): return self.min + self.extents
 
+	@center.setter
+	def center(self, value):
+		self.min = value - self.extents
+	
 	@property
 	def extents(self): return self.size * 0.5
 
