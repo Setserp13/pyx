@@ -273,6 +273,21 @@ class angle(list):
 EPSILON = 1e-10
 
 class polyline(np.ndarray):#list):
+
+
+	def __new__(cls, input_array):
+		# Convert input to ndarray and view it as MyArray
+		obj = np.asarray(input_array).view(cls)
+		return obj
+
+	def __array_finalize__(self, obj):
+		# Called when the object is created via view/slicing
+		if obj is None: return
+		# You can set custom attributes here if needed
+		self.my_attribute = getattr(obj, 'my_attribute', 'default')
+
+
+	
 	def edges(p, closed=True): return List.aranges(p, 2, cycle=closed)
 
 	def edge(vertices, index): return [vertices[index], vertices[(index + 1) % len(vertices)]]
