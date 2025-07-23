@@ -55,7 +55,7 @@ class arc(circle):
 	@property #in XY-plane
 	def normal(self): return np.array([-self.direction[1], self.direction[0]] + list(self.direction[2:]))"""
 
-class line(list):
+class line(np.ndarray):
 	@property
 	def vector(self): return self[1] - self[0]
 	
@@ -272,7 +272,7 @@ class angle(list):
 
 EPSILON = 1e-10
 
-class polyline(list):
+class polyline(np.ndarray):#list):
 	def edges(p, closed=True): return List.aranges(p, 2, cycle=closed)
 
 	def edge(vertices, index): return [vertices[index], vertices[(index + 1) % len(vertices)]]
