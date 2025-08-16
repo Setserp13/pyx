@@ -1,6 +1,7 @@
 import math
 from PIL import Image, ImageFont, ImageDraw
 import pyx.mat.mat as mat
+import numpy as np
 
 def concat(lst, axis=0, equal_sized=False, mode='RGBA'):
 	cell_size = lst[0].size if equal_sized else mat.arg(max, [x.size for x in lst])
@@ -65,7 +66,7 @@ def get_size(text, font, font_size):
 	temp_image = Image.new("RGB", (1, 1))
 	draw = ImageDraw.Draw(temp_image)
 	bbox = draw.textbbox((0, 0), text, font=image_font)
-	return (bbox[2] - bbox[0], bbox[3] - bbox[1])
+	return np.array([bbox[2] - bbox[0], bbox[3] - bbox[1]])
 
 def wrap(line, width, font, font_size):
 	result = ['']
