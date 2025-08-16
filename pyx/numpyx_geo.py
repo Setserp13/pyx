@@ -140,16 +140,28 @@ def truncate(vertices, t=.25, closed=True):
 		result[-1] = vertices[-1]
 	return result
 
-#a regular polygon or a regular star polygon. #A regular polygram, as a general regular polygon, is denoted by its Schläfli symbol {p/q}, where p and q are relatively prime (they share no factors) and q ≥ 2
-def regular_polygram(p, q, r=1.0, center=np.zeros(2), start=0.0):	#p = total number of vertices on the circle, q = step size (how many points to skip when drawing)
+#returns the vertex indices of a polygon, a star polygon or a polygon compound, is denoted by its Schläfli symbol {p/q}, where p and q are relatively prime (they share no factors) and q ≥ 2
+def polygram(p, q):	#p = total number of vertices, q = step size (how many points to skip when drawing)
 	if q >= p / 2 or p < 3:
 		return []
+	if math.gcd(p, q) == 1: #returns a regular polygon or a regular star polygon
+		return [[(i * q) % p for i in range(p)]]
+	#else math.gcd(p, q) > 1: returns a regular polygon compound
+	g = math.gcd(p, q)
+	return [[(j + i * q) % p for i in range(p // g)] for j in range(g)]
+
+#a regular polygon or a regular star polygon. #A regular polygram, as a general regular polygon, is denoted by its Schläfli symbol {p/q}, where p and q are relatively prime (they share no factors) and q ≥ 2
+def regular_polygram(p, q, r=1.0, center=np.zeros(2), start=0.0):	#p = total number of vertices on the circle, q = step size (how many points to skip when drawing)
+	return Mesh(npx.on_circle(n=p, r=r, center=center, start=start), polygram(p, q))
+	"""if q >= p / 2 or p < 3:
+		return []
 	vertices = npx.on_circle(n=p, r=r, center=center, start=start)
+	
 	if math.gcd(p, q) == 1: #returns a regular polygon or a regular star polygon
 		return [[vertices[(i * q) % p] for i in range(p)]]
 	#else math.gcd(p, q) > 1: returns a regular polygon compound
 	g = math.gcd(p, q)
-	return [[vertices[(j + i * q) % p] for i in range(p // g)] for j in range(g)]
+	return [[vertices[(j + i * q) % p] for i in range(p // g)] for j in range(g)]"""
 
 def star(n, r=1.0, spoke_ratio=0.5, t=0.5, center=np.zeros(2), start=0.0):
 	vertices = npx.on_circle(n=n, r=r, center=center, start=start)
@@ -640,6 +652,7 @@ def bars(values, offset = np.zeros(2), width=1, gap=0, axis=0, align=0):
 		size = np.array([width, y])[[axis, 1 - axis]]
 		result.append(npx.rect(min, size))
 	return result
+
 
 
 
