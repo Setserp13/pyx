@@ -1,7 +1,7 @@
 import ast
 from lxml import etree
 
-def create_element(tag, text='', tail='', parent=None, children=[], **kwargs):
+def element(tag, text='', tail='', parent=None, children=[], **kwargs): #create a xml element
 	result = etree.Element(tag, **kwargs)
 	if parent is not None:
 		parent.append(result)
