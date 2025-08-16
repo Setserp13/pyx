@@ -145,7 +145,7 @@ def regular_polygram(p, q, r=1.0, center=np.zeros(2), start=0.0):	#p = total num
 	if q > p / 2 or p < 3:
 		return []
 	vertices = npx.on_circle(n=p, r=r, center=center, start=start)
-	if math.gcd(p, q) = 1: #returns a regular polygon or a regular star polygon
+	if math.gcd(p, q) == 1: #returns a regular polygon or a regular star polygon
 		return [[vertices[(i * q) % p] for i in range(p)]]
 	return [[vertices[j + (i * q) % p] for i in range(p / q)] for j in range(q)] #math.gcd(p, q) > 1: returns a regular polygon compound
 
@@ -638,4 +638,5 @@ def bars(values, offset = np.zeros(2), width=1, gap=0, axis=0, align=0):
 		size = np.array([width, y])[[axis, 1 - axis]]
 		result.append(npx.rect(min, size))
 	return result
+
 
