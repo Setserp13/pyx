@@ -1,4 +1,4 @@
-from pyx.mat.rect import *
+"""from pyx.mat.rect import *
 
 class Align:
 	def align(obj, anchor, objPoint, anchorPoint): #both points are normalized with their respective rects
@@ -20,4 +20,4 @@ class Align:
 	def bottomToBottom(obj, anchor): return Align.alignAxis(obj, anchor, 1, 0, 0)
 	def bottomToTop(obj, anchor): return Align.alignAxis(obj, anchor, 1, 0, 1)
 	def topToBottom(obj, anchor): return Align.alignAxis(obj, anchor, 1, 1, 0)
-	def topToTop(obj, anchor): return Align.alignAxis(obj, anchor, 1, 1, 1)
+	def topToTop(obj, anchor): return Align.alignAxis(obj, anchor, 1, 1, 1)"""
