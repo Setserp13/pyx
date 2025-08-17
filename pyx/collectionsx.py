@@ -109,3 +109,48 @@ def flatten(lst):
 		else:
 			result.append(item)
 	return result
+
+
+
+
+class graph(list):
+	def __init__(self, *args):
+		super().__init__(args)
+		self.adjacency = [[] for _ in range(len(args))]
+
+	def append(self, item):
+		super().append(item)
+		self.adjacency.append([])
+
+	def extend(self, items):
+		for x in items:
+			self.append(x)
+
+	def insert(self, index, item):
+		super().insert(index, item)
+		self.adjacency.insert(index, [])
+		for adj in self.adjacency:	#Shift up indices greater than inserted
+			adj[:] = [j if j < index else j + 1 for j in adj]
+
+	def remove_at(self, index):
+		super().pop(index)
+		self.adjacency.pop(index)
+		for adj in self.adjacency:	#Clean all references to this index, shift down indices greater than removed
+			adj[:] = [j if j < index else j - 1 for j in adj if j != index]
+
+	def remove(self, item):
+		if item in self:
+			index = self.index(item)
+			self.remove_at(index)
+
+	def add_arrow(self, i, j): self.adjacency[i].append(j)
+
+	def add_edge(self, i, j):
+		self.add_arrow(i, j)
+		self.add_arrow(j, i)
+
+	def neighbors_at(self, i): return List.items(self, self.adjacency[i])
+
+	def neighbors(self, item):
+		if item in self:
+			return self.neighbors_at(self.index(item))
