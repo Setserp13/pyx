@@ -196,9 +196,9 @@ class radar_chart:
 
 class Mesh():
 	def __init__(self, vertices=None, faces=None, uvs=None):
-		self.vertices = vertices.copy() if vertices else []
-		self.faces = faces.copy() if faces else []
-		self.uvs = uvs.copy() if uvs else []
+		self.vertices = vertices.copy() if vertices is not None else []
+		self.faces = faces.copy() if faces is not None else []
+		self.uvs = uvs.copy() if uvs is not None else []
 
 	def get_face(self, i): return List.items(self.vertices, self.faces[i])
 
@@ -643,6 +643,7 @@ def bars(values, offset = np.zeros(2), width=1, gap=0, axis=0, align=0):
 		size = np.array([width, y])[[axis, 1 - axis]]
 		result.append(npx.rect(min, size))
 	return result
+
 
 
 
