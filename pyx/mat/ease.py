@@ -1,4 +1,22 @@
 from easing_functions import *
+
+class Ease:
+    _easings = [
+        "Quad", "Cubic", "Quartic", "Quintic", 
+        "Sine", "Circular", "Exponential",
+        "Elastic", "Back", "Bounce"
+    ]
+    _modes = ["In", "Out", "InOut"]
+	Linear = LinearInOut(0, 1, 1)
+
+# Dynamically attach easing functions as class attributes
+for name in Ease._easings:
+	for mode in Ease._modes:
+		clsname = f"{name}Ease{mode}"
+		if clsname in globals():
+			setattr(Ease, f"{name}{mode}", globals()[clsname](0, 1, 1))
+
+"""from easing_functions import *
 #pip install easing-functions
 
 #print(dir(easing_functions))
@@ -46,3 +64,4 @@ class Ease:
 	BounceInOut = BounceEaseInOut(0, 1, 1)
 
 	Linear = LinearInOut(0, 1, 1)
+"""
