@@ -7,7 +7,6 @@ import pyx.rex as rex
 from PIL import Image
 import uuid
 import os
-import pyx.osx as osx
 import tkinter as tk
 from tkinter import filedialog
 import svgpathtools
