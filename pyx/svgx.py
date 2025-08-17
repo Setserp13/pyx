@@ -214,3 +214,7 @@ def g(*args, **kwargs):
 	for x in args:
 		result.append(x)
 	return result
+
+def capsule(center, size):
+	r = min(*size) * 0.5
+	return rect(*(np.array(center) - size * 0.5), *size, rx=str(r), ry=str(r))
