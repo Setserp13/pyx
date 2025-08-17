@@ -1,5 +1,6 @@
 import ast
 from lxml import etree
+import pyx.osx as osx
 
 def element(tag, text='', tail='', parent=None, children=[], **kwargs): #create a xml element
 	result = etree.Element(tag, **kwargs)
@@ -67,3 +68,5 @@ def leaf_paths(element, current_path=''): #returns all root-to-leaf paths
 		for child in element:
 			paths += leaf_paths(child, path)
 	return paths
+
+def save(obj, path): osx.write(path, etree.tostring(obj, pretty_print=True, encoding='unicode'))
