@@ -209,8 +209,8 @@ def rect(x, y, width, height, **kwargs): return etree.Element("rect", x=str(x), 
 
 def line(x1, y1, x2, y2, **kwargs): return etree.Element("line", x1=str(x1), y1=str(y1), x2=str(x2), y2=str(y2), **kwargs)
 
-def g(*args):
-	result = etree.Element("g")
+def g(*args, **kwargs):
+	result = etree.Element("g", **kwargs)
 	for x in args:
 		result.append(x)
 	return result
