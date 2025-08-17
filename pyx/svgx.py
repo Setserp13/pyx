@@ -15,6 +15,7 @@ import svgutils.transform as sg
 import re
 from pyx.collectionsx import List
 from pyx.lxmlx import localname
+import numpy as np
 import pyx.numpyx as npx
 
 def vertices(obj):
@@ -213,6 +214,8 @@ def g(*args, **kwargs):
 	for x in args:
 		result.append(x)
 	return result
+
+def path(d, **kwargs): return etree.Element("path", d=d, **kwargs)
 
 def capsule(center, size, **kwargs):
 	r = min(*size) * 0.5
