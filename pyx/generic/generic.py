@@ -25,3 +25,17 @@ class Validator(list):
 """class Child(Parent): #Example
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)"""
+
+class Value:
+	def __init__(self, value, on_change):
+		self._value = value
+		self.on_change = on_change
+
+	@property
+	def value(self):
+		return self._value
+
+	@value.setter
+	def value(self, value):
+		self.on_change(self.value, value)
+		self.value = value
