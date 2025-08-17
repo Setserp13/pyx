@@ -7,7 +7,7 @@ import pyx.rex as rex
 from PIL import Image
 import uuid
 import os
-from pyx.osx import wd
+import pyx.osx as osx
 import tkinter as tk
 from tkinter import filedialog
 import svgpathtools
@@ -221,4 +221,3 @@ def capsule(center, size):
 
 NSMAP = {None: "http://www.w3.org/2000/svg"}
 def svg(width, height): return etree.Element("svg", width=str(width), height=str(height), nsmap=NSMAP)
-
