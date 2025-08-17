@@ -214,9 +214,9 @@ def g(*args, **kwargs):
 		result.append(x)
 	return result
 
-def capsule(center, size):
+def capsule(center, size, **kwargs):
 	r = min(*size) * 0.5
-	return rect(*(np.array(center) - size * 0.5), *size, rx=str(r), ry=str(r))
+	return rect(*(np.array(center) - size * 0.5), *size, rx=str(r), ry=str(r), **kwargs)
 
 NSMAP = {None: "http://www.w3.org/2000/svg"}
 def svg(width, height): return etree.Element("svg", width=str(width), height=str(height), nsmap=NSMAP)
