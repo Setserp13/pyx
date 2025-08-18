@@ -217,6 +217,13 @@ def g(*args, **kwargs):
 
 def path(d, **kwargs): return etree.Element("path", d=d, **kwargs)
 
+def href(image): return image.get('{http://www.w3.org/1999/xlink}href', None)
+
+#def rect_attrib(rct): return { 'x': str(rct.min[0]), 'y': str(rct.min[1]), 'width': str(rct.size[0]), 'height': str(rct.size[1]) }
+
+def image(x, y, width, height, href):
+	return etree.Element("{http://www.w3.org/2000/svg}image", x=str(x), y=str(y), width=str(width), height=str(height), **{'{http://www.w3.org/1999/xlink}href': href})
+
 def capsule(center, size, **kwargs):
 	r = min(*size) * 0.5
 	return rect(*(np.array(center) - size * 0.5), *size, rx=str(r), ry=str(r), **kwargs)
