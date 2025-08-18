@@ -48,7 +48,7 @@ def find_layers(root):
 def remove_at(ls, i): return ls[:i] + ls[i+1:]
 
 def root_rects(rects): #Rects that are not subrects of another one in the list
-	return [x for i, x in enumerate(rects) if len(list(filter(lambda y: y.containsRect(x), remove_at(rects, i)))) == 0]
+	return [x for i, x in enumerate(rects) if len(list(filter(lambda y: y.contains_rect(x), remove_at(rects, i)))) == 0]
 
 
 
