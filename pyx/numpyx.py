@@ -5,7 +5,7 @@ import numpy as np
 import itertools
 from pyx.collectionsx import List as ls
 import random
-from pyx.numpyx_geo import polygon
+from pyx.numpyx_geo import polyline
 
 def fill(obj, length, filler=0):
 	if isinstance(obj, np.ndarray):
