@@ -5,6 +5,7 @@ import numpy as np
 import itertools
 from pyx.collectionsx import List as ls
 import random
+from pyx.numpyx_geo import polygon
 
 def fill(obj, length, filler=0):
 	if isinstance(obj, np.ndarray):
@@ -20,6 +21,16 @@ def clamp_magnitude(vector, max_magnitude):
 	return vector
 
 def lerp(a, b, t): return a * (1 - t) + b * t	#works for both Number and ndarray
+
+@dispatch(Number, Number, Number)
+def inverse_lerp(a, b, c): return (c - a) / (b - a)
+
+@dispatch(np.ndarray, np.ndarray, Number)
+def inverse_lerp(a, b, c):	#Works even if c is not exactly on the line (you get the fractional position along the segment).
+	ab = b - a
+	ac = c - a
+	t = np.dot(ac, ab) / np.dot(ab, ab)
+	return t
 
 def subdivide(a, b, n):
 	if n == 1:
@@ -203,7 +214,7 @@ class rect2(rect):
 	def bottom(rect): return [rect2.bottom_left(rect), rect2.bottom_right(rect)]
 	def top(rect): return [rect2.top_left(rect), rect2.top_right(rect)]
 
-	def corners(rect): return [rect2.bottom_left(rect), rect2.top_left(rect), rect2.top_right(rect), rect2.bottom_right(rect)]
+	def corners(rect): return polygon([rect2.bottom_left(rect), rect2.top_left(rect), rect2.top_right(rect), rect2.bottom_right(rect)])
 	def area(rect): return rect.size[0] * rect.size[1]
 	def cut(rect, t, axis=0, expand=0):
 		u = ei(axis, 2) * t
