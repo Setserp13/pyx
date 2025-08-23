@@ -28,8 +28,7 @@ def inverse_lerp(a, b, c): return (c - a) / (b - a)
 @dispatch(np.ndarray, np.ndarray, np.ndarray)
 def inverse_lerp(a, b, c):	#Works even if c is not exactly on the line (you get the fractional position along the segment).
 	ab = b - a
-	ac = c - a
-	t = np.dot(ac, ab) / np.dot(ab, ab)
+	t = np.dot(c - a, ab) / np.dot(ab, ab)
 	return t
 
 def subdivide(a, b, n):
