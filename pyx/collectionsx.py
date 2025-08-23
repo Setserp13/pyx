@@ -1,6 +1,7 @@
 import copy
 import random
 import numpy as np
+from pyx.array_utility import find_index
 
 class Dict:
 	def items(dct, keys): return { x: dct[x] for x in keys if x in dct } #also works with list and tuple
@@ -36,6 +37,19 @@ class bag(list):	#each item in bag is a tuple like (item, count)
 	def to_set(self): #return the underlying set
 		return [x[0] for x in self]
 
+	def append(self, item, count=1):
+		index = find_index(self, lambda x: x[0] == item)
+		if index > -1:
+			self[index][1] += count
+		else:
+			super().append([item, count])
+
+	def from_list(ls):
+		result = bag()
+		for x in ls:
+			result.append(x)
+		return result
+	
 def For(start, stop, step=None, func=None):
 	if func is None:
 		raise ValueError("You must provide a function")
