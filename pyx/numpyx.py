@@ -214,7 +214,7 @@ class rect2(rect):
 	def bottom(rect): return [rect2.bottom_left(rect), rect2.bottom_right(rect)]
 	def top(rect): return [rect2.top_left(rect), rect2.top_right(rect)]
 
-	def corners(rect): return polygon([rect2.bottom_left(rect), rect2.top_left(rect), rect2.top_right(rect), rect2.bottom_right(rect)])
+	def corners(rect): return polyline([rect2.bottom_left(rect), rect2.top_left(rect), rect2.top_right(rect), rect2.bottom_right(rect)])
 	def area(rect): return rect.size[0] * rect.size[1]
 	def cut(rect, t, axis=0, expand=0):
 		u = ei(axis, 2) * t
