@@ -25,7 +25,7 @@ def lerp(a, b, t): return a * (1 - t) + b * t	#works for both Number and ndarray
 @dispatch(Number, Number, Number)
 def inverse_lerp(a, b, c): return (c - a) / (b - a)
 
-@dispatch(np.ndarray, np.ndarray, Number)
+@dispatch(np.ndarray, np.ndarray, np.ndarray)
 def inverse_lerp(a, b, c):	#Works even if c is not exactly on the line (you get the fractional position along the segment).
 	ab = b - a
 	ac = c - a
