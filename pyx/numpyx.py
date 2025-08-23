@@ -19,7 +19,7 @@ def clamp_magnitude(vector, max_magnitude):
 		vector = (vector / current_magnitude) * max_magnitude
 	return vector
 
-def lerp(a, b, t): return a * (1 - t) + b * t
+def lerp(a, b, t): return a * (1 - t) + b * t	#works for both Number and ndarray
 
 def subdivide(a, b, n):
 	if n == 1:
