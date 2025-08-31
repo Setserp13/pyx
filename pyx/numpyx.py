@@ -378,7 +378,7 @@ def random_in_arc(r, start_angle, stop_angle): return random_on_arc(random.unifo
 def random_on_circle(r): return random_on_arc(r, 0, 2 * math.pi)
 def random_in_annulus(r, R): return random_on_circle(random.uniform(r, R))
 def random_in_circle(r): return random_in_annulus(0, r)
-
+def random_in_segment(a, b): return lerp(a, b, random.uniform(0.0, 1.0))
 
 def polar_to_cartesian(r, theta): return np.array([r * math.cos(theta), r * math.sin(theta)])
 def cartesian_to_polar(x, y): return np.array([math.sqrt(x**2 + y**2), math.atan2(y, x)])
