@@ -52,6 +52,8 @@ def floor(value, step): return math.floor(value / step) * step #returns the grea
 @dispatch(Number, Number)
 def ceil(value, step): return math.ceil(value / step) * step #returns the smallest multiple of step greater than or equal to value
 
+def mean(iterable): return sum(iterable) / len(iterable)
+
 """@dispatch(Number, Number, Number)
 def clamp(value, min, max):
 	if value < min:
@@ -105,12 +107,12 @@ def raised_norm(a, n): return sum(abs(x) ** n for x in a)
 def norm(a, n): return raised_norm(a, n) ** (1.0 / n)
 def raised_distance(a, b, n=2): return raised_norm(list(map(lambda x, y: y - x, a, b)), n)
 def distance(a, b, n=2): return raised_distance(a, b, n) ** (1.0 / n)
-#def distance(a, b): return magnitude(sub(a, b))"""
+#def distance(a, b): return magnitude(sub(a, b))
 
 
 
 
-def mean(iterable): return sum(iterable) / len(iterable)
+
 
 
 
@@ -124,7 +126,7 @@ def random_range(start, stop):
 
 @dispatch(tuple, tuple)#, float)
 def random_range(start, stop):
-	return tuple(map(lambda x, y: random_range(x, y), start, stop))
+	return tuple(map(lambda x, y: random_range(x, y), start, stop))"""
 
 def rangef(start, stop, step):
 	return [start + step * i for i in range(math.ceil((stop - start) / step))]
