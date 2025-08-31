@@ -13,7 +13,7 @@ from svgpathtools import parse_path
 import svgutils.transform as sg
 import re
 from pyx.collectionsx import List
-from pyx.lxmlx import localname
+from pyx.lxmlx import *	#localname
 import numpy as np
 import pyx.numpyx as npx
 
