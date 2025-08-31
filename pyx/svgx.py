@@ -96,8 +96,6 @@ def layer_of(self):
 def ishidden(self):
 	return find_ancestor(self, lambda x: islayer(x) and get_style_property(x, 'display') == 'none') != None
 
-from pyx.lsvg import clip
-
 def clip_image(root, obj, img_path):
 	parent = obj.getparent()
 	#print(img_path)
