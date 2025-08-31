@@ -12,13 +12,23 @@ def fill(obj, length, filler=0):
 		return np.append(obj, [filler] * (length - len(obj)))
 	return [fill(x, length, filler) for x in obj]
 
-def clamp(point, min, max): return np.minimum(np.maximum(point, min), max)
+#works for both scalars (numbers) and NumPy arrays
+def clamp(value, min, max): return np.minimum(np.maximum(value, min), max)
 
-def clamp_magnitude(vector, max_magnitude):
-	current_magnitude = np.linalg.norm(vector)
+def clamp01(value): return clamp(value, 0.0, 1.0)
+
+def repeat(t, length):
+	return clamp(t - math.floor(t / length) * length, 0.0, length)
+
+def ping_pong(t, length):
+	t = repeat(t, length * 2)
+	return length - abs(t - length)
+
+def clamp_magnitude(v, max_magnitude):
+	current_magnitude = np.linalg.norm(v)
 	if current_magnitude > max_magnitude:
-		vector = (vector / current_magnitude) * max_magnitude
-	return vector
+		v = (v / current_magnitude) * max_magnitude
+	return v
 
 def lerp(a, b, t): return a * (1 - t) + b * t	#works for both Number and ndarray
 
