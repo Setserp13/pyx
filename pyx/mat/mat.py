@@ -4,7 +4,7 @@ import numpy as np
 import random
 import math
 from pyx.array_utility import index_of
-
+from functools import reduce
 
 def hyperop(a, n, b): #a[n]b = a[n-1](a[n](b-1)), n>=1 #Hyperoperation
     if n == 0: # Successor
@@ -52,7 +52,7 @@ def floor(value, step): return math.floor(value / step) * step #returns the grea
 @dispatch(Number, Number)
 def ceil(value, step): return math.ceil(value / step) * step #returns the smallest multiple of step greater than or equal to value
 
-@dispatch(Number, Number, Number)
+"""@dispatch(Number, Number, Number)
 def clamp(value, min, max):
 	if value < min:
 		return min
@@ -91,33 +91,23 @@ def lerp(a, b, t):
 def lerp(a, b, t):
 	return tuple(map(lambda x, y: lerp(x, y, t), a, b))
 
-
-
-
-from functools import reduce
-
-def sqr_magnitude(v): return reduce(lambda a, b: a+b*b, v)
-
-def magnitude(v): return math.sqrt(sqr_magnitude(v))
-
-def sub(a, b): return map(lambda x, y: x - y, a, b)
-
-def raised_norm(a, n): return sum(abs(x) ** n for x in a)
-
-def norm(a, n): return raised_norm(a, n) ** (1.0 / n)
-
-def raised_distance(a, b, n=2): return raised_norm(list(map(lambda x, y: y - x, a, b)), n)
-
-def distance(a, b, n=2): return raised_distance(a, b, n) ** (1.0 / n)
-
-#def distance(a, b): return magnitude(sub(a, b))
-
 @dispatch(list, list, float)
 @dispatch(tuple, tuple, float)
 def inverse_lerp(a, b, c): return distance(a, c) / distance(a, b) #NOT COMPLETE YET
 
 @dispatch(Number, Number, Number)
 def inverse_lerp(a, b, c): return (c - a) / (b - a)
+
+def sqr_magnitude(v): return reduce(lambda a, b: a+b*b, v)
+def magnitude(v): return math.sqrt(sqr_magnitude(v))
+def sub(a, b): return map(lambda x, y: x - y, a, b)
+def raised_norm(a, n): return sum(abs(x) ** n for x in a)
+def norm(a, n): return raised_norm(a, n) ** (1.0 / n)
+def raised_distance(a, b, n=2): return raised_norm(list(map(lambda x, y: y - x, a, b)), n)
+def distance(a, b, n=2): return raised_distance(a, b, n) ** (1.0 / n)
+#def distance(a, b): return magnitude(sub(a, b))"""
+
+
 
 
 def mean(iterable): return sum(iterable) / len(iterable)
