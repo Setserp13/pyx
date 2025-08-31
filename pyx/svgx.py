@@ -1,14 +1,13 @@
 import xml.etree.ElementTree as ET
 from lxml import etree
 from functools import reduce
-from pyx.lsvg import *
 from lxml import etree
 import pyx.rex as rex
 from PIL import Image
 import uuid
 import os
-import tkinter as tk
-from tkinter import filedialog
+#import tkinter as tk
+#from tkinter import filedialog
 import svgpathtools
 from svgpathtools import parse_path
 import svgutils.transform as sg
@@ -114,6 +113,22 @@ def clip_image(root, obj, img_path):
 	parent.insert(obj_index, img)
 	clip(img, obj)
 
+def clip(obj, mask):
+	root = obj.getroottree().getroot()
+	clip_path_id = 'clipPath' + str(int(uuid.uuid4()))
+	obj.set('clip-path', f'url(#{clip_path_id})')
+	"""defs = root.find('.//{http://www.w3.org/2000/svg}defs')
+	if defs is None:
+		defs = etree.SubElement(root, '{http://www.w3.org/2000/svg}defs')"""
+	defs = get_or_create(root, '{http://www.w3.org/2000/svg}defs')
+	clip_path = etree.SubElement(defs, '{http://www.w3.org/2000/svg}clipPath', attrib={'clipPathUnits': 'userSpaceOnUse', 'id': clip_path_id})
+	clip_path.append(mask)
+
+def circle_bbox(obj): return npx.bbox.circle(*get(obj, float, 'cx', 'cy', 'r'))
+
+def ellipse_bbox(obj): return npx.bbox.ellipse(*get(obj, float, 'cx', 'cy', 'rx', 'ry'))
+
+def rect_bbox(obj): return npx.rect2(*get(obj, float, 'x', 'y', 'width', 'height'))
 
 #TEXT
 
