@@ -30,6 +30,12 @@ def inverse_lerp(a, b, c):	#Works even if c is not exactly on the line (you get 
 	ab = b - a
 	t = np.dot(c - a, ab) / np.dot(ab, ab)
 	return t
+	#return distance(a, c) / distance(a, b)
+
+def raised_norm(a, n=2): return sum(abs(x) ** n for x in a)	#default n=2 means sqr magnitude
+def norm(a, n=2): return raised_norm(a, n) ** (1.0 / n)	#default n=2 means magnitude
+def raised_distance(a, b, n=2): return raised_norm(b - a, n)	#default n=2 means sqr euclidean distance
+def distance(a, b, n=2): return raised_distance(a, b, n) ** (1.0 / n)	#default n=2 means euclidean distance
 
 def subdivide(a, b, n):
 	if n == 1:
