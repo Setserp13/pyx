@@ -56,6 +56,17 @@ class arc(circle):
 	def normal(self): return np.array([-self.direction[1], self.direction[0]] + list(self.direction[2:]))"""
 
 class line(np.ndarray):
+	def __new__(cls, input_array):
+		# Convert input to ndarray and view it as MyArray
+		obj = np.asarray(input_array).view(cls)
+		return obj
+
+	def __array_finalize__(self, obj):
+		# Called when the object is created via view/slicing
+		if obj is None: return
+		# You can set custom attributes here if needed
+		self.my_attribute = getattr(obj, 'my_attribute', 'default')
+
 	@property
 	def vector(self): return self[1] - self[0]
 	
@@ -643,6 +654,7 @@ def bars(values, offset = np.zeros(2), width=1, gap=0, axis=0, align=0):
 		size = np.array([width, y])[[axis, 1 - axis]]
 		result.append(npx.rect(min, size))
 	return result
+
 
 
 
