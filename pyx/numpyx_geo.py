@@ -324,7 +324,7 @@ class polyline(np.ndarray):#list):
 	def lengths(vertices, closed=True):
 		return [np.linalg.norm(x[0] - x[1]) for x in polyline.edges(vertices, closed=closed)]
 	
-	def perimeter(vertices, closed=True): return sum(lengths(vertices, closed=closed))
+	def perimeter(vertices, closed=True): return sum(polyline.lengths(vertices, closed=closed))
 
 	def midpoints(vertices, closed=True):
 		return [np.mean(x, axis = 0) for x in polyline.edges(vertices, closed=closed)]
@@ -654,6 +654,7 @@ def bars(values, offset = np.zeros(2), width=1, gap=0, axis=0, align=0):
 		size = np.array([width, y])[[axis, 1 - axis]]
 		result.append(npx.rect(min, size))
 	return result
+
 
 
 
