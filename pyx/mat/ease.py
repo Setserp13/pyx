@@ -1,12 +1,12 @@
 from easing_functions import *
 
 class Ease:
-    _easings = [
-        "Quad", "Cubic", "Quartic", "Quintic", 
-        "Sine", "Circular", "Exponential",
-        "Elastic", "Back", "Bounce"
-    ]
-    _modes = ["In", "Out", "InOut"]
+	_easings = [
+		"Quad", "Cubic", "Quartic", "Quintic", 
+		"Sine", "Circular", "Exponential",
+		"Elastic", "Back", "Bounce"
+	]
+	_modes = ["In", "Out", "InOut"]
 	Linear = LinearInOut(0, 1, 1)
 
 # Dynamically attach easing functions as class attributes
