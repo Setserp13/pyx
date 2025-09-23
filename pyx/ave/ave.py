@@ -1,5 +1,6 @@
 from pyx.mat.ease import Ease
 from pyx.mat.mat import *
+from pyx.numpyx import lerp
 import cv2
 import math
 
@@ -233,3 +234,4 @@ def add_audio_to_video(video_path, audio_path, output_path):
 		"-shortest",               # stop when shortest stream ends
 		output_path
 	])
+
