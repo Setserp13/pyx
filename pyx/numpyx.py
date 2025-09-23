@@ -39,10 +39,10 @@ def lerp(a, b, t): return a * (1 - t) + b * t	#a + (b - a) * t
 @dispatch(int, int, float)
 def lerp(a, b, t): return int(a * (1 - t) + b * t)
 
-@dispatch(list, list, float)
+"""@dispatch(list, list, float)
 def lerp(a, b, t): return list(map(lambda x, y: lerp(x, y, t), a, b))
 @dispatch(tuple, tuple, float)
-def lerp(a, b, t): return tuple(map(lambda x, y: lerp(x, y, t), a, b))
+def lerp(a, b, t): return tuple(map(lambda x, y: lerp(x, y, t), a, b))"""
 
 @dispatch(Number, Number, Number)
 def inverse_lerp(a, b, c): return (c - a) / (b - a)
