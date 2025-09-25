@@ -284,7 +284,7 @@ class Mesh():
 		return Mesh(vertices, faces)
 
 class angle(list):
-	def rays(self): return [line([self[1], self[2]]), line([self[1], self[0]])]
+	def rays(self): return [line([self[1], self[0]]), line([self[1], self[2]])]
 
 	def vectors(self): return [x.vector for x in self.rays()]
 
@@ -654,6 +654,7 @@ def bars(values, offset = np.zeros(2), width=1, gap=0, axis=0, align=0):
 		size = np.array([width, y])[[axis, 1 - axis]]
 		result.append(npx.rect(min, size))
 	return result
+
 
 
 
