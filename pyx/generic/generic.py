@@ -1,3 +1,10 @@
+def get(obj, *keys): return [getattr(obj, k) for x in keys]
+
+def set(obj, **kwargs):
+	for k in kwargs:
+		setattr(obj, k, kwargs[k])
+	return obj
+
 class Event(list):
 	def invoke(self, *args, **kwargs):
 		for x in self:
