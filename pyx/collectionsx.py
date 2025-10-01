@@ -170,6 +170,13 @@ class graph(list):
 			return self.neighbors_at(self.index(item))
 
 
+def list_equal(a, b, equal=np.array_equal):
+	return all(equal(a[i], b[i]) for i in range(len(a))) if len(a) == len(b) else False
+
+def contains(a, b, equal=np.array_equal): return all(any(equal(x, y) for y in a) for x in b)
+
+def set_equal(a, b, equal=np.array_equal):
+	return contains(a, b, equal=equal) and contains(b, a, equal=equal)
 
 def distinct(ls, equal=np.array_equal):
 	result = []
