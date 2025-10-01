@@ -2,6 +2,8 @@ import math
 from PIL import Image, ImageFont, ImageDraw
 import pyx.mat.mat as mat
 import numpy as np
+import pyx.numpyx as npx
+from pyx.collectionsx import merge_where
 
 def concat(lst, axis=0, equal_sized=False, mode='RGBA'):
 	cell_size = lst[0].size if equal_sized else mat.arg(max, [x.size for x in lst])
@@ -15,9 +17,6 @@ def concat(lst, axis=0, equal_sized=False, mode='RGBA'):
 		#print(pos)
 		result.paste(x, tuple(pos))
 	return result
-
-import numpy as np
-import pyx.numpyx as npx
 
 def sprites(img, regions): return [img.crop((*x.min, *x.max)) for x in regions]
 
@@ -158,3 +157,10 @@ def resize_bilinear(img, new_shape):
 	result = top * (1 - dy) + bottom * dy
 
 	return result.astype(img.dtype)
+
+
+def get_atlases(img, threshold=0.5, min_dist=1):
+	pixels = [[i, j] for i in range(img.size[0]) for j in range(img.size[1]) if img.getpixel((i, j))[3] > threshold]
+	rects = [npx.rect(np.array(x), np.ones(2)) for x in pixels]
+	#print(rects)
+	return merge_where(rects, lambda x, y: npx.rect.chebyshev_distance(x, y) <= min_dist, npx.rect.aabb)
