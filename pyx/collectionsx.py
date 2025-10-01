@@ -194,3 +194,10 @@ def merge_where(ls, condition, merge_func):
 				del ls[i]	#ls.pop(i)
 				break
 	return ls
+
+"""
+List (a.k.a. Sequence) → Order matters, Duplicates matter.
+Bag (a.k.a. Multiset) → Order does not matter, Duplicates matter.
+Set → Order does not matter, Duplicates do not matter.
+"""
+
