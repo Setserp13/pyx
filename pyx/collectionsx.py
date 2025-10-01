@@ -168,3 +168,22 @@ class graph(list):
 	def neighbors(self, item):
 		if item in self:
 			return self.neighbors_at(self.index(item))
+
+
+
+def distinct(ls, equal=np.array_equal):
+	result = []
+	for x in ls:
+		#print(x)
+		if not any(equal(x, y) for y in result):
+			result.append(x)
+	return result
+
+def merge_where(ls, condition, merge_func):
+	for i in range(len(ls) - 1, 0, -1):
+		for j in range(i - 1, -1, -1):
+			if condition(ls[i], ls[j]):
+				ls[j] = merge_func(ls[i], ls[j])
+				del ls[i]	#ls.pop(i)
+				break
+	return ls
