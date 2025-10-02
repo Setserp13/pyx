@@ -308,9 +308,9 @@ class polyline(np.ndarray):#list):
 
 
 	
-	def edges(p, closed=True): return List.aranges(p, 2, cycle=closed)
+	def edges(p, closed=True): return [line(x) for x in List.aranges(p, 2, cycle=closed)]
 
-	def edge(vertices, index): return [vertices[index], vertices[(index + 1) % len(vertices)]]
+	def edge(vertices, index): return line([vertices[index], vertices[(index + 1) % len(vertices)]])
 	
 	#def angle(vertices, index): return [vertices.edge(index), list(reversed(vertices.edge((index - 1) % len(vertices))))]
 	def vertex_angle(vertices, index): return angle(List.arange(vertices, 3, start=index - 1))
@@ -654,6 +654,7 @@ def bars(values, offset = np.zeros(2), width=1, gap=0, axis=0, align=0):
 		size = np.array([width, y])[[axis, 1 - axis]]
 		result.append(npx.rect(min, size))
 	return result
+
 
 
 
