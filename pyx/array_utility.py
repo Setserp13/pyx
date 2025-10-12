@@ -51,6 +51,8 @@ def find(array, match):
 	if index > -1:
 		return array[index]
 
+def exists(array, item): return find(array, lambda x: x == item) is not None
+
 #find_last_index(array, match) = return find_index(reversed(array), match)
 
 def find_indices(array, match, start=0, stop=None, step=1):
