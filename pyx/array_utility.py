@@ -55,10 +55,10 @@ def exists(array, item): return find(array, lambda x: x == item) is not None
 
 #find_last_index(array, match) = return find_index(reversed(array), match)
 
-def find_indices(array, match, start=0, stop=None, step=1):
-	stop = len(array) if stop is None else stop
+def find_indices(array, match, mask=None):
+	mask = range(len(array)) if mask is None else mask
 	result = []
-	for i in range(start, stop, step):
+	for i in mask:
 		if call(match, array[i], i):
 			result.append(i)
 	return result
