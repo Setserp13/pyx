@@ -393,6 +393,8 @@ def random_in_arc(r, start_angle, stop_angle): return random_on_arc(random.unifo
 def random_on_circle(r): return random_on_arc(r, 0, 2 * math.pi)
 def random_in_annulus(r, R): return random_on_circle(random.uniform(r, R))
 def random_in_circle(r): return random_in_annulus(0, r)
+def uniform_in_annulus(r, R): return random_on_circle(lerp(r, R, math.sqrt(random.random()))
+def uniform_in_circle(r): return uniform_in_annulus(0, r)
 def random_in_segment(a, b): return lerp(a, b, random.uniform(0.0, 1.0))
 
 def polar_to_cartesian(r, theta): return np.array([r * math.cos(theta), r * math.sin(theta)])
