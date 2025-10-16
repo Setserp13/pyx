@@ -28,6 +28,12 @@ class circle():
 
 	def get_point01(self, t): return self.get_point(t * 2 * np.pi)
 
+	@property
+	def diameter(self): return radius * 2
+	
+	@property
+	def aabb(self): return npx.rect.center_size(self.center, np.ones(2) * self.diameter)
+
 class arc(circle):
 	def __init__(self, center, radius, start, end): #start is start angle and end is end angle
 		super().__init__(center, radius)
@@ -38,24 +44,7 @@ class arc(circle):
 		t = mat.clamp01(t)
 		return self.get_point(mat.lerp(self.start, self.end, t))
 
-"""class line():
-	def __init__(self, start, end):
-		self.start = np.array(start)
-		self.end = np.array(end)
-
-	@property
-	def length(self): return np.linalg.norm(self.end - self.start)
-
-	@property
-	def direction(self): return npx.normalize(self.end - self.start)
-
-	@property
-	def midpoint(self): return (self.start + self.end) * 0.5
-
-	@property #in XY-plane
-	def normal(self): return np.array([-self.direction[1], self.direction[0]] + list(self.direction[2:]))"""
-
-class line(np.ndarray):
+class line(np.ndarray):	#start = self[0], end = self[1]
 	def __new__(cls, input_array):
 		# Convert input to ndarray and view it as MyArray
 		obj = np.asarray(input_array).view(cls)
@@ -215,6 +204,9 @@ class Mesh():
 
 	def get_faces(self): return [self.get_face(i) for i in range(len(self.faces))]
 
+	@property
+	def edges(self): return List.flatten([polyline.edges(x) for x in self.get_faces()])
+	
 	def to_obj(self, path):
 		lines = [f"v {x} {y} {z}" for x, y, z in self.vertices]
 		if self.uvs is not None and len(self.uvs) > 0:
@@ -654,6 +646,7 @@ def bars(values, offset = np.zeros(2), width=1, gap=0, axis=0, align=0):
 		size = np.array([width, y])[[axis, 1 - axis]]
 		result.append(npx.rect(min, size))
 	return result
+
 
 
 
