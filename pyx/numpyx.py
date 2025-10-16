@@ -7,6 +7,8 @@ from pyx.collectionsx import List as ls
 import random
 from pyx.numpyx_geo import polyline
 
+def project(v, u): return (np.dot(v, u) / np.dot(u, u)) * u	#Project vector v onto vector u.
+
 def fill(obj, length, filler=0):
 	if isinstance(obj, np.ndarray):
 		return np.append(obj, [filler] * (length - len(obj)))
