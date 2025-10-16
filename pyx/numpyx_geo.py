@@ -5,6 +5,7 @@ from pyx.collectionsx import lshift
 import math
 import pyx.osx as osx
 from pyx.collectionsx import List
+from pyx.collectionsx import flatten
 from itertools import product
 
 #In geometry, a set of points are said to be concyclic (or cocyclic) if they lie on a common circle. A polygon whose vertices are concyclic is called a cyclic polygon, and the circle is called its circumscribing circle or circumcircle.
@@ -205,7 +206,7 @@ class Mesh():
 	def get_faces(self): return [self.get_face(i) for i in range(len(self.faces))]
 
 	@property
-	def edges(self): return List.flatten([polyline.edges(x) for x in self.get_faces()])
+	def edges(self): return flatten([polyline.edges(x) for x in self.get_faces()])
 	
 	def to_obj(self, path):
 		lines = [f"v {x} {y} {z}" for x, y, z in self.vertices]
@@ -646,6 +647,7 @@ def bars(values, offset = np.zeros(2), width=1, gap=0, axis=0, align=0):
 		size = np.array([width, y])[[axis, 1 - axis]]
 		result.append(npx.rect(min, size))
 	return result
+
 
 
 
