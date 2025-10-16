@@ -123,11 +123,21 @@ def clip(obj, mask):
 	clip_path = etree.SubElement(defs, '{http://www.w3.org/2000/svg}clipPath', attrib={'clipPathUnits': 'userSpaceOnUse', 'id': clip_path_id})
 	clip_path.append(mask)
 
-def circle_bbox(obj): return npx.bbox.circle(*get(obj, float, 'cx', 'cy', 'r'))
+#def circle_bbox(obj): return npx.bbox.circle(*get(obj, float, 'cx', 'cy', 'r'))
+def circle_from_svg(obj): return geo.circle(*get(obj, float, 'cx', 'cy', 'r'))
 
 def ellipse_bbox(obj): return npx.bbox.ellipse(*get(obj, float, 'cx', 'cy', 'rx', 'ry'))
 
-def rect_bbox(obj): return npx.rect2(*get(obj, float, 'x', 'y', 'width', 'height'))
+#def rect_bbox(obj): return npx.rect2(*get(obj, float, 'x', 'y', 'width', 'height'))
+def rect_from_svg(obj): return npx.rect2(*get(obj, float, 'x', 'y', 'width', 'height'))
+
+def parse_points2(s):
+	matches = re.findall(r'(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)', s)
+	return np.array(matches, dtype=float)
+
+def polyline_from_svg(obj): return geo.polyline(parse_points2(obj.get('points')), closed=False)
+
+def polygon_from_svg(obj):  return geo.polyline(parse_points2(obj.get('points')), closed=True)
 
 #TEXT
 
