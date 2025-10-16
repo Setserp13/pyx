@@ -1,3 +1,5 @@
+import pyx.numpyx as npx
+import pyx.numpyx_geo as geo
 from multipledispatch import dispatch
 from numbers import Number
 import numpy as np
@@ -212,6 +214,51 @@ def segment_segment_intersection(seg1, seg2):
 	vector = polar_to_cartesian(random_range(0.0, radius), random_range(0.0, 2.0 * math.pi))
 	return tuple(map(lambda x, y: x + y, center, vector))"""
 
+def project_point_on_line(p, a, b):	#Project point p onto the line defined by points a and b.
+	return a + npx.project(p - a, b - a)
+
+def project_circle_on_line(center, radius, a, b):
+	dir = npx.normalize(b - a)
+	proj_center = project_point_on_line(center, a, b)
+	return geo.line([proj_center - dir * radius, proj_center + dir * radius])
+
+def circle_circle_distance(center, radius, circle):
+	dir_vec = circle.center - center
+	dist_centers = np.linalg.norm(dir_vec)
+	if dist_centers == 0:
+		closest_point = circle.center
+	else:
+		closest_point = circle.center - dir_vec / dist_centers * circle.radius
+	return dist_centers - (circle.radius + radius), closest_point
+
+def point_line_distance(p, a, b):
+	proj = project_point_on_line(p, a, b)
+	return np.linalg.norm(proj - p), proj
+
+def point_segment_distance(p, a, b):
+	#print(a, b)
+	t = npx.inverse_lerp(a, b, p)
+	closest_point = npx.lerp(a, b, np.clip(t, 0, 1))
+	return np.linalg.norm(closest_point - p), closest_point
+
+def circle_line_distance(center, radius, a, b): return point_line_distance(center, a, b) - radius
+"""Subtracting the circle’s radius gives the signed distance from the circle’s edge to the line:
+	If the result is positive, the line is outside the circle.
+	If the result is zero, the line is tangent to the circle.
+	If the result is negative, the line intersects the circle."""
+
+def circle_segment_distance(center, radius, a, b):
+	dist = point_segment_distance(center, a, b)
+	return dist[0] - radius, dist[1]
+
+def circle_polyline_distance(center, radius, vertices):
+	dists = [circle_segment_distance(center, radius, *x) for x in vertices.edges()]
+	dists.sort(key=lambda x: x[0])
+	return dists[0]
+	#return min([circle_segment_distance(center, radius, *x) for x in vertices.edges()])
+
+def circle_rect_distance(center, radius, rect):
+	return circle_polyline_distance(center, radius, npx.rect2.corners(rect))
 
 
 def batch(total, size): return [min(total - (i * size), size) for i in range(math.ceil(total / size))]
