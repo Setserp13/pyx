@@ -76,10 +76,10 @@ def linear_layout(n, offset=np.zeros(3), dir=np.array([1, 0, 0]), cell_size=1, a
 def random_range(start, stop): return np.array(list(map(lambda x, y: random_range(x, y), start, stop)))
 
 def on_circle(n, r=1.0, center=np.zeros(2), start=0.0):	#regular polygon
-	return [polar_to_cartesian(r, start + 2.0 * math.pi * (i / n)) + center for i in range(n)]
+	return polyline([polar_to_cartesian(r, start + 2.0 * math.pi * (i / n)) + center for i in range(n)])
 
 def on_arc(n, r=1.0, center=np.zeros(2), start=0.0, size=2.0 * math.pi):
-	return [polar_to_cartesian(r, start + size * (i / (n - 1))) + center for i in range(n)]
+	return polyline([polar_to_cartesian(r, start + size * (i / (n - 1))) + center for i in range(n)])
 
 class rect:
 	def __init__(self, min, size):
