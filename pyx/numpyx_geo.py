@@ -8,6 +8,12 @@ from pyx.collectionsx import List
 from pyx.collectionsx import flatten
 from itertools import product
 
+def elbow_connector1(start, end, x=0): return polyline([start, np.array([start[x], end[1 - x]]), end])
+
+def elbow_connector2(start, end, x=0, t=0.5):
+	y = npx.lerp(start[1 - x], end[1 - x], t)
+	return polyline([start, np.array([start[x], y]), np.array([end[x], y]), end])
+
 #In geometry, a set of points are said to be concyclic (or cocyclic) if they lie on a common circle. A polygon whose vertices are concyclic is called a cyclic polygon, and the circle is called its circumscribing circle or circumcircle.
 def cyclic_polygon(angles, r=1, center=np.zeros(2)):
 	return [npx.polar_to_cartesian(r, x) + center for x in angles]
@@ -647,6 +653,7 @@ def bars(values, offset = np.zeros(2), width=1, gap=0, axis=0, align=0):
 		size = np.array([width, y])[[axis, 1 - axis]]
 		result.append(npx.rect(min, size))
 	return result
+
 
 
 
