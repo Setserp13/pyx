@@ -263,7 +263,13 @@ class grid:
 
 	def cell_index(self, point):
 		return (point - self.offset) // (self.cell_size + self.cell_gap)
-	
+
+	def snap_point(self, point, to=np.ones(2) * 0.5):
+		index = self.cell_index(point).astype(int)
+		return self.cell(index).denormalize_point(to)
+
+	def snap_rect(self, rct): return rect.min_max(self.snap_point(rct.min, np.zeros(2)), self.snap_point(rct.max, np.ones(2)))
+		
 	def cell(self, index):
 		return rect(self.cell_min(index), self.cell_size)
 
@@ -287,8 +293,6 @@ class grid:
 		indices = itertools.product(*ranges)
 		indices = [ls.items(x, swizzle) for x in indices]
 		return [self.cell(np.array(x)) for x in indices]
-
-
 
 #POINT-POINT AABB
 @dispatch(np.ndarray, np.ndarray)
