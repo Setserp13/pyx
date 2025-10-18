@@ -392,9 +392,6 @@ class polyline(np.ndarray):#list):
 
 	def segment_intersection(vertices, seg, closed=True): return [mat.segment_segment_intersection(x, seg) for x in polyline.edges(vertices, closed=closed)]
 
-	def contains_point(vertices, point):
-		return len(polyline.ray_intersection(vertices, [np.centroid(vertices), vertices[0]], closed=True)) % 2 == 1
-
 	def is_clockwise(polygon):
 		sum = 0
 		for i in range(len(polygon)):
@@ -411,7 +408,12 @@ class polyline(np.ndarray):#list):
 			x2, y2 = vertices[(i + 1) % n]
 			area += (x1 * y2 - x2 * y1)
 		return area * 0.5	#abs(area) * 0.5, let it return negative numbers too, to triangulate works fine
-	
+
+	"""def contains_point(vertices, point):
+		ray = [point, point + np.array([1e6, 0])]	# Make a ray starting from the point → far to the right (for odd-even test)
+		hits = polyline.ray_intersection(vertices, ray, closed=True)	# Count intersections between the ray and polygon edges
+		return len([h for h in hits if h is not None]) % 2 == 1	# Odd number of hits → point is inside"""
+
 	def contains_point(polygon, point):
 		x, y = point
 		inside = False
@@ -653,6 +655,7 @@ def bars(values, offset = np.zeros(2), width=1, gap=0, axis=0, align=0):
 		size = np.array([width, y])[[axis, 1 - axis]]
 		result.append(npx.rect(min, size))
 	return result
+
 
 
 
