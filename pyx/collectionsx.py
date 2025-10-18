@@ -191,6 +191,12 @@ class graph(list):
 		result.add_edges(tree_edges)
 		return result
 
+	def arrows_from(self, i): return [(i, j) for j in self.adjacency[i]]
+	#def edges_at(self, i): return [{i, j} for j in self.adjacency[i]]
+	def arrows(self): return flatten([self.arrows_from(i) for i in range(len(self))])
+	def edges(self): return list({tuple(sorted(e)) for e in self.arrows()})
+	def get_edges(self): return [[self[i], self[j]] for i, j in self.edges()]
+
 def list_equal(a, b, equal=np.array_equal):
 	return all(equal(a[i], b[i]) for i in range(len(a))) if len(a) == len(b) else False
 
