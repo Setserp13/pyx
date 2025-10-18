@@ -163,12 +163,33 @@ class graph(list):
 		self.add_arrow(i, j)
 		self.add_arrow(j, i)
 
+	def add_arrows(self, args):
+		for x in args: self.add_arrow(*x)
+
+	def add_edges(self, args):
+		for x in args: self.add_edge(*x)
+
 	def neighbors_at(self, i): return List.items(self, self.adjacency[i])
 
 	def neighbors(self, item):
 		if item in self:
 			return self.neighbors_at(self.index(item))
 
+	def spanning_tree(self, start=0):
+		n = len(self.adjacency)
+		visited = [False]*n
+		tree_edges = []
+		def dfs(u):
+			visited[u] = True
+			for v in self.adjacency[u]:
+				if not visited[v]:
+					tree_edges.append((u, v))
+					dfs(v)
+		dfs(start)
+		#return tree_edges
+		result = graph(*self)
+		result.add_edges(tree_edges)
+		return result
 
 def list_equal(a, b, equal=np.array_equal):
 	return all(equal(a[i], b[i]) for i in range(len(a))) if len(a) == len(b) else False
