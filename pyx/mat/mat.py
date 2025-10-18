@@ -212,6 +212,44 @@ def segment_segment_intersection(seg1, seg2):
 		return None
 	return pt if colinear_point_on_segment(seg1, pt) and colinear_point_on_segment(seg2, pt) else None
 
+def segment_polygon_intersection(seg, polygon):
+	p1, p2 = np.array(seg[0], float), np.array(seg[1], float)
+	segment_dir = p2 - p1
+	points = []
+
+	# Go through all polygon edges
+	for i in range(len(polygon)):
+		a = np.array(polygon[i], float)
+		b = np.array(polygon[(i + 1) % len(polygon)], float)
+
+		# Edge direction
+		edge = b - a
+		den = segment_dir[0] * edge[1] - segment_dir[1] * edge[0]
+		if abs(den) < 1e-9:
+			continue  # parallel → no intersection
+
+		diff = a - p1
+		t = (diff[0] * edge[1] - diff[1] * edge[0]) / den
+		u = (diff[0] * segment_dir[1] - diff[1] * segment_dir[0]) / den
+
+		if 0 <= t <= 1 and 0 <= u <= 1:
+			# Intersection point
+			points.append(p1 + t * segment_dir)
+
+	if geo.polyline.contains_point(polygon, p1):
+		points.append(p1)
+	if geo.polyline.contains_point(polygon, p2):
+		points.append(p2)
+
+	if len(points) < 2:
+		return None
+
+	# Sort points along the segment direction
+	points = sorted(points, key=lambda p: np.dot(p - p1, segment_dir))
+	return [points[0], points[-1]]
+
+def segment_rect_intersection(seg, rect): return segment_polygon_intersection(seg, npx.rect2.corners(rect))
+
 """def line_segment_intersection(line, segment):
 	point = line_line_intersection(line, segment)
 	if point == None: return None
