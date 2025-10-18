@@ -17,7 +17,8 @@ class List:
 	def aranges(ls, k, start=0, cycle=True): return [List.arange(ls, k, start + i) for i in range(len(ls) - (0 if cycle else (k - 1)))]
 	
 
-def get_random(ls, count):
+def get_random(ls, amount):	#amount can be an int in [0, len(ls) - 1] or a float in [0.0, 1.0]
+	count = int(len(ls) * amount) if isinstance(amount, float) else amount
 	result = copy.copy(ls)
 	for i in range(len(ls) - count):
 		result.pop(random.randint(0, len(result)-1))
