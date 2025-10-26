@@ -48,7 +48,7 @@ def weights(values): return np.array(values) / sum(values)
 
 def sgn(value): return -1 if value < 0 else 1 if value > 0 else 0
 
-@dispatch(Number, Number)
+@dispatch(Number, Number)	#snap
 def floor(value, step): return math.floor(value / step) * step #returns the greatest multiple of step less than or equal to value
 
 @dispatch(Number, Number)
