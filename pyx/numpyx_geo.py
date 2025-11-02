@@ -31,7 +31,7 @@ class circle():
 		delta = point - self.center
 		return np.arctan2(delta[1], delta[0])
 
-	def get_point(self, theta): return np.array(list(npx.polar_to_cartesian(self.radius, theta)) + [0]) + self.center		
+	def get_point(self, theta): return npx.polar_to_cartesian(self.radius, theta) + self.center		
 
 	def get_point01(self, t): return self.get_point(t * 2 * np.pi)
 
@@ -655,6 +655,7 @@ def bars(values, offset = np.zeros(2), width=1, gap=0, axis=0, align=0):
 		size = np.array([width, y])[[axis, 1 - axis]]
 		result.append(npx.rect(min, size))
 	return result
+
 
 
 
