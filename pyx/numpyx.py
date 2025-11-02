@@ -321,7 +321,7 @@ def aabb(args): #args can contain np.ndarray and rect
 	return result
 
 def set_aabb(p, value):	#p is a list of points
-	aabb = npx.aabb(p)
+	aabb = aabb(p)
 	return [value.denormalize_point(aabb.normalize_point(x)) for x in p]
 
 from typing import Union
