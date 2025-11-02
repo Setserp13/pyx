@@ -320,6 +320,10 @@ def aabb(args): #args can contain np.ndarray and rect
 		result = aabb(result, args[i])
 	return result
 
+def set_aabb(p, value):	#p is a list of points
+	aabb = npx.aabb(p)
+	return [value.denormalize_point(aabb.normalize_point(x)) for x in p]
+
 from typing import Union
 #@dispatch(Number, Number, Number)
 
