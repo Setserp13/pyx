@@ -49,7 +49,7 @@ class arc(circle):
 
 	def get_point01(self, t):
 		t = npx.clamp01(t)
-		return self.get_point(mat.lerp(self.start, self.end, t))
+		return self.get_point(npx.lerp(self.start, self.end, t))
 
 class line(np.ndarray):	#start = self[0], end = self[1]
 	def __new__(cls, input_array):
@@ -655,6 +655,7 @@ def bars(values, offset = np.zeros(2), width=1, gap=0, axis=0, align=0):
 		size = np.array([width, y])[[axis, 1 - axis]]
 		result.append(npx.rect(min, size))
 	return result
+
 
 
 
