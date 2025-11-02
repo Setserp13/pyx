@@ -164,7 +164,7 @@ class rect:
 		return self.padding(padding, padding)
 
 	def bounds(self, obj_size, obj_pivot=None):
-		if obj_pivot == None:
+		if obj_pivot is None:
 			obj_pivot = np.full(len(obj_size), 0.5)
 		return self.padding(obj_size * obj_pivot, obj_size * (1 - obj_pivot))
 
