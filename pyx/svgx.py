@@ -255,13 +255,13 @@ def capsule(center, size, **kwargs):
 NSMAP = {None: "http://www.w3.org/2000/svg"}
 def svg(width, height): return etree.Element("svg", width=str(width), height=str(height), nsmap=NSMAP)
 
-def polygon_arcs(vertices, closed=True, mask=None, **kwargs):
+def polygon_arcs(vertices, closed=True, mask=None, radius=0.5 **kwargs):
 	edges = geo.polyline.edges(vertices, closed=closed)
 	if mask is None:
 		mask = [True] * len(edges)
 	d = f"M {vertices[0][0]} {vertices[0][1]}"
 	for i, edge in enumerate(edges):
-		r = edge.length * 0.5
+		r = edge.length * radius
 		x, y = edge[1]
 		d += f" A {r} {r} 0 0 1 {x} {y}" if mask[i] else f" L {x} {y}"
 	return path(d=d, **kwargs)
