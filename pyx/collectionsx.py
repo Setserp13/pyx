@@ -3,6 +3,8 @@ import random
 import numpy as np
 from pyx.array_utility import find_index
 
+def pad(array, pad_width, fill): return array + [fill] * (pad_width - len(array))
+
 class Dict:
 	def items(dct, keys): return { x: dct[x] for x in keys if x in dct } #also works with list and tuple
 	def get(dct, key, dflt_value=None): return dct[key] if key in dct else dflt_value
