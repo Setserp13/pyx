@@ -617,7 +617,7 @@ def ring(count, r=1, R=2, height=1):
 
 
 
-class bezier:
+"""class bezier:
 	def get_point(t, *p):
 		# Recursive Bézier evaluation (De Casteljau's algorithm)
 		if len(p) == 1:
@@ -625,14 +625,14 @@ class bezier:
 		else:
 			return (1 - t) * get_point(t, *p[:-1]) + t * get_point(t, *p[1:])
 
-		"""#Evaluate a Bézier curve at parameter t using Bernstein basis.
+		#Evaluate a Bézier curve at parameter t using Bernstein basis.
 		n = len(points) - 1
 		points = np.array(points)
 		point = np.zeros_like(points[0])
 		for i in range(n + 1):
 			binom = np.math.comb(n, i)
 			point += binom * ((1 - t) ** (n - i)) * (t ** i) * points[i]
-		return point"""
+		return point
 	
 	def get_derivative(t, *p):
 		# Derivative of Bézier curve (based on differences between control points)
@@ -640,7 +640,7 @@ class bezier:
 		if n < 1:
 			raise ValueError("Need at least two points for a derivative")
 		derivative_points = [n * (p[i + 1] - p[i]) for i in range(n)]
-		return get_point(t, *derivative_points)
+		return get_point(t, *derivative_points)"""
 
 
 def randomize2(vertices, r=.1): return [npx.random_in_circle(r) + x for x in vertices]
@@ -655,6 +655,7 @@ def bars(values, offset = np.zeros(2), width=1, gap=0, axis=0, align=0):
 		size = np.array([width, y])[[axis, 1 - axis]]
 		result.append(npx.rect(min, size))
 	return result
+
 
 
 
