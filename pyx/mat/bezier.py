@@ -32,6 +32,31 @@ class bezier(np.ndarray):
 		#print(d)
 		return d
 
+	def get_point(p, t):
+		# Recursive Bézier evaluation (De Casteljau's algorithm)
+		if len(p) == 1:
+			return p[0]
+		else:
+			return (1 - t) * get_point(t, *p[:-1]) + t * get_point(t, *p[1:])
+
+		"""#Evaluate a Bézier curve at parameter t using Bernstein basis.
+		n = len(points) - 1
+		points = np.array(points)
+		point = np.zeros_like(points[0])
+		for i in range(n + 1):
+			binom = np.math.comb(n, i)
+			point += binom * ((1 - t) ** (n - i)) * (t ** i) * points[i]
+		return point"""
+	
+	def get_derivative(p, t):
+		# Derivative of Bézier curve (based on differences between control points)
+		n = len(p) - 1
+		if n < 1:
+			raise ValueError("Need at least two points for a derivative")
+		derivative_points = [n * (p[i + 1] - p[i]) for i in range(n)]
+		return get_point(t, *derivative_points)
+
+
 def smooth_control_points(p, index, extents=10):
 	angle = p.vertex_angle(index)
 	rot = (math.pi - angle.size()) * 0.5
