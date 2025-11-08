@@ -118,16 +118,26 @@ def Map(start, stop=None, step=None, func=None):
 
     return result
 
-def flatten(lst):
+"""def flatten(lst):
 	result = []
 	for item in lst:
 		if isinstance(item, list):
 			result.extend(flatten(item))
 		else:
 			result.append(item)
+	return result"""
+
+from collections.abc import Iterable
+def flatten(ls, times=1):
+	if times < 1:
+		return ls
+	result = []
+	for item in ls:
+		if isinstance(item, Iterable):
+			result.extend(flatten(item, times-1))
+		else:
+			result.append(item)
 	return result
-
-
 
 
 class graph(list):
