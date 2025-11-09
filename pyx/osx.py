@@ -48,7 +48,9 @@ def open_all(ls, open, **kwargs):
 	return result
 	#return [y for y in [open(x, **kwargs) for x in ls] if y != None]
 
-
+def move_to(path, dir):
+	basename = os.path.basename(path)
+	os.rename(path, os.path.join(dir, basename))
 
 def remove_all(files):
 	for x in files:
@@ -185,6 +187,7 @@ def ls(dir, abs=True): return [os.path.join(dir, x) for x in os.listdir(dir)] if
 #Return a list containing the names of the entries in the directory given by path. The list is in arbitrary order. If abs is true, it returns the absolute path of each entry.
 
 def lsall(dirs, abs=True): return [ls(x, abs) for x in dirs]
+
 
 
 
