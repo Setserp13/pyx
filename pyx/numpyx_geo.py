@@ -294,9 +294,10 @@ EPSILON = 1e-10
 class polyline(np.ndarray):#list):
 
 
-	def __new__(cls, input_array):
+	def __new__(cls, input_array, closed=True):
 		# Convert input to ndarray and view it as MyArray
 		obj = np.asarray(input_array).view(cls)
+		obj.closed = closed
 		return obj
 
 	def __array_finalize__(self, obj):
@@ -655,6 +656,7 @@ def bars(values, offset = np.zeros(2), width=1, gap=0, axis=0, align=0):
 		size = np.array([width, y])[[axis, 1 - axis]]
 		result.append(npx.rect(min, size))
 	return result
+
 
 
 
