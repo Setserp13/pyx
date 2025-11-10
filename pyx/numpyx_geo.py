@@ -474,12 +474,12 @@ class polyline(np.ndarray):#list):
 		return triangles
 
 
-	def to_stroke(v, width=1, closed=False):
+	def to_stroke(v, width=1, closed=False, align=0.5):
 		inward_normals = polyline.vertex_normals(v, outward=False, closed=closed)
 		outward_normals = polyline.vertex_normals(v, outward=True, closed=closed)
 		for i, x in enumerate(v):
-			inward_normals[i] = inward_normals[i] * width + x
-			outward_normals[i] = outward_normals[i] * width + x
+			inward_normals[i] = inward_normals[i] * width * align + x
+			outward_normals[i] = outward_normals[i] * width * (1.0 - align) + x
 		return polyline(inward_normals + list(reversed(outward_normals)))
 
 
@@ -616,34 +616,6 @@ def ring(count, r=1, R=2, height=1):
 		faces += prism_laterals(count, start_index1=count * a, start_index2=count * b)
 	return vertices, faces
 
-
-
-"""class bezier:
-	def get_point(t, *p):
-		# Recursive Bézier evaluation (De Casteljau's algorithm)
-		if len(p) == 1:
-			return p[0]
-		else:
-			return (1 - t) * get_point(t, *p[:-1]) + t * get_point(t, *p[1:])
-
-		#Evaluate a Bézier curve at parameter t using Bernstein basis.
-		n = len(points) - 1
-		points = np.array(points)
-		point = np.zeros_like(points[0])
-		for i in range(n + 1):
-			binom = np.math.comb(n, i)
-			point += binom * ((1 - t) ** (n - i)) * (t ** i) * points[i]
-		return point
-	
-	def get_derivative(t, *p):
-		# Derivative of Bézier curve (based on differences between control points)
-		n = len(p) - 1
-		if n < 1:
-			raise ValueError("Need at least two points for a derivative")
-		derivative_points = [n * (p[i + 1] - p[i]) for i in range(n)]
-		return get_point(t, *derivative_points)"""
-
-
 def randomize2(vertices, r=.1): return [npx.random_in_circle(r) + x for x in vertices]
 
 def randomize3(vertices, r=.1): return [npx.random_in_sphere(r) + x for x in vertices]
@@ -656,6 +628,7 @@ def bars(values, offset = np.zeros(2), width=1, gap=0, axis=0, align=0):
 		size = np.array([width, y])[[axis, 1 - axis]]
 		result.append(npx.rect(min, size))
 	return result
+
 
 
 
