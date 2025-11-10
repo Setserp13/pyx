@@ -487,7 +487,7 @@ class polyline(np.ndarray):#list):
 		for i, x in enumerate(polyline.vertex_normals(v, outward=True, closed=closed)):
 			result.append(v[i] + x * width * (1.0 - align))
 			result.insert(0, v[i] - x * width * align)
-		return polyline(result)
+		return polyline([result[len(v) - 1]] + result + [result[len(v)]]) if closed else polyline(result)
 
 
 class polygon:
@@ -633,6 +633,7 @@ def bars(values, offset = np.zeros(2), width=1, gap=0, axis=0, align=0):
 		size = np.array([width, y])[[axis, 1 - axis]]
 		result.append(npx.rect(min, size))
 	return result
+
 
 
 
