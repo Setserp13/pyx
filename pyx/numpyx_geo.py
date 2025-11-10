@@ -474,15 +474,20 @@ class polyline(np.ndarray):#list):
 		return triangles
 
 
-	def to_stroke(v, width=1, closed=False, align=0.5):
+	"""def to_stroke(v, width=1, closed=False, align=0.5):
 		inward_normals = polyline.vertex_normals(v, outward=False, closed=closed)
 		outward_normals = polyline.vertex_normals(v, outward=True, closed=closed)
 		for i, x in enumerate(v):
 			inward_normals[i] = inward_normals[i] * width * align + x
 			outward_normals[i] = outward_normals[i] * width * (1.0 - align) + x
-		return polyline(inward_normals + list(reversed(outward_normals)))
+		return polyline(inward_normals + list(reversed(outward_normals)))"""
 
-
+	def to_stroke(v, width=1, closed=False, align=0.5):
+		result = []
+		for i, x in enumerate(polyline.vertex_normals(v, outward=True, closed=closed)):
+			result.append(v[i] + x * width * (1.0 - align))
+			result.insert(0, v[i] - x * width * align)
+		return polyline(result)
 
 
 class polygon:
@@ -628,6 +633,7 @@ def bars(values, offset = np.zeros(2), width=1, gap=0, axis=0, align=0):
 		size = np.array([width, y])[[axis, 1 - axis]]
 		result.append(npx.rect(min, size))
 	return result
+
 
 
 
