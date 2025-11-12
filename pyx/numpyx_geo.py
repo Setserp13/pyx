@@ -485,9 +485,9 @@ class polyline(np.ndarray):#list):
 	def to_stroke(v, width, closed=False, align=0.5, join='miter'):	#join in ['bevel', 'butt', 'miter']
 		result = []
 		if join == 'bevel':
-			edges = geo.polyline.edges(v, closed=closed)
+			edges = polyline.edges(v, closed=closed)
 			for x in edges:
-				normal = geo.polyline.normal(x, outward=True)
+				normal = polyline.normal(x, outward=True)
 				result.append(x[0] + normal * width * (1.0 - align))
 				result.append(x[1] + normal * width * (1.0 - align))
 				result.insert(0, x[0] - normal * width * align)
@@ -497,14 +497,14 @@ class polyline(np.ndarray):#list):
 				result.append(v[i] + x * width * (1.0 - align))
 				result.insert(0, v[i] - x * width * align)
 		elif join == 'miter':
-			angles = [x.size() for x in geo.polyline.vertex_angles(v, closed=closed)]
+			angles = [x.size() for x in polyline.vertex_angles(v, closed=closed)]
 			if not closed:
 				angles = [math.pi] + angles + [math.pi]
-			for i, x in enumerate(geo.polyline.vertex_normals(v, outward=True, closed=closed)):
+			for i, x in enumerate(polyline.vertex_normals(v, outward=True, closed=closed)):
 				s = math.sin(angles[i] / 2)
 				result.append(v[i] + x * (width * (1.0 - align)) / s)
 				result.insert(0, v[i] - (x * width * align) / s)		
-		return geo.polyline([result[(len(result) // 2) - 1]] + result + [result[len(result) // 2]]) if closed else geo.polyline(result)
+		return polyline([result[(len(result) // 2) - 1]] + result + [result[len(result) // 2]]) if closed else polyline(result)
 
 
 class polygon:
@@ -650,6 +650,7 @@ def bars(values, offset = np.zeros(2), width=1, gap=0, axis=0, align=0):
 		size = np.array([width, y])[[axis, 1 - axis]]
 		result.append(npx.rect(min, size))
 	return result
+
 
 
 
