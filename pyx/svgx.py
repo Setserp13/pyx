@@ -30,7 +30,11 @@ def vertices(obj):
 
 def circle_from_svg(obj): return geo.circle(*get(obj, float, 'cx', 'cy', 'r'))
 def rect_from_svg(obj): return npx.rect2(*get(obj, float, 'x', 'y', 'width', 'height'))
-
+def parse_points2(s):
+	matches = re.findall(r'(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)', s)
+	return np.array(matches, dtype=float)
+def polygon_from_svg(obj):  return geo.polyline(parse_points2(obj.get('points')), closed=True)
+def polyline_from_svg(obj): return geo.polyline(parse_points2(obj.get('points')), closed=False)
 
 def circle_bbox(obj): return circle_from_svg(obj).aabb
 def ellipse_bbox(obj):
@@ -42,12 +46,15 @@ def path_bbox(obj):
 	bbox = path.bbox()
 	sc = get_scale(obj)
 	return npx.rect.min_max(np.array([bbox[0] * sc[0], bbox[2] * sc[1]]), np.array([bbox[1] * sc[0], bbox[3] * sc[1]]))
+def polyline_bbox(obj):	return npx.aabb(polyline_from_svg(obj))
 #
 def bbox(obj): return {
 		'circle': circle_bbox,
 		'ellipse': ellipse_bbox,
 		'image': rect_bbox,
 		'path': path_bbox,
+		'polyline': polyline_bbox,
+		'polygon': polyline_bbox,
 		'rect': rect_bbox
 	}[localname(obj.tag)](obj)
 
@@ -145,13 +152,8 @@ def clip(obj, mask):
 
 
 
-def parse_points2(s):
-	matches = re.findall(r'(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)', s)
-	return np.array(matches, dtype=float)
 
-def polyline_from_svg(obj): return geo.polyline(parse_points2(obj.get('points')), closed=False)
 
-def polygon_from_svg(obj):  return geo.polyline(parse_points2(obj.get('points')), closed=True)
 
 #TEXT
 
