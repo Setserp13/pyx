@@ -54,8 +54,10 @@ def g_bbox(group):
 		except:
 			#print(elem)
 			continue
+		if b is None:
+			continue
 		bboxes.append(b)
-	return npx.aabb(bboxes)
+	return npx.aabb(bboxes) if len(bboxes) > 0 else None
 #
 def bbox(obj): return {
 		'circle': circle_bbox,
