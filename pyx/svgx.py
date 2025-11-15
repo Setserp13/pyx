@@ -49,13 +49,14 @@ def polyline_bbox(obj):	return npx.aabb(polyline_from_svg(obj))
 def g_bbox(group):
 	bboxes = []
 	for elem in group.iterdescendants():	#deep search
-		try:
+		"""try:
 			b = svgx.bbox(elem)
 		except:
 			#print(elem)
 			continue
 		if b is None:
-			continue
+			continue"""
+		b = bbox(elem)
 		bboxes.append(b)
 	return npx.aabb(bboxes) if len(bboxes) > 0 else None
 #
