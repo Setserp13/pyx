@@ -320,6 +320,12 @@ def aabb(args): #args can contain np.ndarray and rect
 		result = aabb(result, args[i])
 	return result
 
+@dispatch(np.ndarray)
+def aabb(arr): #args can contain np.ndarray and rect
+	if arr.ndim != 2:
+		raise TypeError("Expected 2D array")
+	return aabb(list(arr))
+
 def set_aabb(p, value):	#p is a list of points
 	current = aabb(p)
 	return [value.denormalize_point(current.normalize_point(x)) for x in p]
