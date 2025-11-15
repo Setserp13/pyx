@@ -48,7 +48,7 @@ def path_bbox(obj):
 def polyline_bbox(obj):	return npx.aabb(polyline_from_svg(obj))
 def g_bbox(group):
 	bboxes = []
-	for elem in group.iter():	#deep search
+	for elem in group.iterdescendants():	#deep search
 		try:
 			b = svgx.bbox(elem)
 		except:
