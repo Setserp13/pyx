@@ -4,6 +4,8 @@ import cairosvg
 from lxml import etree
 import pyx.svgx as svgx
 
+#Convert from vector image to raster image
+
 def svg_to_png(tree, output_png, rect, dpi=10):
     root = tree.getroot()	
     #print(rect.to_tuple())
