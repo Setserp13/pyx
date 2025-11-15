@@ -28,8 +28,9 @@ def vertices(obj):
 	elif localname(obj.tag) == 'path':
 		return [[float(y) for y in x.replace(' ', '').split(',')] for x in obj.get('d', '').split(' ')[1:-1]]
 
-def circle_from_svg(obj): return geo.circle(*get(obj, float, 'cx', 'cy', 'r'))
+def circle_from_svg(obj): return geo.circle(get(obj, float, 'cx', 'cy'), *get(obj, float, 'r'))
 def rect_from_svg(obj): return npx.rect2(*get(obj, float, 'x', 'y', 'width', 'height'))
+def line_from_svg(obj): return geo.line([get(obj, float, 'x1', 'y1'), get(obj, float, 'x2', 'y2')])
 def parse_points2(s):
 	matches = re.findall(r'(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)', s)
 	return np.array(matches, dtype=float)
@@ -41,6 +42,7 @@ def ellipse_bbox(obj):
 	cx, cy, rx, ry = get(obj, float, 'cx', 'cy', 'rx', 'ry')
 	return npx.rect2(cx - rx, cy - ry, rx * 2, ry * 2)
 def rect_bbox(obj): return rect_from_svg(obj)	#npx.rect2(*get(obj, float, 'x', 'y', 'width', 'height'))
+def line_bbox(obj):	return npx.aabb(*line_from_svg(obj))
 def path_bbox(obj):
 	path = parse_path(obj.get('d', None))
 	bbox = path.bbox()
@@ -52,6 +54,7 @@ def bbox(obj): return {
 		'circle': circle_bbox,
 		'ellipse': ellipse_bbox,
 		'image': rect_bbox,
+		'line': line_bbox,
 		'path': path_bbox,
 		'polyline': polyline_bbox,
 		'polygon': polyline_bbox,
