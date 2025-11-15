@@ -49,6 +49,16 @@ def path_bbox(obj):
 	sc = get_scale(obj)
 	return npx.rect.min_max(np.array([bbox[0] * sc[0], bbox[2] * sc[1]]), np.array([bbox[1] * sc[0], bbox[3] * sc[1]]))
 def polyline_bbox(obj):	return npx.aabb(polyline_from_svg(obj))
+def g_bbox(group):
+	bboxes = []
+	for elem in group.iter():	#deep search
+		try:
+			b = svgx.bbox(elem)
+		except:
+			#print(elem)
+			continue
+		bboxes.append(b)
+	return npx.aabb(bboxes)
 #
 def bbox(obj): return {
 		'circle': circle_bbox,
@@ -58,7 +68,8 @@ def bbox(obj): return {
 		'path': path_bbox,
 		'polyline': polyline_bbox,
 		'polygon': polyline_bbox,
-		'rect': rect_bbox
+		'rect': rect_bbox,
+		'g': g_bbox
 	}[localname(obj.tag)](obj)
 
 def get_bboxes(objs): return [get_bbox(x) for x in objs]
