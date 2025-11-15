@@ -363,9 +363,7 @@ def rotate(v, angle_rad):
 def rotate_around(point, angle, center=np.zeros(2)): #use default center to rotate vectors
 	return rotate(point - center, angle) + center
 
-class bbox:
-	def circle(cx, cy, r): return rect2(cx - r, cy - r, r * 2, r * 2)
-	def ellipse(cx, cy, rx, ry): return rect2(cx - rx, cy - ry, rx * 2, ry * 2)
+
 
 def align(object, anchor, pivot, value): return object.set_position(pivot, anchor.denormalize_point(value))
 
