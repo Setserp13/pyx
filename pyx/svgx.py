@@ -50,7 +50,7 @@ def g_bbox(group):
 	bboxes = []
 	for elem in group.iterdescendants():	#deep search
 		"""try:
-			b = svgx.bbox(elem)
+			b = bbox(elem)
 		except:
 			#print(elem)
 			continue
