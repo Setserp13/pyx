@@ -1,13 +1,10 @@
 import xml.etree.ElementTree as ET
 from lxml import etree
 from functools import reduce
-from lxml import etree
 import pyx.rex as rex
 from PIL import Image
 import uuid
 import os
-#import tkinter as tk
-#from tkinter import filedialog
 import svgpathtools
 from svgpathtools import parse_path
 import svgutils.transform as sg
