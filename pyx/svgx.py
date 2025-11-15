@@ -59,7 +59,7 @@ def g_bbox(group):
 		bboxes.append(b)
 	return npx.aabb(bboxes) if len(bboxes) > 0 else None
 #
-def bbox(obj): return {
+def bbox(obj): return {	#Se o grupo tiver transformações (transform="translate(...)" etc), isso não será aplicado
 		'circle': circle_bbox,
 		'ellipse': ellipse_bbox,
 		'image': rect_bbox,
