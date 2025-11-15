@@ -18,6 +18,10 @@ import numpy as np
 import pyx.numpyx as npx
 import pyx.numpyx_geo as geo
 
+class bbox:
+	def circle(cx, cy, r): return rect2(cx - r, cy - r, r * 2, r * 2)
+	def ellipse(cx, cy, rx, ry): return rect2(cx - rx, cy - ry, rx * 2, ry * 2)
+
 def vertices(obj):
 	if localname(obj.tag) == 'rect':
 		return [list(x) for x in npx.corners(rect_bbox(obj))]
