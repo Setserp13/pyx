@@ -18,9 +18,9 @@ import numpy as np
 import pyx.numpyx as npx
 import pyx.numpyx_geo as geo
 
-class bbox:
+"""class bbox:
 	def circle(cx, cy, r): return rect2(cx - r, cy - r, r * 2, r * 2)
-	def ellipse(cx, cy, rx, ry): return rect2(cx - rx, cy - ry, rx * 2, ry * 2)
+	def ellipse(cx, cy, rx, ry): return rect2(cx - rx, cy - ry, rx * 2, ry * 2)"""
 
 def vertices(obj):
 	if localname(obj.tag) == 'rect':
@@ -28,13 +28,28 @@ def vertices(obj):
 	elif localname(obj.tag) == 'path':
 		return [[float(y) for y in x.replace(' ', '').split(',')] for x in obj.get('d', '').split(' ')[1:-1]]
 
+def circle_from_svg(obj): return geo.circle(*get(obj, float, 'cx', 'cy', 'r'))
+def rect_from_svg(obj): return npx.rect2(*get(obj, float, 'x', 'y', 'width', 'height'))
+
+
+def circle_bbox(obj): return circle_from_svg(obj).aabb
+def ellipse_bbox(obj):
+	cx, cy, rx, ry = get(obj, float, 'cx', 'cy', 'rx', 'ry')
+	return npx.rect2(cx - rx, cy - ry, rx * 2, ry * 2)
+def rect_bbox(obj): return rect_from_svg(obj)	#npx.rect2(*get(obj, float, 'x', 'y', 'width', 'height'))
 def path_bbox(obj):
 	path = parse_path(obj.get('d', None))
 	bbox = path.bbox()
 	sc = get_scale(obj)
 	return npx.rect.min_max(np.array([bbox[0] * sc[0], bbox[2] * sc[1]]), np.array([bbox[1] * sc[0], bbox[3] * sc[1]]))
-
-def get_bbox(obj): return {'circle': circle_bbox, 'ellipse': ellipse_bbox, 'image': rect_bbox, 'path': path_bbox, 'rect': rect_bbox}[localname(obj.tag)](obj)
+#
+def bbox(obj): return {
+		'circle': circle_bbox,
+		'ellipse': ellipse_bbox,
+		'image': rect_bbox,
+		'path': path_bbox,
+		'rect': rect_bbox
+	}[localname(obj.tag)](obj)
 
 def get_bboxes(objs): return [get_bbox(x) for x in objs]
 
@@ -127,13 +142,8 @@ def clip(obj, mask):
 	clip_path = etree.SubElement(defs, '{http://www.w3.org/2000/svg}clipPath', attrib={'clipPathUnits': 'userSpaceOnUse', 'id': clip_path_id})
 	clip_path.append(mask)
 
-#def circle_bbox(obj): return npx.bbox.circle(*get(obj, float, 'cx', 'cy', 'r'))
-def circle_from_svg(obj): return geo.circle(*get(obj, float, 'cx', 'cy', 'r'))
 
-def ellipse_bbox(obj): return npx.bbox.ellipse(*get(obj, float, 'cx', 'cy', 'rx', 'ry'))
 
-#def rect_bbox(obj): return npx.rect2(*get(obj, float, 'x', 'y', 'width', 'height'))
-def rect_from_svg(obj): return npx.rect2(*get(obj, float, 'x', 'y', 'width', 'height'))
 
 def parse_points2(s):
 	matches = re.findall(r'(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)', s)
