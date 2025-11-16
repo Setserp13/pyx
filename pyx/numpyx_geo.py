@@ -506,6 +506,7 @@ class polyline(np.ndarray):#list):
 				result.insert(0, v[i] - (x * width * align) / s)		
 		return polyline([result[(len(result) // 2) - 1]] + result + [result[len(result) // 2]]) if closed else polyline(result)
 
+	def rotate_around(p, angle, center=np.zeros(2)): return polyline([npx.rotate_around(x, angle, center) for x in p])
 
 class polygon:
 	def a(n, R=1): return R * math.cos(math.pi/n)	#apothem
@@ -650,6 +651,7 @@ def bars(values, offset = np.zeros(2), width=1, gap=0, axis=0, align=0):
 		size = np.array([width, y])[[axis, 1 - axis]]
 		result.append(npx.rect(min, size))
 	return result
+
 
 
 
