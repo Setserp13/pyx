@@ -513,7 +513,10 @@ class polyline(np.ndarray):#list):
 
 	def to_absolute(v, axis=None, start=np.zeros(2)):
 		result = polyline(v)
-		result[0] += start
+		if axis is None:
+			result[0] += start
+		else:
+			result[0][axis] += start[axis]
 		for i in range(1, len(result)):
 			if axis is None:
 				result[i] += result[i - 1]
@@ -524,7 +527,10 @@ class polyline(np.ndarray):#list):
 	
 	def to_relative(v, axis=None, start=np.zeros(2)):
 		result = polyline(v)
-		result[0] -= start
+		if axis is None:
+			result[0] -= start
+		else:
+			result[0][axis] -= start[axis]
 		for i in range(1, len(result)):
 			if axis is None:
 				result[i] -= result[i - 1]
@@ -677,6 +683,7 @@ def bars(values, offset = np.zeros(2), width=1, gap=0, axis=0, align=0):
 		size = np.array([width, y])[[axis, 1 - axis]]
 		result.append(npx.rect(min, size))
 	return result
+
 
 
 
