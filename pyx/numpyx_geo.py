@@ -78,6 +78,9 @@ class line(np.ndarray):	#start = self[0], end = self[1]
 	@property #in XY-plane
 	def normal(self): return np.array([-self.direction[1], self.direction[0]] + list(self.direction[2:]))
 
+	@property	#angle of inclination, from x-axis
+	def angle(self): return math.atan2(self.vector[1], self.vector[0])
+
 def point_on_line(line, point, tol=1e-8): #tol: tolerância numérica
 	line_vec = line[1] - line[0]
 	test_vec = point - line[0]
@@ -651,6 +654,7 @@ def bars(values, offset = np.zeros(2), width=1, gap=0, axis=0, align=0):
 		size = np.array([width, y])[[axis, 1 - axis]]
 		result.append(npx.rect(min, size))
 	return result
+
 
 
 
