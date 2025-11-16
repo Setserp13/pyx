@@ -15,15 +15,28 @@ import numpy as np
 import pyx.numpyx as npx
 import pyx.numpyx_geo as geo
 
-"""class bbox:
-	def circle(cx, cy, r): return rect2(cx - r, cy - r, r * 2, r * 2)
-	def ellipse(cx, cy, rx, ry): return rect2(cx - rx, cy - ry, rx * 2, ry * 2)"""
 
-def vertices(obj):
+"""def vertices(obj):
 	if localname(obj.tag) == 'rect':
 		return [list(x) for x in npx.corners(rect_bbox(obj))]
 	elif localname(obj.tag) == 'path':
-		return [[float(y) for y in x.replace(' ', '').split(',')] for x in obj.get('d', '').split(' ')[1:-1]]
+		return [[float(y) for y in x.replace(' ', '').split(',')] for x in obj.get('d', '').split(' ')[1:-1]]"""
+
+
+#PATH
+def parse_commands(s):
+	p = re.compile(r'([A-Za-z])|([-+]?\d*\.?\d+(?:[eE][-+]?\d+)?)')
+	r, c, a = [], None, []
+	for cmd, num in p.findall(s):
+		if cmd:
+			if c: r.append((c,*map(float,a))); a=[]
+			c = cmd
+		elif num:
+			a.append(num)
+	if c: r.append((c,*map(float,a)))
+	return r
+
+
 
 def circle_from_svg(obj): return geo.circle(get(obj, float, 'cx', 'cy'), *get(obj, float, 'r'))
 def rect_from_svg(obj): return npx.rect2(*get(obj, float, 'x', 'y', 'width', 'height'))
