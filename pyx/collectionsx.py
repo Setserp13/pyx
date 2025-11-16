@@ -17,7 +17,10 @@ class List:
 	def arange(ls, k, start=0): return [ls[(start + i) % len(ls)] for i in range(k)]
 
 	def aranges(ls, k, start=0, cycle=True): return [List.arange(ls, k, start + i) for i in range(len(ls) - (0 if cycle else (k - 1)))]
-	
+
+	def batch(lst, size):
+		for i in range(0, len(lst), size):
+			yield lst[i:i+size]
 
 def get_random(ls, amount):	#amount can be an int in [0, len(ls) - 1] or a float in [0.0, 1.0]
 	count = int(len(ls) * amount) if isinstance(amount, float) else amount
