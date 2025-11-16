@@ -511,6 +511,29 @@ class polyline(np.ndarray):#list):
 
 	def rotate_around(p, angle, center=np.zeros(2)): return polyline([npx.rotate_around(x, angle, center) for x in p])
 
+	def to_absolute(v, axis=None, start=np.zeros(2)):
+		result = polyline(v)
+		result[0] += start
+		for i in range(1, len(result)):
+			if axis is None:
+				result[i] += result[i - 1]
+			else:
+				result[i][axis] += result[i - 1][axis]
+		#print(v, result)
+		return result
+	
+	def to_relative(v, axis=None, start=np.zeros(2)):
+		result = polyline(v)
+		result[0] -= start
+		for i in range(1, len(result)):
+			if axis is None:
+				result[i] -= result[i - 1]
+			else:
+				result[i][axis] -= result[i - 1][axis]
+		#print(v, result)
+		return result
+
+
 class polygon:
 	def a(n, R=1): return R * math.cos(math.pi/n)	#apothem
 
@@ -654,6 +677,7 @@ def bars(values, offset = np.zeros(2), width=1, gap=0, axis=0, align=0):
 		size = np.array([width, y])[[axis, 1 - axis]]
 		result.append(npx.rect(min, size))
 	return result
+
 
 
 
