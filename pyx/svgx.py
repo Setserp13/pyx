@@ -14,7 +14,7 @@ from pyx.lxmlx import *	#localname
 import numpy as np
 import pyx.numpyx as npx
 import pyx.numpyx_geo as geo
-
+from pyx.mat.bezier import bezier
 
 """def vertices(obj):
 	if localname(obj.tag) == 'rect':
@@ -36,6 +36,39 @@ def parse_commands(s):
 	if c: r.append((c,*map(float,a)))
 	return r
 
+def bezier_from_svg(obj):
+	d = obj.get('d')
+	commands = parse_commands(d)
+	points = []
+	endpoints = []
+	pos = np.zeros(2)
+	for t in commands:
+		cmd, *args = t
+		#print(args)
+		v = []
+		if cmd.upper() in 'MLQCTS':
+			v = [np.array(x) for x in List.batch(args, 2)]
+			if cmd.upper() in 'TS':
+				v.insert(0, pos + (pos - curve[-2]))
+		elif cmd in 'Hh':
+			v = [np.array([x, pos[1]]) for x in args]
+		elif cmd in 'Vv':
+			v = [np.array([pos[0], x]) for x in args]
+		elif cmd in 'Zz':
+			v.append(np.array(points[0]))
+
+		if cmd.islower(): v = geo.polyline.to_absolute(v, axis = 0 if cmd == 'h' else 1 if cmd == 'v' else None, start=pos)
+
+		if cmd.upper() in 'MLHV':
+			endpoints.extend([i + len(points) for i in range(len(v))])
+		elif cmd.upper() in 'QCTS':
+			endpoints.extend([len(points), len(points) + (len(v) - 1)])
+
+		points.extend(v)
+		pos = v[-1]
+	#print(points)
+	#miss Aa
+	return bezier(points, endpoints=endpoints)
 
 
 def circle_from_svg(obj): return geo.circle(get(obj, float, 'cx', 'cy'), *get(obj, float, 'r'))
