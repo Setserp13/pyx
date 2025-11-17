@@ -81,6 +81,11 @@ class line(np.ndarray):	#start = self[0], end = self[1]
 	@property	#angle of inclination, from x-axis
 	def angle(self): return math.atan2(self.vector[1], self.vector[0])
 
+	def normal(self, left=True):
+		v = self.vector
+		n = np.array([-v[1], v[0]]) if left else np.array([v[1], -v[0]])
+		return n if np.array_equal(self[0], self[1]) else npx.normalize(n)
+
 def point_on_line(line, point, tol=1e-8): #tol: tolerância numérica
 	line_vec = line[1] - line[0]
 	test_vec = point - line[0]
@@ -360,9 +365,10 @@ class polyline(np.ndarray):#list):
 		return edges
 
 	def normal(edge, outward=True):
-		v = edge[1] - edge[0]
+		return line(edge).normal(left=not outward)
+		"""v = edge[1] - edge[0]
 		result = np.array([v[1], -v[0]]) if outward else np.array([-v[1], v[0]])
-		return npx.normalize(result)
+		return npx.normalize(result)"""
 	
 	def normals(vertices, outward=True, closed=True): return [polyline.normal(x, outward=outward) for x in polyline.edges(vertices, closed)]
 	
@@ -683,6 +689,7 @@ def bars(values, offset = np.zeros(2), width=1, gap=0, axis=0, align=0):
 		size = np.array([width, y])[[axis, 1 - axis]]
 		result.append(npx.rect(min, size))
 	return result
+
 
 
 
