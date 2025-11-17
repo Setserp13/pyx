@@ -93,6 +93,8 @@ class line(np.ndarray):	#start = self[0], end = self[1]
 		dir = self.direction
 		return line([self[0] + dir * left, self[1] - dir * right])
 
+	def expand(self, amount, relative=False): return self.padding(-amount, -amount, relative=relative)
+
 def point_on_line(line, point, tol=1e-8): #tol: tolerância numérica
 	line_vec = line[1] - line[0]
 	test_vec = point - line[0]
@@ -696,6 +698,7 @@ def bars(values, offset = np.zeros(2), width=1, gap=0, axis=0, align=0):
 		size = np.array([width, y])[[axis, 1 - axis]]
 		result.append(npx.rect(min, size))
 	return result
+
 
 
 
