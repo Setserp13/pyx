@@ -346,7 +346,7 @@ class polyline(np.ndarray):#list):
 	def midpoints(vertices, closed=True):
 		return [np.mean(x, axis = 0) for x in polyline.edges(vertices, closed=closed)]
 	
-	def point_from_proportion(t, vertices, closed=True):
+	def point_from_proportion(vertices, t, closed=True):
 		p = polyline.perimeter(vertices, closed=closed)
 		a = 0.0
 		for x in polyline.edges(vertices, closed=closed):
@@ -698,6 +698,7 @@ def bars(values, offset = np.zeros(2), width=1, gap=0, axis=0, align=0):
 		size = np.array([width, y])[[axis, 1 - axis]]
 		result.append(npx.rect(min, size))
 	return result
+
 
 
 
