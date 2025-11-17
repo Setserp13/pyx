@@ -86,6 +86,13 @@ class line(np.ndarray):	#start = self[0], end = self[1]
 		n = np.array([-v[1], v[0]]) if left else np.array([v[1], -v[0]])
 		return n if np.array_equal(self[0], self[1]) else npx.normalize(n)
 
+	def padding(self, left, right, relative=False):
+		if relative:
+			left *= self.length
+			right *= self.length
+		dir = self.direction
+		return line([self[0] + dir * left, self[1] - dir * right])
+
 def point_on_line(line, point, tol=1e-8): #tol: tolerância numérica
 	line_vec = line[1] - line[0]
 	test_vec = point - line[0]
@@ -689,6 +696,7 @@ def bars(values, offset = np.zeros(2), width=1, gap=0, axis=0, align=0):
 		size = np.array([width, y])[[axis, 1 - axis]]
 		result.append(npx.rect(min, size))
 	return result
+
 
 
 
