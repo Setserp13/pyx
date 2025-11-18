@@ -507,13 +507,14 @@ class polyline(np.ndarray):#list):
 		return polyline(inward_normals + list(reversed(outward_normals)))"""
 
 	def to_stroke(v, width, closed=False, align=0.5, join='miter', cap='butt'):	#join in ['bevel', 'butt', 'miter'], cap in ['butt', 'square']
+		if not closed:
+			v = polyline(v)
+			if cap == 'square':
+				v[0] += npx.normalize(v[0] - v[1]) * width * 0.5
+				v[-1] += npx.normalize(v[-1] - v[-2]) * width * 0.5
 		result = []
 		if join == 'bevel':
 			edges = polyline.edges(v, closed=closed)
-			if not closed:
-				if cap == 'square':
-					edges[0] = edges[0].padding(left=-width * 0.5)
-					edges[-1] = edges[-1].padding(right=-width * 0.5)
 			for x in edges:
 				normal = polyline.normal(x, outward=True)
 				result.append(x[0] + normal * width * (1.0 - align))
@@ -715,6 +716,7 @@ def conic_sort(edges):
 
 def incident_edges(point, edges, eps=1e-9):
 	return [e for e in edges if any(np.linalg.norm(v - point) <= eps for v in e)]
+
 
 
 
