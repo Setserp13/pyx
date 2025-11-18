@@ -299,6 +299,12 @@ class Mesh():
 			vertices += x.vertices
 		return Mesh(vertices, faces)
 
+	def two_sided(mesh):
+		mesh.faces += [list(reversed(x)) for x in mesh.faces]
+
+	def flip_normals(mesh):
+		mesh.faces = [list(reversed(x)) for x in mesh.faces]
+
 class angle(list):
 	def rays(self): return [line([self[1], self[0]]), line([self[1], self[2]])]
 
@@ -698,6 +704,7 @@ def bars(values, offset = np.zeros(2), width=1, gap=0, axis=0, align=0):
 		size = np.array([width, y])[[axis, 1 - axis]]
 		result.append(npx.rect(min, size))
 	return result
+
 
 
 
