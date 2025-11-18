@@ -348,7 +348,7 @@ def angle(a, b):
 def angle2(a, b):
 	dot_product = np.dot(a, b)
 	cross_product = np.cross(a, b)
-	angle = np.arctan2(cross_product, dot_product)[2]  # Gives the angle in radians
+	angle = np.arctan2(cross_product, dot_product)  # Gives the angle in radians
 	# Normalize the angle to [0, 2*pi]
 	#print(angle)
 	if angle < 0:
