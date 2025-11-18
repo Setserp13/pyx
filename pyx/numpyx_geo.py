@@ -508,8 +508,8 @@ class polyline(np.ndarray):#list):
 
 	def to_stroke(v, width, closed=False, align=0.5, join='miter', cap='butt'):	#join in ['bevel', 'butt', 'miter'], cap in ['butt', 'square']
 		if not closed:
-			v = polyline(v)
 			if cap == 'square':
+				v = polyline(v)
 				v[0] += npx.normalize(v[0] - v[1]) * width * 0.5
 				v[-1] += npx.normalize(v[-1] - v[-2]) * width * 0.5
 		result = []
@@ -716,6 +716,7 @@ def conic_sort(edges):
 
 def incident_edges(point, edges, eps=1e-9):
 	return [e for e in edges if any(np.linalg.norm(v - point) <= eps for v in e)]
+
 
 
 
