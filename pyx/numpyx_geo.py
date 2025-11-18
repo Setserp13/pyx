@@ -706,6 +706,11 @@ def bars(values, offset = np.zeros(2), width=1, gap=0, axis=0, align=0):
 	return result
 
 
+def conic_sort(edges):
+	return sorted(edges, key=lambda e: npx.angle2(npx.ei(0.0, 2), e.vector))
+
+def incident_edges(point, edges, eps=1e-9):
+	return [e for e in edges if any(np.linalg.norm(v - point) <= eps for v in e)]
 
 
 
