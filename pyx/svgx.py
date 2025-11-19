@@ -9,7 +9,7 @@ import svgpathtools
 from svgpathtools import parse_path
 import svgutils.transform as sg
 import re
-from pyx.collectionsx import List
+from pyx.collectionsx import List, to_str
 from pyx.lxmlx import *	#localname
 import numpy as np
 import pyx.numpyx as npx
@@ -271,7 +271,7 @@ def embed_images(svg_tree, svg_folder):
 				image_element.set("{http://www.w3.org/1999/xlink}href", f"data:image/png;base64,{encoded_image}")
 	return svg_tree
 
-def circle(cx, cy, r, **kwargs): return etree.Element("circle", cx=str(cx), cy=str(cy), r=str(r), **kwargs)
+def circle(cx, cy, r, **kwargs): return etree.Element("circle", cx=str(cx), cy=str(cy), r=str(r), **to_str(kwargs))
 
 def ellipse(cx, cy, rx, ry, **kwargs): return etree.Element("ellipse", cx=str(cx), cy=str(cy), rx=str(rx), ry=str(ry), **kwargs)
 
@@ -279,9 +279,9 @@ def polygon(*points, **kwargs): return etree.Element("polygon", points=" ".join(
 
 def polyline(*points, **kwargs): return etree.Element("polyline", points=" ".join(f"{x[0]},{x[1]}" for x in points), **kwargs)
 
-def rect(x, y, width, height, **kwargs): return etree.Element("rect", x=str(x), y=str(y), width=str(width), height=str(height), **kwargs)
+def rect(x, y, width, height, **kwargs): return etree.Element("rect", x=str(x), y=str(y), width=str(width), height=str(height), **to_str(kwargs))
 
-def line(x1, y1, x2, y2, **kwargs): return etree.Element("line", x1=str(x1), y1=str(y1), x2=str(x2), y2=str(y2), **kwargs)
+def line(x1, y1, x2, y2, **kwargs): return etree.Element("line", x1=str(x1), y1=str(y1), x2=str(x2), y2=str(y2), **to_str(kwargs))
 
 def g(*args, **kwargs):
 	result = etree.Element("g", **kwargs)
