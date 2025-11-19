@@ -22,7 +22,7 @@ class Color(np.ndarray):
 		obj = np.asarray(arr).view(cls)
 		return obj"""
 
-	def new(cls, *args):
+	def __new__(cls, *args):
 		# Parse input
 		if len(args) == 1: # hex string or color name
 			r, g, b, *a = cls._parse_color(args[0])
