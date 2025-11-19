@@ -7,21 +7,6 @@ class Color(np.ndarray):
 	Subclass of numpy.ndarray.
 	"""
 
-	"""def __new__(cls, *args):
-		# Normalize inputs
-		if len(args) == 1:  # hex or color name
-			r, g, b, *a = cls._parse_color(args[0])
-			a = a[0] if a else 1.0	#255
-		elif len(args) in (3, 4):
-			r, g, b = args[:3]
-			a = args[3] if len(args) == 4 else 1.0	#255
-		else:
-			raise ValueError("Color expects hex, name, or R,G,B[,A]")
-
-		arr = np.array([r, g, b, a], dtype=np.float32)	# / 255.0
-		obj = np.asarray(arr).view(cls)
-		return obj"""
-
 	def __new__(cls, *args):
 		# Parse input
 		if len(args) == 1: # hex string or color name
@@ -105,3 +90,7 @@ class Color(np.ndarray):
 		return Color(*self.rgba255[:3], a)
 
 def gray(value): return Color([value, value, value, 1.0])
+
+def shade(color, amt):
+	#print(color)
+	return np.clip(color * (1 + amt) if amt < 0 else color + amt, 0, 1)
