@@ -26,10 +26,10 @@ class Color(np.ndarray):
 		# Parse input
 		if len(args) == 1: # hex string or color name
 			r, g, b, *a = cls._parse_color(args[0])
-			a = a[0] if a else 255
+			a = a[0] if a else 1.0	#255
 		elif len(args) in (3, 4):
 			r, g, b = args[:3]
-			a = args[3] if len(args) == 4 else 255
+			a = args[3] if len(args) == 4 else 1.0	#255
 		else:
 			raise ValueError("Color expects hex, name, or R,G,B[,A]")
 		
