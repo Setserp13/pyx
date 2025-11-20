@@ -59,12 +59,17 @@ class path(np.ndarray):	#composite Bézier curve or Bézier spline
 		# You can set custom attributes here if needed
 		self.my_attribute = getattr(obj, 'my_attribute', 'default')
 
-	def curves(self):
+	def curves(self, closed=True):
 		result = []
-		result.append(self[self.endpoints[0]:self.endpoints[0]+1])
-		for i in range(len(self.endpoints) - 1):
-			result.append(self[self.endpoints[i]+1:self.endpoints[i+1]+1])
-		result.append(np.concatenate([self[self.endpoints[-1]+1:], self[:self.endpoints[0]+1]]))
+		result.append(self[self.endpoints[0]:self.endpoints[0]+1])	# first curve
+		for i in range(len(self.endpoints) - 1):	# middle curves
+			result.append(self[self.endpoints[i]+1 : self.endpoints[i+1]+1])
+		# last curve
+		last_start = self.endpoints[-1] + 1
+		if closed:
+			result.append(np.concatenate([self[last_start:], self[:self.endpoints[0] + 1]]))
+		else:
+			result.append(self[last_start:])
 		return [bezier(x) for x in result]
 
 	def d(self):
