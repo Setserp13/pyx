@@ -76,9 +76,9 @@ class path(np.ndarray):	#composite Bézier curve or Bézier spline
 		for c in curves:
 			#print(c)
 			parts.append(c[:-1])
-		if not self.closed:	# add last point if open path
+		if not p.closed:	# add last point if open path
 			parts.append(curves[-1][-1:])
-		return polyline(np.vstack(parts), closed=self.closed)
+		return polyline(np.vstack(parts), closed=p.closed)
 	
 	def d_coordinates(self, closed=True):
 		result = []
