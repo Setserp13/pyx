@@ -62,7 +62,9 @@ def bezier_from_svg(obj):
 		if cmd.upper() in 'MLHV':
 			endpoints.extend([i + len(points) for i in range(len(v))])
 		elif cmd.upper() in 'QCTS':
-			endpoints.extend([len(points), len(points) + (len(v) - 1)])
+			step = 2 if cmd.upper() in 'QT' else 3
+			for i in range(len(points) + step, len(points) + len(v), step)
+				endpoints.append(i)
 
 		points.extend(v)
 		pos = v[-1]
