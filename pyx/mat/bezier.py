@@ -46,11 +46,12 @@ class bezier(np.ndarray):
 		return p.sample(steps)
 
 class path(np.ndarray):	#composite Bézier curve or Bézier spline
-	def __new__(cls, input_array, endpoints=None):
+	def __new__(cls, input_array, endpoints=None, closed=False):
 		# Convert input to ndarray and view it as MyArray
 		obj = np.asarray(input_array).view(cls)
 		#obj.endpoints = [True] * len(input_array) if endpoints is None else endpoints
 		obj.endpoints = list(range(len(input_array))) if endpoints is None else endpoints
+		obj.closed = closed
 		return obj
 
 	def __array_finalize__(self, obj):
@@ -59,24 +60,25 @@ class path(np.ndarray):	#composite Bézier curve or Bézier spline
 		# You can set custom attributes here if needed
 		self.my_attribute = getattr(obj, 'my_attribute', 'default')
 
-	def curves(self, closed=True):
+	@property
+	def curves(self):
 		result = []
 		for i in range(len(self.endpoints) - 1):
 			result.append(self[self.endpoints[i] : self.endpoints[i+1]+1])
 		# last curve
-		if closed:
+		if self.closed:
 			result.append(np.concatenate([self[self.endpoints[-1]:], self[:self.endpoints[0]]]))
 		return [bezier(x) for x in result]
 
-	def sample_by_size(p, size, resolution=100, closed=False):
-		curves = [x.sample_by_size(size, resolution=resolution) for x in p.curves(closed=closed)]
+	def sample_by_size(p, size, resolution=100):
+		curves = [x.sample_by_size(size, resolution=resolution) for x in p.curves]
 		parts = []
 		for c in curves:
 			#print(c)
 			parts.append(c[:-1])
-		if not closed:	# add last point if open path
+		if not self.closed:	# add last point if open path
 			parts.append(curves[-1][-1:])
-		return polyline(np.vstack(parts), closed=closed)
+		return polyline(np.vstack(parts), closed=self.closed)
 	
 	def d_coordinates(self, closed=True):
 		result = []
