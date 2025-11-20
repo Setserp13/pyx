@@ -538,8 +538,12 @@ class polyline(np.ndarray):#list):
 			for i, x in enumerate(polyline.vertex_normals(v, outward=True, closed=closed)):
 				s = math.sin(angles[i] / 2)
 				result.append(v[i] + x * (width * (1.0 - align)) / s)
-				result.insert(0, v[i] - (x * width * align) / s)		
-		return polyline([result[(len(result) // 2) - 1]] + result + [result[len(result) // 2]]) if closed else polyline(result)
+				result.insert(0, v[i] - (x * width * align) / s)
+		if closed:
+				mid = len(result) // 2
+				print(mid, result[mid - 1])
+				return polyline([result[mid - 1]] + result + [result[mid]])
+		else: polyline(result)
 
 	def rotate_around(p, angle, center=np.zeros(2)): return polyline([npx.rotate_around(x, angle, center) for x in p])
 
@@ -722,6 +726,7 @@ def conic_sort(edges):
 
 def incident_edges(point, edges, eps=1e-9):
 	return [e for e in edges if any(np.linalg.norm(v - point) <= eps for v in e)]
+
 
 
 
