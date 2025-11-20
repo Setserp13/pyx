@@ -1,6 +1,7 @@
 import math
 import numpy as np
 import pyx.numpyx as npx
+from pyx.numpyx_geo import polyline
 
 class bezier(np.ndarray):
 	def __new__(cls, input_array):
@@ -34,6 +35,14 @@ class bezier(np.ndarray):
 		derivative_points = [n * (p[i + 1] - p[i]) for i in range(n)]
 		return get_point(t, *derivative_points)
 
+	def sample(p, steps): return polyline([p.get_point(t) for t in np.linspace(0.0, 1.0, steps)], closed=False)
+
+	def length(p, resolution=100): return p.sample(resolution).perimeter(closed=False)
+
+	def sample_by_size(p, size, resolution=100):
+		length = p.length(resolution)
+		steps = max(2, int(math.ceil(length / size)))	#minimum 2 samples
+		return p.sample(steps)
 
 class path(np.ndarray):	#composite Bézier curve or Bézier spline
 	def __new__(cls, input_array, endpoints=None):
