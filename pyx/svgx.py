@@ -49,7 +49,7 @@ def bezier_from_svg(obj):
 		if cmd.upper() in 'MLQCTS':
 			v = [np.array(x) for x in List.batch(args, 2)]
 			if cmd.upper() in 'TS':
-				v.insert(0, pos + (pos - curve[-2]))
+				v.insert(0, pos + (pos - points[-2]))
 		elif cmd in 'Hh':
 			v = [np.array([x, pos[1]]) for x in args]
 		elif cmd in 'Vv':
@@ -63,7 +63,8 @@ def bezier_from_svg(obj):
 			endpoints.extend([i + len(points) for i in range(len(v))])
 		elif cmd.upper() in 'QCTS':
 			step = 2 if cmd.upper() in 'QT' else 3
-			for i in range(len(points) + step, len(points) + len(v), step):
+			for i in range((len(points) - 1) + step, len(points) + len(v), step):
+				print(v, i)
 				endpoints.append(i)
 
 		points.extend(v)
