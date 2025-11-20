@@ -16,7 +16,7 @@ class bezier(np.ndarray):
 		if len(p) == 1:
 			return p[0]
 		else:
-			return (1 - t) * get_point(t, *p[:-1]) + t * get_point(t, *p[1:])
+			return (1 - t) * bezier.get_point(p[:-1], t) + t * bezier.get_point(p[1:], t)
 
 		"""#Evaluate a Bézier curve at parameter t using Bernstein basis.
 		n = len(points) - 1
