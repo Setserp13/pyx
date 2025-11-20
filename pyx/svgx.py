@@ -60,7 +60,7 @@ def bezier_from_svg(obj):
 		v = geo.polyline(v)
 		if cmd.islower():	#relative to the last point of the previous command
 			k = 2 if cmd.upper() in 'QT' else 3 if cmd.upper() in 'CS' else 1
-			axis = 0 if cmd.upper() == 'H' 1 if cmd.upper() == 'V' else None
+			axis = 0 if cmd.upper() == 'H' else 1 if cmd.upper() == 'V' else None
 			print(cmd, k, v)
 			for i in range(0, len(v), k):
 				if axis is None:
