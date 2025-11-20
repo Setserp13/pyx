@@ -77,46 +77,36 @@ class quaternion(np.ndarray):
 	@staticmethod
 	def from_euler(euler):
 		roll, pitch, yaw = euler
-		# Convert angles to radians if they are in degrees
-		# roll, pitch, yaw = np.radians([roll, pitch, yaw])
-	    
-		# Compute half angles
-		half_roll = roll / 2
-		half_pitch = pitch / 2
-		half_yaw = yaw / 2
 	
-		# Compute the individual quaternions for each axis
-		qw_roll = np.cos(half_roll)
-		qx_roll = np.sin(half_roll)
-	    
-		qw_pitch = np.cos(half_pitch)
-		qy_pitch = np.sin(half_pitch)
-	    
-		qw_yaw = np.cos(half_yaw)
-		qz_yaw = np.sin(half_yaw)
+		hr = roll  * 0.5
+		hp = pitch * 0.5
+		hy = yaw   * 0.5
 	
-		# Quaternion for roll (around X-axis)
-		q_roll = np.array([qw_roll, qx_roll, 0, 0])
+		sr = np.sin(hr)
+		cr = np.cos(hr)
+		sp = np.sin(hp)
+		cp = np.cos(hp)
+		sy = np.sin(hy)
+		cy = np.cos(hy)
 	
-		# Quaternion for pitch (around Y-axis)
-		q_pitch = np.array([qw_pitch, 0, qy_pitch, 0])
+		# Combine into quaternion (x,y,z,w)
+		x = sr*cp*cy - cr*sp*sy
+		y = cr*sp*cy + sr*cp*sy
+		z = cr*cp*sy - sr*sp*cy
+		w = cr*cp*cy + sr*sp*sy
 	
-		# Quaternion for yaw (around Z-axis)
-		q_yaw = np.array([qw_yaw, 0, 0, qz_yaw])
-	
-		# Multiply quaternions in the order Yaw -> Pitch -> Roll
-		q = quaternion.multiply(quaternion.multiply(q_yaw, q_pitch), q_roll)
-	    
-		return q
+		return np.array([x, y, z, w])
 
 	def multiply(q1, q2):
-		w1, x1, y1, z1 = q1
-		w2, x2, y2, z2 = q2
-		w = w1 * w2 - x1 * x2 - y1 * y2 - z1 * z2
-		x = w1 * x2 + x1 * w2 + y1 * z2 - z1 * y2
-		y = w1 * y2 + y1 * w2 + z1 * x2 - x1 * z2
-		z = w1 * z2 + z1 * w2 + x1 * y2 - y1 * x2
-		return np.array([w, x, y, z])
+		x1, y1, z1, w1 = q1
+		x2, y2, z2, w2 = q2
+	
+		w = w1*w2 - x1*x2 - y1*y2 - z1*z2
+		x = w1*x2 + x1*w2 + y1*z2 - z1*y2
+		y = w1*y2 + y1*w2 + z1*x2 - x1*z2
+		z = w1*z2 + z1*w2 + x1*y2 - y1*x2
+	
+		return np.array([x, y, z, w])
 
 
 
