@@ -61,14 +61,14 @@ def bezier_from_svg(obj):
 		if cmd.islower():	#relative to the last point of the previous command
 			k = 2 if cmd.upper() in 'QT' else 3 if cmd.upper() in 'CS' else 1
 			axis = 0 if cmd.upper() == 'H' else 1 if cmd.upper() == 'V' else None
-			print(cmd, k, v)
+			#print(cmd, k, v)
 			for i in range(0, len(v), k):
 				if axis is None:
 					v[i:i + k] = v[i:i + k] + pos
 				else:
 					v[i:i + k, axis] = v[i:i + k, axis] + pos[axis]
 				pos = v[i + k - 1]
-			print(v)
+			#print(v)
 		
 		if cmd.upper() in 'MLHV':
 			endpoints.extend([i + len(points) for i in range(len(v))])
