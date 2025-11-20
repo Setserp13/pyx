@@ -41,6 +41,7 @@ def bezier_from_svg(obj):
 	commands = parse_commands(d)
 	points = []
 	endpoints = []
+	closed = False
 	pos = np.zeros(2)
 	for t in commands:
 		cmd, *args = t
@@ -55,6 +56,7 @@ def bezier_from_svg(obj):
 		elif cmd in 'Vv':
 			v = [np.array([pos[0], x]) for x in args]
 		elif cmd in 'Zz':
+			closed = True
 			v.append(np.array(points[0]))
 
 		v = geo.polyline(v)
@@ -80,7 +82,7 @@ def bezier_from_svg(obj):
 		pos = v[-1]
 	#print(points)
 	#miss Aa
-	return bezier.path(points, endpoints=endpoints)
+	return bezier.path(points, endpoints=endpoints, closed=closed)
 
 
 def circle_from_svg(obj): return geo.circle(get(obj, float, 'cx', 'cy'), *get(obj, float, 'r'))
