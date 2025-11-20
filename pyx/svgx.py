@@ -14,7 +14,7 @@ from pyx.lxmlx import *	#localname
 import numpy as np
 import pyx.numpyx as npx
 import pyx.numpyx_geo as geo
-from pyx.mat.bezier import bezier
+import pyx.mat.bezier as bezier
 
 """def vertices(obj):
 	if localname(obj.tag) == 'rect':
@@ -68,7 +68,7 @@ def bezier_from_svg(obj):
 		pos = v[-1]
 	#print(points)
 	#miss Aa
-	return bezier(points, endpoints=endpoints)
+	return bezier.path(points, endpoints=endpoints)
 
 
 def circle_from_svg(obj): return geo.circle(get(obj, float, 'cx', 'cy'), *get(obj, float, 'r'))
