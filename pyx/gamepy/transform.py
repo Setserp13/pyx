@@ -76,7 +76,8 @@ class quaternion(np.ndarray):
 		roll = np.arctan2(sinr, cosr)
 		
 		return np.array([pitch, yaw, roll])
-	
+
+	@staticmethod
 	def from_euler(euler):
 		roll, pitch, yaw = euler
 		# Convert angles to radians if they are in degrees
