@@ -68,8 +68,8 @@ class path(np.ndarray):	#composite Bézier curve or Bézier spline
 			result.append(np.concatenate([self[self.endpoints[-1]:], self[:self.endpoints[0]]]))
 		return [bezier(x) for x in result]
 
-	def sample_by_size(p, steps, resolution=100, closed=False):
-		curves = [x.sample_by_size(10, resolution=resolution) for x in p.curves(closed=closed)]
+	def sample_by_size(p, size, resolution=100, closed=False):
+		curves = [x.sample_by_size(size, resolution=resolution) for x in p.curves(closed=closed)]
 		parts = []
 		for c in curves:
 			#print(c)
