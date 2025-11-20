@@ -56,7 +56,6 @@ class path(np.ndarray):	#composite Bézier curve or Bézier spline
 			result.append(self[self.endpoints[i]+1:self.endpoints[i+1]+1])
 		result.append(np.concatenate([self[self.endpoints[-1]+1:], self[:self.endpoints[0]+1]]))
 		return [bezier(x) for x in result]
-		return result
 
 	def d(self):
 		d = ''
