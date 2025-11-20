@@ -550,7 +550,7 @@ class polyline(np.ndarray):#list):
 
 	def rotate_around(p, angle, center=np.zeros(2)): return polyline([npx.rotate_around(x, angle, center) for x in p])
 
-	def to_absolute(v, axis=None, start=np.zeros(2)):
+	def from_vectors(v, axis=None, start=np.zeros(2)):	#concatenation of n vectors (or edges) end-to-end starting from start
 		result = polyline(v)
 		if axis is None:
 			result[0] += start
@@ -564,7 +564,7 @@ class polyline(np.ndarray):#list):
 		#print(v, result)
 		return result
 	
-	def to_relative(v, axis=None, start=np.zeros(2)):
+	def to_vectors(v, axis=None, start=np.zeros(2)):
 		result = polyline(v)
 		if axis is None:
 			result[0] -= start
@@ -729,6 +729,7 @@ def conic_sort(edges):
 
 def incident_edges(point, edges, eps=1e-9):
 	return [e for e in edges if any(np.linalg.norm(v - point) <= eps for v in e)]
+
 
 
 
