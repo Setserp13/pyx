@@ -61,7 +61,7 @@ def bezier_from_svg(obj):
 		if cmd.islower():	#relative to the last point of the previous command
 			k = 2 if cmd.upper() in 'QT' else 3 if cmd.upper() in 'CS' else 1
 			for i in range(0, len(v), k):
-				v[:i + k] = v[:i + k] + pos
+				v[i:i + k] = v[i:i + k] + pos
 				pos = v[i + k - 1]
 
 		if cmd.upper() in 'MLHV':
