@@ -302,6 +302,9 @@ class Mesh():
 	def two_sided(mesh):
 		mesh.faces += [list(reversed(x)) for x in mesh.faces]
 
+	def flip_normal(mesh, i):
+		mesh.faces[i] = list(reversed(mesh.faces[i]))
+
 	def flip_normals(mesh):
 		mesh.faces = [list(reversed(x)) for x in mesh.faces]
 
@@ -716,6 +719,7 @@ def conic_sort(edges):
 
 def incident_edges(point, edges, eps=1e-9):
 	return [e for e in edges if any(np.linalg.norm(v - point) <= eps for v in e)]
+
 
 
 
