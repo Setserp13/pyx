@@ -21,28 +21,25 @@ class Matrix:
 			[0, 0, 1]
 		])
 
+	@staticmethod
 	def R3(q):
 		q = q / np.linalg.norm(q)
-		q_w, q_x, q_y, q_z = q
-		R = np.array([
-			[1 - 2 * (q_y**2 + q_z**2), 2 * (q_x * q_y - q_z * q_w), 2 * (q_x * q_z + q_y * q_w)],
-			[2 * (q_x * q_y + q_z * q_w), 1 - 2 * (q_x**2 + q_z**2), 2 * (q_y * q_z - q_x * q_w)],
-			[2 * (q_x * q_z - q_y * q_w), 2 * (q_y * q_z + q_x * q_w), 1 - 2 * (q_x**2 + q_y**2)]
-		])
-		return R
+		x, y, z, w = q
 
-	"""def R3(axis, theta): #rotation 3D
-		axis = np.asarray(axis, dtype=float)
-		axis /= np.linalg.norm(axis)  # normalize the axis
-		x, y, z = axis
-		c = np.cos(theta)
-		s = np.sin(theta)
-		C = 1 - c
-		return np.array([
-			[c + x*x*C,     x*y*C - z*s, x*z*C + y*s],
-			[y*x*C + z*s,   c + y*y*C,   y*z*C - x*s],
-			[z*x*C - y*s,   z*y*C + x*s, c + z*z*C]
-		])"""
+		xx, yy, zz = x*x, y*y, z*z
+		xy, xz, yz = x*y, x*z, y*z
+		wx, wy, wz = w*x, w*y, w*z
+
+		R = np.array([
+			[1 - 2*(yy + zz),   2*(xy - wz),     2*(xz + wy)],
+			[2*(xy + wz),       1 - 2*(xx + zz), 2*(yz - wx)],
+			[2*(xz - wy),       2*(yz + wx),     1 - 2*(xx + yy)]
+		])
+
+		# ⬇ Convert to 4×4 homogeneous matrix
+		R4 = np.eye(4)
+		R4[:3, :3] = R
+		return R4
 
 class quaternion(np.ndarray):
 	def __new__(cls, input_array):
