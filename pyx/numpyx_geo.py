@@ -541,7 +541,7 @@ class polyline(np.ndarray):#list):
 				result.insert(0, v[i] - (x * width * align) / s)
 		if closed:
 				mid = len(result) // 2
-				print(mid, result[mid - 1])
+				print(result, mid, result[mid - 1])
 				return polyline([result[mid - 1]] + result + [result[mid]])
 		else: polyline(result)
 
@@ -726,6 +726,7 @@ def conic_sort(edges):
 
 def incident_edges(point, edges, eps=1e-9):
 	return [e for e in edges if any(np.linalg.norm(v - point) <= eps for v in e)]
+
 
 
 
