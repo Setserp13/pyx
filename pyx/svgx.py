@@ -57,7 +57,8 @@ def bezier_from_svg(obj):
 		elif cmd in 'Zz':
 			v.append(np.array(points[0]))
 
-		if cmd.islower(): v = geo.polyline.to_absolute(v, axis = 0 if cmd == 'h' else 1 if cmd == 'v' else None, start=pos)
+		if cmd.islower():	#relative to the last point of the previous command
+			v = geo.polyline(v) + pos
 
 		if cmd.upper() in 'MLHV':
 			endpoints.extend([i + len(points) for i in range(len(v))])
