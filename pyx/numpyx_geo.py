@@ -270,11 +270,14 @@ class Mesh():
 		self.vertices.extend(vertices)
 		self.faces.append(list(range(start_index, start_index + len(vertices))))
 
-	def extrude(self, dir, face):
+	def extrude(self, dir, face, flip=True):
 		face = self.get_face(face)
 		self.add_face(*[x + dir for x in face])
 		for x in polyline.edges(face):
 			self.add_face(x[0], x[1], x[1] + dir, x[0] + dir)
+		if flip:
+			for i in range(len(self.faces) - 5, len(self.faces)):
+				self.flip_normal(i)
 
 	def translate(self, vector):
 		self.vertices = [x + vector for x in self.vertices]
@@ -719,6 +722,7 @@ def conic_sort(edges):
 
 def incident_edges(point, edges, eps=1e-9):
 	return [e for e in edges if any(np.linalg.norm(v - point) <= eps for v in e)]
+
 
 
 
