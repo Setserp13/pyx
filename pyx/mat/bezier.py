@@ -42,6 +42,7 @@ class bezier(np.ndarray):
 	def sample_by_size(p, size, resolution=100):
 		length = p.length(resolution)
 		steps = max(2, int(math.ceil(length / size)))	#minimum 2 samples
+		print(length, size, steps)
 		return p.sample(steps)
 
 class path(np.ndarray):	#composite Bézier curve or Bézier spline
