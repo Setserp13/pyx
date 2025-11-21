@@ -95,7 +95,7 @@ class quaternion(np.ndarray):
 		z = cr*cp*sy - sr*sp*cy
 		w = cr*cp*cy + sr*sp*sy
 	
-		return np.array([x, y, z, w])
+		return quaternion([x, y, z, w])
 
 	def multiply(q1, q2):
 		x1, y1, z1, w1 = q1
