@@ -110,7 +110,7 @@ class quaternion(np.ndarray):
 
 
 
-class Node2(Node):
+class Node2D(Node):
 	def __init__(self, position=np.zeros(2), rotation=0.0, scale=np.ones(2)):
 		super().__init__(None, None)
 		self.position = position
@@ -156,7 +156,7 @@ class Node2(Node):
 
 
 
-class Node3(Node):
+class Node3D(Node):
 	def __init__(self, position=np.zeros(3), rotation=quaternion([0, 0, 0, 1]), scale=np.ones(3)):
 		super().__init__(None, None)
 		self.position = position       # vec3
