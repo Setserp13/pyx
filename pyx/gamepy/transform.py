@@ -76,8 +76,9 @@ class quaternion(np.ndarray):
 
 	@staticmethod
 	def from_euler(euler):
-		roll, pitch, yaw = euler
-	
+		#roll, pitch, yaw = euler
+		pitch, yaw, roll = euler
+		
 		hr = roll  * 0.5
 		hp = pitch * 0.5
 		hy = yaw   * 0.5
