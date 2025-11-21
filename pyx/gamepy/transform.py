@@ -50,51 +50,46 @@ class quaternion(np.ndarray):
 		if obj is None: return
 
 	def to_euler(q):
-		"""
-		Convert quaternion (x, y, z, w) to Euler angles (pitch, yaw, roll)
-		using intrinsic XYZ rotation order.
-		Returned angles are in radians.
-		"""
 		x, y, z, w = q
-		
-		# --- X (pitch) ---
-		sinp = 2 * (w*x + y*z)
-		cosp = 1 - 2 * (x*x + y*y)
-		pitch = np.arctan2(sinp, cosp)
-		
-		# --- Y (yaw) ---
-		siny = 2 * (w*y - z*x)
-		siny = np.clip(siny, -1, 1)  # avoid domain errors
-		yaw = np.arcsin(siny)
-		
-		# --- Z (roll) ---
-		sinr = 2 * (w*z + x*y)
-		cosr = 1 - 2 * (y*y + z*z)
-		roll = np.arctan2(sinr, cosr)
-		
-		return np.array([pitch, yaw, roll])
+	
+		# Rotation around X
+		sin_x = 2 * (w*x + y*z)
+		cos_x = 1 - 2 * (x*x + y*y)
+		ex = np.arctan2(sin_x, cos_x)
+	
+		# Rotation around Y
+		sin_y = 2 * (w*y - z*x)
+		sin_y = np.clip(sin_y, -1, 1)
+		ey = np.arcsin(sin_y)
+	
+		# Rotation around Z
+		sin_z = 2 * (w*z + x*y)
+		cos_z = 1 - 2 * (y*y + z*z)
+		ez = np.arctan2(sin_z, cos_z)
+	
+		return np.array([ex, ey, ez])
 
 	@staticmethod
 	def from_euler(euler):
-		#roll, pitch, yaw = euler
-		pitch, yaw, roll = euler
-		
-		hr = roll  * 0.5
-		hp = pitch * 0.5
-		hy = yaw   * 0.5
+		ex, ey, ez = euler
 	
-		sr = np.sin(hr)
-		cr = np.cos(hr)
-		sp = np.sin(hp)
-		cp = np.cos(hp)
+		# Half angles
+		hx = ex * 0.5
+		hy = ey * 0.5
+		hz = ez * 0.5
+	
+		sx = np.sin(hx)
+		cx = np.cos(hx)
 		sy = np.sin(hy)
 		cy = np.cos(hy)
+		sz = np.sin(hz)
+		cz = np.cos(hz)
 	
-		# Combine into quaternion (x,y,z,w)
-		x = sr*cp*cy - cr*sp*sy
-		y = cr*sp*cy + sr*cp*sy
-		z = cr*cp*sy - sr*sp*cy
-		w = cr*cp*cy + sr*sp*sy
+		# Combine into quaternion (x, y, z, w)
+		x = sx*cy*cz - cx*sy*sz
+		y = cx*sy*cz + sx*cy*sz
+		z = cx*cy*sz - sx*sy*cz
+		w = cx*cy*cz + sx*sy*sz
 	
 		return quaternion([x, y, z, w])
 
