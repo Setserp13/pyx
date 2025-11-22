@@ -11,7 +11,7 @@ def get_item(array, indices, dflt=None):	#works for any-dimensional jagged array
 		if idx < 0 or idx >= len(cur):	# out of range
 			return dflt
 		cur = cur[idx]
-    return cur
+	return cur
 
 def pad(array, pad_width, fill): return array + [fill] * (pad_width - len(array))
 
