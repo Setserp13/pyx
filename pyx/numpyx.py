@@ -5,7 +5,7 @@ import numpy as np
 import itertools
 from pyx.collectionsx import List as ls
 import random
-from pyx.numpyx_geo import polyline
+from pyx.numpyx_geo import polyline, line
 
 def project(v, u): return (np.dot(v, u) / np.dot(u, u)) * u	#Project vector v onto vector u.
 
@@ -227,6 +227,7 @@ class rect2(rect):
 	def __init__(self, x, y, width, height):
 		super().__init__(np.array([x, y]), np.array([width, height]))
 
+"""
 	def bottom_left(rect): return rect.denormalize_point(np.array([0, 0]))
 	def bottom_right(rect): return rect.denormalize_point(np.array([0, 1]))
 	def top_left(rect): return rect.denormalize_point(np.array([1, 0]))
@@ -236,6 +237,22 @@ class rect2(rect):
 	def right(rect): return [rect2.bottom_right(rect), rect2.top_right(rect)]
 	def bottom(rect): return [rect2.bottom_left(rect), rect2.bottom_right(rect)]
 	def top(rect): return [rect2.top_left(rect), rect2.top_right(rect)]
+"""
+
+	def bottom_left(rect): return rect.denormalize_point(np.array([0, 0]))
+	def bottom_right(rect): return rect.denormalize_point(np.array([1, 0]))
+	def top_left(rect): return rect.denormalize_point(np.array([0, 1]))
+	def top_right(rect): return rect.denormalize_point(np.array([1, 1]))
+	
+	def side(rect, axis, dir):  # dir -> 0: left/down, 1: right/up
+		return line([
+			rect.denormalize_point(np.array([dir, i])[[axis, 1 - axis]])
+			for i in [0.0, 1.0]
+		])
+	def left(rect): return rect2.side(rect, axis=0, dir=0)
+	def right(rect): return rect2.side(rect, axis=0, dir=1)
+	def bottom(rect): return rect2.side(rect, axis=1, dir=0)
+	def top(rect): return rect2.side(rect, axis=1, dir=1)
 
 	def corners(rect): return polyline([rect2.bottom_left(rect), rect2.top_left(rect), rect2.top_right(rect), rect2.bottom_right(rect)])
 	def area(rect): return rect.size[0] * rect.size[1]
