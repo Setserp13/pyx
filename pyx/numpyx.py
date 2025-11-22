@@ -227,18 +227,14 @@ class rect2(rect):
 	def __init__(self, x, y, width, height):
 		super().__init__(np.array([x, y]), np.array([width, height]))
 
-"""
-	def bottom_left(rect): return rect.denormalize_point(np.array([0, 0]))
+	"""def bottom_left(rect): return rect.denormalize_point(np.array([0, 0]))
 	def bottom_right(rect): return rect.denormalize_point(np.array([0, 1]))
 	def top_left(rect): return rect.denormalize_point(np.array([1, 0]))
 	def top_right(rect): return rect.denormalize_point(np.array([1, 1]))
-
 	def left(rect): return [rect2.bottom_left(rect), rect2.top_left(rect)]
 	def right(rect): return [rect2.bottom_right(rect), rect2.top_right(rect)]
 	def bottom(rect): return [rect2.bottom_left(rect), rect2.bottom_right(rect)]
-	def top(rect): return [rect2.top_left(rect), rect2.top_right(rect)]
-"""
-
+	def top(rect): return [rect2.top_left(rect), rect2.top_right(rect)]"""
 	def bottom_left(rect): return rect.denormalize_point(np.array([0, 0]))
 	def bottom_right(rect): return rect.denormalize_point(np.array([1, 0]))
 	def top_left(rect): return rect.denormalize_point(np.array([0, 1]))
