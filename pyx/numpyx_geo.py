@@ -730,47 +730,13 @@ def conic_sort(edges):
 def incident_edges(point, edges, eps=1e-9):
 	return [e for e in edges if any(np.linalg.norm(v - point) <= eps for v in e)]
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+def angle_vector_plane(v, p1, p2):	#p1 and p2 are vectors that define the plane
+	n = np.cross(p1, p2)	# Plane normal via cross product
+	v_norm = v / np.linalg.norm(v)	# Normalize normal and vector
+	n_norm = n / np.linalg.norm(n)
+	angle_to_normal = np.arccos(np.clip(np.dot(v_norm, n_norm), -1.0, 1.0))	# Angle between v and plane normal (in radians)
+	angle_to_plane = np.pi / 2 - angle_to_normal	# Angle between vector and plane
+	return angle_to_plane	# return in radians
 
 
 
