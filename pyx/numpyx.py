@@ -223,7 +223,7 @@ class rect:
 		self.size = value
 
 	def face_center(rect, axis, dir):  # dir -> -1: left/down/back and so on..., 1: right/up/front and so on...
-		return rect.center + rect.extents[axis] * npx.ei(axis, len(rect.center)) * dir
+		return rect.center + rect.extents[axis] * ei(axis, len(rect.center)) * dir
 	
 	def face(rect, axis, dir):  # dir -> -1: left/down/back, 1: right/up/front
 		size = np.array(rect.size)
