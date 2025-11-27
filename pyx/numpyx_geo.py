@@ -95,6 +95,8 @@ class line(np.ndarray):	#start = self[0], end = self[1]
 
 	def expand(self, amount, relative=False): return self.padding(-amount, -amount, relative=relative)
 
+	def subdivide(self, n): return polyline.edges(npx.subdivide(self[0], self[1], n+1), closed=False)
+
 def point_on_line(line, point, tol=1e-8): #tol: tolerância numérica
 	line_vec = line[1] - line[0]
 	test_vec = point - line[0]
@@ -737,6 +739,7 @@ def angle_vector_plane(v, p1, p2):	#p1 and p2 are vectors that define the plane
 	angle_to_normal = np.arccos(np.clip(np.dot(v_norm, n_norm), -1.0, 1.0))	# Angle between v and plane normal (in radians)
 	angle_to_plane = np.pi / 2 - angle_to_normal	# Angle between vector and plane
 	return angle_to_plane	# return in radians
+
 
 
 
