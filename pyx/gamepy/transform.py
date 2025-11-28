@@ -49,10 +49,29 @@ class quaternion(np.ndarray):
 	def __array_finalize__(self, obj):
 		if obj is None: return
 
+	@property
 	def conjugate(q):
 		x, y, z, w = q
 		return np.array([-x, -y, -z, w], float)
-	
+
+	def rotate(self, v):
+		# v é um vetor 3D (lista/tupla/np.array)
+		vx, vy, vz = v
+
+		qx, qy, qz, qw = self.x, self.y, self.z, self.w
+
+		# t = 2 * cross(q.xyz, v)
+		tx = 2 * (qy * vz - qz * vy)
+		ty = 2 * (qz * vx - qx * vz)
+		tz = 2 * (qx * vy - qy * vx)
+
+		# v' = v + qw * t + cross(q.xyz, t)
+		vpx = vx + qw * tx + (qy * tz - qz * ty)
+		vpy = vy + qw * ty + (qz * tx - qx * tz)
+		vpz = vz + qw * tz + (qx * ty - qy * tx)
+
+		return np.array([vpx, vpy, vpz], float)
+
 	def to_euler(q):
 		x, y, z, w = q
 	
