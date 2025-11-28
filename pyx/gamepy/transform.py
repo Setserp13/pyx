@@ -104,7 +104,45 @@ class quaternion(np.ndarray):
 	
 		return np.array([x, y, z, w])
 
-
+	@staticmethod
+	def from_matrix(M):
+		# Accept 4×4 or 3×3
+		if M.shape == (4, 4):
+			m = M[:3, :3]
+		else:
+			m = M
+	
+		trace = m[0,0] + m[1,1] + m[2,2]
+	
+		if trace > 0:
+			s = 0.5 / np.sqrt(trace + 1.0)
+			w = 0.25 / s
+			x = (m[2,1] - m[1,2]) * s
+			y = (m[0,2] - m[2,0]) * s
+			z = (m[1,0] - m[0,1]) * s
+	
+		elif m[0,0] > m[1,1] and m[0,0] > m[2,2]:
+			s = 2.0 * np.sqrt(1.0 + m[0,0] - m[1,1] - m[2,2])
+			w = (m[2,1] - m[1,2]) / s
+			x = 0.25 * s
+			y = (m[0,1] + m[1,0]) / s
+			z = (m[0,2] + m[2,0]) / s
+	
+		elif m[1,1] > m[2,2]:
+			s = 2.0 * np.sqrt(1.0 + m[1,1] - m[0,0] - m[2,2])
+			w = (m[0,2] - m[2,0]) / s
+			x = (m[0,1] + m[1,0]) / s
+			y = 0.25 * s
+			z = (m[1,2] + m[2,1]) / s
+	
+		else:
+			s = 2.0 * np.sqrt(1.0 + m[2,2] - m[0,0] - m[1,1])
+			w = (m[1,0] - m[0,1]) / s
+			x = (m[0,2] + m[2,0]) / s
+			y = (m[1,2] + m[2,1]) / s
+			z = 0.25 * s
+	
+		return np.array([x, y, z, w], float)
 
 class Node2D(Node):
 	def __init__(self, position=np.zeros(2), rotation=0.0, scale=np.ones(2)):
