@@ -226,7 +226,7 @@ class rect:
 		return rect.center + rect.extents[axis] * ei(axis, len(rect.center)) * dir
 	
 	def face(rect, axis, dir):  # dir -> -1: left/down/back, 1: right/up/front
-		size = np.concatenate((rect.size[:axis], [0.0], rect.size[axis+1:]), axis=0))
+		size = np.concatenate((rect.size[:axis], [0.0], rect.size[axis+1:]), axis=0)
 		return rect.center_size(rect.face_center(axis, dir), size)
 
 
