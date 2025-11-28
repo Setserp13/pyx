@@ -49,6 +49,10 @@ class quaternion(np.ndarray):
 	def __array_finalize__(self, obj):
 		if obj is None: return
 
+	def conjugate(q):
+		x, y, z, w = q
+		return np.array([-x, -y, -z, w], float)
+	
 	def to_euler(q):
 		x, y, z, w = q
 	
