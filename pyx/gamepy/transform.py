@@ -52,7 +52,7 @@ class quaternion(np.ndarray):
 	@property
 	def conjugate(q):
 		x, y, z, w = q
-		return np.array([-x, -y, -z, w], float)
+		return quaternion([-x, -y, -z, w])
 
 	def rotate(self, v):
 		# v é um vetor 3D (lista/tupla/np.array)
@@ -165,7 +165,7 @@ class quaternion(np.ndarray):
 			y = (m[1,2] + m[2,1]) / s
 			z = 0.25 * s
 	
-		return np.array([x, y, z, w], float)
+		return quaternion([x, y, z, w])
 
 class Node2D(Node):
 	def __init__(self, position=np.zeros(2), rotation=0.0, scale=np.ones(2)):
