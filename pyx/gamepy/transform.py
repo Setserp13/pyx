@@ -58,7 +58,7 @@ class quaternion(np.ndarray):
 		# v é um vetor 3D (lista/tupla/np.array)
 		vx, vy, vz = v
 
-		qx, qy, qz, qw = self.x, self.y, self.z, self.w
+		qx, qy, qz, qw = self
 
 		# t = 2 * cross(q.xyz, v)
 		tx = 2 * (qy * vz - qz * vy)
