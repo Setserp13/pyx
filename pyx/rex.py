@@ -60,12 +60,13 @@ def to_label_track(string):
 				result = result[:len(result) - 1]
 	return result
 
-"""def to_label_track(string):
-	result = [findnumbers(x) for x in string.split('\n')]
-	result = [x for x in result if len(x) == 2]
-	for i in range(len(result)):
-		#print(i)
-		if i < len(result) - 1:
-			if result[i][0] == result[i][1]:
-				result[i][1] = result[i+1][0]
-	return result"""
+def camel_to_snake(name: str) -> str:
+	# Insert underscore before capital letters, except the first character
+	s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
+	snake = re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
+	return snake
+
+def snake_to_camel(name: str, lower=False) -> str:
+	result = ''.join(word.capitalize() if word else '_' for word in name.split('_'))
+	return result[0].lower() + result[1:] if lower else result
+
