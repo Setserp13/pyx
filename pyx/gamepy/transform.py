@@ -181,10 +181,10 @@ class Node2D(Node):
 
 	def TRS(self):
 		#print(self.local_TRS())
-		return functools.reduce(lambda acc, x: acc @ x, [x.local_TRS() for x in [self] + self.ancestors()])
+		return functools.reduce(lambda acc, x: acc @ x, [x.local_TRS() for x in reversed([self] + self.ancestors())])
 
 	def inverse_TRS(self):
-		return functools.reduce(lambda acc, x: acc @ x, [x.local_inverse_TRS() for x in [self] + self.ancestors()])
+		return functools.reduce(lambda acc, x: acc @ x, [x.local_inverse_TRS() for x in reversed([self] + self.ancestors())])
 
 	def local_TRS(self): #local transformation matrix
 		T, R, S = Matrix.T(self.position), Matrix.R2(self.rotation), Matrix.S(self.scale)
@@ -235,13 +235,13 @@ class Node3D(Node):
 	def TRS(self):
 		return functools.reduce(
 			lambda acc, x: acc @ x,
-			[x.local_TRS() for x in [self] + self.ancestors()]
+			[x.local_TRS() for x in reversed([self] + self.ancestors())]
 		)
 
 	def inverse_TRS(self):
 		return functools.reduce(
 			lambda acc, x: acc @ x,
-			[x.local_inverse_TRS() for x in [self] + self.ancestors()]
+			[x.local_inverse_TRS() for x in reversed([self] + self.ancestors())]
 		)
 
 	# =====================================================================
