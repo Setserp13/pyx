@@ -204,6 +204,7 @@ class Transform(Node):
 		return self.T @ self.R @ self.S
 
 	def local_inverse_TRS(self): #local inverse transformation matrix
+		print(self.T, self.R, self.S)
 		return np.linalg.inv(self.T) @ np.linalg.inv(self.R) @ np.linalg.inv(self.S)	#maybe inv of R is its transpose -> R.T
 
 	def to_local(self, point):
