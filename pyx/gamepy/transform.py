@@ -214,10 +214,11 @@ class Transform(Node):
 
 class Node2D(Transform):	#Node):
 	def __init__(self, position=np.zeros(2), rotation=0.0, scale=np.ones(2), **kwargs):
-		super().__init__(**kwargs)
+		super().__init__(position, rotation, scale, **kwargs)
+		"""super().__init__(**kwargs)
 		self.position = position
 		self.rotation = rotation
-		self.scale = scale
+		self.scale = scale"""
 
 	@property
 	def R(self): return Matrix.R2(self.rotation)
@@ -265,10 +266,11 @@ class Node2D(Transform):	#Node):
 
 class Node3D(Transform):	#Node):):
 	def __init__(self, position=np.zeros(3), rotation=quaternion([0, 0, 0, 1]), scale=np.ones(3), **kwargs):
-		super().__init__(**kwargs)
+		super().__init__(position, rotation, scale, **kwargs)
+		"""super().__init__(**kwargs)
 		self.position = position       # vec3
 		self.rotation = rotation       # quaternion (x,y,z,w)
-		self.scale = scale             # vec3
+		self.scale = scale             # vec3"""
 
 	@property
 	def euler(self): return self.rotation.to_euler()
