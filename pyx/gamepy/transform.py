@@ -212,7 +212,7 @@ class Transform(Node):
 
 
 
-class Node2D(Node):
+class Node2D(Transform):	#Node):
 	def __init__(self, position=np.zeros(2), rotation=0.0, scale=np.ones(2), **kwargs):
 		super().__init__(**kwargs)
 		self.position = position
@@ -263,7 +263,7 @@ class Node2D(Node):
 
 
 
-class Node3D(Node):
+class Node3D(Transform):	#Node):):
 	def __init__(self, position=np.zeros(3), rotation=quaternion([0, 0, 0, 1]), scale=np.ones(3), **kwargs):
 		super().__init__(**kwargs)
 		self.position = position       # vec3
