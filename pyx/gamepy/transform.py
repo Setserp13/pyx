@@ -200,11 +200,10 @@ class Transform(Node):
 		return functools.reduce(lambda acc, x: acc @ x, [x.local_inverse_TRS() for x in reversed([self] + self.ancestors())])
 
 	def local_TRS(self):	#local transformation matrix
-		print(self.T, self.R, self.S)
+		#print(self.T, self.R, self.S)
 		return self.T @ self.R @ self.S
 
 	def local_inverse_TRS(self): #local inverse transformation matrix
-		print(self.T, self.R, self.S)
 		return np.linalg.inv(self.T) @ np.linalg.inv(self.R) @ np.linalg.inv(self.S)	#maybe inv of R is its transpose -> R.T
 
 	def to_local(self, point):
@@ -218,67 +217,20 @@ class Transform(Node):
 	@property
 	def global_position(self): return self.to_global(self.position)
 
-
+	@property
+	def basis(self):	# BASIS (n×n matrix of world axes) -> upper-left n×n
+		return self.TRS()[:self.dim, :self.dim]
 
 class Node2D(Transform):	#Node):
 	def __init__(self, position=np.zeros(2), rotation=0.0, scale=np.ones(2), **kwargs):
 		super().__init__(position, rotation, scale, **kwargs)
-		"""super().__init__(**kwargs)
-		self.position = position
-		self.rotation = rotation
-		self.scale = scale"""
 
 	@property
 	def R(self): return Matrix.R2(self.rotation)
 
-	"""@property
-	def global_position(self):
-		#print(self.TRS())
-		return (self.TRS() @ np.append(self.position, 1))[:2]
-
-	def TRS(self):
-		#print(self.local_TRS())
-		return functools.reduce(lambda acc, x: acc @ x.local_TRS(), [self] + self.ancestors())
-		#return functools.reduce(lambda acc, x: acc @ x, [x.local_TRS() for x in [self] + self.ancestors()])
-
-	def inverse_TRS(self):
-		return functools.reduce(lambda acc, x: acc @ x, [x.local_inverse_TRS() for x in reversed([self] + self.ancestors())])
-
-	def local_TRS(self): #local transformation matrix
-		T, R, S = Matrix.T(self.position), Matrix.R2(self.rotation), Matrix.S(self.scale)
-		#print(T, R, S)
-		return T @ R @ S
-
-	def local_inverse_TRS(self): #local inverse transformation matrix
-		T_inv = Matrix.T(-self.position)
-		R_inv = Matrix.R2(self.rotation).T  # Rotation inverse is the transpose
-		S_inv = Matrix.S(1/self.scale)
-		return S_inv @ R_inv @ T_inv
-
-	def to_local(self, point):
-		# ponto global vira homogêneo
-		p = np.append(point, 1)
-
-		# aplica a matriz TRS inversa acumulada (self + ancestrais)
-		local = self.inverse_TRS() @ p
-
-		return local[:2]
-
-	def to_global(self, point):
-		p = np.append(point, 1)
-		return (self.TRS() @ p)[:2]"""
-
-
-
-
-
 class Node3D(Transform):	#Node):):
 	def __init__(self, position=np.zeros(3), rotation=quaternion([0, 0, 0, 1]), scale=np.ones(3), **kwargs):
 		super().__init__(position, rotation, scale, **kwargs)
-		"""super().__init__(**kwargs)
-		self.position = position       # vec3
-		self.rotation = rotation       # quaternion (x,y,z,w)
-		self.scale = scale             # vec3"""
 
 	@property
 	def euler(self): return self.rotation.to_euler()
@@ -288,61 +240,3 @@ class Node3D(Transform):	#Node):):
 	@property
 	def R(self): return Matrix.R3(self.rotation)
 
-	"""@property
-	def global_position(self):
-		return (self.TRS() @ np.append(self.position, 1))[:3]
-
-	# =====================================================================
-	# COMBINED TRANSFORM (self + ancestors)
-	# =====================================================================
-	def TRS(self):
-		return functools.reduce(
-			lambda acc, x: acc @ x,
-			[x.local_TRS() for x in [self] + self.ancestors()]
-		)
-
-	def inverse_TRS(self):
-		return functools.reduce(
-			lambda acc, x: acc @ x,
-			[x.local_inverse_TRS() for x in reversed([self] + self.ancestors())]
-		)
-
-	# =====================================================================
-	# LOCAL TRANSFORM
-	# =====================================================================
-	def local_TRS(self):
-		T = Matrix.T(self.position)
-		R = Matrix.R3(self.rotation)    # rotation from quaternion
-		S = Matrix.S(self.scale)
-		return T @ R @ S
-
-	def local_inverse_TRS(self):
-		T_inv = Matrix.T(-self.position)
-		
-		# quaternion inverse (x,y,z,-w) normalized
-		qx, qy, qz, qw = self.rotation
-		q_inv = np.array([-qx, -qy, -qz, qw])
-		
-		R_inv = Matrix.R3(q_inv)
-		S_inv = Matrix.S(1 / self.scale)
-		
-		return S_inv @ R_inv @ T_inv
-
-	# =====================================================================
-	# SPACE CONVERSION
-	# =====================================================================
-	def to_local(self, point):
-		p = np.append(point, 1)
-		return (self.inverse_TRS() @ p)[:3]
-
-	def to_global(self, point):
-		p = np.append(point, 1)
-		return (self.TRS() @ p)[:3]"""
-
-	# =====================================================================
-	# BASIS (3×3 matrix of world axes)
-	# =====================================================================
-	@property
-	def basis(self):
-		M = self.TRS()[:3, :3]  # upper-left 3×3
-		return M
