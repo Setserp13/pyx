@@ -167,6 +167,51 @@ class quaternion(np.ndarray):
 	
 		return quaternion([x, y, z, w])
 
+class Transform(Node):
+	def __init__(self, position, rotation, scale, **kwargs):
+		super().__init__(**kwargs)
+		self.position = position
+		self.rotation = rotation
+		self.scale = scale
+
+	@property
+	def dim(self): return len(self.position)
+	
+	@property
+	def T(self): return Matrix.T(self.position)
+
+	@property
+	def R(self): pass
+
+	@property
+	def S(self): return Matrix.S(self.scale)
+
+	def TRS(self):
+		return functools.reduce(lambda acc, x: acc @ x.local_TRS(), [self] + self.ancestors())
+
+	def inverse_TRS(self):
+		#return functools.reduce(lambda acc, x: x.local_inverse_TRS() @ acc, [self] + self.ancestors())
+		return functools.reduce(lambda acc, x: acc @ x.local_inverse_TRS(), reversed([self] + self.ancestors()))
+
+	def local_TRS(self):	#local transformation matrix
+		return self.T @ self.R @ self.S
+
+	def local_inverse_TRS(self): #local inverse transformation matrix
+		return np.linalg.inv(self.T) @ np.linalg.inv(self.R) @ np.linalg.inv(self.S)	#maybe inv of R is its transpose -> R.T
+
+	def to_local(self, point):
+		p = np.append(point, 1)
+		return (self.inverse_TRS() @ p)[:self.dim]
+
+	def to_global(self, point):
+		p = np.append(point, 1)
+		return (self.TRS() @ p)[:self.dim]
+
+	@property
+	def global_position(self): return self.to_global(self.position)
+
+
+
 class Node2D(Node):
 	def __init__(self, position=np.zeros(2), rotation=0.0, scale=np.ones(2), **kwargs):
 		super().__init__(**kwargs)
@@ -175,6 +220,9 @@ class Node2D(Node):
 		self.scale = scale
 
 	@property
+	def R(self): return Matrix.R2(self.rotation)
+
+	"""@property
 	def global_position(self):
 		#print(self.TRS())
 		return (self.TRS() @ np.append(self.position, 1))[:2]
@@ -209,7 +257,8 @@ class Node2D(Node):
 
 	def to_global(self, point):
 		p = np.append(point, 1)
-		return (self.TRS() @ p)[:2]
+		return (self.TRS() @ p)[:2]"""
+
 
 
 
@@ -225,8 +274,11 @@ class Node3D(Node):
 	def euler(self): return self.rotation.to_euler()
 	@euler.setter
 	def euler(self, value): self.rotation = quaternion.from_euler(value)
-	
+
 	@property
+	def R(self): return Matrix.R3(self.rotation)
+
+	"""@property
 	def global_position(self):
 		return (self.TRS() @ np.append(self.position, 1))[:3]
 
@@ -275,7 +327,7 @@ class Node3D(Node):
 
 	def to_global(self, point):
 		p = np.append(point, 1)
-		return (self.TRS() @ p)[:3]
+		return (self.TRS() @ p)[:3]"""
 
 	# =====================================================================
 	# BASIS (3×3 matrix of world axes)
