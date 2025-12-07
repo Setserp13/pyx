@@ -196,15 +196,15 @@ class Transform(Node):
 		#return functools.reduce(lambda acc, x: x @ acc, [x.local_TRS() for x in [self] + self.ancestors()])
 		return functools.reduce(lambda acc, x: acc @ x, [x.local_TRS() for x in reversed([self] + self.ancestors())])
 
-	def inverse_TRS(self):
-		return functools.reduce(lambda acc, x: acc @ x, [x.local_inverse_TRS() for x in [self] + self.ancestors()])
+	def inverse_TRS(self): return np.linalg.inv(self.TRS())
 
 	def local_TRS(self):	#local transformation matrix
 		#print(self.T, self.R, self.S)
 		return self.T @ self.R @ self.S
 
 	def local_inverse_TRS(self): #local inverse transformation matrix
-		return np.linalg.inv(self.T) @ np.linalg.inv(self.R) @ np.linalg.inv(self.S)	#maybe inv of R is its transpose -> R.T
+		return np.linalg.inv(self.local_TRS())
+		#return np.linalg.inv(self.S) @ np.linalg.inv(self.R) @ np.linalg.inv(self.T)
 
 	def to_local(self, point):
 		p = np.append(point, 1)
