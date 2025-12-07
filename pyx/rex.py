@@ -1,5 +1,10 @@
 import re
 from pyx.collectionsx import List
+import pyx.mat.mat as mat
+
+#data can be bytes, string and so on...
+def ljust(data, width, fill): return data + fill * max(0, width - len(data))	#pads up to an exact width
+def lpad(data, align, fill): return ljust(data, mat.ceil(len(data), align), fill)	#pads until length is a multiple of align
 
 def split_at(lst, *indices):
 	if len(indices) == 0:
