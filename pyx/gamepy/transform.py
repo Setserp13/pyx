@@ -193,11 +193,11 @@ class Transform(Node):
 	def S(self): return Matrix.S(self.scale)
 
 	def TRS(self):
-		return functools.reduce(lambda acc, x: acc @ x, [x.local_TRS() for x in [self] + self.ancestors()])
+		#return functools.reduce(lambda acc, x: x @ acc, [x.local_TRS() for x in [self] + self.ancestors()])
+		return functools.reduce(lambda acc, x: acc @ x, [x.local_TRS() for x in reversed([self] + self.ancestors())])
 
 	def inverse_TRS(self):
-		#return functools.reduce(lambda acc, x: x @ acc, [x.local_inverse_TRS() for x in [self] + self.ancestors()])
-		return functools.reduce(lambda acc, x: acc @ x, [x.local_inverse_TRS() for x in reversed([self] + self.ancestors())])
+		return functools.reduce(lambda acc, x: acc @ x, [x.local_inverse_TRS() for x in [self] + self.ancestors()])
 
 	def local_TRS(self):	#local transformation matrix
 		#print(self.T, self.R, self.S)
