@@ -3,6 +3,12 @@ import pyx.numpyx as npx
 from pyx.generic.node import Node
 import functools
 
+"""
+Use R.T (transposta) — é mais rápido e numericamente mais estável que np.linalg.inv.
+Se a matriz não for ortogonal (por exemplo contém escala, cisalhamento ou erro numérico), R.T não será a inversa — aí use np.linalg.inv.
+Para rotações representadas por quaternions, a inversa (rotação oposta) é o conjugado do quaternion normalizado; ao converter para matriz, a transposta continua sendo a inversa.
+"""
+
 class Matrix:
 	def S(vector): #scaling
 		vector = np.append(vector, 1)
@@ -194,6 +200,7 @@ class Transform(Node):
 		return functools.reduce(lambda acc, x: acc @ x.local_inverse_TRS(), reversed([self] + self.ancestors()))
 
 	def local_TRS(self):	#local transformation matrix
+		print(self.T, self.R, self.S)
 		return self.T @ self.R @ self.S
 
 	def local_inverse_TRS(self): #local inverse transformation matrix
