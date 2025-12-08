@@ -11,6 +11,12 @@ Se a matriz não for ortogonal (por exemplo contém escala, cisalhamento ou erro
 Para rotações representadas por quaternions, a inversa (rotação oposta) é o conjugado do quaternion normalizado; ao converter para matriz, a transposta continua sendo a inversa.
 """
 
+def to_homogeneous(matrix):
+	dim = len(matrix)
+	result = np.eye(dim+1)
+	result[:dim, :dim] = matrix
+	return result
+
 def basic_rotation_matrix(theta, axis1, axis2, dim):
     R = np.eye(dim)
     c = math.cos(theta)
@@ -21,16 +27,17 @@ def basic_rotation_matrix(theta, axis1, axis2, dim):
     R[axis2, axis2] = c
     return R
 
-def rotation_matrix(angles, dim):
+def rotation_matrix(angles, dim, homogeneous=True):
     result = np.eye(dim)
     for angle, (axis1, axis2) in zip(angles, itertools.combinations(range(dim), 2)):
         R = basic_rotation_matrix(angle, axis1, axis2, dim)
         result = R @ result   # ordem correta
-    return result
+    return to_homogeneous(result) if homogeneous else result
 
 class Matrix:
-	def S(vector): #scaling
-		vector = np.append(vector, 1)
+	def S(vector, homogeneous=True): #scaling
+		if homogeneous:
+			vector = np.append(vector, 1)
 		return np.array([(npx.ei(i, len(vector)) * x).tolist() for i, x in enumerate(vector)])
 
 	def T(vector): #translation
