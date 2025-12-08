@@ -69,9 +69,10 @@ class Matrix:
 		])
 
 		# ⬇ Convert to 4×4 homogeneous matrix
-		R4 = np.eye(4)
+		"""R4 = np.eye(4)
 		R4[:3, :3] = R
-		return R4
+		return R4"""
+		return to_homogeneous(R)
 
 class quaternion(np.ndarray):
 	def __new__(cls, input_array):
