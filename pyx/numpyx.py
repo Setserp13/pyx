@@ -439,7 +439,7 @@ def cartesian_to_spherical(x, y, z):
 	phi = np.arctan2(y, x)  # Azimute
 	return r, theta, phi
 
-def spherical_to_cartesian(r, theta, phi):
+def spherical_to_cartesian(r, theta, phi):	#radius r, inclination θ, azimuth φ, where r ∈ [0, ∞), θ ∈ [0, π], φ ∈ [0, 2π)
 	x = r * np.sin(theta) * np.cos(phi)
 	y = r * np.sin(theta) * np.sin(phi)
 	z = r * np.cos(theta)
