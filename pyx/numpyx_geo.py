@@ -288,7 +288,7 @@ class Mesh():
 		self.vertices = [x * vector for x in self.vertices]
 
 	@property
-	def bounds(self): return npx.aabb(self.vertices)
+	def aabb(self): return npx.aabb(self.vertices)	#bounds
 
 	@property
 	def pivot(self): return self.bounds.normalize_point(np.zeros(3))
@@ -312,6 +312,13 @@ class Mesh():
 
 	def flip_normals(mesh):
 		mesh.faces = [list(reversed(x)) for x in mesh.faces]
+
+	def make_vertices_unique(self):
+		result = Mesh()
+		for x in self.get_faces():
+			result.add_face(*x)
+		return result
+
 
 class angle(list):
 	def rays(self): return [line([self[1], self[0]]), line([self[1], self[2]])]
@@ -739,6 +746,7 @@ def angle_vector_plane(v, p1, p2):	#p1 and p2 are vectors that define the plane
 	angle_to_normal = np.arccos(np.clip(np.dot(v_norm, n_norm), -1.0, 1.0))	# Angle between v and plane normal (in radians)
 	angle_to_plane = np.pi / 2 - angle_to_normal	# Angle between vector and plane
 	return angle_to_plane	# return in radians
+
 
 
 
