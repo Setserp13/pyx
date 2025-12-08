@@ -2,12 +2,31 @@ import numpy as np
 import pyx.numpyx as npx
 from pyx.generic.node import Node
 import functools
+import itertools
+import math
 
 """
 Use R.T (transposta) — é mais rápido e numericamente mais estável que np.linalg.inv.
 Se a matriz não for ortogonal (por exemplo contém escala, cisalhamento ou erro numérico), R.T não será a inversa — aí use np.linalg.inv.
 Para rotações representadas por quaternions, a inversa (rotação oposta) é o conjugado do quaternion normalizado; ao converter para matriz, a transposta continua sendo a inversa.
 """
+
+def basic_rotation_matrix(theta, axis1, axis2, dim):
+    R = np.eye(dim)
+    c = math.cos(theta)
+    s = math.sin(theta)
+    R[axis1, axis1] = c
+    R[axis1, axis2] = -s
+    R[axis2, axis1] = s
+    R[axis2, axis2] = c
+    return R
+
+def rotation_matrix(angles, dim):
+    result = np.eye(dim)
+    for angle, (axis1, axis2) in zip(angles, itertools.combinations(range(dim), 2)):
+        R = basic_rotation_matrix(angle, axis1, axis2, dim)
+        result = R @ result   # ordem correta
+    return result
 
 class Matrix:
 	def S(vector): #scaling
