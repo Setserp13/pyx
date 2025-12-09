@@ -3,7 +3,7 @@ import numpy as np
 import pyx.numpyx as npx
 import pyx.numpyx_geo as geo
 from pyx.numpyx_geo import Mesh
-from pyx.gamepy.transform import Node3D
+from pyx.mat.transform import Node3D
 import struct
 import json
 from pyx.collectionsx import flatten
