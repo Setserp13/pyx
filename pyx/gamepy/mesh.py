@@ -11,6 +11,9 @@ import copy
 import pyx.mat.mat as mat
 import pyx.rex as rex
 
+def fan_triangulate(indices):
+	return [[indices[0], indices[i], indices[i+1]] for i in range(1, len(indices) - 1)]
+
 class glb:
 	ARRAY_BUFFER = 34962	#dados de vértices (positions, normals, tangents, UVs, colors, joints, weights etc.)
 	ELEMENT_ARRAY_BUFFER = 34963	#índices (faces, triângulos)	
