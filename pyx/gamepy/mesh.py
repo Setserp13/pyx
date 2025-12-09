@@ -188,3 +188,79 @@ def uv_sphere(radius=1.0, stacks=16, slices=32, center=np.zeros(3)):
 			v.append(npx.spherical_to_cartesian(radius, theta, phi) + center)
 			uv.append(np.array([phi / (math.pi * 2), theta / math.pi]))
 	return geo.Mesh(v, geo.enlongated_faces(*([slices] * stacks)), uv)
+
+def generate_rings(polyline, ring_radius=1.0, ring_segments=16):
+	"""
+	polyline: (N,3) numpy array of 3D points
+	ring_radius: radius of the cross-sectional ring
+	ring_segments: number of points in each ring
+
+	returns: list of numpy arrays shaped (ring_segments, 3)
+	"""
+	polyline = np.asarray(polyline)
+	n = len(polyline)
+
+	rings = []
+
+	# Precompute tangents
+	if np.allclose(polyline[0], polyline[-1], atol=1e-6):	#snap end points
+		tangents = geo.polyline.tangents(polyline[:-1], closed=True)
+		tangents.append(tangents[0])
+		#print(tangents)
+	else:
+		tangents = geo.polyline.tangents(polyline, closed=False)
+
+	# Build rings
+	prev_normal = None
+
+	for i in range(n):
+		t = tangents[i]
+
+		# Find a stable normal vector perpendicular to tangent
+		if prev_normal is None:
+			# pick any vector not parallel to t
+			tmp = np.array([1, 0, 0])
+			if abs(np.dot(tmp, t)) > 0.9:
+				tmp = np.array([0, 1, 0])
+			normal = npx.normalize(np.cross(t, tmp))
+		else:
+			# make normal smooth by projecting previous one onto plane ⟂ t
+			normal = prev_normal - t * np.dot(prev_normal, t)
+			normal = npx.normalize(normal)
+
+			# If degenerate, choose a new one
+			if np.linalg.norm(normal) < 1e-6:
+				tmp = np.array([1, 0, 0])
+				if abs(np.dot(tmp, t)) > 0.9:
+					tmp = np.array([0, 1, 0])
+				normal = npx.normalize(np.cross(t, tmp))
+
+		# Binormal
+		binormal = npx.normalize(np.cross(t, normal))
+
+		# Create the ring (circle)
+		ring = []
+		for k in range(ring_segments):
+			angle = 2.0 * np.pi * k / ring_segments
+			offset = (normal * np.cos(angle) + binormal * np.sin(angle)) * ring_radius
+			ring.append(polyline[i] + offset)
+		ring = np.array(ring)
+
+		rings.append(ring)
+		prev_normal = normal
+
+	return rings
+
+def tube(polyline, ring_radius=1.0, ring_segments=16):
+	rings = generate_rings(polyline, ring_radius=ring_radius, ring_segments=ring_segments, closed=closed)
+	result = geo.Mesh()
+	for x in rings:
+		result.vertices.extend(x)
+	primitives = [len(rings[0])] * len(rings)
+	result.faces = geo.enlongated_faces(*primitives)
+	return result
+
+def torus(n, r=1.0, ring_radius=.25):
+	polyline = [np.array([x[0], 0.0, x[1]]) for x in npx.on_arc(n, start=0.0, size=math.pi * 2)]
+	#print(polyline)
+	return tube(polyline, ring_radius=ring_radius, ring_segments=n)
