@@ -32,7 +32,8 @@ class List:
 	def get(arr, index, dflt_value=None): return arr[index] if index in range(len(arr)) else dflt_value
 
 	#Return a k-cycle
-	def arange(ls, k, start=0): return [ls[(start + i) % len(ls)] for i in range(k)]
+	#def arange(ls, k, start=0): return [ls[(start + i) % len(ls)] for i in range(k)]
+	def arange(ls, k, start=0, cycle=True): return [ls[(start + i) % len(ls)] for i in range(k if cycle else min(k, len(ls) - start))]
 
 	def aranges(ls, k, start=0, cycle=True): return [List.arange(ls, k, start + i) for i in range(len(ls) - (0 if cycle else (k - 1)))]
 
