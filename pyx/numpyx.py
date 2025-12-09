@@ -462,3 +462,29 @@ def find_indices(array, match, max_dim=None):
 		if match(value):
 			result.append(np.array(idx))
 	return result
+
+def row_major_order(size, index):	#linear = i0*(s1*s2*...*sn) + i1*(s2*s3*...*sn) + ... + in
+    """
+    Compute linear index of an N-dimensional index (row-major order)
+
+    size  – ndarray of shape (N,) with sizes of each dimension
+    index – ndarray of shape (N,) with indices in each dimension
+    """
+    size = np.asarray(size)
+    index = np.asarray(index)
+    multipliers = np.cumprod(size[::-1])[::-1][1:]
+    multipliers = np.append(multipliers, 1)  # last multiplier = 1
+    return int(np.sum(index * multipliers))
+
+def column_major_order(size, index):	#linear = i0 + i1*s0 + i2*(s0*s1) + ...
+    """
+    Compute linear index of an N-dimensional index (column-major order)
+
+    size  – ndarray of shape (N,)
+    index – ndarray of shape (N,)
+    """
+    size = np.asarray(size)
+    index = np.asarray(index)
+    multipliers = np.cumprod(size) / size  # produces: [1, s0, s0*s1, ...]
+    multipliers = multipliers.astype(int)
+    return int(np.sum(index * multipliers))
