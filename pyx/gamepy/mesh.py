@@ -252,7 +252,7 @@ def generate_rings(polyline, ring_radius=1.0, ring_segments=16):
 	return rings
 
 def tube(polyline, ring_radius=1.0, ring_segments=16):
-	rings = generate_rings(polyline, ring_radius=ring_radius, ring_segments=ring_segments, closed=closed)
+	rings = generate_rings(polyline, ring_radius=ring_radius, ring_segments=ring_segments)
 	result = geo.Mesh()
 	for x in rings:
 		result.vertices.extend(x)
