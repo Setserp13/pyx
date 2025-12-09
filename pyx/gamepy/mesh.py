@@ -159,7 +159,7 @@ class SkinnedMesh(Mesh, Node3D):
 					]
 				})
 
-		print(meshes)		
+		#print(meshes)		
 
 		gltf = {
 			"asset": { "version": "2.0" },
