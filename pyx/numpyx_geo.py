@@ -394,6 +394,34 @@ class polyline(np.ndarray):#list):
 				return edges[:-1]
 		return edges
 
+	def neighbors(v, i, closed=True):	#return ith-vertex-adjacent vertices
+		n = len(v)
+		if closed:
+			return [v[(i - 1) % n], v[(i + 1) % n]]
+		if i == 0:
+			return [v[1]] if n > 1 else []
+		elif i == n - 1:
+			return [v[n - 2]] if n > 1 else []
+		else:
+			return [v[i - 1], v[i + 1]]
+
+	def tangents(v, closed=True):
+		n = len(v)
+		result = []
+		for i in range(n):
+			if closed:
+				t = v[(i + 1) % n] - v[(i - 1) % n]	# Índices com wrap-around
+				#print(t)
+			else:
+				if i == 0:
+					t = v[1] - v[0]
+				elif i == n - 1:
+					t = v[-1] - v[-2]
+				else:
+					t = (v[i+1] - v[i-1]) * 0.5
+			result.append(npx.normalize(t))
+		return result
+
 	def normal(edge, outward=True):
 		return line(edge).normal(left=not outward)
 		"""v = edge[1] - edge[0]
@@ -746,6 +774,7 @@ def angle_vector_plane(v, p1, p2):	#p1 and p2 are vectors that define the plane
 	angle_to_normal = np.arccos(np.clip(np.dot(v_norm, n_norm), -1.0, 1.0))	# Angle between v and plane normal (in radians)
 	angle_to_plane = np.pi / 2 - angle_to_normal	# Angle between vector and plane
 	return angle_to_plane	# return in radians
+
 
 
 
