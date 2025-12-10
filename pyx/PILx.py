@@ -164,3 +164,16 @@ def get_atlases(img, threshold=0.5, min_dist=1):
 	rects = [npx.rect(np.array(x), np.ones(2)) for x in pixels]
 	#print(rects)
 	return merge_where(rects, lambda x, y: npx.rect.chebyshev_distance(x, y) <= min_dist, npx.rect.aabb)
+
+def to_grayscale(img):
+	img = np.asarray(img, dtype=float)
+	if img.ndim == 2:	# Caso já seja grayscale (MxN)
+		return img
+	if np.allclose(img[...,0], img[...,1]) and np.allclose(img[...,1], img[...,2]):
+		return img[..., :1]	# Caso já seja grayscale (MxNx3|4)
+	y = (	# Converte
+		0.299 * img[...,0] +
+		0.587 * img[...,1] +
+		0.114 * img[...,2]
+	)
+	return y[..., None]   # volta para H×W
