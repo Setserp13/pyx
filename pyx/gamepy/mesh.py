@@ -267,3 +267,23 @@ def torus(n, r=1.0, ring_radius=.25):
 	polyline = [np.array([x[0], 0.0, x[1]]) for x in npx.on_arc(n, start=0.0, size=math.pi * 2)]
 	#print(polyline)
 	return tube(polyline, ring_radius=ring_radius, ring_segments=n)
+
+def grid_triangulation(cell_count, closed=[False, False]):
+	cell_count = cell_count.astype(int)
+	def dt(index):
+		return fan_triangulate([
+			npx.column_major_order(cell_count, np.array([index[0], index[1]])),
+			npx.column_major_order(cell_count, np.array([index[0], index[1] + 1])),
+			npx.column_major_order(cell_count, np.array([index[0] + 1, index[1] + 1])),
+			npx.column_major_order(cell_count, np.array([index[0] + 1, index[1]]))
+			])
+	return flatten(Map([0, 0], stop=[cell_count[0] - (0 if closed[0] else 1), cell_count[1] - (0 if closed[1] else 1)], step=None, func=lambda *index: dt(index)), 2)
+
+def plane(offset=np.zeros(2), cell_size=np.ones(2), cell_count=np.ones(2) * 10):
+	#vertices = flatten(Map([0, 0, 0], stop=[cell_count[0], 1, cell_count[1]], step=None, func=lambda *index: np.array(index)), 2)
+	vertices = [np.array([x.min[0], 0, x.min[1]]) for x in npx.grid(offset=offset, cell_size=cell_size).cells(stop=cell_count)]
+	uvs = [x[[0, 2]] / (cell_size * cell_count) for x in vertices]
+	#print(uvs)
+	triangles = grid_triangulation(cell_count, closed=[False, False])
+	#print(triangles)
+	return Mesh(vertices, triangles, uvs)
