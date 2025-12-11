@@ -81,6 +81,13 @@ def on_circle(n, r=1.0, center=np.zeros(2), start=0.0):	#regular polygon
 def on_arc(n, r=1.0, center=np.zeros(2), start=0.0, size=2.0 * math.pi):
 	return polyline([polar_to_cartesian(r, start + size * (i / (n - 1))) + center for i in range(n)])
 
+def on_sphere(radius=1.0, stacks=16, slices=32, center=np.zeros(3)):
+	v = []
+	for theta in subdivide(0.0, math.pi, stacks):
+		for phi in subdivide(0.0, math.pi * 2.0, slices):
+			v.append(spherical_to_cartesian(radius, theta, phi) + center)
+	return v
+
 class rect:
 	def __init__(self, min, size):
 		self.min = np.array(min)
