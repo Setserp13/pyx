@@ -6,7 +6,7 @@ from pyx.numpyx_geo import Mesh
 from pyx.mat.transform import Node3D
 import struct
 import json
-from pyx.collectionsx import flatten
+from pyx.collectionsx import flatten, Map
 import copy
 import pyx.mat.mat as mat
 import pyx.rex as rex
