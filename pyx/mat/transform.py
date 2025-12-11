@@ -200,6 +200,35 @@ class quaternion(np.ndarray):
 	
 		return quaternion([x, y, z, w])
 
+	@staticmethod
+	def from_axis_angle(axis, angle):
+		axis = npx.normalize(axis)
+		s = np.sin(angle * 0.5)
+		return np.array([axis[0] * s, axis[1] * s, axis[2] * s, np.cos(angle * 0.5)], dtype=float)
+
+	@staticmethod
+	def align_vector(local_vec, world_vec):
+		# Normalizar
+		a = npx.normalize(local_vec)
+		b = npx.normalize(world_vec)
+	
+		# Caso especial: já alinhados
+		dot = np.dot(a, b)
+		if dot > 0.999999:
+			return np.array([1, 0, 0, 0], float)  # identidade
+	
+		# Caso especial: opostos → rotação 180° em qualquer eixo perpendicular
+		if dot < -0.999999:
+			axis = npx.normalize(np.cross(a, np.array([1, 0, 0])))
+			if np.linalg.norm(axis) < 1e-6:
+				axis = npx.normalize(np.cross(a, np.array([0, 1, 0])))
+			return quaternion.from_axis_angle(axis, np.pi)
+	
+		axis = npx.normalize(np.cross(a, b))	# Eixo = perpendicular entre A e B
+		angle = np.arccos(np.clip(dot, -1.0, 1.0))	# Ângulo = distância angular entre os vetores
+		return quaternion.from_axis_angle(axis, angle)	# Quaternion final
+
+
 class Transform(Node):
 	def __init__(self, position, rotation, scale, **kwargs):
 		super().__init__(**kwargs)
