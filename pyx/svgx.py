@@ -105,6 +105,7 @@ def path_bbox(obj):
 	bbox = path.bbox()
 	transform = get_transform(obj)
 	sc = transform['scale'] if 'scale' in transform else np.ones(2)
+	print(transform, sc)
 	return npx.rect.min_max(np.array([bbox[0] * sc[0], bbox[2] * sc[1]]), np.array([bbox[1] * sc[0], bbox[3] * sc[1]]))
 def polyline_bbox(obj):	return npx.aabb(polyline_from_svg(obj))
 def g_bbox(group):
