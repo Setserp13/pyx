@@ -105,7 +105,7 @@ def path_bbox(obj):
 	try:
 		bbox = path.bbox()
 	except:	#not valid d in path
-		return npx.rect2(0, 0, 0, 0)
+		return None
 	transform = get_transform(obj)
 	sc = transform['scale'] if 'scale' in transform else np.ones(2)
 	if len(sc) < 2:
