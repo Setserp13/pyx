@@ -103,7 +103,8 @@ def line_bbox(obj):	return npx.aabb(*line_from_svg(obj))
 def path_bbox(obj):
 	path = parse_path(obj.get('d', None))
 	bbox = path.bbox()
-	sc = get_scale(obj)
+	transform = get_transform(obj)
+	sc = transform['scale'] if 'scale' in transform else np.ones(2)
 	return npx.rect.min_max(np.array([bbox[0] * sc[0], bbox[2] * sc[1]]), np.array([bbox[1] * sc[0], bbox[3] * sc[1]]))
 def polyline_bbox(obj):	return npx.aabb(polyline_from_svg(obj))
 def g_bbox(group):
