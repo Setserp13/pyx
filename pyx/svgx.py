@@ -102,7 +102,10 @@ def rect_bbox(obj): return rect_from_svg(obj)	#npx.rect2(*get(obj, float, 'x', '
 def line_bbox(obj):	return npx.aabb(*line_from_svg(obj))
 def path_bbox(obj):
 	path = parse_path(obj.get('d', None))
-	bbox = path.bbox()
+	try:
+		bbox = path.bbox()
+	except:	#not valid d in path
+		return npx.rect2(0, 0, 0, 0)
 	transform = get_transform(obj)
 	sc = transform['scale'] if 'scale' in transform else np.ones(2)
 	if len(sc) < 2:
