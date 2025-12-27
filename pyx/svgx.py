@@ -218,7 +218,7 @@ def clip_image(root, obj, img_path, abspath=False, mode='slice', align=0.5):
 		#img_path = os.path.basename(img_path)
 	img_path = img_path.replace(os.sep, '/')
 
-	img_rect = npx.fit_rect(svgx.bbox(obj), np.array(img.size), mode)
+	img_rect = npx.fit_rect(bbox(obj), np.array(img.size), mode)
 
 	obj_index = list(parent).index(obj)
 	print(img_path)
