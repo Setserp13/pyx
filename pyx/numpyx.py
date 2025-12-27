@@ -421,6 +421,20 @@ def fit_scale(viewport, viewbox, scale_method='meet'):	#scale_method in ['meet',
 
 def fit(viewport, viewbox, scale_method='meet'): return viewbox * fit_scale(viewport, viewbox, scale_method)
 
+def fit_rect(viewport_rect, viewbox, mode='slice', align=0.5):
+	result = rect(viewport_rect.min, fit(viewport_rect.size, viewbox, mode))
+	sx = viewbox[0] / viewport_rect.size[0]	# Scale factors
+	sy = viewbox[1] / viewport_rect.size[1]
+	# Axis that overflows and needs alignment
+	axis = 0 if (mode == 'slice' and sy < sx) or (mode == 'meet' and sy > sx) else 1
+	# available slack along that axis
+	slack = viewport_rect.size[axis] - result.size[axis]
+	# shift according to align (0 = min aligned, 1 = max aligned, .5 = centered)
+	result.min[axis] = viewport_rect.min[axis] + slack * align
+	return result
+
+
+
 def rotate_2d(v, theta): #theta is in radians
 	x, y = v
 	c, s = math.cos(theta), math.sin(theta)
