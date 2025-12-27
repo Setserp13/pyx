@@ -204,18 +204,25 @@ def layer_of(self):
 def ishidden(self):
 	return find_ancestor(self, lambda x: islayer(x) and get_style_property(x, 'display') == 'none') != None
 
-def clip_image(root, obj, img_path):
+def clip_image(root, obj, img_path, abspath=False, mode='slice', align=0.5):
 	parent = obj.getparent()
 	#print(img_path)
 	try:
 		img = Image.open(img_path)
 	except:
 		return print('Image not found')
-	img_path = os.path.basename(img_path)
-	scale_factor = max(np.array(get_bbox(obj).size) / np.array(img.size))
-	img_size = np.array(img.size) * scale_factor
+	if abspath:
+		img_path = 'file:///' + img_path
+	else:
+		pass
+		#img_path = os.path.basename(img_path)
+	img_path = img_path.replace(os.sep, '/')
+
+	img_rect = npx.fit_rect(svgx.bbox(obj), np.array(img.size), mode)
+
 	obj_index = list(parent).index(obj)
-	img = image(parent, npx.rect2(*get(obj, float, 'x', 'y'), *img_size), img_path)
+	print(img_path)
+	img = image(*img_rect.min, *img_rect.size, img_path)
 	parent.insert(obj_index, img)
 	clip(img, obj)
 
