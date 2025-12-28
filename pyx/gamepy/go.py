@@ -1,6 +1,6 @@
 import numpy as np
 import pyx.numpyx as npx
-from pyx.gamepy import Color
+from pyx.gamepy.color import Color
 import pyx.PILx as PILx
 
 class Texture2D():
