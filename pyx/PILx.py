@@ -5,6 +5,12 @@ import numpy as np
 import pyx.numpyx as npx
 from pyx.collectionsx import merge_where
 
+def read_image(path, start_axis=0):
+	image = Image.open(path)
+	array = np.array(image)[::]	#-1]
+	array = np.transpose(array, (1 - start_axis, start_axis, *range(2, array.ndim)))
+	return array
+
 def concat(lst, axis=0, equal_sized=False, mode='RGBA'):
 	cell_size = lst[0].size if equal_sized else mat.arg(max, [x.size for x in lst])
 	size = list(cell_size)
