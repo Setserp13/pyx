@@ -2,6 +2,7 @@ import numpy as np
 import pyx.numpyx as npx
 from pyx.gamepy.color import Color
 import pyx.PILx as PILx
+from pyx.mat.transform import Node2D, Node3D
 
 class Texture2D():
 	def __init__(self, path):
