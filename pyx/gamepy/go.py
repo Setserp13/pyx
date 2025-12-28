@@ -7,7 +7,7 @@ from pyx.mat.transform import Node2D, Node3D
 class Texture2D():
 	def __init__(self, path):
 		self.path = path
-		self.array = mp.texture_xy(path)
+		self.array = PILx.read_image(path)
 
 	@property
 	def size(self): return np.array(self.array.shape[:2])
