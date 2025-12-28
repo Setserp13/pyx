@@ -4,6 +4,7 @@ from pyx.gamepy.color import Color
 import pyx.PILx as PILx
 from pyx.mat.transform import Node2D, Node3D
 import pyx.osx as osx
+from PIL import Image
 
 class Texture2D():
 	def __init__(self, path):
