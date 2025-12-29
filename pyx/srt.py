@@ -142,7 +142,8 @@ class SubRipItem(TimeRange): #herde essa classe de uma classe mais genérica dep
 		
 	@staticmethod
 	def strp(value):
-		index, interval, text = value.split('\n')
+		parts = value.split('\n')
+		index, interval, text = parts[0], parts[1], '\n'.join(parts[2:])
 		start, end = interval.split(' --> ')
 		return SubRipItem(index, seconds(srtptime(start)), seconds(srtptime(end)), text)
 
@@ -165,6 +166,10 @@ class SubRipFile(list):
 			result.append(SubRipItem.strp(x))
 		return result
 
+	@staticmethod
+	def from_srt(path):
+		return SubRipFile.strp(osx.read(path))
+		
 	def shift(self, **kwargs):
 		for x in self:
 			x.shift(**kwargs)
@@ -191,6 +196,7 @@ def create_subs(text, labels, start=0): #Text and labels must have the same numb
 		#result.append(SubRipItem(index=i+1, start=Time(milliseconds=int((start+labels[i][0])*1000)), end=Time(milliseconds=int((start+labels[i][1])*1000)), text=x))
 	return result
 	
+
 
 
 
