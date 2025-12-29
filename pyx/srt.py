@@ -144,7 +144,7 @@ class SubRipItem(TimeRange): #herde essa classe de uma classe mais genérica dep
 	def strp(value):
 		index, interval, text = value.split('\n')
 		start, end = interval.split(' --> ')
-		return SubRipItem(index, start, end, text)	#srtptime(start), srtptime(end), text)
+		return SubRipItem(index, srtptime(start), srtptime(end), text)
 
 	def shift(self, **kwargs):	#hours, minutes, seconds, microseconds
 		self.start += timedelta(**kwargs)
@@ -191,5 +191,6 @@ def create_subs(text, labels, start=0): #Text and labels must have the same numb
 		#result.append(SubRipItem(index=i+1, start=Time(milliseconds=int((start+labels[i][0])*1000)), end=Time(milliseconds=int((start+labels[i][1])*1000)), text=x))
 	return result
 	
+
 
 
