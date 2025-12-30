@@ -4,6 +4,22 @@ import textwrap
 import pyx.mat.mat as mat
 import pyx.osx as osx
 
+def wrap_text(text, width=42, len_func=len, join=True):
+	lines = []
+	current = ""
+	for word in text.split():
+		if len_func(current) + len_func(word) + 1 <= width:
+			if current:
+				current += " " + word
+			else:
+				current = word
+		else:
+			lines.append(current)
+			current = word
+	if current:
+		lines.append(current)
+	return "\n".join(lines) if join else lines
+
 def timing(items, start, duration):
 	ws = mat.weights([len(x.text) for x in items])
 	for i in range(len(items)):
@@ -196,6 +212,7 @@ def create_subs(text, labels, start=0): #Text and labels must have the same numb
 		#result.append(SubRipItem(index=i+1, start=Time(milliseconds=int((start+labels[i][0])*1000)), end=Time(milliseconds=int((start+labels[i][1])*1000)), text=x))
 	return result
 	
+
 
 
 
