@@ -65,6 +65,13 @@ def to_label_track(string):
 				result = result[:len(result) - 1]
 	return result
 
+def intervals_from_durations(durations, start=0.0):
+	labels = []
+	for d in durations:
+		labels.append([start, start + d])
+		start += d
+	return labels
+
 def camel_to_snake(name: str) -> str:
 	# Insert underscore before capital letters, except the first character
 	s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
