@@ -20,7 +20,7 @@ def wrap_text(text, width=42, len_func=len, join=True):
 		lines.append(current)
 	return "\n".join(lines) if join else lines
 
-def batch_lines(text: str, n: int, join = True):
+def batch_lines(text: str, n: int, join=True):
 	lines = text.split("\n") if isinstance(text, str) else text
 	result = [lines[i:i+n] for i in range(0, len(lines), n)]
 	return ["\n".join(x) if join else x for x in result]
@@ -221,6 +221,7 @@ def create_subs(text, labels, start=0): #Text and labels must have the same numb
 		#result.append(SubRipItem(index=i+1, start=Time(milliseconds=int((start+labels[i][0])*1000)), end=Time(milliseconds=int((start+labels[i][1])*1000)), text=x))
 	return result
 	
+
 
 
 
