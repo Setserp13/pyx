@@ -51,7 +51,7 @@ def split_item(item, split=words):
 	timing(result, item.start, duration)
 	return result
 
-def split_subs(subs): return SubRipFile([y for x in subs for y in split_item(x)])
+def split_subs(subs, split=words): return SubRipFile([y for x in subs for y in split_item(x, split=split)])
 
 
 def srtftime(x): return x.strftime("%H:%M:%S,%f")[:-3]
@@ -221,6 +221,7 @@ def create_subs(text, labels, start=0): #Text and labels must have the same numb
 		#result.append(SubRipItem(index=i+1, start=Time(milliseconds=int((start+labels[i][0])*1000)), end=Time(milliseconds=int((start+labels[i][1])*1000)), text=x))
 	return result
 	
+
 
 
 
