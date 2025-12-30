@@ -198,6 +198,10 @@ class SubRipFile(list):
 		#print(self.strf())
 		osx.write(output_path, self.strf(), encoding)
 
+	def wrap(self, width=42):	#if width is None do not wrap
+		for i in range(len(self)):
+			text = self[i].text.replace('\n', ' ')
+			self[i].text = text if width is None else wrap_text(text, width=width)
 
 #print(SubRipFile.strp(osx.read('subs.srt')).strf())
 
@@ -212,6 +216,7 @@ def create_subs(text, labels, start=0): #Text and labels must have the same numb
 		#result.append(SubRipItem(index=i+1, start=Time(milliseconds=int((start+labels[i][0])*1000)), end=Time(milliseconds=int((start+labels[i][1])*1000)), text=x))
 	return result
 	
+
 
 
 
