@@ -2,6 +2,16 @@ import numpy as np
 import librosa
 import soundfile as sf
 
+def add_silence_start(input_path, output_path, seconds):
+	y, sr = sf.read(input_path)
+	n_samples = int(seconds * sr)
+	if y.ndim == 1:
+		silence = np.zeros(n_samples, dtype=y.dtype)
+	else:
+		silence = np.zeros((n_samples, y.shape[1]), dtype=y.dtype)
+	out = np.concatenate([silence, y], axis=0)
+	sf.write(output_path, out, sr)
+
 def concat(audios, output_path="output.wav", gap_seconds=0.0):
 	audio_parts = []
 	sr = None
