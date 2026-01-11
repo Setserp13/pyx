@@ -73,3 +73,50 @@ class soundwave():
 
 	@property
 	def duration(self): return librosa.get_duration(path=self.path)
+
+def pure_tone(
+	frequency,
+	duration,
+	sr=44100,
+	volume=0.5,
+	phase=0.0,
+	wave="sine",
+	channels=1,
+	dtype=np.float32
+):
+	"""
+	Generate a pure tone.
+
+	frequency : float   (Hz)
+	duration  : float   (seconds)
+	sr        : int     (sample rate)
+	volume    : float   (0.0 – 1.0)
+	phase     : float   (radians)
+	wave      : str     ("sine", "square", "triangle", "saw")
+	channels  : int     (1=mono, 2=stereo)
+	dtype     : numpy dtype
+	"""
+
+	t = np.linspace(0, duration, int(sr * duration), endpoint=False)
+
+	if wave == "sine":
+		signal = np.sin(2 * np.pi * frequency * t + phase)
+
+	elif wave == "square":
+		signal = np.sign(np.sin(2 * np.pi * frequency * t + phase))
+
+	elif wave == "triangle":
+		signal = 2 * np.arcsin(np.sin(2 * np.pi * frequency * t + phase)) / np.pi
+
+	elif wave == "saw":
+		signal = 2 * (t * frequency - np.floor(0.5 + t * frequency))
+
+	else:
+		raise ValueError("Invalid wave type")
+
+	signal *= volume
+
+	if channels > 1:
+		signal = np.repeat(signal[:, None], channels, axis=1)
+
+	return signal.astype(dtype)
