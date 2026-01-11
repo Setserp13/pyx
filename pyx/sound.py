@@ -2,9 +2,6 @@ import numpy as np
 import librosa
 import soundfile as sf
 
-def exp_env(t, rate):
-	return np.exp(-t * rate)
-
 def noise(n):
 	return np.random.randn(n)
 
