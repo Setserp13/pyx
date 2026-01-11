@@ -93,11 +93,17 @@ class Time(float):
 	#	return f"Time({self.hours:02}:{self.minutes:02}:{self.seconds:02}.{self.milliseconds:03})"
 
 class TimeRange():
-	def __init__(self, start, end):
+	def __init__(self, start, duration):
+		self.start = Time(start)
+		self.duration = Time(duration)
+	"""def __init__(self, start, end):
 		self.start = Time(start)
 		self.duration = Time(end - start)
-		#self.end = Time(end)
+		#self.end = Time(end)"""
 
+	@classmethod
+	def start_end(cls, start, end): return cls(start, end - start)
+	
 	@property
 	def end(self): return Time(self.start + self.duration)
 
@@ -106,52 +112,27 @@ class TimeRange():
 	#@property
 	#def duration(self): return Time(self.end - self.start)
 
-"""class Time(time):
-	def __new__(self, hours=0, minutes=0, seconds=0, milliseconds=0):
-		millisecond = (hours * 3600 + minutes * 60 + seconds) * 1000 + milliseconds
-		second = millisecond // 1000
-		minute = second // 60
-		return super().__new__(self, hour=minute // 60, minute=minute % 60, second=second % 60, microsecond=(millisecond % 1000) * 1000)
+	def shift(self, **kwargs):	#hours, minutes, seconds, microseconds
+		self.start += timedelta(**kwargs)
+		self.end += timedelta(**kwargs)
 
-	def to_milliseconds(self):
-		return ((self.hour * 3600 + self.minute * 60 + self.second) * 1000 +
-		        self.microsecond // 1000)
+	def expand(self, **kwargs):
+		self.start -= timedelta(**kwargs)
+		self.end += timedelta(**kwargs)
 
-	def __add__(self, other):
-		if isinstance(other, Time):
-			total_ms = self.to_milliseconds() + other.to_milliseconds()
-		elif isinstance(other, int):
-			total_ms = self.to_milliseconds() + other  # assuming int = ms
-		else:
-			return NotImplemented
-		return Time(milliseconds=total_ms)
+class Track(list):	#elements are TimeRange-like
+	def shift(self, **kwargs):
+		for x in self:
+			x.shift(**kwargs)
 
-	def __sub__(self, other):
-		if isinstance(other, Time):
-			total_ms = self.to_milliseconds() - other.to_milliseconds()
-		elif isinstance(other, int):
-			total_ms = self.to_milliseconds() - other
-		else:
-			return NotImplemented
-		return Time(milliseconds=total_ms)
+	def expand(self, **kwargs):
+		for x in self:
+			x.expand(**kwargs)
 
-	def __mul__(self, factor):
-		if isinstance(factor, (int, float)):
-			total_ms = int(self.to_milliseconds() * factor)
-			return Time(milliseconds=total_ms)
-		return NotImplemented
-
-	def __truediv__(self, divisor):
-		if isinstance(divisor, (int, float)):
-			total_ms = int(self.to_milliseconds() / divisor)
-			return Time(milliseconds=total_ms)
-		return NotImplemented"""
 
 class SubRipItem(TimeRange): #herde essa classe de uma classe mais genérica depois, tornando-a irmã de clipes de vídeo, imagens, audios, transições, efeitos e etc...
 	def __init__(self, index, start, end, text):
 		self.index = index
-		#self.start = start
-		#self.end = end
 		self.text = text
 		super().__init__(start, end)
 	
@@ -168,15 +149,9 @@ class SubRipItem(TimeRange): #herde essa classe de uma classe mais genérica dep
 		start, end = interval.split(' --> ')
 		return SubRipItem(index, seconds(srtptime(start)), seconds(srtptime(end)), text)
 
-	def shift(self, **kwargs):	#hours, minutes, seconds, microseconds
-		self.start += timedelta(**kwargs)
-		self.end += timedelta(**kwargs)
 
-	def expand(self, **kwargs):
-		self.start -= timedelta(**kwargs)
-		self.end += timedelta(**kwargs)
 
-class SubRipFile(list):
+class SubRipFile(Track):
 	def strf(self): return ''.join([x.strf() for x in self])
 
 	@staticmethod
@@ -191,13 +166,7 @@ class SubRipFile(list):
 	def from_srt(path):
 		return SubRipFile.strp(osx.read(path))
 		
-	def shift(self, **kwargs):
-		for x in self:
-			x.shift(**kwargs)
 
-	def expand(self, **kwargs):
-		for x in self:
-			x.expand(**kwargs)
 
 	def save(self, output_path, encoding='utf-8'):
 		#print(self.strf())
@@ -221,6 +190,7 @@ def create_subs(text, labels, start=0): #Text and labels must have the same numb
 		#result.append(SubRipItem(index=i+1, start=Time(milliseconds=int((start+labels[i][0])*1000)), end=Time(milliseconds=int((start+labels[i][1])*1000)), text=x))
 	return result
 	
+
 
 
 
