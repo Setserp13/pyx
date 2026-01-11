@@ -1,0 +1,7 @@
+point
+line -> line, ray, line segment
+angle
+circle
+arc
+rect
+polyline -> polyline, polygon
