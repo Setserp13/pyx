@@ -84,13 +84,28 @@ class soundwave():
 	@property
 	def duration(self): return librosa.get_duration(path=self.path)
 
-def pure_tone(
+
+def sine_wave(freq, t, phase=0.0):	#pure tone
+	return np.sin(2 * np.pi * freq * t + phase)
+
+def square_wave(freq, t, phase=0.0):
+	return np.sign(np.sin(2 * np.pi * freq * t + phase))
+
+def triangle_wave(freq, t, phase=0.0):
+	return 2 * np.arcsin(np.sin(2 * np.pi * freq * t + phase)) / np.pi
+
+def saw_wave(freq, t, phase=0.0):	#sawtooth wave
+	phase_cycles = phase / (2 * np.pi)
+	x = t * freq + phase_cycles
+	return 2 * (x - np.floor(0.5 + x))
+
+def periodic_wave(
 	frequency,
 	duration,
 	sr=44100,
 	volume=0.5,
 	phase=0.0,
-	wave="sine",
+	waveform=sine_wave,
 	channels=1,
 	dtype=np.float32
 ):
@@ -109,21 +124,8 @@ def pure_tone(
 
 	t = np.linspace(0, duration, int(sr * duration), endpoint=False)
 
-	if wave == "sine":
-		signal = np.sin(2 * np.pi * frequency * t + phase)
-
-	elif wave == "square":
-		signal = np.sign(np.sin(2 * np.pi * frequency * t + phase))
-
-	elif wave == "triangle":
-		signal = 2 * np.arcsin(np.sin(2 * np.pi * frequency * t + phase)) / np.pi
-
-	elif wave == "saw":
-		signal = 2 * (t * frequency - np.floor(0.5 + t * frequency))
-
-	else:
-		raise ValueError("Invalid wave type")
-
+	signal = waveform(frequency, t, phase)
+	
 	signal *= volume
 
 	if channels > 1:
