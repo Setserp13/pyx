@@ -2,7 +2,15 @@ import numpy as np
 import librosa
 import soundfile as sf
 
-def normalize(x): return x / np.max(np.abs(x))
+def exp_env(t, rate):
+	return np.exp(-t * rate)
+
+def noise(n):
+	return np.random.randn(n)
+
+def normalize(x):
+	m = np.max(np.abs(x))
+	return x if m == 0 else x / m
 
 def silence(duration, sr=22050, channels=1, dtype=np.float32):
 	"""
