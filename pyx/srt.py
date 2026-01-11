@@ -65,13 +65,8 @@ class SubRipItem(TimeRange): #herde essa classe de uma classe mais genérica dep
 	def __init__(self, index, start, end, text):
 		self.index = index
 		self.text = text
-		#super().__init__(start, end)
-		super().__init__(start, end - start)
+		super().__init__(start, end)
 	
-	#@property
-	#def duration(self): return self.end - self.start
-	
-	#def strf(self): return f'{self.index}\n{srtftime(self.start)} --> {srtftime(self.end)}\n{self.text}\n\n'
 	def strf(self): return f'{self.index}\n{srtftime(self.start.time)} --> {srtftime(self.end.time)}\n{self.text}\n\n'
 		
 	@staticmethod
@@ -122,6 +117,7 @@ def create_subs(text, labels, start=0): #Text and labels must have the same numb
 		#result.append(SubRipItem(index=i+1, start=Time(milliseconds=int((start+labels[i][0])*1000)), end=Time(milliseconds=int((start+labels[i][1])*1000)), text=x))
 	return result
 	
+
 
 
 
