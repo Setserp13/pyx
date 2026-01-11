@@ -2,6 +2,8 @@ import numpy as np
 import librosa
 import soundfile as sf
 
+def normalize(x): return x / np.max(np.abs(x))
+
 def silence(duration, sr=22050, channels=1, dtype=np.float32):
 	"""
 	Return a silent audio segment.
