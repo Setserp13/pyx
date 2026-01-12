@@ -159,4 +159,4 @@ def periodic_wave(
 	if channels > 1:
 		signal = np.repeat(signal[:, None], channels, axis=1)
 
-	return signal.astype(dtype)
+	return audio(signal.astype(dtype), sr=sr)
