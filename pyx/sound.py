@@ -25,7 +25,7 @@ def silence(duration, sr=22050, channels=1, dtype=np.float32):
 	else:
 		return np.zeros((samples, channels), dtype=dtype)
 
-class sound(np.ndarray):
+class audio(np.ndarray):
 	def __new__(cls, input_array, sr=44100):
 		obj = np.asarray(input_array).view(cls)
 		obj.sr = sr
@@ -50,20 +50,20 @@ class sound(np.ndarray):
 	@property
 	def channels(self): return self.shape[1] if self.ndim > 1 else 1
 
-def concatenate(sounds, gap_seconds=0.0):
+def concatenate(ls, gap_seconds=0.0):
 	arrays = []
 	sr = None
 	
-	for x in sounds:
+	for x in ls:
 		if sr is None:
 			sr = x.sr
 		arrays.append(x)
 
 		# add silence (except after last file)
-		if gap_seconds > 0 and x != sounds[-1]:
+		if gap_seconds > 0 and x != ls[-1]:
 			arrays.append(silence(gap_seconds, sr, x.channels, data.dtype))
 
-	return sound(np.concatenate(arrays, axis=0), sr=sr)
+	return audio(np.concatenate(arrays, axis=0), sr=sr)
 
 
 
