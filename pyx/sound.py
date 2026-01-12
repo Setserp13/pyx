@@ -25,14 +25,50 @@ def silence(duration, sr=22050, channels=1, dtype=np.float32):
 	else:
 		return np.zeros((samples, channels), dtype=dtype)
 
-def add_silence_start(input_path, output_path, seconds):
+class sound(np.ndarray):
+	def __new__(cls, input_array, sr=44100):
+		obj = np.asarray(input_array).view(cls)
+		obj.sr = sr
+		return obj
+
+	def __array_finalize__(self, obj):
+		if obj is None:
+			return
+		self.sr = getattr(obj, "sr", 44100)
+
+	@classmethod
+	def read(cls, path):
+		data, samplerate = sf.read(path)
+		return cls(data, sr=samplerate)
+
+	def write(self, path):
+		sf.write(path, self, self.sr)
+
+	@property
+	def duration(self): return len(self) / self.sr
+
+	@property
+	def channels(self): return self.shape[1] if self.ndim > 1 else 1
+
+def concatenate(sounds, gap_seconds=0.0):
+	arrays = []
+	sr = None
+	
+	for x in sounds:
+		if sr is None:
+			sr = x.sr
+		arrays.append(x)
+
+		# add silence (except after last file)
+		if gap_seconds > 0 and x != sounds[-1]:
+			arrays.append(silence(gap_seconds, sr, x.channels, data.dtype))
+
+	return sound(np.concatenate(arrays, axis=0), sr=sr)
+
+
+
+"""def add_silence_start(input_path, output_path, seconds):
 	y, sr = sf.read(input_path)
-	"""n_samples = int(seconds * sr)
-	if y.ndim == 1:
-		silence = np.zeros(n_samples, dtype=y.dtype)
-	else:
-		silence = np.zeros((n_samples, y.shape[1]), dtype=y.dtype)
-	out = np.concatenate([silence, y], axis=0)"""
 	out = np.concatenate([silence(seconds, sr, y.shape[1] if y.ndim > 1 else 1, y.dtype), y], axis=0)
 	sf.write(output_path, out, sr)
 
@@ -48,16 +84,11 @@ def concat(audios, output_path="output.wav", gap_seconds=0.0):
 
 		# add silence (except after last file)
 		if gap_seconds > 0 and f != audios[-1]:
-			"""silence = np.zeros(int(sr * gap_seconds))
-			# if stereo, match channels
-			if data.ndim > 1:
-				silence = np.zeros((int(sr * gap_seconds), data.shape[1]))
-			audio_parts.append(silence)"""
 			audio_parts.append(silence(gap_seconds, sr, data.shape[1] if data.ndim > 1 else 1, data.dtype))
 
 	out = np.concatenate(audio_parts, axis=0)
 	sf.write(output_path, out, sr)
-	#print("Saved:", output_path)
+	#print("Saved:", output_path)"""
 
 class soundwave():
 	def __init__(self, path):
