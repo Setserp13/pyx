@@ -27,11 +27,15 @@ def replace_all(root, replacements):
 	replacements: dict {old_text: new_text}
 	"""
 	for el in root.iter():
-		tag = etree.QName(el).localname
-
+		try:
+			tag = etree.QName(el).localname
+		except: continue
 		if tag in ("text", "tspan"):
-			if el.text and el.text in replacements:
-				el.text = replacements[el.text]
+			if el.text:
+				for k, v in replacements.items():
+					el.text = el.text.replace(k, v)
+			#if el.text and el.text in replacements:
+			#	el.text = replacements[el.text]
 	return root
 
 #PATH
