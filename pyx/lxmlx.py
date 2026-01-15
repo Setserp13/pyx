@@ -3,7 +3,8 @@ from lxml import etree
 import pyx.osx as osx
 
 def element(tag, text='', tail='', parent=None, children=[], **kwargs): #create a xml element
-	result = etree.Element(tag, **kwargs)
+	#result = etree.Element(tag, **kwargs)
+	result = etree.Element(tag, attrib={k: str(v) for k, v in kwargs.items()})
 	if parent is not None:
 		parent.append(result)
 	result.text = text
