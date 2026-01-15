@@ -267,10 +267,14 @@ class rect2(rect):
 
 	def corners(rect): return polyline([rect2.bottom_left(rect), rect2.top_left(rect), rect2.top_right(rect), rect2.bottom_right(rect)])
 	def area(rect): return rect.size[0] * rect.size[1]
-	def cut(rect, t, axis=0, expand=0):
-		u = ei(axis, 2) * t
-		v = ei(1 - axis, 2)
-		return [rect.denormalize_point(u + v * 0) - v * expand, rect.denormalize_point(u + v) + v * expand]
+
+	def line_at(rect, t, axis=0):	#result is a line parallel to axis
+		u = ei(1 - axis, 2) * t
+		v = ei(axis, 2)
+		return line([rect.denormalize_point(u + v * i) for i in range(2)])
+
+	def lines(rect, n, axis=0):
+		return [rect2.line_at(rect, t, axis=axis) for t in subdivide(0.0, 1.0, n)]
 
 def rect3(x, y, z, width, height, depth): return rect(np.array([x, y, z]), np.array([width, height, depth]))
 
