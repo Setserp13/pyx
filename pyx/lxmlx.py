@@ -54,7 +54,7 @@ def set(obj, **kwargs):
 	for k in kwargs:
 		obj.set(k, str(kwargs[k]))
 
-def localname(tag): return tag.split('}')[-1] if '}' in tag else tag
+#def localname(tag): return tag.split('}')[-1] if '}' in tag else tag
 
 def find_tags(root, *tags): return findall(root, lambda x: localname(x.tag) in tags)
 #def find_tags(root, *tags): return [x for x in root.iter('*') if localname(x.tag) in tags]
