@@ -22,6 +22,17 @@ import pyx.mat.bezier as bezier
 	elif localname(obj.tag) == 'path':
 		return [[float(y) for y in x.replace(' ', '').split(',')] for x in obj.get('d', '').split(' ')[1:-1]]"""
 
+def replace_all(root, replacements):
+	"""
+	replacements: dict {old_text: new_text}
+	"""
+	for el in root.iter():
+		tag = etree.QName(el).localname
+
+		if tag in ("text", "tspan"):
+			if el.text and el.text in replacements:
+				el.text = replacements[el.text]
+	return root
 
 #PATH
 def parse_commands(s):
