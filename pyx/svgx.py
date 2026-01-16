@@ -5,6 +5,8 @@ import pyx.rex as rex
 from PIL import Image
 import uuid
 import os
+import pyx.osx as osx
+import pyx.PILx as PILx
 import svgpathtools
 from svgpathtools import parse_path
 import svgutils.transform as sg
@@ -327,6 +329,16 @@ def polygon(*points, **kwargs): return etree.Element("polygon", points=" ".join(
 def polyline(*points, **kwargs): return etree.Element("polyline", points=" ".join(f"{x[0]},{x[1]}" for x in points), **to_str(kwargs))
 def rect(x, y, width, height, **kwargs): return etree.Element("rect", x=x, y=y, width=width, height=height, **to_str(kwargs))
 def line(x1, y1, x2, y2, **kwargs): return etree.Element("line", x1=x1, y1=y1, x2=x2, y2=y2, **to_str(kwargs))
+
+def text(cx, cy, s, pivot=np.ones(2) * 0.5, font='arial.ttf', font_size=12, **kwargs): #In SVG, the y attribute of a <text> element refers to the baseline of the text
+	s = str(s)
+	size = PILx.get_size(s, font, font_size)
+	#print(size)
+	rct = npx.rect(np.zeros(2), size)
+	rct = rct.set_position(pivot, np.array([cx, cy]))
+	result = lxmlx.element('text', text=s, x=rct.min[0], y=rct.max[1], **{"font-family": osx.filename(font), "font-size": str(font_size)}, **kwargs)
+	#result = svgx.g(svgx.rect(*rct.min, *rct.size, fill="red"), result)
+	return result
 
 def g(*args, **kwargs):
 	result = etree.Element("g", **to_str(kwargs))
