@@ -9,14 +9,6 @@ import re
 
 def isnull(value): return str(value) in ['None', 'NaN', 'NaT', 'none', 'nan', 'nat', ''] or pd.isnull(value)
 
-"""def select(df, columns, values):
-	match = True
-	for x in columns:
-		match = match & (df[x] == values[x])
-	#print(df[match])
-	return df[match]"""
-
-
 def to_workbook(path, **worksheets):
 	with pd.ExcelWriter(path) as writer:
 		for k in worksheets:
@@ -48,13 +40,6 @@ def rename(df, columns): return df.rename(columns={x: columns[i] for i, x in enu
 
 #def segmentby(df, by):
 
-
-
-
-
-
-
-
 @dispatch(pd.Series)
 def strall(obj):
 	obj = obj.map(lambda x: str(x))
@@ -64,27 +49,6 @@ def strall(obj):
 	for x in obj.columns:
 		strall(obj[x])
 
-"""def row_of(df, dict): #dict is like { column1: value1, ..., column2: value2 }
-	#print(dict)
-	for i in range(df.shape[0]):
-		#print(df.iloc[i].to_dict())
-		match = True
-		for key, value in dict.items():
-			if df[key][i] != value:
-				match = False
-				break
-		if match: return i
-	return -1
-
-def find_rows(df, match, columns = None):
-	result = []
-	for index, row in df.iterrows():
-		if match(row):
-			if columns == None:            
-				result.append(row)
-			else:
-				result.append([row[x] for x in columns])#list(au.map(columns, lambda x, i: row[x])))
-	return result"""
 
 
 def readall(read, path_list, **kwargs): return pd.concat([read(x, **kwargs) for x in path_list])
@@ -110,19 +74,6 @@ def fillnext(df, columns):
 			if pd.isnull(df[col].iloc[i + 1]) or df[col].iloc[i + 1] == 0:
 				df[col].iloc[i + 1] = df[col].iloc[i]
 
-"""
-def weights(df, key_columns, value_column):
-	result = result.groupby(by=key_columns).sum(numeric_only = True).reset_index()
-	total = result[value_column].sum()
-	result[value_column] = result[value_column].map(lambda x: x / total)
-	return result
-
-def absolute(df, key_columns, value_column, total):
-	result = df
-	result[value_column] = result[value_column].map(lambda x: floor(x * total))
-	result[value_column][-1] += total - result[value_column].sum()
-	return result
-"""
 
 
 def resum(df, new_sum, col): #SET SUM
@@ -201,35 +152,6 @@ def pick(inventory, amount, column="OLDEGGS", rels=None):
 			#result[1] = result[1].append(row.copy(), ignore_index=True)
 	return result
 	
-"""def pick(inventory, amount, column="OLDEGGS", rels=None):
-	result = [ pd.DataFrame(columns=inventory.columns),	pd.DataFrame(columns=inventory.columns) ]
-	for i in range(inventory.shape[0]):
-		row = inventory.iloc[[i]]
-		if amount > 0:
-			qty = inventory.columns.get_loc(column)
-			row.iloc[0, qty] = min(row.iloc[0, qty], amount)
-			total = inventory.iloc[i, qty]
-			amount = amount - row.iloc[0, qty]
-			if amount <= 0:
-				result.append(pd.DataFrame(columns=inventory.columns))
-				row2 = inventory.iloc[[i]]
-				row2.iloc[0, qty] = inventory.iloc[i, qty] - row.iloc[0, qty]
-				
-				if rels != None:
-					for j in range(len(rels)):
-						rel = inventory.columns.get_loc(rels[j])
-						#print([inventory.iloc[i, rel], row.iloc[0, rel] ])
-						if total != 0:
-							row.iloc[0, rel] = math.floor((row.iloc[0, qty] / total) * row.iloc[0, rel])
-							row2.iloc[0, rel] = inventory.iloc[i, rel] - row.iloc[0, rel]
-
-				result[1] = pd.concat([result[1], row2])
-			result[0] = pd.concat([result[0], row])
-		else:
-			result[1] = pd.concat([result[1], row])
-
-
-	return result"""
 
 
 def split(df, vols, column, rels=None):
