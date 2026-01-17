@@ -148,8 +148,12 @@ class rect:
 
 	def min_max(min, max): return rect(min, max - min)
 
-	def aabb(a, b):
-		return rect.min_max(np.minimum(a.min, b.min), np.maximum(a.max, b.max))
+	@property
+	def aabb(self): return npx.rect(self.min, self.size)
+	@aabb.setter
+	def aabb(self, value):
+		self.min = value.min
+		self.size = value.size
 
 	def distances(a, b):
 		return [max(a.min[i] - b.max[i], b.min[i] - a.max[i], 0) for i in range(len(a.min))]
