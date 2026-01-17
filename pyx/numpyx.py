@@ -149,7 +149,7 @@ class rect:
 	def min_max(min, max): return rect(min, max - min)
 
 	@property
-	def aabb(self): return npx.rect(self.min, self.size)
+	def aabb(self): return rect(self.min, self.size)
 	@aabb.setter
 	def aabb(self, value):
 		self.min = value.min
