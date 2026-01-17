@@ -40,7 +40,11 @@ class circle():
 	
 	@property
 	def aabb(self): return npx.rect.center_size(self.center, np.ones(2) * self.diameter)
-
+	@aabb.setter
+	def aabb(self, value):
+		self.center = value.center
+		self.radius = min(*value.extents)
+	
 class ellipse():
 	def __init__(self, center, a, b):	#a and be are semi axes
 		self.center = np.array(center)
@@ -48,6 +52,14 @@ class ellipse():
 		self.b = b
 
 	def get_point(self, theta): return np.array([self.a * math.cos(theta), self.b * math.sin(theta)]) + self.center
+
+	@property
+	def aabb(self): return npx.rect.center_size(self.center, np.array([self.a, self.b]) * 2)
+	@aabb.setter
+	def aabb(self, value):
+		self.center = value.center
+		self.a = value.extents[0]
+		self.b = value.extents[1]
 
 class arc(circle):
 	def __init__(self, center, radius, start, end): #start is start angle and end is end angle
@@ -104,6 +116,13 @@ class line(np.ndarray):	#start = self[0], end = self[1]
 	def expand(self, amount, relative=False): return self.padding(-amount, -amount, relative=relative)
 
 	def subdivide(self, n): return polyline.edges(npx.subdivide(self[0], self[1], n+1), closed=False)
+
+	@property
+	def aabb(self): return npx.aabb(*self)
+	@aabb.setter
+	def aabb(self, value): self[:] = npx.set_aabb(self, value)
+
+
 
 def point_on_line(line, point, tol=1e-8): #tol: tolerância numérica
 	line_vec = line[1] - line[0]
@@ -623,6 +642,10 @@ class polyline(np.ndarray):#list):
 		#print(v, result)
 		return result
 
+	@property
+	def aabb(self): return npx.aabb(self)
+	@aabb.setter
+	def aabb(self, value): self[:] = npx.set_aabb(self, value)
 
 class polygon:
 	def a(n, R=1): return R * math.cos(math.pi/n)	#apothem
@@ -782,6 +805,7 @@ def angle_vector_plane(v, p1, p2):	#p1 and p2 are vectors that define the plane
 	angle_to_normal = np.arccos(np.clip(np.dot(v_norm, n_norm), -1.0, 1.0))	# Angle between v and plane normal (in radians)
 	angle_to_plane = np.pi / 2 - angle_to_normal	# Angle between vector and plane
 	return angle_to_plane	# return in radians
+
 
 
 
