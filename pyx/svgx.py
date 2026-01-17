@@ -324,12 +324,12 @@ def polyline(*points, **kwargs): return etree.Element("polyline", points=" ".joi
 def rect(x, y, width, height, **kwargs): return etree.Element("rect", x=str(x), y=str(y), width=str(width), height=str(height), **to_str(kwargs))
 def line(x1, y1, x2, y2, **kwargs): return etree.Element("line", x1=str(x1), y1=str(y1), x2=str(x2), y2=str(y2), **to_str(kwargs))"""
 
-def circle(cx, cy, r, **kwargs): return lxmlx.element("circle", cx=cx, cy=cy, r=r, **to_str(kwargs))
-def ellipse(cx, cy, rx, ry, **kwargs): return lxmlx.element("ellipse", cx=cx, cy=cy, rx=rx, ry=ry, **to_str(kwargs))
-def polygon(*points, **kwargs): return lxmlx.element("polygon", points=" ".join(f"{x[0]},{x[1]}" for x in points), **to_str(kwargs))
-def polyline(*points, **kwargs): return lxmlx.element("polyline", points=" ".join(f"{x[0]},{x[1]}" for x in points), **to_str(kwargs))
-def rect(x, y, width, height, **kwargs): return lxmlx.element("rect", x=x, y=y, width=width, height=height, **to_str(kwargs))
-def line(x1, y1, x2, y2, **kwargs): return lxmlx.element("line", x1=x1, y1=y1, x2=x2, y2=y2, **to_str(kwargs))
+def circle(cx, cy, r, **kwargs): return lxmlx.element("circle", cx=cx, cy=cy, r=r, **kwargs)
+def ellipse(cx, cy, rx, ry, **kwargs): return lxmlx.element("ellipse", cx=cx, cy=cy, rx=rx, ry=ry, **kwargs)
+def polygon(*points, **kwargs): return lxmlx.element("polygon", points=" ".join(f"{x[0]},{x[1]}" for x in points), **kwargs)
+def polyline(*points, **kwargs): return lxmlx.element("polyline", points=" ".join(f"{x[0]},{x[1]}" for x in points), **kwargs)
+def rect(x, y, width, height, **kwargs): return lxmlx.element("rect", x=x, y=y, width=width, height=height, **kwargs)
+def line(x1, y1, x2, y2, **kwargs): return lxmlx.element("line", x1=x1, y1=y1, x2=x2, y2=y2, **kwargs)
 
 def text(cx, cy, s, pivot=np.ones(2) * 0.5, font='arial.ttf', font_size=12, **kwargs): #In SVG, the y attribute of a <text> element refers to the baseline of the text
 	s = str(s)
