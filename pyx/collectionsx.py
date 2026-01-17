@@ -262,4 +262,25 @@ List (a.k.a. Sequence) → Order matters, Duplicates matter.
 Bag (a.k.a. Multiset) → Order does not matter, Duplicates matter.
 Set → Order does not matter, Duplicates do not matter.
 """
+def ndfor(arr, func, index=None):
+	if index is None:
+		index = []
+
+	if not isinstance(arr, (list, tuple)):
+		return func(arr, *index)
+
+	for i, item in enumerate(arr):
+		ndfor(item, func, index + [i])
+
+def ndmap(arr, func, index=None):
+	if index is None:
+		index = []
+
+	if not isinstance(arr, (list, tuple)):
+		return func(arr, *index)
+
+	return [
+		ndmap(item, func, index + [i])
+		for i, item in enumerate(arr)
+	]
 
