@@ -117,15 +117,15 @@ def rotate_page(svg, angle=90):	#angle is in degree
 
 	set_page_size(svg, page_size[[1, 0]])	# swap page size
 
-	g = g(
+	g1 = g(
 		transform=f"translate({cy} {cx}) rotate({angle}) translate({-cx} {-cy})"
 	)
 
 	for child in list(svg):	# move all elements into group
 		svg.remove(child)
-		g.append(child)
+		g1.append(child)
 
-	svg.append(g)
+	svg.append(g1)
 	return svg
 
 def circle_from_svg(obj): return geo.circle(get(obj, float, 'cx', 'cy'), *get(obj, float, 'r'))
