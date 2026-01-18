@@ -112,12 +112,12 @@ def set_page_size(svg, size):
 	set(svg, viewBox=f"0 0 {size[0]} {size[1]}", width=size[0], height=size[1])	
 
 def rotate_page(svg, angle=90):	#angle is in degree
-	page_size = svgx.page_rect(svg).size
+	page_size = page_rect(svg).size
 	cx, cy = page_size / 2
 
 	set_page_size(svg, page_size[[1, 0]])	# swap page size
 
-	g = svgx.g(
+	g = g(
 		transform=f"translate({cy} {cx}) rotate({angle}) translate({-cx} {-cy})"
 	)
 
