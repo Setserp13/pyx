@@ -106,6 +106,7 @@ def bezier_from_svg(obj):
 	#miss Aa
 	return bezier.path(points, endpoints=endpoints, closed=closed)
 
+def page_rect(obj): return npx.rect2(0, 0, *get(obj, float, 'width', 'height'))
 
 def circle_from_svg(obj): return geo.circle(get(obj, float, 'cx', 'cy'), *get(obj, float, 'r'))
 def ellipse_from_svg(obj): return geo.ellipse(get(obj, float, 'cx', 'cy'), *get(obj, float, 'rx', 'ry'))
