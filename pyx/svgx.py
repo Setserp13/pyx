@@ -108,6 +108,26 @@ def bezier_from_svg(obj):
 
 def page_rect(obj): return npx.rect2(0, 0, *get(obj, float, 'width', 'height'))
 
+def set_page_size(svg, size):
+	set(svg, viewBox=f"0 0 {size[0]} {size[1]}", width=size[0], height=size[1])	
+
+def rotate_page(svg, angle=90):	#angle is in degree
+	page_size = svgx.page_rect(svg).size
+	cx, cy = page_size / 2
+
+	set_page_size(svg, page_size[[1, 0]])	# swap page size
+
+	g = svgx.g(
+		transform=f"translate({cy} {cx}) rotate({angle}) translate({-cx} {-cy})"
+	)
+
+	for child in list(svg):	# move all elements into group
+		svg.remove(child)
+		g.append(child)
+
+	svg.append(g)
+	return svg
+
 def circle_from_svg(obj): return geo.circle(get(obj, float, 'cx', 'cy'), *get(obj, float, 'r'))
 def ellipse_from_svg(obj): return geo.ellipse(get(obj, float, 'cx', 'cy'), *get(obj, float, 'rx', 'ry'))
 def rect_from_svg(obj): return npx.rect2(*get(obj, float, 'x', 'y', 'width', 'height'))
