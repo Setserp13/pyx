@@ -108,7 +108,7 @@ def bezier_from_svg(obj):
 
 
 def circle_from_svg(obj): return geo.circle(get(obj, float, 'cx', 'cy'), *get(obj, float, 'r'))
-def ellipse_from_svg(obj): return geo.ellipse(get(obj, float, 'cx', 'cy'), *get(obj, float, 'a', 'b'))
+def ellipse_from_svg(obj): return geo.ellipse(get(obj, float, 'cx', 'cy'), *get(obj, float, 'rx', 'ry'))
 def rect_from_svg(obj): return npx.rect2(*get(obj, float, 'x', 'y', 'width', 'height'))
 def line_from_svg(obj): return geo.line([get(obj, float, 'x1', 'y1'), get(obj, float, 'x2', 'y2')])
 def parse_points2(s):
