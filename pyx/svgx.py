@@ -25,7 +25,7 @@ import pyx.lxmlx as lxmlx
 	elif localname(obj.tag) == 'path':
 		return [[float(y) for y in x.replace(' ', '').split(',')] for x in obj.get('d', '').split(' ')[1:-1]]"""
 
-def replace_all(root, replacements):
+def replace_all(root, replacements, exact_match=False):
 	"""
 	replacements: dict {old_text: new_text}
 	"""
@@ -36,7 +36,11 @@ def replace_all(root, replacements):
 		if tag in ("text", "tspan"):
 			if el.text:
 				for k, v in replacements.items():
-					el.text = el.text.replace(k, v)
+					if exact_match:
+						if el.text == k:
+							el.text = v
+					else:
+						el.text = el.text.replace(k, v)
 			#if el.text and el.text in replacements:
 			#	el.text = replacements[el.text]
 	return root
