@@ -48,7 +48,7 @@ class circle():
 		self.center = value.center
 		self.radius = min(*value.extents)
 
-	def __matmul__(self, M):
+	def __rmatmul__(self, M):
 		M = np.asarray(M, dtype=float)
 
 		if M.shape != (3, 3):
@@ -90,7 +90,7 @@ class ellipse():
 		self.a = value.extents[0]
 		self.b = value.extents[1]
 
-	def __matmul__(self, M):
+	def __rmatmul__(self, M):
 		M = np.asarray(M, dtype=float)
 
 		if M.shape != (3, 3):
@@ -175,7 +175,7 @@ class line(np.ndarray):	#start = self[0], end = self[1]
 	@aabb.setter
 	def aabb(self, value): self[:] = npx.set_aabb(self, value)
 
-	def __matmul__(self, M): return line(npx.affine_transform(M, self))
+	def __rmatmul__(self, M): return line(npx.affine_transform(M, self))
 
 
 def point_on_line(line, point, tol=1e-8): #tol: tolerância numérica
@@ -701,7 +701,7 @@ class polyline(np.ndarray):#list):
 	@aabb.setter
 	def aabb(self, value): self[:] = npx.set_aabb(self, value)
 
-	def __matmul__(self, M): return polyline(npx.affine_transform(M, self), closed=self.closed)
+	def __rmatmul__(self, M): return polyline(npx.affine_transform(M, self), closed=self.closed)
 
 class polygon:
 	def a(n, R=1): return R * math.cos(math.pi/n)	#apothem
@@ -861,6 +861,7 @@ def angle_vector_plane(v, p1, p2):	#p1 and p2 are vectors that define the plane
 	angle_to_normal = np.arccos(np.clip(np.dot(v_norm, n_norm), -1.0, 1.0))	# Angle between v and plane normal (in radians)
 	angle_to_plane = np.pi / 2 - angle_to_normal	# Angle between vector and plane
 	return angle_to_plane	# return in radians
+
 
 
 
