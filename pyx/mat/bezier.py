@@ -45,6 +45,11 @@ class bezier(np.ndarray):
 		#print(length, size, steps)
 		return p.sample(steps)
 
+	@property
+	def aabb(self): return npx.aabb(self)
+	@aabb.setter
+	def aabb(self, value): self[:] = npx.set_aabb(self, value)
+
 class path(np.ndarray):	#composite Bézier curve or Bézier spline
 	def __new__(cls, input_array, endpoints=None, closed=False):
 		# Convert input to ndarray and view it as MyArray
@@ -98,7 +103,10 @@ class path(np.ndarray):	#composite Bézier curve or Bézier spline
 		#print(d)
 		return d
 
-
+	@property
+	def aabb(self): return npx.aabb(self)
+	@aabb.setter
+	def aabb(self, value): self[:] = npx.set_aabb(self, value)
 
 
 def smooth_control_points(p, index, extents=10):
