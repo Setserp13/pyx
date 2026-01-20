@@ -379,19 +379,36 @@ def set_aabb(p, value):	#p is a list of points
 	current = aabb(p)
 	return [value.denormalize_point(current.normalize_point(x)) for x in p]
 
-def affine_transform(M, arr):	#Applies a (n+1)x(n+1) affine transform.
+def affine_transform(M, arr):
+	"""
+	Applies an (n+1)x(n+1) affine transform to points.
+
+	M   : (n+1, n+1) affine matrix
+	arr : (N, n) array of points OR (n,) single point
+	"""
 	M = np.asarray(M, dtype=float)
+	arr = np.asarray(arr, dtype=float)
 
-	dim = len(arr[0])
-	if M.shape != (dim + 1, dim + 1):
-            raise ValueError("Expected a (n+1)x(n+1) affine matrix")
+	# Handle single point
+	if arr.ndim == 1:
+		arr = arr[None, :]
 
-	# Convert to homogeneous coordinates
+	if arr.ndim != 2:
+		raise ValueError("arr must be shape (N, n) or (n,)")
+
+	n = arr.shape[1]
+
+	if M.shape != (n + 1, n + 1):
+		raise ValueError(f"Expected {(n+1)}x{(n+1)} affine matrix")
+
+	# Homogeneous coordinates
 	ones = np.ones((arr.shape[0], 1))
-	pts_h = np.hstack([arr, ones])  # (N, (n+1))
+	pts_h = np.hstack([arr, ones])      # (N, n+1)
 
-	# Transform and drop homogeneous coord
-	return (pts_h @ M.T)[:, :dim]
+	# Apply transform
+	out = pts_h @ M.T                   # (N, n+1)
+
+	return out[:, :n]
 
 
 
