@@ -108,6 +108,7 @@ class path(np.ndarray):	#composite Bézier curve or Bézier spline
 	@aabb.setter
 	def aabb(self, value): self[:] = npx.set_aabb(self, value)
 
+	def __matmul__(self, M): return path(npx.affine_transform(M, self))
 
 def smooth_control_points(p, index, extents=10):
 	angle = p.vertex_angle(index)
