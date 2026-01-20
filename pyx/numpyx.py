@@ -256,7 +256,7 @@ class rect:
 		size_h = np.append(self.size, 0)
 		size = (M @ size_h)[:self.dim]
 
-        return rect(min, size)
+		return rect(min, size)
 
 	def copy(self): return rect(self.min.copy(), self.size.copy())
 
