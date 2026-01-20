@@ -246,7 +246,7 @@ class rect:
 	def __matmul__(self, M):	#Applies a (n+1)x(n+1) affine transform
 		M = np.asarray(M, dtype=float)
 		if M.shape != (self.dim + 1, self.dim + 1):
-			raise ValueError("Expected a 3x3 affine matrix")
+			raise ValueError("Expected a (n+1)x(n+1) affine matrix")
 
 		# position (affected by translation)
 		min_h = np.append(self.min, 1)
@@ -378,6 +378,22 @@ def aabb(arr): #args can contain np.ndarray and rect
 def set_aabb(p, value):	#p is a list of points
 	current = aabb(p)
 	return [value.denormalize_point(current.normalize_point(x)) for x in p]
+
+def affine_transform(M, arr):	#Applies a (n+1)x(n+1) affine transform.
+	M = np.asarray(M, dtype=float)
+
+	dim = len(arr[0])
+	if M.shape != (dim + 1, dim + 1):
+            raise ValueError("Expected a (n+1)x(n+1) affine matrix")
+
+	# Convert to homogeneous coordinates
+	ones = np.ones((arr.shape[0], 1))
+	pts_h = np.hstack([arr, ones])  # (N, (n+1))
+
+	# Transform and drop homogeneous coord
+	return (pts_h @ M.T)[:, :dim]
+
+
 
 from typing import Union
 #@dispatch(Number, Number, Number)
