@@ -243,7 +243,7 @@ class rect:
 	@property
 	def dim(self): return len(self.min)
 
-	def __matmul__(self, M):	#Applies a (n+1)x(n+1) affine transform
+	def __rmatmul__(self, M):	#Applies a (n+1)x(n+1) affine transform
 		M = np.asarray(M, dtype=float)
 		if M.shape != (self.dim + 1, self.dim + 1):
 			raise ValueError("Expected a (n+1)x(n+1) affine matrix")
