@@ -48,28 +48,7 @@ class circle():
 		self.center = value.center
 		self.radius = min(*value.extents)
 
-	def __rmatmul__(self, M):
-		M = np.asarray(M, dtype=float)
-
-		if M.shape != (3, 3):
-			raise ValueError("Expected a 3x3 affine matrix")
-
-		# Transform center (with translation)
-		center_h = np.append(self.center, 1)
-		center = (M @ center_h)[:2]
-
-		# Extract linear part
-		A = M[:2, :2]
-
-		# Scale radius (assumes uniform scaling)
-		scale_x = np.linalg.norm(A[:, 0])
-		scale_y = np.linalg.norm(A[:, 1])
-
-		if not np.isclose(scale_x, scale_y):
-			raise ValueError("Non-uniform scaling turns a Circle into an Ellipse")
-
-		radius *= scale_x
-		return circle(center, radius)
+	def __rmatmul__(self, M): return self.__matmul__(M)
 
 	def __matmul__(self, M):
 		M = np.asarray(M, dtype=float)
@@ -113,27 +92,7 @@ class ellipse():
 		self.a = value.extents[0]
 		self.b = value.extents[1]
 
-	def __rmatmul__(self, M):
-		M = np.asarray(M, dtype=float)
-
-		if M.shape != (3, 3):
-			raise ValueError("Expected a 3x3 affine matrix")
-
-		# Transform center
-		center_h = np.append(self.center, 1)
-		center = (M @ center_h)[:2]
-
-		# Linear part
-		A = M[:2, :2]
-
-		# Transform axis vectors
-		a_vec = A @ np.array([self.a, 0])
-		b_vec = A @ np.array([0, self.b])
-
-		a = np.linalg.norm(a_vec)
-		b = np.linalg.norm(b_vec)
-
-		return ellipse(center, a, b)
+	def __rmatmul__(self, M): return self.__matmul__(M)
 
 	def __matmul__(self, M):
 		M = np.asarray(M, dtype=float)
@@ -220,7 +179,7 @@ class line(np.ndarray):	#start = self[0], end = self[1]
 	@aabb.setter
 	def aabb(self, value): self[:] = npx.set_aabb(self, value)
 
-	def __rmatmul__(self, M): return line(npx.affine_transform(M, self))
+	def __rmatmul__(self, M): return self.__matmul__(M)
 	def __matmul__(self, M): return line(npx.affine_transform(M, self))
 
 def point_on_line(line, point, tol=1e-8): #tol: tolerância numérica
@@ -746,7 +705,7 @@ class polyline(np.ndarray):#list):
 	@aabb.setter
 	def aabb(self, value): self[:] = npx.set_aabb(self, value)
 
-	def __rmatmul__(self, M): return polyline(npx.affine_transform(M, self), closed=self.closed)
+	def __rmatmul__(self, M): return self.__matmul__(M)
 	def __matmul__(self, M): return polyline(npx.affine_transform(M, self), closed=self.closed)
 	
 class polygon:
@@ -907,6 +866,7 @@ def angle_vector_plane(v, p1, p2):	#p1 and p2 are vectors that define the plane
 	angle_to_normal = np.arccos(np.clip(np.dot(v_norm, n_norm), -1.0, 1.0))	# Angle between v and plane normal (in radians)
 	angle_to_plane = np.pi / 2 - angle_to_normal	# Angle between vector and plane
 	return angle_to_plane	# return in radians
+
 
 
 
