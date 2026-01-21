@@ -258,6 +258,21 @@ class rect:
 
 		return rect(min, size)
 
+	def __matmul__(self, M):	#Applies a (n+1)x(n+1) affine transform
+		M = np.asarray(M, dtype=float)
+		if M.shape != (self.dim + 1, self.dim + 1):
+			raise ValueError("Expected a (n+1)x(n+1) affine matrix")
+
+		# position (affected by translation)
+		min_h = np.append(self.min, 1)
+		min = (M @ min_h)[:self.dim]
+
+		# size (direction vector, no translation)
+		size_h = np.append(self.size, 0)
+		size = (M @ size_h)[:self.dim]
+
+		return rect(min, size)
+		
 	def copy(self): return rect(self.min.copy(), self.size.copy())
 
 
