@@ -27,9 +27,15 @@ def ping_pong(t, length):
 	return length - abs(t - length)
 
 def clamp_magnitude(v, max_magnitude):
-	current_magnitude = np.linalg.norm(v)
-	if current_magnitude > max_magnitude:
-		v = (v / current_magnitude) * max_magnitude
+	v = np.asarray(v, dtype=float)
+	mag = np.linalg.norm(v)
+
+	if mag == 0:
+		return v
+
+	if mag > max_magnitude:
+		return v * (max_magnitude / mag)
+
 	return v
 
 @dispatch(np.ndarray, np.ndarray, float)
