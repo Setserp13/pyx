@@ -6,6 +6,7 @@ import itertools
 from pyx.collectionsx import List as ls
 import random
 from pyx.numpyx_geo import polyline, line
+from itertools import product
 
 def project(v, u): return (np.dot(v, u) / np.dot(u, u)) * u	#Project vector v onto vector u.
 
@@ -246,6 +247,15 @@ class rect:
 		size = np.concatenate((rect.size[:axis], [0.0], rect.size[axis+1:]), axis=0)
 		return rect.center_size(rect.face_center(axis, dir), size)
 
+	def ndface_centers(self, axes):	#The faces are parallel to the Euclidean space defined by the axes
+		p = [[0.5] if i in axes else [0.0, 1.0] for i in range(self.dim)]
+		#print(p)
+		return [self.denormalize_point(np.array(x)) for x in product(*p)]
+
+	def ndfaces(self, axes):
+		centers = self.ndface_centers(axes)
+		return [rect.center_size(center, np.array([self.size[i] if i in axes else 0.0 for i in range(self.dim)])) for center in centers]
+	
 	@property
 	def dim(self): return len(self.min)
 
