@@ -868,6 +868,29 @@ def angle_vector_plane(v, p1, p2):	#p1 and p2 are vectors that define the plane
 	return angle_to_plane	# return in radians
 
 
+class group(list):
+	@property
+	def aabb(self):
+		return npx.aabb([x.aabb for x in self])
+
+	@aabb.setter
+	def aabb(self, value):
+		cur = self.aabb
+		for x in self:
+			x.aabb = value.denormalize_rect(cur.normalize_rect(x.aabb))
+
+def distribute(arr, axis=0, align=.5, gap=0.0):
+	for i in range(1, len(arr)):
+		pos = arr[i - 1].aabb.denormalize_point(np.array([1, align])[[axis, 1 - axis]]) + npx.ei(axis, 2) * gap
+		arr[i].aabb = arr[i].aabb.set_position(pivot = np.array([0, align])[[axis, 1 - axis]], value = pos)
+
+def rects(offset, sizes, axis=0, align=0.5, gap=0.0):
+	dim = len(sizes[0])
+	result = [npx.rect(np.zeros(dim), x) for x in sizes]
+	result[0].min = offset
+	#print(offset)
+	distribute(result, axis=axis, align=align, gap=gap)
+	return result
 
 
 
