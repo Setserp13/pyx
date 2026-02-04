@@ -303,13 +303,15 @@ class radar_chart:
 
 
 class Mesh():
-	def __init__(self, vertices=None, faces=None, uvs=None, normals_interpolation='face_varying', uv_interpolation='face_varying', double_sided=False):
+	def __init__(self, vertices=None, faces=None, uvs=None):
 		self.vertices = vertices.copy() if vertices is not None else []
 		self.faces = faces.copy() if faces is not None else []
 		self.uvs = uvs.copy() if uvs is not None else []
-		self.normals_interpolation = normals_interpolation	#constant, face_varying, vertex, uniform
-		self.uv_interpolation = uv_interpolation
-		self.double_sided = double_sided
+		self.normals_interpolation = 'face_varying'	#constant, face_varying, vertex, uniform
+		self.uv_interpolation = 'face_varying'
+		self.colors = None
+		self.color_interpolation = 'face_varying'
+		self.double_sided = False
 	
 	def get_face(self, i): return polyline(List.items(self.vertices, self.faces[i]))
 
@@ -927,6 +929,7 @@ def rects(offset, sizes, axis=0, align=0.5, gap=0.0):
 	#print(offset)
 	distribute(result, axis=axis, align=align, gap=gap)
 	return result
+
 
 
 
