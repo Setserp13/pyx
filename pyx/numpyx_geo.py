@@ -302,15 +302,15 @@ class radar_chart:
 	def data_polygon(self, values): return [self.data_point(i, x) for i, x in enumerate(values)]
 
 
-
-
-
 class Mesh():
-	def __init__(self, vertices=None, faces=None, uvs=None):
+	def __init__(self, vertices=None, faces=None, uvs=None, normals_interpolation='face_varying', uv_interpolation='face_varying', double_sided=False):
 		self.vertices = vertices.copy() if vertices is not None else []
 		self.faces = faces.copy() if faces is not None else []
 		self.uvs = uvs.copy() if uvs is not None else []
-
+		self.normals_interpolation = normals_interpolation	#constant, face_varying, vertex, uniform
+		self.uv_interpolation = uv_interpolation
+		self.double_sided = double_sided
+	
 	def get_face(self, i): return polyline(List.items(self.vertices, self.faces[i]))
 
 	def get_faces(self): return [self.get_face(i) for i in range(len(self.faces))]
@@ -389,7 +389,7 @@ class Mesh():
 			vertices += x.vertices
 		return Mesh(vertices, faces)
 
-	def two_sided(mesh):
+	def make_double_sided(mesh):
 		mesh.faces += [list(reversed(x)) for x in mesh.faces]
 
 	def flip_normal(mesh, i):
@@ -403,6 +403,42 @@ class Mesh():
 		for x in self.get_faces():
 			result.add_face(*x)
 		return result
+
+	def face_normal(self, i):
+		pts = self.get_face(i)
+		n = np.zeros(3)
+
+		for i in range(len(pts)):
+			p0 = pts[i]
+			p1 = pts[(i + 1) % len(pts)]
+
+			n[0] += (p0[1] - p1[1]) * (p0[2] + p1[2])
+			n[1] += (p0[2] - p1[2]) * (p0[0] + p1[0])
+			n[2] += (p0[0] - p1[0]) * (p0[1] + p1[1])
+
+		return npx.normalize(n)
+
+	@property
+	def face_normals(self):
+		return np.asarray([self.face_normal(i) for i in range(len(self.faces))])
+
+	@property
+	def vertex_normals(self):
+		vcount = len(self.vertices)
+		acc = np.zeros((vcount, 3))
+
+		fnormals = self.face_normals()
+
+		for fi, face in enumerate(self.faces):
+			for vi in face:
+				acc[vi] += fnormals[fi]
+
+		# normalize
+		lengths = np.linalg.norm(acc, axis=1)
+		lengths[lengths == 0] = 1.0
+		return acc / lengths[:, None]
+
+
 
 
 class angle(list):
@@ -891,6 +927,7 @@ def rects(offset, sizes, axis=0, align=0.5, gap=0.0):
 	#print(offset)
 	distribute(result, axis=axis, align=align, gap=gap)
 	return result
+
 
 
 
