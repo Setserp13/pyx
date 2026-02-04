@@ -308,9 +308,9 @@ class Mesh():
 		self.faces = faces.copy() if faces is not None else []
 		self.uvs = uvs.copy() if uvs is not None else []
 		self.normals_interpolation = 'face_varying'	#constant, face_varying, vertex, uniform
-		self.uv_interpolation = 'face_varying'
+		self.uvs_interpolation = 'face_varying'
 		self.colors = None
-		self.color_interpolation = 'face_varying'
+		self.colors_interpolation = 'face_varying'
 		self.double_sided = False
 	
 	def get_face(self, i): return polyline(List.items(self.vertices, self.faces[i]))
@@ -929,6 +929,7 @@ def rects(offset, sizes, axis=0, align=0.5, gap=0.0):
 	#print(offset)
 	distribute(result, axis=axis, align=align, gap=gap)
 	return result
+
 
 
 
