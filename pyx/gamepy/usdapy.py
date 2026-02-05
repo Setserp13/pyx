@@ -4,6 +4,7 @@ import pyx.osx as osx
 from pyx.numpyx_geo import Mesh
 from pyx.mat.transform import Node3D
 from pyx.collectionsx import flatten
+from pyx.gamepy.material import Material
 
 def astuple(x):
 	"""
@@ -84,5 +85,22 @@ def Node3D_to_usda(self, indent=0):
 	result += '\n' + block(lines, indent)
 	return result
 
+def Material_to_usda(self):
+	result = '\t' * indent + f'def Material "{self.name}"'	#header
+	lines = [
+		f'token outputs:surface.connect = </{self.name}/PreviewSurface.outputs:surface>',
+		f'def Shader "PreviewSurface"',
+		'{',
+		'\tuniform token info:id = "UsdPreviewSurface"',
+		f'\tcolor3f inputs:diffuseColor = ({self.albedo[0]}, {self.albedo[1]}, {self.albedo[2]})',
+		f'\tfloat inputs:metallic = {self.metallic}',
+		f'\tfloat inputs:roughness = {self.roughness}',
+		'\ttoken outputs:surface',
+		'}',
+	]
+	result += '\n' + block(lines, indent)
+	return result
+
 Mesh.to_usda = Mesh_to_usda
 Node3D.to_usda = Node3D_to_usda
+Material.to_usda = Material_to_usda
