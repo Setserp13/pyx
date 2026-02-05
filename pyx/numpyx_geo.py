@@ -421,11 +421,17 @@ class Mesh():
 		return npx.normalize(n)
 
 	@property
-	def face_normals(self):
+	def face_normals(self):	#uniform
 		return np.asarray([self.face_normal(i) for i in range(len(self.faces))])
 
 	@property
-	def vertex_normals(self):
+	def normal(self):	#constant, one normal for the entire mesh
+		fn = self.face_normals().sum(axis=0)
+		l = np.linalg.norm(fn)
+		return fn / l if l != 0 else fn
+
+	@property
+	def vertex_normals(self):	#vertex
 		vcount = len(self.vertices)
 		acc = np.zeros((vcount, 3))
 
@@ -440,7 +446,23 @@ class Mesh():
 		lengths[lengths == 0] = 1.0
 		return acc / lengths[:, None]
 
+	@property
+	def flat_corner_normals(self):	#face varying flat
+		fnormals = self.face_normals()
+		return np.asarray([
+			fnormals[fi]
+			for fi, face in enumerate(self.faces)
+			for _ in face
+		])
 
+	@property
+	def smooth_corner_normals(self):	#face varying smooth
+		vnormals = self.normals_vertex()
+		return np.asarray([
+			vnormals[vi]
+			for face in self.faces
+			for vi in face
+		])
 
 
 class angle(list):
@@ -929,6 +951,7 @@ def rects(offset, sizes, axis=0, align=0.5, gap=0.0):
 	#print(offset)
 	distribute(result, axis=axis, align=align, gap=gap)
 	return result
+
 
 
 
