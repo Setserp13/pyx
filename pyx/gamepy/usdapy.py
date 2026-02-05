@@ -5,6 +5,7 @@ from pyx.numpyx_geo import Mesh
 from pyx.mat.transform import Node3D
 from pyx.collectionsx import flatten
 from pyx.gamepy.material import Material
+import pyx.rex as rex
 
 def astuple(x):
 	"""
@@ -52,14 +53,14 @@ def Mesh_to_usda(self, indent=0):
 				normals = self.flat_corner_normals
 		#print(type(normals[0]))
 		lines.append(f'normal3f[] normals = {astuple(normals)}')
-		lines.append(f'uniform token normalsInterpolation = "{self.normals_interpolation}"')
+		lines.append(f'uniform token normalsInterpolation = "{rex.snake_to_camel(self.normals_interpolation)}"')
 	if self.uvs:	#not None
-		lines.append(f'float2[] primvars:st = {self.uvs}')
-		lines.append(f'uniform token primvars:st:interpolation = "{self.uvs_interpolation}"')
+		lines.append(f'float2[] primvars:st = {astuple(self.uvs)}')
+		lines.append(f'uniform token primvars:st:interpolation = "{rex.snake_to_camel(self.uvs_interpolation)}"')
 	if self.colors:	#not None
-		lines.append(f'color3f[] primvars:displayColor = {self.colors}')
-		lines.append(f'uniform token primvars:displayColor:interpolation = "{self.colors_interpolation}"')
-	lines.append(f'bool doubleSided = {self.double_sided}')
+		lines.append(f'color3f[] primvars:displayColor = {astuple(self.colors)}')
+		lines.append(f'uniform token primvars:displayColor:interpolation = "{rex.snake_to_camel(self.colors_interpolation)}"')
+	lines.append(f'bool doubleSided = {'true' if self.double_sided else 'false'}')
 	"""lines.append(f'uniform token subdivisionScheme = "{self.subdivision_scheme}"')
 	lines.append(f'token visibility = "{self.visibility}"')
 	lines.append(f'uniform token purpose = "{self.purpose}"')"""
