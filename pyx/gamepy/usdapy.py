@@ -3,6 +3,7 @@ import math
 import pyx.osx as osx
 from pyx.numpyx_geo import Mesh
 from pyx.mat.transform import Node3D
+from pyx.collectionsx import flatten
 
 def astuple(x):
 	"""
