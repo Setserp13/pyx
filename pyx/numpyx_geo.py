@@ -307,7 +307,7 @@ class Mesh():
 		self.vertices = vertices.copy() if vertices is not None else []
 		self.faces = faces.copy() if faces is not None else []
 		self.uvs = uvs.copy() if uvs is not None else []
-		self.normals_interpolation = 'face_varying'	#constant, face_varying, vertex, uniform
+		self.normals_interpolation = 'face_varying'	#constant (one value for entire primitive), face_varying (one value per face corner), vertex (one value per vertex), uniform (one value per face)
 		self.uvs_interpolation = 'face_varying'
 		self.colors = None
 		self.colors_interpolation = 'face_varying'
@@ -951,6 +951,7 @@ def rects(offset, sizes, axis=0, align=0.5, gap=0.0):
 	#print(offset)
 	distribute(result, axis=axis, align=align, gap=gap)
 	return result
+
 
 
 
