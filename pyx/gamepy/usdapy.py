@@ -71,6 +71,7 @@ def Node3D_to_usda(self, indent=0):
 		f'double3 xformOp:translate = {astuple(self.position)}',
 		f'double3 xformOp:scale = {astuple(self.scale)}',
 		f'double3 xformOp:rotateXYZ = {astuple(self.euler)}',
+		'uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]'
 	]
 	"""lines.append(f'token visibility = "{self.visibility}"')
 	lines.append(f'uniform token purpose = "{self.purpose}"')
