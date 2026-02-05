@@ -41,6 +41,9 @@ def Mesh_to_usda(self, indent=0):
 		f'int[] faceVertexCounts = {[len(x) for x in self.faces]}',
 		f'int[] faceVertexIndices = {flatten(self.faces, 1)}'
 	]
+	if hasattr(self, 'keyframes'):
+		for x in self.keyframes:
+			lines.append(x.to_usda(indent))
 	if self.normals_interpolation:
 		match self.normals_interpolation:
 			case 'constant':
