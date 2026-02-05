@@ -422,7 +422,7 @@ class Mesh():
 
 	@property
 	def face_normals(self):	#uniform
-		return np.asarray([self.face_normal(i) for i in range(len(self.faces))])
+		return [self.face_normal(i) for i in range(len(self.faces))]
 
 	@property
 	def normal(self):	#constant, one normal for the entire mesh
@@ -951,6 +951,7 @@ def rects(offset, sizes, axis=0, align=0.5, gap=0.0):
 	#print(offset)
 	distribute(result, axis=axis, align=align, gap=gap)
 	return result
+
 
 
 
