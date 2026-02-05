@@ -60,7 +60,7 @@ def Mesh_to_usda(self, indent=0):
 	if self.colors:	#not None
 		lines.append(f'color3f[] primvars:displayColor = {astuple(self.colors)}')
 		lines.append(f'uniform token primvars:displayColor:interpolation = "{rex.snake_to_camel(self.colors_interpolation)}"')
-	lines.append(f'bool doubleSided = {'true' if self.double_sided else 'false'}')
+	lines.append(f'bool doubleSided = {"true" if self.double_sided else "false"}')
 	"""lines.append(f'uniform token subdivisionScheme = "{self.subdivision_scheme}"')
 	lines.append(f'token visibility = "{self.visibility}"')
 	lines.append(f'uniform token purpose = "{self.purpose}"')"""
