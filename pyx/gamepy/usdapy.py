@@ -75,9 +75,8 @@ def Node3D_to_usda(self, indent=0):
 		f'double3 xformOp:rotateXYZ = {astuple(self.euler)}',
 		'uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]'
 	]
-	if hasattr(self, 'tracks'):
-		for x in self.tracks:
-			lines.append(x.to_usda(indent))
+	if hasattr(self, 'clip'):
+		self.clip.to_usda(indent)
 	"""lines.append(f'token visibility = "{self.visibility}"')
 	lines.append(f'uniform token purpose = "{self.purpose}"')
 	lines.append(f'bool resetXformStack = {self.reset_xform_stack}')"""
