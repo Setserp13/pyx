@@ -1,5 +1,5 @@
 import copy
-from pyx.timeline import Time, TimeRange, Track
+from pyx.timeline import Time, Interval, Layer	#TimeRange, Track
 from datetime import datetime
 import textwrap
 import pyx.mat.mat as mat
@@ -61,7 +61,7 @@ def srtftime(x): return x.strftime("%H:%M:%S,%f")[:-3]
 def srtptime(x): return datetime.strptime(x, "%H:%M:%S,%f").time()
 
 
-class SubRipItem(TimeRange): #herde essa classe de uma classe mais genérica depois, tornando-a irmã de clipes de vídeo, imagens, audios, transições, efeitos e etc...
+class SubRipItem(Interval): #herde essa classe de uma classe mais genérica depois, tornando-a irmã de clipes de vídeo, imagens, audios, transições, efeitos e etc...
 	def __init__(self, index, start, end, text):
 		self.index = index
 		self.text = text
@@ -78,7 +78,7 @@ class SubRipItem(TimeRange): #herde essa classe de uma classe mais genérica dep
 
 
 
-class SubRipFile(Track):
+class SubRipFile(Layer):
 	def strf(self): return ''.join([x.strf() for x in self])
 
 	@staticmethod
@@ -117,6 +117,7 @@ def create_subs(text, labels, start=0): #Text and labels must have the same numb
 		#result.append(SubRipItem(index=i+1, start=Time(milliseconds=int((start+labels[i][0])*1000)), end=Time(milliseconds=int((start+labels[i][1])*1000)), text=x))
 	return result
 	
+
 
 
 
