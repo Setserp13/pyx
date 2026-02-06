@@ -35,11 +35,65 @@ class Time(float):
 	#def __repr__(self):
 	#	return f"Time({self.hours:02}:{self.minutes:02}:{self.seconds:02}.{self.milliseconds:03})"
 
-
-class TimeRange():
+class Interval():	#Clip
 	"""def __init__(self, start, duration):
 		self.start = Time(start)
 		self.duration = Time(duration)"""
+	
+	def __init__(self, start, end):
+		self.start = Time(start)
+		self.duration = Time(end - start)
+		#self.end = Time(end)
+
+	#@classmethod
+	#def start_end(cls, start, end): return cls(start, end - start)
+	
+	@classmethod
+	def start_duration(cls, start, duration): return cls(start, start + duration)
+
+	@property
+	def end(self): return Time(self.start + self.duration)
+
+	@end.setter
+	def end(self, value): self.duration = Time(value - self.start)
+
+	def shift(self, **kwargs):	#hours, minutes, seconds, microseconds
+		self.start += timedelta(**kwargs)
+		#self.end += timedelta(**kwargs)
+
+	def expand(self, **kwargs):
+		self.start -= timedelta(**kwargs)
+		self.end += timedelta(**kwargs)
+
+class Instant(Interval):
+	def __init__(self, time):
+		super().__init__(time, time)
+
+
+class Layer(list):	#elements are Interval-like
+	@property
+	def start(self): return min([x.start for x in self])
+
+	@property
+	def end(self): return max([x.end for x in self])
+
+	def shift(self, **kwargs):
+		for x in self:
+			x.shift(**kwargs)
+
+	def expand(self, **kwargs):
+		for x in self:
+			x.expand(**kwargs)
+
+
+
+
+
+
+"""class TimeRange():
+	#def __init__(self, start, duration):
+	#	self.start = Time(start)
+	#	self.duration = Time(duration)
 	
 	def __init__(self, start, end):
 		self.start = Time(start)
@@ -72,3 +126,4 @@ class Track(list):	#elements are TimeRange-like
 	def expand(self, **kwargs):
 		for x in self:
 			x.expand(**kwargs)
+"""
