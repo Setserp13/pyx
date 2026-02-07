@@ -6,13 +6,14 @@ import pyx.svgx as svgx
 
 #Convert from vector image to raster image
 
-def svg_to_png(tree, output_png, rect, dpi=10):
-    root = tree.getroot()	
-    #print(rect.to_tuple())
-    if rect.size[0] < 1 or rect.size[1] < 1: return #'CUZ NO SIZE CAN BE LESSER THAN 1
+def svg_to_png(tree, output_png, rect=None, dpi=10):
+    root = tree.getroot()
+    
+	if not rect is None:
+    	if rect.size[0] < 1 or rect.size[1] < 1: return #'CUZ NO SIZE CAN BE LESSER THAN 1
 
-    # Modify the SVG content to include a viewBox attribute
-    root.attrib['viewBox'] = f"{rect.min[0]} {rect.min[1]} {rect.size[0]} {rect.size[1]}"
+    	# Modify the SVG content to include a viewBox attribute
+    	root.attrib['viewBox'] = f"{rect.min[0]} {rect.min[1]} {rect.size[0]} {rect.size[1]}"
 
     # Create an in-memory file-like object
     svg_buffer = BytesIO()
