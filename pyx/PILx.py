@@ -1,5 +1,5 @@
 import math
-from PIL import Image, ImageFont, ImageDraw
+from PIL import Image, ImageFont, ImageDraw	 #pip install Pillow
 import pyx.mat.mat as mat
 import numpy as np
 import pyx.numpyx as npx
