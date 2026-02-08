@@ -911,15 +911,6 @@ def randomize2(vertices, r=.1): return [npx.random_in_circle(r) + x for x in ver
 def randomize3(vertices, r=.1): return [npx.random_in_sphere(r) + x for x in vertices]
 
 
-def bars(values, offset = np.zeros(2), width=1, gap=0, axis=0, align=0):
-	result = []
-	for i, y in enumerate(values):
-		min = offset + np.array([i * (width + gap), -y * align])[[axis, 1 - axis]] #swizzle
-		size = np.array([width, y])[[axis, 1 - axis]]
-		result.append(npx.rect(min, size))
-	return result
-
-
 def conic_sort(edges):
 	return sorted(edges, key=lambda e: npx.angle2(npx.ei(0.0, 2), e.vector))
 
@@ -958,6 +949,7 @@ def rects(offset, sizes, axis=0, align=0.5, gap=0.0):
 	#print(offset)
 	distribute(result, axis=axis, align=align, gap=gap)
 	return result
+
 
 
 
