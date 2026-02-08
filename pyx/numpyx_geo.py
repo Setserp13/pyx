@@ -941,8 +941,8 @@ class group(list):
 
 def distribute(arr, axis=0, align=.5, gap=0.0):
 	for i in range(1, len(arr)):
-		pos = arr[i - 1].aabb.denormalize_point(np.array([1, align])[[axis, 1 - axis]]) + npx.ei(axis, 2) * gap
-		arr[i].aabb = arr[i].aabb.set_position(pivot = np.array([0, align])[[axis, 1 - axis]], value = pos)
+		pos = arr[i - 1].aabb.denormalize_point(np.array([1, float(align)])[[axis, 1 - axis]]) + npx.ei(axis, 2) * float(gap)
+		arr[i].aabb = arr[i].aabb.set_position(pivot = np.array([0, float(align)])[[axis, 1 - axis]], value = pos)
 
 def rects(offset, sizes, axis=0, align=0.5, gap=0.0):
 	dim = len(sizes[0])
@@ -951,6 +951,7 @@ def rects(offset, sizes, axis=0, align=0.5, gap=0.0):
 	#print(offset)
 	distribute(result, axis=axis, align=align, gap=gap)
 	return result
+
 
 
 
