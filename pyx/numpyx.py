@@ -306,7 +306,7 @@ class rect2(rect):
 	def bottom(rect): return rect2.side(rect, axis=1, dir=0)
 	def top(rect): return rect2.side(rect, axis=1, dir=1)
 
-	def corners(rect): return polyline([rect2.bottom_left(rect), rect2.top_left(rect), rect2.top_right(rect), rect2.bottom_right(rect)])
+	def corners(rect): return polyline([rect2.bottom_left(rect), rect2.top_left(rect), rect2.top_right(rect), rect2.bottom_right(rect)], closed=True)
 	def area(rect): return rect.size[0] * rect.size[1]
 
 	def line_at(rect, t, axis=0):	#result is a line parallel to axis
