@@ -343,19 +343,20 @@ def embed_images(svg_tree, svg_folder):
 				image_element.set("{http://www.w3.org/1999/xlink}href", f"data:image/png;base64,{encoded_image}")
 	return svg_tree
 
-"""def circle(cx, cy, r, **kwargs): return etree.Element("circle", cx=str(cx), cy=str(cy), r=str(r), **to_str(kwargs))
-def ellipse(cx, cy, rx, ry, **kwargs): return etree.Element("ellipse", cx=str(cx), cy=str(cy), rx=str(rx), ry=str(ry), **to_str(kwargs))
-def polygon(*points, **kwargs): return etree.Element("polygon", points=" ".join(f"{x[0]},{x[1]}" for x in points), **to_str(kwargs))
-def polyline(*points, **kwargs): return etree.Element("polyline", points=" ".join(f"{x[0]},{x[1]}" for x in points), **to_str(kwargs))
-def rect(x, y, width, height, **kwargs): return etree.Element("rect", x=str(x), y=str(y), width=str(width), height=str(height), **to_str(kwargs))
-def line(x1, y1, x2, y2, **kwargs): return etree.Element("line", x1=str(x1), y1=str(y1), x2=str(x2), y2=str(y2), **to_str(kwargs))"""
-
-def circle(cx, cy, r, **kwargs): return lxmlx.element("circle", cx=cx, cy=cy, r=r, **kwargs)
+"""def circle(cx, cy, r, **kwargs): return lxmlx.element("circle", cx=cx, cy=cy, r=r, **kwargs)
 def ellipse(cx, cy, rx, ry, **kwargs): return lxmlx.element("ellipse", cx=cx, cy=cy, rx=rx, ry=ry, **kwargs)
 def polygon(*points, **kwargs): return lxmlx.element("polygon", points=" ".join(f"{x[0]},{x[1]}" for x in points), **kwargs)
 def polyline(*points, **kwargs): return lxmlx.element("polyline", points=" ".join(f"{x[0]},{x[1]}" for x in points), **kwargs)
 def rect(x, y, width, height, **kwargs): return lxmlx.element("rect", x=x, y=y, width=width, height=height, **kwargs)
-def line(x1, y1, x2, y2, **kwargs): return lxmlx.element("line", x1=x1, y1=y1, x2=x2, y2=y2, **kwargs)
+def line(x1, y1, x2, y2, **kwargs): return lxmlx.element("line", x1=x1, y1=y1, x2=x2, y2=y2, **kwargs)"""
+
+def circle(obj, **kwargs): return lxmlx.element("circle", cx=obj.center[0], cy=obj.center[1], r=obj.radius, **kwargs)
+def ellipse(obj, **kwargs): return lxmlx.element("ellipse", cx=obj.center[0], cy=obj.center[1], rx=obj.a, ry=obj.b, **kwargs)
+def polygon(obj, **kwargs): return lxmlx.element("polygon", points=" ".join(f"{x[0]},{x[1]}" for x in obj), **kwargs)
+def polyline(obj, **kwargs): return lxmlx.element("polyline", points=" ".join(f"{x[0]},{x[1]}" for x in obj), **kwargs)
+def rect(obj, **kwargs): return lxmlx.element("rect", x=obj.min[0], y=obj.min[1], width=obj.size[0], height=obj.size[1], **kwargs)
+def line(obj, **kwargs): return lxmlx.element("line", x1=obj[0][0], y1=obj[0][1], x2=obj[1][0], y2=obj[1][1], **kwargs)
+
 
 def text(cx, cy, s, pivot=np.ones(2) * 0.5, font='arial.ttf', font_size=12, **kwargs): #In SVG, the y attribute of a <text> element refers to the baseline of the text
 	s = str(s)
