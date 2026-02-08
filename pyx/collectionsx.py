@@ -262,7 +262,7 @@ List (a.k.a. Sequence) → Order matters, Duplicates matter.
 Bag (a.k.a. Multiset) → Order does not matter, Duplicates matter.
 Set → Order does not matter, Duplicates do not matter.
 """
-def ndfor(arr, func, index=None):
+def ndfor(arr, func, index=None):	#it does work with jagged (ragged) arrays
 	if index is None:
 		index = []
 
@@ -272,7 +272,7 @@ def ndfor(arr, func, index=None):
 	for i, item in enumerate(arr):
 		ndfor(item, func, index + [i])
 
-def ndmap(arr, func, index=None):
+def ndmap(arr, func, index=None):	#it does work with jagged (ragged) arrays
 	if index is None:
 		index = []
 
