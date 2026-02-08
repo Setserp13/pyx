@@ -42,7 +42,7 @@ def arg(function, iterables, return_type=tuple):
 
 def normalize(values): return np.array(values) / max(values)
 
-def normalize2(values): return [inverse_lerp(min(values), max(values), x) for x in values]
+def normalize2(values): return [npx.inverse_lerp(min(values), max(values), x) for x in values]
 
 def weights(values): return np.array(values) / sum(values)
 
