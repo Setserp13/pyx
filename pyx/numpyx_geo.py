@@ -578,6 +578,9 @@ class polyline(np.ndarray):#list):
 	def vertex_normals(vertices, outward=True, closed=True):
 		return [npx.normalize(np.sum([polyline.normal(x, outward=outward) for x in polyline.incident_edges(vertices, i, closed=closed)], axis=0)) for i in range(len(vertices))]
 
+	def expand(self, amount, outward=True, closed=True):
+		return polyline([self[i] + x * float(amount) for i, x in enumerate(polyline.vertex_normals(self, outward=outward, closed=closed))], closed=closed)
+	
 	def internal_angle_sum(n): return math.pi * (n - 2)
 
 	def perpendicular_bisector(edge):
@@ -951,6 +954,7 @@ def rects(offset, sizes, axis=0, align=0.5, gap=0.0):
 	#print(offset)
 	distribute(result, axis=axis, align=align, gap=gap)
 	return result
+
 
 
 
