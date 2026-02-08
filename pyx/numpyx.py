@@ -549,6 +549,30 @@ def random_in_sphere(r): return random_on_sphere(random.uniform(0, r))
 
 def random_on_line(start, end): return lerp(start, end, random.uniform(0.0, 1.0))
 
+class rand:
+	def __init__(self, min, max):
+		self.min = min
+		self.max = max
+
+	def __call__(self):
+		raise NotImplementedError
+
+	def sample(self, count):
+		return [self() for _ in range(count)]
+
+class rand_number(rand):
+	def __float__(self): return float(self())
+
+	def __int__(self): return int(self())
+
+class rand_float(rand_number):
+	def __call__(self):
+		return np.random.uniform(self.min, self.max)
+
+class rand_int(rand_number):
+	def __call__(self):
+		return np.random.randint(self.min, self.max)
+
 
 
 def find_indices(array, match, max_dim=None):
