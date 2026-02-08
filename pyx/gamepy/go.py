@@ -5,12 +5,14 @@ import pyx.PILx as PILx
 from pyx.mat.transform import Node2D, Node3D
 import pyx.osx as osx
 from PIL import Image
+import uuid
 
 class Texture2D():
 	def __init__(self, path):
 		self.path = path
 		self.array = PILx.read_image(path)
-
+		self.id = uuid.uuid4()
+	
 	@property
 	def size(self): return np.array(self.array.shape[:2])
 
