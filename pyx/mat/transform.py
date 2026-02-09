@@ -4,6 +4,8 @@ from pyx.generic.node import Node
 import functools
 import itertools
 import math
+from itertools import combinations
+from functools import reduce
 
 """
 Use R.T (transposta) — é mais rápido e numericamente mais estável que np.linalg.inv.
@@ -17,22 +19,39 @@ def to_homogeneous(matrix):
 	result[:dim, :dim] = matrix
 	return result
 
-def basic_rotation_matrix(theta, axis1, axis2, dim):
-    R = np.eye(dim)
-    c = math.cos(theta)
-    s = math.sin(theta)
-    R[axis1, axis1] = c
-    R[axis1, axis2] = -s
-    R[axis2, axis1] = s
-    R[axis2, axis2] = c
-    return R
 
-def rotation_matrix(angles, dim, homogeneous=True):
-    result = np.eye(dim)
-    for angle, (axis1, axis2) in zip(angles, itertools.combinations(range(dim), 2)):
-        R = basic_rotation_matrix(angle, axis1, axis2, dim)
-        result = R @ result   # ordem correta
-    return to_homogeneous(result) if homogeneous else result
+
+def R2(theta):
+	c = math.cos(theta)
+	s = math.sin(theta)
+	return np.array([[c, -s],
+					 [s,  c]])
+
+def basic_rotation_matrix(theta, plane, dim):
+	M = np.eye(dim)
+	i, j = plane
+	M[np.ix_([i, j], [i, j])] = R2(theta)
+	return M
+
+def R(angles):
+	# Solve n(n-1)/2 = len(angles)
+	k = len(angles)
+	n = int((1 + math.sqrt(1 + 8*k)) / 2)
+
+	axes = range(n)
+	planes = combinations(axes, 2)
+
+	rotations = [
+		basic_rotation_matrix(angle, plane, n)
+		for angle, plane in zip(angles, planes)
+	]
+
+	return reduce(lambda A, B: A @ B, rotations)
+
+
+
+
+
 
 class Matrix:
 	def S(vector, homogeneous=True): #scaling
