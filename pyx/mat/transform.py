@@ -315,3 +315,113 @@ class Node3D(Transform):	#Node):):
 	@property
 	def R(self): return Matrix.R3(self.rotation)
 
+
+
+
+
+
+
+def decompose_trs_shear(M, eps=1e-8):
+	"""
+	Decompose a homogeneous affine matrix into:
+	- translation vector T
+	- rotation matrix R
+	- scale vector S
+	- shear matrix Sh
+
+	Works in any dimension.
+	"""
+	M = np.asarray(M, dtype=float)
+	n = M.shape[0] - 1
+
+	if M.shape != (n + 1, n + 1):
+		raise ValueError("Matrix must be homogeneous (N+1 x N+1)")
+
+    
+	T = M[:-1, -1].copy()	# 1. Translation
+
+	A = M[:-1, :-1]	# 2. Linear part
+
+	ATA = A.T @ A	# 3. Polar decomposition
+
+	# Eigen-decomposition of symmetric matrix
+	eigvals, eigvecs = np.linalg.eigh(ATA)
+	eigvals = np.maximum(eigvals, eps)
+
+	H = eigvecs @ np.diag(np.sqrt(eigvals)) @ eigvecs.T
+	R = A @ np.linalg.inv(H)
+
+	# Fix improper rotation (reflection)
+	if np.linalg.det(R) < 0:
+		R[:, 0] *= -1
+		H[0, :] *= -1
+
+	S = np.diag(H).copy()	# 4. Scale (diagonal of H)
+
+	# 5. Shear matrix
+	Sh = H.copy()
+	for i in range(n):
+		if abs(S[i]) > eps:
+			Sh[i, :] /= S[i]
+
+	np.fill_diagonal(Sh, 1.0)
+
+	return {
+		"T": T,
+		"R": R,
+		"S": S,
+		"ShearMatrix": Sh
+	}
+
+def compose_trs_shear(T, R, S, Sh):
+	n = len(T)
+
+	Sm = np.diag(S)	# Scale matrix
+
+	H = Sm @ Sh	# Shear+scale
+
+	A = R @ H	# Linear part
+
+	# Homogeneous matrix
+	M = np.eye(n + 1)
+	M[:-1, :-1] = A
+	M[:-1, -1] = T
+
+	return M
+
+def random_rotation(n):
+	A = np.random.randn(n, n)
+	Q, _ = np.linalg.qr(A)
+	if np.linalg.det(Q) < 0:
+		Q[:, 0] *= -1
+	return Q
+
+
+def test_decompose_trs_shear():
+	np.random.seed(42)
+
+	for n in [2, 3, 5, 8]:
+		for _ in range(50):
+			# Random components
+			T = np.random.uniform(-10, 10, size=n)
+			R = random_rotation(n)
+			S = np.random.uniform(0.5, 3.0, size=n)
+
+			# Random shear (unit diagonal)
+			Sh = np.eye(n)
+			Sh += np.random.uniform(-0.3, 0.3, size=(n, n))
+			np.fill_diagonal(Sh, 1.0)
+
+			M = compose_trs_shear(T, R, S, Sh)	# Compose
+
+			out = decompose_trs_shear(M)	# Decompose
+
+			# Recompose
+			M2 = compose_trs_shear(out["T"], out["R"], out["S"], out["ShearMatrix"])
+
+			assert np.allclose(M, M2, atol=1e-6), f"Failed in {n}D"	# Assertions
+
+	print("All decomposition tests passed ✅")
+
+#test_decompose_trs_shear()
+
