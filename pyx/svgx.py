@@ -18,6 +18,8 @@ import pyx.numpyx as npx
 import pyx.numpyx_geo as geo
 import pyx.mat.bezier as bezier
 import pyx.lxmlx as lxmlx
+from pyx.mat.transform import Node2D
+from pyx.gamepy.color import Color
 
 """def vertices(obj):
 	if localname(obj.tag) == 'rect':
@@ -105,6 +107,60 @@ def bezier_from_svg(obj):
 	#print(points)
 	#miss Aa
 	return bezier.path(points, endpoints=endpoints, closed=closed)
+
+def transform_from_svg(obj):
+	transform = get_transform(obj)
+	if 'matrix' in transform:
+		a, b, c, d, e, f = transform['matrix']
+		return np.array([[a, c, e], [b, d, f], [0,0,1]])
+	else:
+		result = Node2D()
+		if 'translate' in transform:
+			result.position = np.array(transform['translate'])
+		if 'rotate' in transform:
+			result.rotation = math.radians(float(transform['rotate'][0]))
+		if 'scale' in transform:
+			result.scale = np.array(transform['scale'])
+		return result
+
+def from_svg(obj):
+	result = []
+	if etree.QName(obj).localname == 'svg':
+		obj = lxmlx.find_tags(obj, 'g')[0]
+	tag = etree.QName(obj).localname
+	#print(tag)
+	match tag:
+		case 'circle': result = circle_from_svg(obj)
+		case 'ellipse': result = ellipse_from_svg(obj)
+		case 'g': result = geo.group([from_svg(x) for x in obj])	#.children
+		case 'line': result = line_from_svg(obj)
+		case 'path': result = bezier_from_svg(obj)
+		case 'polyline': polyline_from_svg(obj)
+		case 'polygon': result = polyline_from_svg(obj)
+		case 'rect': result = rect_from_svg(obj)
+		case 'text': pass
+
+	result.transform = transform_from_svg(obj)
+
+	result.id = obj.get('id')
+	result.style = get_style(obj)
+	for k in ['fill', 'stroke']:
+		try:
+			result.style[k] = Color(result.style[k])
+		except:
+			result.style[k] = None
+	for k in ['fill-opacity', 'stroke-opacity', 'stroke-width']:
+		try:
+			result.style[k] = float(result.style[k])
+		except:
+			result.style[k] = 1.0
+	return result
+
+
+
+
+
+
 
 def page_rect(obj): return npx.rect2(0, 0, *get(obj, float, 'width', 'height'))
 
