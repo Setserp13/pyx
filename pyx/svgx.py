@@ -401,12 +401,7 @@ def embed_images(svg_tree, svg_folder):
 				image_element.set("{http://www.w3.org/1999/xlink}href", f"data:image/png;base64,{encoded_image}")
 	return svg_tree
 
-"""def circle(cx, cy, r, **kwargs): return lxmlx.element("circle", cx=cx, cy=cy, r=r, **kwargs)
-def ellipse(cx, cy, rx, ry, **kwargs): return lxmlx.element("ellipse", cx=cx, cy=cy, rx=rx, ry=ry, **kwargs)
-def polygon(*points, **kwargs): return lxmlx.element("polygon", points=" ".join(f"{x[0]},{x[1]}" for x in points), **kwargs)
-def polyline(*points, **kwargs): return lxmlx.element("polyline", points=" ".join(f"{x[0]},{x[1]}" for x in points), **kwargs)
-def rect(x, y, width, height, **kwargs): return lxmlx.element("rect", x=x, y=y, width=width, height=height, **kwargs)
-def line(x1, y1, x2, y2, **kwargs): return lxmlx.element("line", x1=x1, y1=y1, x2=x2, y2=y2, **kwargs)"""
+
 
 def circle(obj, **kwargs): return lxmlx.element("circle", cx=obj.center[0], cy=obj.center[1], r=obj.radius, **kwargs)
 def ellipse(obj, **kwargs): return lxmlx.element("ellipse", cx=obj.center[0], cy=obj.center[1], rx=obj.a, ry=obj.b, **kwargs)
