@@ -133,6 +133,7 @@ def from_svg(obj):
 		case 'circle': result = circle_from_svg(obj)
 		case 'ellipse': result = ellipse_from_svg(obj)
 		case 'g': result = geo.group([from_svg(x) for x in obj])	#.children
+		case 'svg': result = geo.group([from_svg(x) for x in obj])	#.children
 		case 'line': result = line_from_svg(obj)
 		case 'path': result = bezier_from_svg(obj)
 		case 'polyline': polyline_from_svg(obj)
