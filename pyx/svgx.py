@@ -124,14 +124,15 @@ def transform_from_svg(obj):
 		return result
 
 def from_svg(obj):
-	result = []
+	result = None
 	tag = etree.QName(obj).localname
 	#print(tag)
 	match tag:
 		case 'circle': result = circle_from_svg(obj)
 		case 'ellipse': result = ellipse_from_svg(obj)
-		case 'g': result = geo.group([from_svg(x) for x in obj])	#.children
-		case 'svg': result = geo.group([from_svg(x) for x in obj])	#.children
+		case 'g' | 'svg':
+			children = [from_svg(x) for x in obj]
+			result = geo.group([x for x in children if not x is None])
 		case 'line': result = line_from_svg(obj)
 		case 'path': result = bezier_from_svg(obj)
 		case 'polyline': result = polyline_from_svg(obj)
@@ -139,6 +140,8 @@ def from_svg(obj):
 		case 'rect': result = rect_from_svg(obj)
 		case 'text': pass
 
+	if result is None:
+		return result
 	result.transform = transform_from_svg(obj)
 
 	result.id = obj.get('id')
