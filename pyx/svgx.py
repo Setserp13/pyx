@@ -145,17 +145,22 @@ def from_svg(obj):
 	result.transform = transform_from_svg(obj)
 
 	result.id = obj.get('id')
-	result.style = get_style(obj)
+	style = get_style(obj)
+	if not 'fill' in style:
+		style['fill'] = 'black'
+	if not 'stroke' in style:
+		style['stroke'] = 'none'
 	for k in ['fill', 'stroke']:
 		try:
-			result.style[k] = Color(result.style[k])
+			style[k] = Color(style[k])
 		except:
-			result.style[k] = None
+			style[k] = None
 	for k in ['fill-opacity', 'stroke-opacity', 'stroke-width']:
-		try:
-			result.style[k] = float(result.style[k])
-		except:
-			result.style[k] = 1.0
+		if k in style:
+			style[k] = float(style[k])
+		else:
+			style[k] = 1.0
+	result.style = style
 	return result
 
 
