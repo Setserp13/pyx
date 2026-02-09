@@ -246,7 +246,7 @@ def truncate(vertices, t=.25):	#, closed=True):
 	result = []
 	for x in vertices.edges(closed=vertices.closed):	#polyline.edges(vertices, closed=closed):
 		result += [npx.lerp(x[0], x[1], float(t)), npx.lerp(x[0], x[1], 1-float(t))]
-	if not closed:
+	if not vertices.closed:
 		result[0] = vertices[0]
 		result[-1] = vertices[-1]
 	return polyline(result, closed=vertices.closed)
@@ -949,6 +949,7 @@ def rects(offset, sizes, axis=0, align=0.5, gap=0.0):
 	#print(offset)
 	distribute(result, axis=axis, align=align, gap=gap)
 	return result
+
 
 
 
