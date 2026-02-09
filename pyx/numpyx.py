@@ -1,4 +1,5 @@
 import math
+import cmath
 from multipledispatch import dispatch
 from numbers import Number
 import numpy as np
@@ -611,3 +612,34 @@ def column_major_order(size, index):	#linear = i0 + i1*s0 + i2*(s0*s1) + ...
     multipliers = np.cumprod(size) / size  # produces: [1, s0, s0*s1, ...]
     multipliers = multipliers.astype(int)
     return int(np.sum(index * multipliers))
+
+
+
+
+
+def quadratic(a, b, c):
+	if a == 0:
+		raise ValueError("a must not be zero")
+
+	delta = b*b - 4*a*c
+	den = 2*a
+
+	if delta > 0:
+		sqrt_delta = math.sqrt(delta)
+		return (
+			(-b + sqrt_delta) / den,
+			(-b - sqrt_delta) / den
+		)
+
+	if delta == 0:
+		return (-b / den,)
+
+	# delta < 0 → complex
+	sqrt_delta = cmath.sqrt(delta)
+	return (
+		(-b + sqrt_delta) / den,
+		(-b - sqrt_delta) / den
+	)
+
+
+
