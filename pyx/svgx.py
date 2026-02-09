@@ -125,8 +125,6 @@ def transform_from_svg(obj):
 
 def from_svg(obj):
 	result = []
-	if etree.QName(obj).localname == 'svg':
-		obj = lxmlx.find_tags(obj, 'g')[0]
 	tag = etree.QName(obj).localname
 	#print(tag)
 	match tag:
@@ -136,7 +134,7 @@ def from_svg(obj):
 		case 'svg': result = geo.group([from_svg(x) for x in obj])	#.children
 		case 'line': result = line_from_svg(obj)
 		case 'path': result = bezier_from_svg(obj)
-		case 'polyline': polyline_from_svg(obj)
+		case 'polyline': result = polyline_from_svg(obj)
 		case 'polygon': result = polyline_from_svg(obj)
 		case 'rect': result = rect_from_svg(obj)
 		case 'text': pass
