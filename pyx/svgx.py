@@ -165,7 +165,7 @@ def from_svg(obj):
 
 	desc = lxmlx.find(obj, lambda x: x.tag == "desc", iter=lambda e: e)
 
-	result.desc = {} if desc is None else rex.strpdict(desc.text, sep=[',', '='])
+	result.desc = {} if desc is None else rex.strpdict(desc.text, sep=[';', '='])
 	return result
 
 
