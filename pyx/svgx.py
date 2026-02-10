@@ -164,7 +164,7 @@ def from_svg(obj):
 	result.style = style
 
 	desc = lxmlx.find(obj, lambda x: etree.QName(x).localname == "desc", iter=lambda e: e)
-	print(desc)
+	#print(desc)
 	result.desc = {} if desc is None else rex.strpdict(desc.text, sep=[';', '='])
 	return result
 
