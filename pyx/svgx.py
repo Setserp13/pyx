@@ -112,7 +112,8 @@ def transform_from_svg(obj):
 	transform = get_transform(obj)
 	if 'matrix' in transform:
 		a, b, c, d, e, f = transform['matrix']
-		return np.array([[a, c, e], [b, d, f], [0,0,1]])
+		M = np.array([[a, c, e], [b, d, f], [0,0,1]])
+		return Node2D.from_matrix(M)
 	else:
 		result = Node2D()
 		if 'translate' in transform:
