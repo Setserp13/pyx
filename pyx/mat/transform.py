@@ -303,6 +303,15 @@ class Node2D(Transform):	#Node):
 	@property
 	def R(self): return Matrix.R2(self.rotation)
 
+	@classmethod
+	def from_matrix(cls, M):
+		t = decompose_trs_shear(M)
+		rotation = math.atan2(t['R'][1, 0], t['R'][0, 0])
+		#print(rotation)
+		return cls(position=t['T'], rotation=rotation, scale=t['S'])
+
+
+
 class Node3D(Transform):	#Node):):
 	def __init__(self, position=np.zeros(3), rotation=quaternion([0, 0, 0, 1]), scale=np.ones(3), **kwargs):
 		super().__init__(position, rotation, scale, **kwargs)
