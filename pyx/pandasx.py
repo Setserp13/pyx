@@ -6,6 +6,24 @@ import os
 import math
 import numpy as np
 import re
+import pyx.lxmlx as lxmlx
+
+def xml2df(root):
+	lvs = lxmlx.leaves(root)
+	series = {}
+	for x in lvs:
+		k = x['path'].replace('/', '_')
+		if not k in series:
+			series[k] = []
+		series[k].append(x['element'])
+	item_count = max([len(series[k]) for k in series])
+	df = pd.DataFrame(data=[], columns=[k for k in series])
+	for k in series:
+		#print(k)
+		df[k] = pd.Series([x.text for x in series[k]]).reindex(range(item_count))
+	#print(df)
+	return df
+
 
 def isnull(value): return str(value) in ['None', 'NaN', 'NaT', 'none', 'nan', 'nat', ''] or pd.isnull(value)
 
