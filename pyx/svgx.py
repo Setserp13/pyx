@@ -152,10 +152,7 @@ def from_svg(obj):
 	if not 'stroke' in style:
 		style['stroke'] = 'none'
 	for k in ['fill', 'stroke']:
-		try:
-			style[k] = Color(style[k])
-		except:
-			style[k] = None
+		style[k] = None if style[k] == 'none' else Color(style[k])
 	for k in ['fill-opacity', 'stroke-opacity', 'stroke-width']:
 		if k in style:
 			style[k] = float(style[k])
