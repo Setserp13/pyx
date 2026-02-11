@@ -74,7 +74,15 @@ def leaves(element, current_path=''): #returns all leaves and their global names
 			result += leaves(child, path)
 	return result
 
-
+def get_namespaces(root: etree._Element) -> Dict[str, str]:
+	#Extract namespaces from an XML document. If a default namespace exists, it is mapped to 'ns'.
+	nsmap = {}
+	for k, v in root.nsmap.items():
+		if k is None:
+			nsmap["ns"] = v
+		else:
+			nsmap[k] = v
+	return nsmap
 
 
 
