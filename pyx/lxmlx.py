@@ -59,15 +59,24 @@ def set(obj, **kwargs):
 def find_tags(root, *tags): return findall(root, lambda x: etree.QName(x.tag).localname in tags)	#localname(x.tag) in tags)
 #def find_tags(root, *tags): return [x for x in root.iter('*') if localname(x.tag) in tags]
 
-def leaf_paths(element, current_path=''): #returns all root-to-leaf paths
-	paths = []
-	path = f'{current_path}/{element.tag}' if current_path else element.tag
-	if len(element) == 0:  #is a leaf element
+
+
+def leaves(element, current_path=''): #returns all leaves and their global names
+	result = []
+	#tag = element.tag
+	tag = etree.QName(element).localname
+	path = f'{current_path}/{tag}' if current_path else tag
+	if len(element) == 0:  #element is a leaf
 		#print(path)
-		paths.append(path)
+		result.append({'element': element, 'path': path})
 	else:
 		for child in element:
-			paths += leaf_paths(child, path)
-	return paths
+			result += leaves(child, path)
+	return result
+
+
+
+
+
 
 def save(obj, path): osx.write(path, etree.tostring(obj, pretty_print=True, encoding='unicode'))
