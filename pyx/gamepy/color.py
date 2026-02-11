@@ -1,5 +1,6 @@
 import numpy as np
 from PIL import ImageColor
+import re
 
 class Color(np.ndarray):
 	"""
@@ -20,27 +21,49 @@ class Color(np.ndarray):
 		
 		# Convert to array
 		arr = np.array([r, g, b, a], dtype=np.float32)
+
+		if arr.max() > 1:
+			arr /= 255.0
 		
 		# Create subclassed ndarray
 		obj = np.asarray(arr).view(cls)
 		return obj
 
+
+
 	@classmethod
 	def _parse_color(cls, value):
-		# Se já for lista/tuple com 3 ou 4 valores, use direto
+		# --- Case 1: list/tuple ---
 		if isinstance(value, (list, tuple)):
-			if len(value) == 3:
-				r, g, b = value
-				a = 1.0
-			elif len(value) == 4:
-				r, g, b, a = value
-			else:
+			if len(value) not in (3, 4):
 				raise ValueError("Color list/tuple must have 3 or 4 values")
-			return r, g, b, a
-
-		# Caso contrário, assume string e deixa o ImageColor tratar
+			r, g, b = value[:3]
+			a = value[3] if len(value) == 4 else 1.0
+			# Normalize if needed
+			if max(r, g, b) > 1:
+				r /= 255.0
+				g /= 255.0
+				b /= 255.0
+			if a > 1:
+				a /= 255.0
+			return float(r), float(g), float(b), float(a)
+		# --- Case 2: rgba() string ---
+		if isinstance(value, str) and value.startswith("rgba"):
+			nums = re.findall(r"[\d.]+", value)
+			r, g, b = map(float, nums[:3])
+			a = float(nums[3]) if len(nums) > 3 else 1.0
+			return r/255.0, g/255.0, b/255.0, a
+		# --- Case 3: hex with alpha (#RRGGBBAA) ---
+		if isinstance(value, str) and value.startswith("#") and len(value) == 9:
+			r = int(value[1:3], 16)
+			g = int(value[3:5], 16)
+			b = int(value[5:7], 16)
+			a = int(value[7:9], 16)
+			return r/255.0, g/255.0, b/255.0, a/255.0
+		# --- Default: let PIL parse ---
 		r, g, b = ImageColor.getrgb(value)
-		return r / 255.0, g / 255.0, b / 255.0, 1.0
+		return r/255.0, g/255.0, b/255.0, 1.0
+
 
 	# -------- Properties -------- #
 
