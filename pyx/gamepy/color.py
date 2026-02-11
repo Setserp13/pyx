@@ -40,7 +40,7 @@ class Color(np.ndarray):
 
 		# Caso contrário, assume string e deixa o ImageColor tratar
 		r, g, b = ImageColor.getrgb(value)
-		return r, g, b, 1.0
+		return r / 255, g / 255, b / 255, 1.0
 
 	# -------- Properties -------- #
 
