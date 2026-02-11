@@ -8,7 +8,7 @@ import numpy as np
 import re
 import pyx.lxmlx as lxmlx
 
-def xml2df(root):
+def xml2df(root) -> pd.DataFrame:
 	lvs = lxmlx.leaves(root)
 	series = {}
 	for x in lvs:
@@ -23,6 +23,10 @@ def xml2df(root):
 		df[k] = pd.Series([x.text for x in series[k]]).reindex(range(item_count))
 	#print(df)
 	return df
+
+def xmls2df(roots) -> pd.DataFrame:	#Convert multiple XML documents into a single DataFrame.
+	dfs = [xml2df(root) for root in roots]
+	return pd.concat(dfs, ignore_index=True, sort=True)
 
 
 def isnull(value): return str(value) in ['None', 'NaN', 'NaT', 'none', 'nan', 'nat', ''] or pd.isnull(value)
