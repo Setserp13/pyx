@@ -144,7 +144,10 @@ def from_svg(obj):
 	if result is None:
 		return result
 	result.transform = transform_from_svg(obj)
-
+	if isinstance(result, geo.group):
+		for x in geo.group:
+			result.transform.append(x.transform)
+	
 	result.id = obj.get('id')
 	style = get_style(obj)
 	fill = obj.get('fill', None)
