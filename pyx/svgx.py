@@ -147,6 +147,12 @@ def from_svg(obj):
 
 	result.id = obj.get('id')
 	style = get_style(obj)
+	fill = obj.get('fill', None)
+	if not fill is None:
+		style['fill'] = fill
+	stroke = obj.get('stroke', None)
+	if not stroke is None:
+		style['stroke'] = stroke
 	if not 'fill' in style:
 		style['fill'] = 'black'
 	if not 'stroke' in style:
