@@ -1,6 +1,7 @@
 import ast
 from lxml import etree
 import pyx.osx as osx
+from typing import Dict
 
 def element(tag, text='', tail='', parent=None, children=[], **kwargs): #create a xml element
 	#result = etree.Element(tag, **kwargs)
