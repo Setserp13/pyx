@@ -21,10 +21,6 @@ class Color(np.ndarray):
 		# Convert to array
 		arr = np.array([r, g, b, a], dtype=np.float32)
 		
-		# Normalize to 0–1 if needed
-		if arr.max() > 1.0:
-		    arr /= 255.0
-		
 		# Create subclassed ndarray
 		obj = np.asarray(arr).view(cls)
 		return obj
