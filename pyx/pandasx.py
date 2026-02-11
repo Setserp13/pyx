@@ -12,7 +12,7 @@ def xml2df(root) -> pd.DataFrame:
 	lvs = lxmlx.leaves(root)
 	series = {}
 	for x in lvs:
-		k = x['path'].replace('/', '_')
+		k = x['path']#.replace('/', '_')
 		if not k in series:
 			series[k] = []
 		series[k].append(x['element'])
