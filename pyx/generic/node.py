@@ -56,7 +56,7 @@ class Node:
 	
 	def remove(self, value):
 		if value in self.children:
-			self.children.remove(self)
+			self.children.remove(value)
 			self.parent = None
 		#value.setParent(None)	#remove a child
 
