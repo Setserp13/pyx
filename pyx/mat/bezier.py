@@ -65,6 +65,8 @@ class path(np.ndarray):	#composite Bézier curve or Bézier spline
 		# You can set custom attributes here if needed
 		self.my_attribute = getattr(obj, 'my_attribute', 'default')
 
+	def get_endpoints(self): return polyline([self[i] for i in self.endpoints], closed=self.closed)
+	
 	@property
 	def curves(self):
 		result = []
