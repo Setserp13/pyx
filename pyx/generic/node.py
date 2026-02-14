@@ -50,6 +50,10 @@ class Node:
 			value.parent = self
 		#value.setParent(self)	#append a child
 
+	def extend(self, items):
+		for x in items:
+			self.append(x)
+	
 	def remove(self, value):
 		if value in self.children:
 			self.children.remove(self)
