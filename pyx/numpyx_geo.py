@@ -182,6 +182,12 @@ class line(np.ndarray):	#start = self[0], end = self[1]
 	def __rmatmul__(self, M): return self.__matmul__(M)
 	def __matmul__(self, M): return line(npx.affine_transform(M, self))
 
+	def set_position(self, pivot, value):	#pivot is normalized and value is not normalized
+		pivot = npx.lerp(*self, pivot)
+		delta = value - pivot
+		return line(self + delta)
+
+
 def point_on_line(line, point, tol=1e-8): #tol: tolerância numérica
 	line_vec = line[1] - line[0]
 	test_vec = point - line[0]
@@ -949,6 +955,7 @@ def rects(offset, sizes, axis=0, align=0.5, gap=0.0):
 	#print(offset)
 	distribute(result, axis=axis, align=align, gap=gap)
 	return result
+
 
 
 
