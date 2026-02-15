@@ -950,39 +950,10 @@ def distribute(arr, axis=0, align=.5, gap=0.0):
 
 def rects(offset, sizes, axis=0, align=0.5, gap=0.0):
 	dim = len(sizes[0])
-	result = [npx.rect(np.zeros(dim), x) for x in sizes]
+	result = group([npx.rect(np.zeros(dim), x) for x in sizes])
 	result[0].min = offset
 	#print(offset)
 	distribute(result, axis=axis, align=align, gap=gap)
 	return result
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
