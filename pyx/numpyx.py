@@ -116,7 +116,10 @@ class rect:
 	@max.setter
 	def max(self, value): self.min = value - self.size
 
-	def normalize_point(self, value): return (value - self.min) / self.size
+	def normalize_point(self, value):
+		size = self.size
+		size = np.where(size == 0, 1, size)
+		return (value - self.min) / size
 	def normalize_point_component(self, value, axis=0): return (value - self.min[axis]) / self.size[axis]
 
 	def denormalize_point(self, value): return value * self.size + self.min
