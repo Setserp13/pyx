@@ -490,7 +490,7 @@ npx.rect.draw = lambda self, **kwargs: rect(self, **get_attrib(self))
 geo.group.draw = lambda self: g(*[x.draw() for x in self])
 #geo.group.draw = lambda self: g([x.draw() for x in self], **get_attrib(self))
 
-shapes = [bezier.path, geo.circle, svgx.circle, geo.ellipse, geo.line, geo.polyline, npx.rect, geo.group]
+shapes = [bezier.path, geo.circle, geo.ellipse, geo.line, geo.polyline, npx.rect, geo.group]
 
 def to_svg(obj):
 	size = obj.aabb.size
