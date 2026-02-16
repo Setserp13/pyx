@@ -478,6 +478,7 @@ def polygon_arcs(vertices, closed=True, mask=None, radius=0.5, **kwargs):
 
 
 #ADD SHAPE SVG DRAW METHODS
+import pyx.generic.generic as generic
 
 def get_attrib(obj): return getattr(obj, "attrib", {})
 
