@@ -472,3 +472,40 @@ def polygon_arcs(vertices, closed=True, mask=None, radius=0.5, **kwargs):
 		x, y = edge[1]
 		d += f" A {r} {r} 0 0 1 {x} {y}" if mask[i] else f" L {x} {y}"
 	return path(d=d, **kwargs)
+
+
+
+
+
+#ADD SHAPE SVG DRAW METHODS
+
+def get_attrib(obj): return getattr(obj, "attrib", {})
+
+bezier.path.draw = lambda self: path(self.d(), **get_attrib(self))
+geo.circle.draw = lambda self: circle(self, **get_attrib(self))
+geo.ellipse.draw = lambda self: ellipse(self, **get_attrib(self))
+geo.line.draw = lambda self: line(self, **get_attrib(self))
+geo.polyline.draw = lambda self: polygon(self, **get_attrib(self)) if self.closed else polyline(self, **get_attrib(self))
+npx.rect.draw = lambda self, **kwargs: rect(self, **get_attrib(self))
+geo.group.draw = lambda self: g(*[x.draw() for x in self])
+#geo.group.draw = lambda self: g([x.draw() for x in self], **get_attrib(self))
+
+shapes = [bezier.path, geo.circle, svgx.circle, geo.ellipse, geo.line, geo.polyline, npx.rect, geo.group]
+
+def to_svg(obj):
+	size = obj.aabb.size
+	obj.aabb = npx.rect(np.zeros(2), size)
+	result = svg(*size)
+	result.append(obj.draw())
+	return result
+
+for x in shapes:
+	x.set = lambda self, **attrib: generic.set(self, attrib={**getattr(self, "attrib", {}), **attrib})
+	x.get = lambda self, *keys: [self.attrib[k] for k in keys] if 'attrib' in self else None
+	x.to_svg = lambda self: to_svg(self)
+
+
+
+
+
+
