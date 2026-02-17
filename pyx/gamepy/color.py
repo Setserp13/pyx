@@ -106,7 +106,7 @@ class Color(np.ndarray):
 
 	def invert(self):	#Invert RGB (keep alpha).
 		rgb = 1.0 - self[:3]
-        return Color(*rgb, self[3])
+		return Color(*rgb, self[3])
 
 	def grayscale(self):	#Convert to grayscale using luminance formula.
 		r, g, b = self[:3]
