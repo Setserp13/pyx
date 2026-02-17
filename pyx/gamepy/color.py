@@ -80,20 +80,16 @@ class Color(np.ndarray):
 	def a(self): return float(self[3])
 
 	@property
-	def rgb(self):
-		return tuple(float(x) for x in self[:3])
+	def rgb(self): return np.array(self[:3])
 
 	@property
-	def rgba(self):
-		return tuple(float(x) for x in self[:4])
+	def rgba(self): return np.array(self[:4])
 
 	@property
-	def rgb255(self):
-		return tuple(int(x * 255) for x in self[:3])
+	def rgb255(self): return (self.rgb * 255).astype(int)
 
 	@property
-	def rgba255(self):
-		return tuple(int(x * 255) for x in self[:4])
+	def rgba255(self): return (self.rgba * 255).astype(int)
 
 	@property
 	def hex(self):
