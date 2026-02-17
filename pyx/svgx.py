@@ -123,6 +123,8 @@ def transform_from_svg(obj):
 			result.rotation = math.radians(float(transform['rotate'][0]))
 		if 'scale' in transform:
 			result.scale = np.array(transform['scale'])
+			if len(result.scale) < 1:
+				result.scale = np.append(result.scale, result.scale[0])
 		return result
 
 def from_svg(obj):
