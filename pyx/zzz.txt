@@ -1,7 +1,10 @@
+shapes
+
 point
 line -> line, ray, line segment
 angle
 circle
 arc
+ellipse
 rect
 polyline -> polyline, polygon
