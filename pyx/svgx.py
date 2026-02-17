@@ -182,8 +182,8 @@ def from_svg(obj):
 
 
 def page_rect(obj):
-	return npx.rect2(*[float(x) for x in obj.get('viewBox').split(' ')])
-	#return npx.rect2(0, 0, *get(obj, float, 'width', 'height'))	#WRONG
+	viewBox = obj.get('viewBox')
+	return npx.rect2(0, 0, *get(obj, float, 'width', 'height')) if viewBox is None else npx.rect2(*[float(x) for x in viewBox.split(' ')])
 
 def set_page_size(svg, size):
 	set(svg, viewBox=f"0 0 {size[0]} {size[1]}", width=size[0], height=size[1])	
