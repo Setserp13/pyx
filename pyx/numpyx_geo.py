@@ -792,7 +792,7 @@ class polygon:
 
 	def r2a(n): return math.cos(math.pi / n)
 	def r2s(n): return 2 * math.sin(math.pi / n)
-	def a2s(n): return 2 * math.tan(math.pi / n​)
+	def a2s(n): return 2 * math.tan(math.pi / n)
 
 
 class triangle(polyline):
@@ -959,6 +959,7 @@ def rects(offset, sizes, axis=0, align=0.5, gap=0.0):
 	#print(offset)
 	distribute(result, axis=axis, align=align, gap=gap)
 	return result
+
 
 
 
