@@ -65,31 +65,6 @@ def concatenate(ls, gap_seconds=0.0):
 
 	return audio(np.concatenate(arrays, axis=0), sr=sr)
 
-
-
-"""def add_silence_start(input_path, output_path, seconds):
-	y, sr = sf.read(input_path)
-	out = np.concatenate([silence(seconds, sr, y.shape[1] if y.ndim > 1 else 1, y.dtype), y], axis=0)
-	sf.write(output_path, out, sr)
-
-def concat(audios, output_path="output.wav", gap_seconds=0.0):
-	audio_parts = []
-	sr = None
-	
-	for f in audios:
-		data, samplerate = sf.read(f)
-		if sr is None:
-			sr = samplerate
-		audio_parts.append(data)
-
-		# add silence (except after last file)
-		if gap_seconds > 0 and f != audios[-1]:
-			audio_parts.append(silence(gap_seconds, sr, data.shape[1] if data.ndim > 1 else 1, data.dtype))
-
-	out = np.concatenate(audio_parts, axis=0)
-	sf.write(output_path, out, sr)
-	#print("Saved:", output_path)"""
-
 class soundwave():
 	def __init__(self, path):
 		# --- Audio analysis ---
