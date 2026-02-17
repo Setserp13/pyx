@@ -190,6 +190,14 @@ def lsall(dirs, abs=True): return [ls(x, abs) for x in dirs]
 
 
 
+def save_all(files, output_dir, naming='file {i}', save_func=write):
+	output_dir = to_distinct(output_dir)
+	os.makedirs(output_dir, exist_ok=True)
+	digit_count = len(str(len(files) - 1))
+	for i, x in enumerate(files):
+		filename = naming.format(i=str(i).zfill(digit_count))
+		path = os.path.join(output_dir, filename)
+		save_func(path, x)
 
 
 
