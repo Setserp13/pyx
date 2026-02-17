@@ -77,7 +77,7 @@ class Color(np.ndarray):
 	def b(self): return float(self[2])
 
 	@property
-	def a(self): return float(self[3])
+	def a(self): return float(self[3])	#if len(self) > 3 else 1.0
 
 	@property
 	def rgb(self): return np.array(self[:3])
@@ -104,7 +104,38 @@ class Color(np.ndarray):
 			a = int(a * 255)
 		return Color(*self.rgba255[:3], a)
 
-def gray(value): return Color([value, value, value, 1.0])
+	def invert(self):	#Invert RGB (keep alpha).
+		rgb = 1.0 - self[:3]
+        return Color(*rgb, self[3])
+
+	def grayscale(self):	#Convert to grayscale using luminance formula.
+		r, g, b = self[:3]
+		value = 0.299*r + 0.587*g + 0.114*b
+		return gray(value, self[3])
+
+	def lighten(self, amount):	#Lighten toward white. amount: 0–1
+		rgb = self[:3] + (1.0 - self[:3]) * amount
+		return np.clip(np.array([*rgb, self[3]]), 0.0, 1.0)
+
+	def darken(self, amount):	#Darken toward black. amount: 0–1
+		rgb = self[:3] * (1.0 - amount)
+		return np.clip(np.array([*rgb, self[3]]), 0.0, 1.0)
+
+	def adjust_brightness(self, amount):	#Add/subtract brightness. amount: -1 to +1
+		rgb = self[:3] + amount
+		return np.clip(np.array([*rgb, self[3]]), 0.0, 1.0)
+
+	def adjust_contrast(self, amount):	#Contrast adjustment. amount: -1 to +1. 0 = no change
+		factor = 1.0 + amount
+		rgb = 0.5 + (self[:3] - 0.5) * factor
+		return np.clip(np.array([*rgb, self[3]]), 0.0, 1.0)
+
+	def gamma_correct(self, gamma):	#Apply gamma correction. gamma > 1 darkens. gamma < 1 lightens
+		rgb = self[:3] ** gamma
+		return np.clip(np.array([*rgb, self[3]]), 0.0, 1.0)
+
+
+def gray(value, a=1.0): return Color([value, value, value, a])
 
 def shade(color, amt):
 	#print(color)
