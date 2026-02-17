@@ -1,9 +1,14 @@
 import math
-from PIL import Image, ImageFont, ImageDraw	 #pip install Pillow
+from PIL import Image, ImageFont, ImageDraw, ImageSequence	 #pip install Pillow
 import pyx.mat.mat as mat
 import numpy as np
 import pyx.numpyx as npx
 from pyx.collectionsx import merge_where
+
+def extract_frames(anim):
+	return [ x.copy().convert("RGBA") for x in ImageSequence.Iterator(anim) ]
+
+def to_spritesheet(anim): return concat(extract_frames(anim))
 
 def read_image(path, start_axis=0):
 	image = Image.open(path)
