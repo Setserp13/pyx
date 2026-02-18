@@ -140,7 +140,7 @@ def from_svg(obj):
 		case 'line': result = line_from_svg(obj)
 		case 'path': result = bezier_from_svg(obj)
 		case 'polyline': result = polyline_from_svg(obj)
-		case 'polygon': result = polyline_from_svg(obj)
+		case 'polygon': result = polygon_from_svg(obj)
 		case 'rect': result = rect_from_svg(obj)
 		case 'text': pass
 
