@@ -21,7 +21,7 @@ def get_aabb(mob):
 def MCircle(obj): return Circle(radius = obj.radius).move_to(np.append(obj.center, 0))
 def MEllipse(obj): return Ellipse(width = obj.a * 2, height = obj.b * 2).move_to(np.append(obj.center, 0))
 def MLine(obj): return Line(start = np.append(obj[0], 0), end = np.append(obj[1], 0))
-def MPolygon(obj): return Polygon(*[np.append(x, 0) for x in obj])
+def MPolygon(obj): return Polygon(*[(*x, 0) for x in obj])
 def MRect(obj): return Rectangle(width = obj.size[0], height = obj.size[1]).move_to(np.append(obj.center, 0))
 
 
@@ -297,5 +297,6 @@ class ImageScrolling1D:
 	
 	@property
 	def total_width(self): return self.images[0].width * len(self.images)
+
 
 
