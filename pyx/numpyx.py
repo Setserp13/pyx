@@ -11,10 +11,8 @@ from itertools import product
 
 def project(v, u): return (np.dot(v, u) / np.dot(u, u)) * u	#Project vector v onto vector u.
 
-def fill(obj, length, filler=0):
-	if isinstance(obj, np.ndarray):
-		return np.append(obj, [filler] * (length - len(obj)))
-	return [fill(x, length, filler) for x in obj]
+def fill(obj, length, filler=0):	#put it as a methodclass in a class called points that bases line, polyline, bezier, path and so on...
+	return np.array([np.append(x, [filler] * (length - len(x))) for x in obj])
 
 #works for both scalars (numbers) and NumPy arrays
 def clamp(value, min, max): return np.minimum(np.maximum(value, min), max)
