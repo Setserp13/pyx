@@ -163,7 +163,7 @@ def line_line_intersection(line1, line2):
 	x = (B1 * C2 - B2 * C1) / det
 	y = (A2 * C1 - A1 * C2) / det
 
-	return x, y
+	return np.array([x, y])
 
 """def colinear_point_on_ray(ray, pt):
 	return np.dot(ray[1] - ray[0], pt - ray[0]) >= 0	# Checa se projeta no mesmo sentido"""
