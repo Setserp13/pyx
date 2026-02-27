@@ -504,7 +504,8 @@ def to_svg(obj):
 
 for x in shapes:
 	x.set = lambda self, **attrib: generic.set(self, attrib={**getattr(self, "attrib", {}), **attrib})
-	x.get = lambda self, *keys: [self.attrib[k] for k in keys] if 'attrib' in self else None
+	#x.get = lambda self, *keys: [self.attrib[k] for k in keys] if 'attrib' in self else None
+	x.get = lambda self, *keys: [self.attrib[k] for k in keys] if hasattr(self, 'attrib') else None
 	x.to_svg = lambda self: to_svg(self)
 
 
