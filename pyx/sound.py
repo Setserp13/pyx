@@ -28,7 +28,7 @@ def silence(duration, sr=22050, channels=1, dtype=np.float32):
 class audio(np.ndarray):
 	def __new__(cls, input_array, sr=44100):
 		obj = np.asarray(input_array).view(cls)
-		obj.sr = sr
+		obj.sr = sr	#Sample rate. How many audio samples per second
 		return obj
 
 	def __array_finalize__(self, obj):
@@ -94,6 +94,13 @@ class audio(np.ndarray):
 		if samples.ndim > 1:	# Convert stereo → mono if needed
 			samples = samples.mean(axis=1)
 		return audio(samples, sr=self.sr)
+
+	def to_rms(self, frame_length=2048, hop_length=512):
+		y = self.to_mono()	# convert to mono if needed
+		rms = librosa.feature.rms(y=y, frame_length=frame_length, hop_length=hop_length)[0]
+		rms_sr = self.sr / hop_length
+		return audio(rms, rms_sr)
+
 
 def concatenate(ls, gap_seconds=0.0):
 	arrays = []
