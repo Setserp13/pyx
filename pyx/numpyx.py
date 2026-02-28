@@ -68,6 +68,31 @@ def inverse_lerp(a, b, c):	#Works even if c is not exactly on the line (you get 
 	return t
 	#return distance(a, c) / distance(a, b)
 
+def min_max_normalize(arr):
+	"""
+	Normalize a 1D array to the [0, 1] range using min-max scaling.
+    
+	Parameters:
+		arr (np.ndarray): Input 1D array.
+        
+	Returns:
+		np.ndarray: Normalized array with values in [0, 1].
+	"""
+	#arr = np.asarray(arr)  # Ensure input is an ndarray
+	a = arr.min()
+	b = arr.max()
+    
+	if a == b:
+		# Avoid division by zero if all elements are the same
+		return np.zeros_like(arr, dtype=float)
+    
+	return (arr - a) / (b - a)
+
+
+
+
+
+
 def raised_norm(a, n=2): return sum(abs(x) ** n for x in a)	#default n=2 means sqr magnitude
 def norm(a, n=2): return raised_norm(a, n) ** (1.0 / n)	#default n=2 means magnitude
 def raised_distance(a, b, n=2): return raised_norm(b - a, n)	#default n=2 means sqr euclidean distance
