@@ -107,7 +107,7 @@ def concatenate(ls, gap_seconds=0.0):
 
 
 #REMOVE THIS CLASS LATER, KEEP ALL INTO audio CLASS
-class soundwave():
+"""class soundwave():
 	def __init__(self, path):
 		# --- Audio analysis ---
 		self.path = path
@@ -127,7 +127,7 @@ class soundwave():
 		return self.rms[-1]
 
 	@property
-	def duration(self): return librosa.get_duration(path=self.path)
+	def duration(self): return librosa.get_duration(path=self.path)"""
 
 
 def sine_wave(freq, t, phase=0.0):	#pure tone
