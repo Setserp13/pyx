@@ -98,7 +98,7 @@ class audio(np.ndarray):
 	def to_rms(self, frame_length=2048, hop_length=512):
 		y = self.to_mono()	# convert to mono if needed
 		rms = librosa.feature.rms(y=y, frame_length=frame_length, hop_length=hop_length)[0]
-		rms_sr = self.sr / hop_length
+		rms_sr = self.sr // hop_length	#/ hop_length
 		return audio(rms, rms_sr)
 
 
