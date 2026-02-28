@@ -97,7 +97,13 @@ class audio(np.ndarray):
 
 	def to_rms(self, frame_length=2048, hop_length=512):
 		y = self.to_mono()	# convert to mono if needed
-		rms = librosa.feature.rms(y=y, frame_length=frame_length, hop_length=hop_length)[0]
+		#rms = librosa.feature.rms(y=y, frame_length=frame_length, hop_length=hop_length)[0]
+		n_frames = 1 + (len(y) - frame_length) // hop_length
+		shape = (n_frames, frame_length)
+		strides = (y.strides[0] * hop_length, y.strides[0])
+		frames = np.lib.stride_tricks.as_strided(y, shape=shape, strides=strides)
+		rms = np.sqrt(np.mean(frames**2, axis=1))
+		
 		rms_sr = self.sr // hop_length	#/ hop_length
 		return audio(rms, rms_sr)
 
