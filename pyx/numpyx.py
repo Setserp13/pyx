@@ -10,7 +10,7 @@ from pyx.numpyx_geo import polyline, line
 from itertools import product
 
 def slice_by_size(arr, size):	#Divide a 1D array into subarrays of given size. Last chunk may be smaller.
-	return np.array([arr[i:i+size] for i in range(0, len(arr), size)])
+	return [arr[i:i+size] for i in range(0, len(arr), size)]
 
 def slice_by_count(arr, count):
 	return slice_by_size(arr, math.ceil(len(arr) / count))
