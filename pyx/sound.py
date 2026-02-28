@@ -89,6 +89,11 @@ class audio(np.ndarray):
 			return audio(self.copy(), sr=self.sr)
 		return audio(self / peak, sr=self.sr)
 
+	def to_mono(self):
+		samples = self.copy()
+		if samples.ndim > 1:	# Convert stereo → mono if needed
+			samples = samples.mean(axis=1)
+		return audio(samples, sr=self.sr)
 
 def concatenate(ls, gap_seconds=0.0):
 	arrays = []
