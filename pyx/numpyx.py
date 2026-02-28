@@ -9,6 +9,12 @@ import random
 from pyx.numpyx_geo import polyline, line
 from itertools import product
 
+def slice_by_size(arr, size):	#Divide a 1D array into subarrays of given size. Last chunk may be smaller.
+	return [arr[i:i+size] for i in range(0, len(arr), size)]
+
+def slice_by_count(arr, count):
+	return slice_by_size(arr, math.ceil(len(arr) / count))
+
 def project(v, u): return (np.dot(v, u) / np.dot(u, u)) * u	#Project vector v onto vector u.
 
 def fill(obj, length, filler=0):	#put it as a methodclass in a class called points that bases line, polyline, bezier, path and so on...
