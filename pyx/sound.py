@@ -50,6 +50,46 @@ class audio(np.ndarray):
 	@property
 	def channels(self): return self.shape[1] if self.ndim > 1 else 1
 
+	def sample_at(self, t, channel=None):	#Return sample value at time t (seconds).
+		if not (0 <= t < self.duration):
+			raise ValueError("Time outside audio duration")
+		idx = int(t * self.sr)
+		sample = self[idx]
+		if channel is not None and self.ndim > 1:
+			sample = sample[channel]
+		return sample
+
+	def amp_at(self, t, channel=None):	#Return sample amplitude at time t (seconds).
+		return np.abs(self.sample_at(t, channel))
+
+	def segment(self, t_start, t_end):
+		"""
+		Return an audio segment between t_start and t_end (seconds).
+		Works for mono and multi-channel audio.
+		"""
+		# Clamp times
+		t_start = max(0.0, t_start)
+		t_end = min(self.duration, t_end)
+
+		if t_start >= t_end:
+			# Return empty audio segment
+			return audio(np.zeros((0,) + self.shape[1:], dtype=self.dtype), sr=self.sr)
+
+		# Convert time to sample indices
+		start_sample = int(t_start * self.sr)
+		end_sample = int(t_end * self.sr)
+
+		end_sample = min(end_sample, len(self))	# Safety clamp
+
+		return audio(self[start_sample:end_sample], sr=self.sr)
+	
+	def normalize(self):	#Scale audio so peak amplitude becomes 1 (range -1 to 1).
+		peak = np.max(np.abs(self))
+		if peak == 0:
+			return audio(self.copy(), sr=self.sr)
+		return audio(self / peak, sr=self.sr)
+
+
 def concatenate(ls, gap_seconds=0.0):
 	arrays = []
 	sr = None
@@ -65,6 +105,8 @@ def concatenate(ls, gap_seconds=0.0):
 
 	return audio(np.concatenate(arrays, axis=0), sr=sr)
 
+
+#REMOVE THIS CLASS LATER, KEEP ALL INTO audio CLASS
 class soundwave():
 	def __init__(self, path):
 		# --- Audio analysis ---
