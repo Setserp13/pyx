@@ -36,7 +36,7 @@ class circle():
 	def get_point01(self, t): return self.get_point(t * 2 * np.pi)
 
 	@property
-	def diameter(self): return radius * 2
+	def diameter(self): return self.radius * 2
 
 	@property
 	def area(self): return 2 * math.pi * self.radius ** 2
@@ -959,6 +959,7 @@ def rects(offset, sizes, axis=0, align=0.5, gap=0.0):
 	#print(offset)
 	distribute(result, axis=axis, align=align, gap=gap)
 	return result
+
 
 
 
