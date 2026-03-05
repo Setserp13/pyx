@@ -139,9 +139,16 @@ def slope(line):
 	delta = line[1] - line[0]
 	return delta[1] / delta[0] if delta[0] != 0 else float('inf')  # Avoid division by zero
 
+def line_equation_coefficients(l):
+	(x1, y1), (x2, y2) = l
+	# Line equation: Ax + By + C = 0
+	A = y2 - y1
+	B = x1 - x2
+	C = x2 * y1 - x1 * y2
+	return A, B, C
 
 def line_line_intersection(line1, line2):
-	(x1, y1), (x2, y2) = line1
+	"""(x1, y1), (x2, y2) = line1
 	(x3, y3), (x4, y4) = line2
 
 	# Coeficientes da equação geral da reta: Ax + By + C = 0
@@ -151,8 +158,10 @@ def line_line_intersection(line1, line2):
 
 	A2 = y4 - y3
 	B2 = x3 - x4
-	C2 = x4 * y3 - x3 * y4
-
+	C2 = x4 * y3 - x3 * y4"""
+	A1, B1, C1 = line_equation_coefficients(line1)
+	A2, B2, C2 = line_equation_coefficients(line2)
+	
 	# Determinante
 	det = A1 * B2 - A2 * B1
 
