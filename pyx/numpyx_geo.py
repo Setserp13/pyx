@@ -962,6 +962,64 @@ def rects(offset, sizes, axis=0, align=0.5, gap=0.0):
 
 
 
+def circle_circle_intersection(c0, c1, tol=1e-9):
+	"""
+	Compute intersection points between two circle objects.
+
+	Returns:
+		None  -> no intersection
+		[]    -> coincident circles (infinite intersections)
+		[p]   -> tangent (one point)
+		[p1, p2] -> two intersection points (numpy arrays)
+	"""
+
+	p0 = c0.center
+	p1 = c1.center
+	r0 = c0.radius
+	r1 = c1.radius
+
+	d = np.linalg.norm(p1 - p0)
+
+	# No intersection
+	if d > r0 + r1 + tol:
+		return None
+
+	# One inside the other
+	if d < abs(r0 - r1) - tol:
+		return None
+
+	# Coincident circles
+	if d < tol and abs(r0 - r1) < tol:
+		return []
+
+	# Distance from p0 to midpoint
+	a = (r0**2 - r1**2 + d**2) / (2*d)
+
+	# Height from midpoint to intersections
+	h_sq = r0**2 - a**2
+	h_sq = max(h_sq, 0.0)
+	h = np.sqrt(h_sq)
+
+	# Midpoint
+	midpoint = p0 + a * (p1 - p0) / d
+
+	# Perpendicular direction
+	perp = np.array([-(p1 - p0)[1], (p1 - p0)[0]]) / d
+
+	p_int1 = midpoint + h * perp
+	p_int2 = midpoint - h * perp
+
+	if h < tol:
+		return [p_int1]  # tangent
+
+	return [p_int1, p_int2]
+
+
+
+
+
+
+
 
 
 
