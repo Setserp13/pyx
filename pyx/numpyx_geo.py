@@ -1015,6 +1015,56 @@ def circle_circle_intersection(c0, c1, tol=1e-9):
 	return [p_int1, p_int2]
 
 
+def circle_line_intersection(c, l, tol=1e-9):
+	"""
+	Intersection between circle and line segment.
+
+	c : circle instance
+	l   : line instance (shape (2,2))
+
+	Returns:
+		None
+		[p]
+		[p1, p2]
+	"""
+
+	C = c.center
+	r = c.radius
+
+	P0 = np.array(l[0], dtype=float)
+	P1 = np.array(l[1], dtype=float)
+
+	d = P1 - P0          # direction vector
+	f = P0 - C           # vector from circle center to line start
+
+	a = np.dot(d, d)
+	b = 2 * np.dot(f, d)
+	c = np.dot(f, f) - r**2
+
+	discriminant = b**2 - 4*a*c
+
+	if discriminant < -tol:
+		return None
+
+	discriminant = max(discriminant, 0.0)
+	sqrt_disc = np.sqrt(discriminant)
+
+	t1 = (-b - sqrt_disc) / (2*a)
+	t2 = (-b + sqrt_disc) / (2*a)
+
+	points = []
+
+	# Check if intersection is within segment [0,1]
+	if 0 - tol <= t1 <= 1 + tol:
+		points.append(P0 + t1 * d)
+
+	if 0 - tol <= t2 <= 1 + tol and discriminant > tol:
+		points.append(P0 + t2 * d)
+
+	if not points:
+		return None
+
+	return points
 
 
 
