@@ -156,7 +156,10 @@ class rect:
 
 	def denormalize_points(self, value): return [self.denormalize_point(x) for x in value]
 	
-	def normalize_vector(self, value): return value / self.size
+	def normalize_vector(self, value):
+		size = self.size
+		size = np.where(size == 0, 1, size)
+		return value / size
 
 	def denormalize_vector(self, value): return value * self.size
 
