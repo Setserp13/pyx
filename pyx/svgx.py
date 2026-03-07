@@ -442,11 +442,12 @@ def text(cx, cy, s, pivot=np.ones(2) * 0.5, font='arial.ttf', font_size=12, **kw
 	#result = svgx.g(svgx.rect(*rct.min, *rct.size, fill="red"), result)
 	return result
 
-def g(*args, **kwargs):
+def g(obj, **kwargs): return lxmlx.element("g", children=[x.to_svg_element() for x in obj], **kwargs)
+"""def g(*args, **kwargs):
 	result = etree.Element("g", **to_str(kwargs))
 	for x in args:
 		result.append(x)
-	return result
+	return result"""
 
 def path(d, **kwargs): return etree.Element("path", d=d, **to_str(kwargs))
 
@@ -484,14 +485,15 @@ import pyx.generic.generic as generic
 
 def get_attrib(obj): return getattr(obj, "attrib", {})
 
-bezier.path.draw = lambda self: path(self.d(), **get_attrib(self))
-geo.circle.draw = lambda self: circle(self, **get_attrib(self))
-geo.ellipse.draw = lambda self: ellipse(self, **get_attrib(self))
-geo.line.draw = lambda self: line(self, **get_attrib(self))
-geo.polyline.draw = lambda self: polygon(self, **get_attrib(self)) if self.closed else polyline(self, **get_attrib(self))
-npx.rect.draw = lambda self, **kwargs: rect(self, **get_attrib(self))
-geo.group.draw = lambda self: g(*[x.draw() for x in self])
+bezier.path.to_svg_element = lambda self: path(self.d(), **get_attrib(self))
+geo.circle.to_svg_element = lambda self: circle(self, **get_attrib(self))
+geo.ellipse.to_svg_element = lambda self: ellipse(self, **get_attrib(self))
+geo.line.to_svg_element = lambda self: line(self, **get_attrib(self))
+geo.polyline.to_svg_element = lambda self: polygon(self, **get_attrib(self)) if self.closed else polyline(self, **get_attrib(self))
+npx.rect.to_svg_element = lambda self, **kwargs: rect(self, **get_attrib(self))
+#geo.group.draw = lambda self: g(*[x.draw() for x in self])
 #geo.group.draw = lambda self: g([x.draw() for x in self], **get_attrib(self))
+geo.group.to_svg_element = lambda self: g(self, **get_attrib(self))
 
 shapes = [bezier.path, geo.circle, geo.ellipse, geo.line, geo.polyline, npx.rect, geo.group]
 
@@ -499,7 +501,7 @@ def to_svg(obj):
 	size = obj.aabb.size
 	obj.aabb = npx.rect(np.zeros(2), size)
 	result = svg(*size)
-	result.append(obj.draw())
+	result.append(obj.to_svg_element())
 	return result
 
 for x in shapes:
