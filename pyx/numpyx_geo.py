@@ -706,7 +706,7 @@ class polyline(np.ndarray):#list):
 				s = math.sin(angles[i] / 2)
 				result.append(v[i] + x * (width * (1.0 - align)) / s)
 				result.insert(0, v[i] - (x * width * align) / s)
-		if closed:
+		if v.closed:
 				mid = len(result) // 2
 				#print(result, mid, result[mid - 1])
 				return polyline([result[mid - 1]] + result + [result[mid]])
@@ -1029,6 +1029,7 @@ def circle_line_intersection(c, l, tol=1e-9):
 		return None
 
 	return points
+
 
 
 
