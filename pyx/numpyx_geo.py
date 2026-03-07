@@ -260,7 +260,7 @@ def truncate(vertices, t=.25):	#, closed=True):
 #returns the vertex indices of a polygon, a star polygon or a polygon compound, is denoted by its Schläfli symbol {p/q}, where p and q are relatively prime (they share no factors) and q ≥ 2
 def polygram(p, q):	#p = total number of vertices, q = step size (how many points to skip when drawing)
 	#if q >= p / 2 or p < 3:
-	if q >= p / 2 or p < 2:
+	if q > p / 2 or p < 2:
 		return []
 	if math.gcd(p, q) == 1: #returns a regular polygon or a regular star polygon
 		return [[(i * q) % p for i in range(p)]]
@@ -1066,6 +1066,7 @@ def circle_line_intersection(c, l, tol=1e-9):
 		return None
 
 	return points
+
 
 
 
