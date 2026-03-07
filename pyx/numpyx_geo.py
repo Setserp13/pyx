@@ -172,6 +172,11 @@ class line(np.ndarray):	#start = self[0], end = self[1]
 
 	def expand(self, amount, relative=False): return self.padding(-amount, -amount, relative=relative)
 
+	def resize(self, value, pivot=0.5):
+		origin = npx.lerp(*self, pivot)
+		dir = self.direction
+		return line([origin - dir * value * (1 - pivot), origin + dir * value * pivot])
+	
 	def subdivide(self, n): return polyline(npx.subdivide(self[0], self[1], n+1), closed=False).edges()
 
 	@property
@@ -1029,6 +1034,7 @@ def circle_line_intersection(c, l, tol=1e-9):
 		return None
 
 	return points
+
 
 
 
