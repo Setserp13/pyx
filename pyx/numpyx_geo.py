@@ -569,8 +569,8 @@ class polyline(np.ndarray):#list):
 			result.append(npx.normalize(t))
 		return result
 
-	def normal(edge, outward=True): return line(edge).normal(left=not outward)
-	
+	def normal(edge, outward=True): return line(edge).normal * -1 if outward else 1
+
 	def normals(p, outward=True): return [polyline.normal(x, outward=outward) for x in p.edges()]
 	
 	def vertex_normals(vertices, outward=True):
@@ -1029,6 +1029,7 @@ def circle_line_intersection(c, l, tol=1e-9):
 		return None
 
 	return points
+
 
 
 
