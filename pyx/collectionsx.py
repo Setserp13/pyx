@@ -266,7 +266,7 @@ def ndfor(arr, func, index=None):	#it does work with jagged (ragged) arrays
 	if index is None:
 		index = []
 
-	if not isinstance(arr, (list, tuple)):
+	if not isinstance(arr, (list)):	#, tuple)):
 		return func(arr, *index)
 
 	for i, item in enumerate(arr):
@@ -276,7 +276,7 @@ def ndmap(arr, func, index=None):	#it does work with jagged (ragged) arrays
 	if index is None:
 		index = []
 
-	if not isinstance(arr, (list, tuple)):
+	if not isinstance(arr, (list)):	#, tuple)):
 		return func(arr, *index)
 
 	return [
