@@ -172,7 +172,7 @@ class line(np.ndarray):	#start = self[0], end = self[1]
 
 	def expand(self, amount, relative=False): return self.padding(-amount, -amount, relative=relative)
 
-	def subdivide(self, n): return polyline.edges(npx.subdivide(self[0], self[1], n+1), closed=False)
+	def subdivide(self, n): return polyline(npx.subdivide(self[0], self[1], n+1), closed=False).edges()
 
 	@property
 	def aabb(self): return npx.aabb(*self)
@@ -1029,6 +1029,7 @@ def circle_line_intersection(c, l, tol=1e-9):
 		return None
 
 	return points
+
 
 
 
