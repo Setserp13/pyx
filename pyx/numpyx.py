@@ -154,6 +154,8 @@ class rect:
 	def denormalize_point(self, value): return value * self.size + self.min
 	def denormalize_point_component(self, value, axis=0): return value * self.size[axis] + self.min[axis]
 
+	def denormalize_points(self, value): return [self.denormalize_point(x) for x in value]
+	
 	def normalize_vector(self, value): return value / self.size
 
 	def denormalize_vector(self, value): return value * self.size
