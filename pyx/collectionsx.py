@@ -33,7 +33,9 @@ class List:
 
 	#Return a k-cycle
 	#def arange(ls, k, start=0): return [ls[(start + i) % len(ls)] for i in range(k)]
-	def arange(ls, k, start=0, cycle=True): return [ls[(start + i) % len(ls)] for i in range(k if cycle else min(k, len(ls) - start))]
+	#def arange(ls, k, start=0, cycle=True): return [ls[(start + i) % len(ls)] for i in range(k if cycle else min(k, len(ls) - start))]
+	def arange(ls, k, start=0, cycle=True):
+		return [ls[i % len(ls)] for i in range(start if cycle else max(start, 0), start + k if cycle else min(start + k, len(ls)))]
 
 	def aranges(ls, k, start=0, cycle=True): return [List.arange(ls, k, start + i) for i in range(len(ls) - (0 if cycle else (k - 1)))]
 
