@@ -321,7 +321,7 @@ class Mesh():
 	
 	def get_face(self, i): return polyline(List.items(self.vertices, self.faces[i]))
 
-	def get_faces(self): return [self.get_face(i) for i in range(len(self.faces))]
+	def get_faces(self): return group([self.get_face(i) for i in range(len(self.faces))])
 
 	@property
 	def edges(self): return flatten([polyline.edges(x) for x in self.get_faces()])
@@ -1065,6 +1065,7 @@ def circle_line_intersection(c, l, tol=1e-9):
 		return None
 
 	return points
+
 
 
 
