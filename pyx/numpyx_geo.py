@@ -500,30 +500,12 @@ class polyline(np.ndarray):#list):
 		# You can set custom attributes here if needed
 		self.my_attribute = getattr(obj, 'my_attribute', 'default')
 
-
-	
-	def edges(p, closed=True): return [line(x) for x in List.aranges(p, 2, cycle=closed)]
-
-	def edge(vertices, index): return line([vertices[index], vertices[(index + 1) % len(vertices)]])
-	
-	#def angle(vertices, index): return [vertices.edge(index), list(reversed(vertices.edge((index - 1) % len(vertices))))]
-	def vertex_angle(vertices, index): return angle(List.arange(vertices, 3, start=index - 1))
-	
-	def vertex_angles(vertices, closed=True): return [vertices.vertex_angle(i) for i in range(0 if closed else 1, len(vertices) - (0 if closed else 1))]
-	
-	"""def angle_size(vertices, index):
-		angle = vertices.angle(index)
-		return npx.angle(angle[0][1] - angle[0][0], angle[1][1] - angle[1][0])"""
-	
-	def lengths(vertices, closed=True):
-		return [np.linalg.norm(x[0] - x[1]) for x in polyline.edges(vertices, closed=closed)]
-	
-	def perimeter(vertices, closed=True): return sum(polyline.lengths(vertices, closed=closed))
-
-	def midpoints(vertices, closed=True):
-		return [np.mean(x, axis = 0) for x in polyline.edges(vertices, closed=closed)]
-	
-	def point_from_proportion(vertices, t, closed=True):
+	#def edges(p, closed=True): return [line(x) for x in List.aranges(p, 2, cycle=closed)]
+	#def vertex_angles(vertices, closed=True): return [vertices.vertex_angle(i) for i in range(0 if closed else 1, len(vertices) - (0 if closed else 1))]
+	#def lengths(vertices, closed=True): return [np.linalg.norm(x[0] - x[1]) for x in polyline.edges(vertices, closed=closed)]
+	#def perimeter(vertices, closed=True): return sum(polyline.lengths(vertices, closed=closed))
+	#def midpoints(vertices, closed=True): return [np.mean(x, axis = 0) for x in polyline.edges(vertices, closed=closed)]
+	"""def point_from_proportion(vertices, t, closed=True):
 		p = polyline.perimeter(vertices, closed=closed)
 		a = 0.0
 		for x in polyline.edges(vertices, closed=closed):
@@ -532,7 +514,6 @@ class polyline(np.ndarray):#list):
 				return npx.lerp(x[0], x[1], (t - a) / (b - a))
 			a = b
 		return None
-
 	def subdivide(vertices, n, closed=True):
 		result = []
 		for x in polyline.edges(vertices, closed=closed):
@@ -540,8 +521,7 @@ class polyline(np.ndarray):#list):
 		if not closed:
 			result.append(vertices[-1])
 		return result
-
-	def incident_edges(vertices, vertex, closed=True): #vertex is an index
+		def incident_edges(vertices, vertex, closed=True): #vertex is an index
 		edges = [List.arange(vertices, 2, start=vertex - 1), List.arange(vertices, 2, start=vertex)]
 		if not closed:
 			if vertex == 0:
@@ -549,7 +529,6 @@ class polyline(np.ndarray):#list):
 			elif vertex == len(vertices) - 1:
 				return edges[:-1]
 		return edges
-
 	def neighbors(v, i, closed=True):	#return ith-vertex-adjacent vertices
 		n = len(v)
 		if closed:
@@ -560,7 +539,6 @@ class polyline(np.ndarray):#list):
 			return [v[n - 2]] if n > 1 else []
 		else:
 			return [v[i - 1], v[i + 1]]
-
 	def tangents(v, closed=True):
 		n = len(v)
 		result = []
@@ -576,8 +554,81 @@ class polyline(np.ndarray):#list):
 				else:
 					t = (v[i+1] - v[i-1]) * 0.5
 			result.append(npx.normalize(t))
+		return result"""
+
+
+	
+	def edges(p): return [line(x) for x in List.aranges(p, 2, cycle=p.closed)]
+	
+	def edge(p, index): return line([p[index], p[(index + 1) % len(p)]])
+	
+	def vertex_angle(p, index): return angle(List.arange(p, 3, start=index - 1))
+	
+	def vertex_angles(p): return [p.vertex_angle(i) for i in range(0 if p.closed else 1, len(p) - (0 if p.closed else 1))]
+
+	def lengths(p): return [x.length for x in p.edges()]
+	
+	def perimeter(p): return sum(p.lengths())
+	
+	def midpoints(p): return [x.midpoint for x in p.edges()]
+	
+	def point_from_proportion(self, t):
+		p = self.perimeter()
+		a = 0.0
+		for x in self.edges():
+			b = a + x.length / p
+			if a <= t and t <= b:
+				return npx.lerp(x[0], x[1], (t - a) / (b - a))
+			a = b
+		return None
+
+	def subdivide(p, n):
+		result = []
+		for x in p.edges():
+			result += [npx.lerp(x[0], x[1], i / n) for i in range(n)]
+		if not p.closed:
+			result.append(vertices[-1])
+		return polyline(result, closed=p.closed)
+
+	def incident_edges(p, vertex): #vertex is an index
+		edges = [List.arange(p, 2, start=vertex - 1), List.arange(p, 2, start=vertex)]
+		if not p.closed:
+			if vertex == 0:
+				return edges[1:]
+			elif vertex == len(p) - 1:
+				return edges[:-1]
+		return edges
+
+	def neighbors(v, i):	#return ith-vertex-adjacent vertices
+		n = len(v)
+		if v.closed:
+			return [v[(i - 1) % n], v[(i + 1) % n]]
+		if i == 0:
+			return [v[1]] if n > 1 else []
+		elif i == n - 1:
+			return [v[n - 2]] if n > 1 else []
+		else:
+			return [v[i - 1], v[i + 1]]
+
+	def tangents(v):
+		n = len(v)
+		result = []
+		for i in range(n):
+			if v.closed:
+				t = v[(i + 1) % n] - v[(i - 1) % n]	# Índices com wrap-around
+				#print(t)
+			else:
+				if i == 0:
+					t = v[1] - v[0]
+				elif i == n - 1:
+					t = v[-1] - v[-2]
+				else:
+					t = (v[i+1] - v[i-1]) * 0.5
+			result.append(npx.normalize(t))
 		return result
 
+
+	
 	def normal(edge, outward=True):
 		return line(edge).normal(left=not outward)
 		"""v = edge[1] - edge[0]
@@ -783,14 +834,9 @@ class polyline(np.ndarray):#list):
 	def __matmul__(self, M): return polyline(npx.affine_transform(M, self), closed=self.closed)
 	
 class polygon:
-	def a(n, R=1): return R * math.cos(math.pi/n)	#apothem
-
-	def R(n, a=1): return a / math.cos(math.pi/n)
-
-	def s(n, R=1): return 2 * R * math.sin(math.pi/n)
-
 	def internal_angle(n): return polyline.internal_angle_sum(n) / n
 
+	#a = apothem, r = radius, s = side
 	def r2a(n): return math.cos(math.pi / n)
 	def r2s(n): return 2 * math.sin(math.pi / n)
 	def a2s(n): return 2 * math.tan(math.pi / n)
@@ -1066,6 +1112,7 @@ def circle_line_intersection(c, l, tol=1e-9):
 		return None
 
 	return points
+
 
 
 
