@@ -500,64 +500,6 @@ class polyline(np.ndarray):#list):
 		# You can set custom attributes here if needed
 		self.my_attribute = getattr(obj, 'my_attribute', 'default')
 
-	#def edges(p, closed=True): return [line(x) for x in List.aranges(p, 2, cycle=closed)]
-	#def vertex_angles(vertices, closed=True): return [vertices.vertex_angle(i) for i in range(0 if closed else 1, len(vertices) - (0 if closed else 1))]
-	#def lengths(vertices, closed=True): return [np.linalg.norm(x[0] - x[1]) for x in polyline.edges(vertices, closed=closed)]
-	#def perimeter(vertices, closed=True): return sum(polyline.lengths(vertices, closed=closed))
-	#def midpoints(vertices, closed=True): return [np.mean(x, axis = 0) for x in polyline.edges(vertices, closed=closed)]
-	"""def point_from_proportion(vertices, t, closed=True):
-		p = polyline.perimeter(vertices, closed=closed)
-		a = 0.0
-		for x in polyline.edges(vertices, closed=closed):
-			b = a + np.linalg.norm(x[0] - x[1]) / p
-			if a <= t and t <= b:
-				return npx.lerp(x[0], x[1], (t - a) / (b - a))
-			a = b
-		return None
-	def subdivide(vertices, n, closed=True):
-		result = []
-		for x in polyline.edges(vertices, closed=closed):
-			result += [npx.lerp(x[0], x[1], i / n) for i in range(n)]
-		if not closed:
-			result.append(vertices[-1])
-		return result
-		def incident_edges(vertices, vertex, closed=True): #vertex is an index
-		edges = [List.arange(vertices, 2, start=vertex - 1), List.arange(vertices, 2, start=vertex)]
-		if not closed:
-			if vertex == 0:
-				return edges[1:]
-			elif vertex == len(vertices) - 1:
-				return edges[:-1]
-		return edges
-	def neighbors(v, i, closed=True):	#return ith-vertex-adjacent vertices
-		n = len(v)
-		if closed:
-			return [v[(i - 1) % n], v[(i + 1) % n]]
-		if i == 0:
-			return [v[1]] if n > 1 else []
-		elif i == n - 1:
-			return [v[n - 2]] if n > 1 else []
-		else:
-			return [v[i - 1], v[i + 1]]
-	def tangents(v, closed=True):
-		n = len(v)
-		result = []
-		for i in range(n):
-			if closed:
-				t = v[(i + 1) % n] - v[(i - 1) % n]	# Índices com wrap-around
-				#print(t)
-			else:
-				if i == 0:
-					t = v[1] - v[0]
-				elif i == n - 1:
-					t = v[-1] - v[-2]
-				else:
-					t = (v[i+1] - v[i-1]) * 0.5
-			result.append(npx.normalize(t))
-		return result"""
-
-
-	
 	def edges(p): return [line(x) for x in List.aranges(p, 2, cycle=p.closed)]
 	
 	def edge(p, index): return line([p[index], p[(index + 1) % len(p)]])
@@ -627,20 +569,14 @@ class polyline(np.ndarray):#list):
 			result.append(npx.normalize(t))
 		return result
 
+	def normal(edge, outward=True): return line(edge).normal(left=not outward)
+	
+	def normals(p, outward=True): return [polyline.normal(x, outward=outward) for x in p.edges()]
+	
+	def vertex_normals(vertices, outward=True):
+		return [npx.normalize(np.sum([polyline.normal(x, outward=outward) for x in p.incident_edges(i)], axis=0)) for i in range(len(p))]
 
-	
-	def normal(edge, outward=True):
-		return line(edge).normal(left=not outward)
-		"""v = edge[1] - edge[0]
-		result = np.array([v[1], -v[0]]) if outward else np.array([-v[1], v[0]])
-		return npx.normalize(result)"""
-	
-	def normals(vertices, outward=True, closed=True): return [polyline.normal(x, outward=outward) for x in polyline.edges(vertices, closed)]
-	
-	def vertex_normals(vertices, outward=True, closed=True):
-		return [npx.normalize(np.sum([polyline.normal(x, outward=outward) for x in polyline.incident_edges(vertices, i, closed=closed)], axis=0)) for i in range(len(vertices))]
-
-	def expand(self, amount, outward=True, closed=True):
+	def expand(self, amount, outward=True):
 		return polyline([self[i] + x * float(amount) for i, x in enumerate(self.vertex_normals(outward=outward, closed=self.closed))], closed=self.closed)
 	
 	def internal_angle_sum(n): return math.pi * (n - 2)
@@ -649,26 +585,17 @@ class polyline(np.ndarray):#list):
 		mid = np.mean(edge, axis=0)
 		return [mid, mid + polyline.normal(edge, outward=False)]
 
-	def perpendicular_bisectors(vertices, closed=True):
-		return [polyline.perpendicular_bisector(x) for x in polyline.edges(vertices, closed=closed)]
+	def perpendicular_bisectors(p): return [polyline.perpendicular_bisector(x) for x in p.edges()]
 
-	def circumcenter(vertices, closed=True):
-		return mat.line_line_intersection(*polyline.perpendicular_bisectors(vertices, closed=closed)[:2])
-		"""m1, v1 = polyline.perpendicular_bisector(vertices[:2])
-		m2, v2 = polyline.perpendicular_bisector(vertices[1:3])
-	
-		A_mat = np.array([v1, -v2]).T
-		b_vec = m2 - m1
-		t = np.linalg.solve(A_mat, b_vec)
-		return m1 + t[0] * v1"""
+	def circumcenter(p): return mat.line_line_intersection(*p.perpendicular_bisectors()[:2])
 
-	def centroid(vertices): return np.mean(vertices, axis = 0)
+	def centroid(p): return np.mean(p, axis = 0)
 
-	def line_intersection(vertices, line, closed=True): return [mat.segment_line_intersection(x, line) for x in polyline.edges(vertices, closed=closed)]
+	def line_intersection(p, line): return [mat.segment_line_intersection(x, line) for x in p.edges()]
 
-	def ray_intersection(vertices, ray, closed=True): return [mat.segment_ray_intersection(x, ray) for x in polyline.edges(vertices, closed=closed)]
+	def ray_intersection(p, ray): return [mat.segment_ray_intersection(x, ray) for x in p.edges()]
 
-	def segment_intersection(vertices, seg, closed=True): return [mat.segment_segment_intersection(x, seg) for x in polyline.edges(vertices, closed=closed)]
+	def segment_intersection(p, seg): return [mat.segment_segment_intersection(x, seg) for x in p.edges()]
 
 	def is_clockwise(polygon):
 		sum = 0
@@ -750,17 +677,8 @@ class polyline(np.ndarray):#list):
 	
 		return triangles
 
-
-	"""def to_stroke(v, width=1, closed=False, align=0.5):
-		inward_normals = polyline.vertex_normals(v, outward=False, closed=closed)
-		outward_normals = polyline.vertex_normals(v, outward=True, closed=closed)
-		for i, x in enumerate(v):
-			inward_normals[i] = inward_normals[i] * width * align + x
-			outward_normals[i] = outward_normals[i] * width * (1.0 - align) + x
-		return polyline(inward_normals + list(reversed(outward_normals)))"""
-
-	def to_stroke(v, width, closed=False, align=0.5, join='miter', cap='butt'):	#join in ['bevel', 'butt', 'miter'], cap in ['butt', 'square']
-		if closed:
+	def to_stroke(v, width, align=0.5, join='miter', cap='butt'):	#join in ['bevel', 'butt', 'miter'], cap in ['butt', 'square']
+		if v.closed:
 			if np.allclose(v[0], v[-1]):
 				v = v[:-1]
 		else:
@@ -770,22 +688,21 @@ class polyline(np.ndarray):#list):
 				v[-1] += npx.normalize(v[-1] - v[-2]) * width * 0.5
 		result = []
 		if join == 'bevel':
-			edges = polyline.edges(v, closed=closed)
-			for x in edges:
+			for x in v.edges():
 				normal = polyline.normal(x, outward=True)
 				result.append(x[0] + normal * width * (1.0 - align))
 				result.append(x[1] + normal * width * (1.0 - align))
 				result.insert(0, x[0] - normal * width * align)
 				result.insert(0, x[1] - normal * width * align)
 		elif join == 'butt':
-			for i, x in enumerate(polyline.vertex_normals(v, outward=True, closed=closed)):
+			for i, x in enumerate(v.vertex_normals(outward=True)):
 				result.append(v[i] + x * width * (1.0 - align))
 				result.insert(0, v[i] - x * width * align)
 		elif join == 'miter':
 			angles = [x.size() for x in polyline.vertex_angles(v, closed=closed)]
-			if not closed:
+			if not v.closed:
 				angles = [math.pi] + angles + [math.pi]
-			for i, x in enumerate(polyline.vertex_normals(v, outward=True, closed=closed)):
+			for i, x in enumerate(v.vertex_normals(outward=True)):
 				s = math.sin(angles[i] / 2)
 				result.append(v[i] + x * (width * (1.0 - align)) / s)
 				result.insert(0, v[i] - (x * width * align) / s)
@@ -795,7 +712,7 @@ class polyline(np.ndarray):#list):
 				return polyline([result[mid - 1]] + result + [result[mid]])
 		else: return polyline(result)
 
-	def rotate_around(p, angle, center=np.zeros(2)): return polyline([npx.rotate_around(x, angle, center) for x in p])
+	def rotate_around(p, angle, center=np.zeros(2)): return polyline([npx.rotate_around(x, angle, center) for x in p], closed=p.closed)
 
 	def from_vectors(v, axis=None, start=np.zeros(2)):	#concatenation of n vectors (or edges) end-to-end starting from start
 		result = polyline(v)
@@ -1112,6 +1029,7 @@ def circle_line_intersection(c, l, tol=1e-9):
 		return None
 
 	return points
+
 
 
 
