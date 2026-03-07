@@ -385,7 +385,7 @@ class grid:
 				a = np.array(min_index)
 				b = np.array(max_index)
 				a[axis] = b[axis] = i
-				result.append([self.cell_min(a), self.cell_min(b)])
+				result.append(line([self.cell_min(a), self.cell_min(b)]))
 		return result
 
 	def cells(self, stop, start=np.zeros(2), swizzle=[0,1]):
