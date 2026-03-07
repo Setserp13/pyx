@@ -262,6 +262,7 @@ def polygram(p, q):	#p = total number of vertices, q = step size (how many point
 	#if q >= p / 2 or p < 3:
 	if q > p / 2 or p < 2:
 		return []
+	print(p, q)
 	if math.gcd(p, q) == 1: #returns a regular polygon or a regular star polygon
 		return [[(i * q) % p for i in range(p)]]
 	#else math.gcd(p, q) > 1: returns a regular polygon compound
@@ -1066,6 +1067,7 @@ def circle_line_intersection(c, l, tol=1e-9):
 		return None
 
 	return points
+
 
 
 
