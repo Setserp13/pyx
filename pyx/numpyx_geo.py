@@ -152,16 +152,16 @@ class line(np.ndarray):	#start = self[0], end = self[1]
 	@property
 	def midpoint(self): return np.mean(self, axis=0)
 
-	@property #in XY-plane
-	def normal(self): return np.array([-self.direction[1], self.direction[0]] + list(self.direction[2:]))
+	@property #in XY-plane	#return left normal
+	def normal(self): return np.array([-self.direction[1], self.direction[0]])
 
 	@property	#angle of inclination, from x-axis
 	def angle(self): return math.atan2(self.vector[1], self.vector[0])
 
-	def normal(self, left=True):
+	"""def normal(self, left=True):
 		v = self.vector
 		n = np.array([-v[1], v[0]]) if left else np.array([v[1], -v[0]])
-		return n if np.array_equal(self[0], self[1]) else npx.normalize(n)
+		return n if np.array_equal(self[0], self[1]) else npx.normalize(n)"""
 
 	def padding(self, left, right, relative=False):
 		if relative:
@@ -1029,6 +1029,7 @@ def circle_line_intersection(c, l, tol=1e-9):
 		return None
 
 	return points
+
 
 
 
