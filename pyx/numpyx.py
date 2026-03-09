@@ -9,6 +9,8 @@ import random
 from pyx.numpyx_geo import polyline, line
 from itertools import product
 
+def norm(x, ord): sum(abs(x)**ord)**(1./ord)
+
 def slice_by_size(arr, size):	#Divide a 1D array into subarrays of given size. Last chunk may be smaller.
 	return [arr[i:i+size] for i in range(0, len(arr), size)]
 
