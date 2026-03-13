@@ -95,7 +95,7 @@ class audio(np.ndarray):
 			samples = samples.mean(axis=1)
 		return audio(samples, sr=self.sr)
 
-	def frame(y, frame_length, hop_length):	#Slice a data array into (overlapping) frames.
+	def frames(y, frame_length, hop_length):	#Slice a data array into (overlapping) frames.
 		
 		if y.ndim == 1:
 			n_frames = 1 + (len(y) - frame_length) // hop_length
@@ -111,7 +111,30 @@ class audio(np.ndarray):
 	
 		return np.lib.stride_tricks.as_strided(y, shape=shape, strides=strides)
 
+	def apply(self, func, frame_length, hop_length):
+		frames = self.frame(frame_length, hop_length)
+		values = func(frames)
+		return audio(values, self.sr // hop_length)
+
+	def rms(self, frame_length=2048, hop_length=512):
+		return self.apply(lambda frames: np.sqrt(np.mean(frames**2, axis=1)), frame_length, hop_length)
+	
 	def short_time_energy(self, frame_length=2048, hop_length=512):
+		return self.apply(lambda frames: np.sum(frames**2, axis=1), frame_length, hop_length)
+
+	def spectral_flux(self, frame_length=2048, hop_length=512):
+		def func(frames):
+			spectrum = np.abs(np.fft.rfft(frames, axis=1))
+			diff = np.diff(spectrum, axis=0)
+			flux = np.sum(diff**2, axis=1)
+			if flux.ndim == 1:
+				flux = np.concatenate(([0], flux))
+			else:
+				flux = np.vstack([np.zeros((1, flux.shape[1])), flux])
+			return flux
+		return self.apply(func, frame_length, hop_length)
+	
+	"""def short_time_energy(self, frame_length=2048, hop_length=512):
 		self = self.to_mono()
 		frames = self.frame(frame_length, hop_length)
 		energy = np.sum(frames**2, axis=1)
@@ -132,7 +155,7 @@ class audio(np.ndarray):
 		self = self.to_mono()
 		frames = self.frame(frame_length, hop_length)
 		rms = np.sqrt(np.mean(frames**2, axis=1))
-		return audio(rms, self.sr // hop_length)
+		return audio(rms, self.sr // hop_length)"""
 	
 	"""def to_rms(self, frame_length=2048, hop_length=512):
 		y = self.to_mono()	# convert to mono if needed
