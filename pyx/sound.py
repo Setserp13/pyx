@@ -134,41 +134,6 @@ class audio(np.ndarray):
 			return flux
 		return self.apply(func, frame_length, hop_length)
 	
-	"""def short_time_energy(self, frame_length=2048, hop_length=512):
-		self = self.to_mono()
-		frames = self.frame(frame_length, hop_length)
-		energy = np.sum(frames**2, axis=1)
-		return audio(energy, self.sr // hop_length)
-
-	def spectral_flux(self, frame_length=2048, hop_length=512):
-		self = self.to_mono()
-		frames = self.frame(frame_length, hop_length)
-		spectrum = np.abs(np.fft.rfft(frames, axis=1))	# FFT magnitude
-		n_frames = spectrum.shape[0]
-		flux = np.zeros(n_frames)
-		for i in range(1, n_frames):
-			diff = spectrum[i] - spectrum[i-1]
-			flux[i] = np.sum(diff**2)
-		return audio(flux, self.sr // hop_length)
-
-	def rms(self, frame_length=2048, hop_length=512):
-		self = self.to_mono()
-		frames = self.frame(frame_length, hop_length)
-		rms = np.sqrt(np.mean(frames**2, axis=1))
-		return audio(rms, self.sr // hop_length)"""
-	
-	"""def to_rms(self, frame_length=2048, hop_length=512):
-		y = self.to_mono()	# convert to mono if needed
-		#rms = librosa.feature.rms(y=y, frame_length=frame_length, hop_length=hop_length)[0]
-		n_frames = 1 + (len(y) - frame_length) // hop_length
-		shape = (n_frames, frame_length)
-		strides = (y.strides[0] * hop_length, y.strides[0])
-		frames = np.lib.stride_tricks.as_strided(y, shape=shape, strides=strides)
-		rms = np.sqrt(np.mean(frames**2, axis=1))
-		
-		rms_sr = self.sr // hop_length	#/ hop_length
-		return audio(rms, rms_sr)"""
-
 
 def concatenate(ls, gap_seconds=0.0):
 	arrays = []
