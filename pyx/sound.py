@@ -151,6 +151,7 @@ def concatenate(ls, gap_seconds=0.0):
 	return audio(np.concatenate(arrays, axis=0), sr=sr)
 
 #Time unit conversion
+#time (seconds) ↔ samples ↔ frames
 
 def frames_to_samples(frames, hop_length, n_fft=None):
 	frames = np.asarray(frames)
@@ -158,13 +159,6 @@ def frames_to_samples(frames, hop_length, n_fft=None):
 	if n_fft is not None:
 		offset = n_fft // 2
 	return frames * hop_length + offset
-
-def frames_to_time(frames, sr, hop_length, n_fft=None):
-	frames = np.asarray(frames)
-	offset = 0
-	if n_fft is not None:
-		offset = n_fft // 2
-	return (frames * hop_length + offset) / sr
 
 def samples_to_frames(samples, hop_length, n_fft=None):
 	samples = np.asarray(samples)
@@ -177,16 +171,15 @@ def samples_to_time(samples, sr):
 	samples = np.asarray(samples)
 	return samples / sr
 
-def time_to_frames(times, sr, hop_length, n_fft=None):
-	times = np.asarray(times)
-	offset = 0
-	if n_fft is not None:
-		offset = n_fft // 2
-	return ((times * sr - offset) / hop_length).astype(int)
-
 def time_to_samples(times, sr):
 	times = np.asarray(times)
 	return (times * sr).astype(int)
+
+def frames_to_time(frames, sr, hop_length, n_fft=None):
+	return samples_to_time(frames_to_samples(frames, hop_length, n_fft), sr)
+
+def time_to_frames(times, sr, hop_length, n_fft=None):
+	return samples_to_frames(time_to_samples(times, sr), hop_length, n_fft)
 
 ###
 
