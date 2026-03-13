@@ -150,29 +150,45 @@ def concatenate(ls, gap_seconds=0.0):
 
 	return audio(np.concatenate(arrays, axis=0), sr=sr)
 
+#Time unit conversion
 
-#REMOVE THIS CLASS LATER, KEEP ALL INTO audio CLASS
-"""class soundwave():
-	def __init__(self, path):
-		# --- Audio analysis ---
-		self.path = path
-		print(self.path)
-		y, sr = librosa.load(self.path)
-		frame_size = 2048
-		hop = 512
-		self.rms = librosa.feature.rms(y=y, frame_length=frame_size, hop_length=hop)[0]
-		self.rms = self.rms / np.max(self.rms)   # normalize 0–1
+def frames_to_samples(frames, hop_length, n_fft=None):
+	frames = np.asarray(frames)
+	offset = 0
+	if n_fft is not None:
+		offset = n_fft // 2
+	return frames * hop_length + offset
 
-		self.times = librosa.frames_to_time(np.arange(len(self.rms)), sr=sr, hop_length=hop, n_fft=frame_size)
+def frames_to_time(frames, sr, hop_length, n_fft=None):
+	frames = np.asarray(frames)
+	offset = 0
+	if n_fft is not None:
+		offset = n_fft // 2
+	return (frames * hop_length + offset) / sr
 
-	def amp_at(self, t):
-		for i in range(len(self.times) - 1):
-			if self.times[i] <= t < self.times[i+1]:
-				return self.rms[i]
-		return self.rms[-1]
+def samples_to_frames(samples, hop_length, n_fft=None):
+	samples = np.asarray(samples)
+	offset = 0
+	if n_fft is not None:
+		offset = n_fft // 2
+	return ((samples - offset) / hop_length).astype(int)
 
-	@property
-	def duration(self): return librosa.get_duration(path=self.path)"""
+def samples_to_time(samples, sr):
+	samples = np.asarray(samples)
+	return samples / sr
+
+def time_to_frames(times, sr, hop_length, n_fft=None):
+	times = np.asarray(times)
+	offset = 0
+	if n_fft is not None:
+		offset = n_fft // 2
+	return ((times * sr - offset) / hop_length).astype(int)
+
+def time_to_samples(times, sr):
+	times = np.asarray(times)
+	return (times * sr).astype(int)
+
+###
 
 
 def sine_wave(freq, t, phase=0.0):	#pure tone
