@@ -112,13 +112,13 @@ class audio(np.ndarray):
 		return np.lib.stride_tricks.as_strided(y, shape=shape, strides=strides)
 
 	def short_time_energy(y, frame_length=2048, hop_length=512):
-		frames = frame(y, frame_length, hop_length)
+		frames = y.frame(frame_length, hop_length)
 		y = y.to_mono()
 		energy = np.sum(frames**2, axis=1)
 		return audio(energy, self.sr // hop_length)
 
 	def spectral_flux(y, frame_length=2048, hop_length=512):
-		frames = frame(y, frame_length, hop_length)
+		frames = y.frame(frame_length, hop_length)
 		y = y.to_mono()
 		spectrum = np.abs(np.fft.rfft(frames, axis=1))	# FFT magnitude
 		n_frames = spectrum.shape[0]
@@ -129,7 +129,7 @@ class audio(np.ndarray):
 		return audio(flux, self.sr // hop_length)
 
 	def rms(y, frame_length=2048, hop_length=512):
-		frames = frame(y, frame_length, hop_length)
+		frames = y.frame(frame_length, hop_length)
 		y = y.to_mono()
 		rms = np.sqrt(np.mean(frames**2, axis=1))
 		return audio(rms, self.sr // hop_length)
