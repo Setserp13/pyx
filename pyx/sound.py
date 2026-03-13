@@ -112,7 +112,7 @@ class audio(np.ndarray):
 		return np.lib.stride_tricks.as_strided(y, shape=shape, strides=strides)
 
 	def apply(self, func, frame_length, hop_length):
-		frames = self.frame(frame_length, hop_length)
+		frames = self.frames(frame_length, hop_length)
 		values = func(frames)
 		return audio(values, self.sr // hop_length)
 
