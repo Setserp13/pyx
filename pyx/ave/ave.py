@@ -91,12 +91,13 @@ def path_property(object, property, start_time, durations, start_value, values):
 
 class DictClip(Clip):
 	def __init__(self, start_time, duration, make, clips=None, **init): # clips is a list of tuples of property name and clip, each clip in clips has func that receives prop value and t as input and returns a given property value
-		self.start_time = start_time
-		self.duration = duration
+		#self.start_time = start_time
+		#self.duration = duration
 		self.make = make
 		self.init = init
 		self.clips = [] if clips == None else clips
-		self.function = lambda t, *args: self.cfunc(t, *args)
+		#self.function = lambda t, *args: self.cfunc(t, *args)
+		super().__init__(start_time, duration, lambda t, *args: self.cfunc(t, *args))
 		#print(self.clips, init)
 		self.props = self.init
 
