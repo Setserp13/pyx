@@ -70,7 +70,7 @@ class Instant(Interval):
 		super().__init__(time, time)
 
 
-class Layer(list):	#elements are Interval-like
+class Layer(list):	#elements are Interval-like or Layer-like
 	@property
 	def start(self): return min([x.start for x in self])
 
