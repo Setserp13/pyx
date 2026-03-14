@@ -3,8 +3,9 @@ from pyx.mat.mat import *
 from pyx.numpyx import lerp
 import cv2
 import math
+from pyx.timeline import Interval, Layer
 
-class Clip:
+"""class Clip:
 	def __init__(self, start_time, duration, function):
 		self.start_time = start_time
 		self.duration = duration
@@ -45,7 +46,29 @@ class ClipGroup(Clip):
 
 	def update(self, t, *args):
 		for x in self.items:
+			x.update(t, *args)"""
+
+
+class Clip(Interval):
+	def __init__(self, start, duration, function):
+		super().__init__(start, start + duration)
+		self.function = function
+
+	def update(self, t, *args):	#, **kwargs):
+		if self.start <= t <= self.end:
+			self.function(t - self.start, *args)
+
+class Group(Layer):	#elements are Clip-like
+	def update(self, t, *args):
+		for x in self:
 			x.update(t, *args)
+
+
+
+
+
+
+
 
 def animate_property(object, property, start_time, duration, function, ease = Ease.QuadInOut):
 	return Clip(start_time, duration, lambda t, *args: setattr(object, property, function(ease(t / duration))))
