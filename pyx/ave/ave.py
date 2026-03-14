@@ -4,6 +4,9 @@ from pyx.numpyx import lerp
 import cv2
 import math
 from pyx.timeline import Interval, Layer
+import imageio
+import numpy as np
+from tqdm import tqdm
 
 """class Clip:
 	def __init__(self, start_time, duration, function):
@@ -63,6 +66,52 @@ class Group(Layer):	#elements are Clip-like
 		for x in self:
 			x.update(t, *args)
 
+class Video(Layer):	#elements are Clip-like or Group-like
+	def __init__(self, width, height, fps, items=None):
+		self.width = width
+		self.height = height
+		self.fps = fps
+		super().__init__([] if items is None else items)
+
+	@property
+	def size(self): return npx.array([self.width, self.height])
+
+	@property
+	def rect(self): return npx.rect(np.zeros(2), self.size)
+
+	@property
+	def frame_count(self): return int(self.duration * self.fps)
+
+	def render(self, filename='output.mov', mode='rgba'):	#mode in ['gray', 'rgb', 'rgba']
+		# Abre o writer com codec PNG e RGBA
+		writer = imageio.get_writer(
+			filename,
+			format='FFMPEG',
+			mode='I',
+			fps=self.fps,
+			codec='png',
+			output_params=['-pix_fmt', mode]
+		)
+
+		print("Gerando frames com transparência...")
+		for i in tqdm(range(self.frame_count)):
+			t = i / self.fps
+			if mode == 'gray':
+				img = np.zeros((self.height, self.width), dtype=np.uint8)
+				img[:, :] = 0
+			else:
+				img = np.zeros((self.height, self.width, len(mode)), dtype=np.uint8)
+				img[:, :] = (0,) * len(mode)	#channels
+
+			for clip in self:
+				clip.update(t, img)  # draw clip
+
+			writer.append_data(img)
+
+		writer.close()
+		print("Codificando vídeo final com canal alfa...")
+
+		print("Vídeo com transparência salvo como:", filename)
 
 
 
@@ -192,11 +241,10 @@ def generateVideo(fps, width, height, frame_count, *clips, filename='output.mp4'
 
 
 
-import imageio
-import numpy as np
+
 import os
 import cv2
-from tqdm import tqdm
+
 import subprocess
 
 def generateVideoWithAlpha(fps, width, height, frame_count, *clips, filename='output.mov'):
