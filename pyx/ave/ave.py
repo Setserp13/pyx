@@ -105,8 +105,12 @@ class DictClip(Clip):
 		#clip = Clip(start_time, duration, func)
 		def f(t, *args): self.props[name] = func(t)
 		clip = Clip(start_time, duration, f)
-		self.start_time = min(self.start_time, start_time)
-		self.end_time = max(self.end_time, start_time + duration)
+		
+		#self.start_time = min(self.start_time, start_time)
+		#self.end_time = max(self.end_time, start_time + duration)
+		self.start = min(self.start, start_time)
+		self.end = max(self.end, start_time + duration)
+		
 		self.clips.append([name, clip])
 
 	def set_prop01(self, name, start_time, duration, func, ease = Ease.QuadInOut):
