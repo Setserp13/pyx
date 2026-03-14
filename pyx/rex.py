@@ -1,3 +1,4 @@
+import math
 import re
 from pyx.collectionsx import List
 import pyx.mat.mat as mat
