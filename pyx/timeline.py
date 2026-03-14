@@ -77,6 +77,9 @@ class Layer(list):	#elements are Interval-like or Layer-like
 	@property
 	def end(self): return max([x.end for x in self])
 
+	@property
+	def duration(self): return Time(self.end - self.start)
+
 	def shift(self, **kwargs):
 		for x in self:
 			x.shift(**kwargs)
