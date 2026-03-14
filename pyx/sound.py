@@ -134,13 +134,11 @@ class audio(np.ndarray):
 			return flux
 		return self.apply(func, frame_length, hop_length)
 
-	def stft(self, frame_length=2048, hop_length=512, window=True):
+	def stft(self, frame_length=2048, hop_length=512):
+		w = np.hanning(frame_length).reshape(1, frame_length, 1)
 	
-		if window:
-			w = np.hanning(frame_length)
-			return self.apply(lambda f: np.fft.rfft(f * w, axis=1), frame_length, hop_length)
-	
-		return self.apply(lambda f: np.fft.rfft(f, axis=1), frame_length, hop_length)
+		return self.apply(lambda f: np.fft.rfft(f * w, axis=1), frame_length, hop_length)
+
 
 def concatenate(ls, gap_seconds=0.0):
 	arrays = []
