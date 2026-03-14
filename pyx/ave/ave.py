@@ -74,6 +74,9 @@ class Video(Layer):	#elements are Clip-like or Group-like
 		super().__init__([] if items is None else items)
 
 	@property
+	def aspect(self): return self.width / self.height
+
+	@property
 	def size(self): return np.array([self.width, self.height])
 
 	@property
