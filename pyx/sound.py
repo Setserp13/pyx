@@ -118,7 +118,7 @@ class audio(np.ndarray):
 
 	def rms(self, frame_length=2048, hop_length=512):
 		return self.apply(lambda frames: np.sqrt(np.mean(frames**2, axis=1)), frame_length, hop_length)
-	
+
 	def short_time_energy(self, frame_length=2048, hop_length=512):
 		return self.apply(lambda frames: np.sum(frames**2, axis=1), frame_length, hop_length)
 
@@ -133,7 +133,14 @@ class audio(np.ndarray):
 				flux = np.vstack([np.zeros((1, flux.shape[1])), flux])
 			return flux
 		return self.apply(func, frame_length, hop_length)
+
+	def stft(self, frame_length=2048, hop_length=512, window=True):
 	
+		if window:
+			w = np.hanning(frame_length)
+			return self.apply(lambda f: np.fft.rfft(f * w, axis=1), frame_length, hop_length)
+	
+		return self.apply(lambda f: np.fft.rfft(f, axis=1), frame_length, hop_length)
 
 def concatenate(ls, gap_seconds=0.0):
 	arrays = []
