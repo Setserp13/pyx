@@ -1,56 +1,12 @@
+import cv2
+import imageio
+import math
+import numpy as np
 from pyx.mat.ease import Ease
 from pyx.mat.mat import *
 from pyx.numpyx import lerp
-import cv2
-import math
 from pyx.timeline import Interval, Layer
-import imageio
-import numpy as np
 from tqdm import tqdm
-
-"""class Clip:
-	def __init__(self, start_time, duration, function):
-		self.start_time = start_time
-		self.duration = duration
-		self.function = function
-
-	@property
-	def end_time(self): return self.start_time + self.duration
-
-	@end_time.setter
-	def end_time(self, value): self.duration = value - self.start_time
-
-	def update(self, t, *args):#, **kwargs):
-		if self.start_time <= t <= self.end_time:
-			self.function(t - self.start_time, *args)
-
-class ClipGroup(Clip):
-	def __init__(self, items=None):
-		self.start_time = float('inf')
-		self.end_time = float('-inf')
-		self.items = []
-		if items is not None:
-			self.extend(items)
-	
-	def append(self, clip):
-		self.items.append(clip)
-		self.start_time = min(self.start_time, clip.start_time)
-		self.end_time = max(self.end_time, clip.end_time)
-	
-	def extend(self, clips):
-		for x in clips:
-			self.append(x)
-
-	def __getitem__(self, index): return self.items[index]
-
-	def __setitem__(self, index, value): self.items[index] = value
-
-	def __len__(self): return len(self.items)
-
-	def update(self, t, *args):
-		for x in self.items:
-			x.update(t, *args)"""
-
 
 class Clip(Interval):
 	def __init__(self, start, duration, function):
@@ -210,6 +166,63 @@ def progressbar(i, total, size=50):
 	fill = math.floor(progress * size)
 	bar = '#' * fill + '_' * (size - fill)
 	print(f'{bar}{100*progress:.2f}% {i+1}/{total}', end='\r')	
+
+
+
+
+
+
+
+
+"""class Clip:
+	def __init__(self, start_time, duration, function):
+		self.start_time = start_time
+		self.duration = duration
+		self.function = function
+
+	@property
+	def end_time(self): return self.start_time + self.duration
+
+	@end_time.setter
+	def end_time(self, value): self.duration = value - self.start_time
+
+	def update(self, t, *args):#, **kwargs):
+		if self.start_time <= t <= self.end_time:
+			self.function(t - self.start_time, *args)
+
+class ClipGroup(Clip):
+	def __init__(self, items=None):
+		self.start_time = float('inf')
+		self.end_time = float('-inf')
+		self.items = []
+		if items is not None:
+			self.extend(items)
+	
+	def append(self, clip):
+		self.items.append(clip)
+		self.start_time = min(self.start_time, clip.start_time)
+		self.end_time = max(self.end_time, clip.end_time)
+	
+	def extend(self, clips):
+		for x in clips:
+			self.append(x)
+
+	def __getitem__(self, index): return self.items[index]
+
+	def __setitem__(self, index, value): self.items[index] = value
+
+	def __len__(self): return len(self.items)
+
+	def update(self, t, *args):
+		for x in self.items:
+			x.update(t, *args)"""
+
+
+
+
+
+
+
 
 def generateVideo(fps, width, height, frame_count, *clips, filename='output.mp4'):
 	# Create video writer object
