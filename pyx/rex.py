@@ -82,3 +82,23 @@ def snake_to_camel(name: str, lower=False) -> str:
 	result = ''.join(word.capitalize() if word else '_' for word in name.split('_'))
 	return result[0].lower() + result[1:] if lower else result
 
+def roman(n):
+	if not (1 <= n <= 3999):
+		raise ValueError("Roman numerals support integers from 1 to 3999")
+	mapper = { 1: "I", 5: "V", 10: "X", 50: "L", 100: "C", 500: "D", 1000: "M" }
+	div = mat.largest_power(n, 10)
+	res = ""
+	while n:
+		last_num = int(n / div)	# main significant digit extracted
+		#print(div, last_num)
+		if last_num <= 3:
+			res += (mapper[div] * last_num)
+		elif last_num == 4:
+			res += (mapper[div] + mapper[div * 5])
+		elif 5 <= last_num <= 8:
+			res += (mapper[div * 5] + (mapper[div] * (last_num - 5)))
+		elif last_num == 9:
+			res += (mapper[div] + mapper[div * 10])
+		n = math.floor(n % div)
+		div /= 10
+	return res
