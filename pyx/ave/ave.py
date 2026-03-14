@@ -141,7 +141,7 @@ class DictClip(Clip):
 
 	def cfunc(self, t, *args): # composite function
 		for x in self.clips:
-			x[1].update(t + self.start_time)
+			x[1].update(t + self.start)	#_time)
 			#self.props[x[0]] = x[1].update(self.props[x[0]], t + self.start_time)
 		args[0][:] = self.make(args[0], **self.props)[:]
 		#return self.make(obj, **self.props)
