@@ -768,6 +768,11 @@ class polyline(np.ndarray):#list):
 				result.extend(sort_by_distance(inter, edge[0]))
 		return polyline(result, closed=p1.closed)
 
+	def simplify(self):	# remove points that lie exactly on the line between their neighbors
+		result = [x for i, x in enumerate(self) if not point_on_segment(self.neighbors(i), x)]
+		#print(len(result))
+		return result
+
 
 class polygon:
 	def internal_angle(n): return polyline.internal_angle_sum(n) / n
@@ -959,7 +964,17 @@ def rects(offset, sizes, axis=0, align=0.5, gap=0.0):
 	distribute(result, axis=axis, align=align, gap=gap)
 	return result
 
+def collinear(u, v, tol=1e-12):	# check if vectors u and v are collinear
+	#return abs(np.cross(u, v)) < tol	# works in 2D only
+	return np.linalg.norm(np.cross(u, v)) < tol	# works in 2D and 3D
 
+def point_on_segment(seg, p, tol=1e-12):	# check if point p is on segment ab
+	a, b = seg
+	ap = p - a
+	ab = b - a
+	if not collinear(ab, ap, tol):
+		return False
+	return -tol <= np.dot(ap, ab) <= np.dot(ab, ab) + tol
 
 def circle_circle_intersection(c0, c1, tol=1e-9):
 	"""
