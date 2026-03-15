@@ -198,12 +198,12 @@ def point_on_ray(ray, pt, tol=1e-6):	#ray = (origin, direction)
 	dist = np.linalg.norm(v - np.dot(v, d) / np.dot(d, d) * d)	# Distance from point to ray line
 	return dist < tol and np.dot(d, v) >= -tol"""
 
-def colinear_point_on_segment(seg, pt):	# Checa se ponto está no segmento (entre A e B)
+"""def colinear_point_on_segment(seg, pt):	# Checa se ponto está no segmento (entre A e B)
 	AB = seg[1] - seg[0]
 	AP = pt - seg[0]
 	dot1 = np.dot(AB, AP)
 	dot2 = np.dot(AB, AB)
-	return 0 <= dot1 <= dot2
+	return 0 <= dot1 <= dot2"""
 	
 def ray_line_intersection(ray, line):
 	pt = line_line_intersection(ray, line)	# Calcula interseção
@@ -215,7 +215,7 @@ def segment_line_intersection(seg, line):
 	pt = line_line_intersection(seg, line)	# Calcula interseção
 	if pt is None:
 		return None
-	return pt if colinear_point_on_segment(seg, pt) else None
+	return pt if geo.point_on_segment(seg, pt) else None	#colinear_point_on_segment(seg, pt) else None
 
 def ray_ray_intersection(ray1, ray2):
 	pt = line_line_intersection(ray1, ray2)	# Calcula interseção
@@ -227,13 +227,14 @@ def segment_ray_intersection(seg, ray):
 	pt = line_line_intersection(seg, ray)	# Calcula interseção
 	if pt is None:
 		return None
-	return pt if colinear_point_on_ray(ray, pt) and colinear_point_on_segment(seg, pt) else None
+	return pt if colinear_point_on_ray(ray, pt) and geo.point_on_segment(seg, pt) else None	#colinear_point_on_segment(seg, pt) else None
 
 def segment_segment_intersection(seg1, seg2):
 	pt = line_line_intersection(seg1, seg2)	# Calcula interseção
 	if pt is None:
 		return None
-	return pt if colinear_point_on_segment(seg1, pt) and colinear_point_on_segment(seg2, pt) else None
+	return pt if geo.point_on_segment(seg1, pt) and geo.point_on_segment(seg2, pt) else None
+	#return pt if colinear_point_on_segment(seg1, pt) and colinear_point_on_segment(seg2, pt) else None
 
 def segment_polygon_intersection(seg, polygon):
 	p1, p2 = np.array(seg[0], float), np.array(seg[1], float)
