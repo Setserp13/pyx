@@ -194,7 +194,7 @@ class line(np.ndarray):	#start = self[0], end = self[1]
 
 	def coincide(a, b, tol=1e-12):
 		"""Check if two N-dimensional lines coincide."""
-    	return all(point_on_line(a, x, tol) for x in b)
+		return all(point_on_line(a, x, tol) for x in b)
 
 
 class chord(line):
