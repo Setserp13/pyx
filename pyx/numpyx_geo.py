@@ -765,7 +765,7 @@ class polyline(np.ndarray):#list):
 				and not any(np.array_equal(p, v) for v in edge)
 			]
 			if inter:
-				result.extend(geo.sort_by_distance(inter, edge[0]))
+				result.extend(sort_by_distance(inter, edge[0]))
 		return polyline(result, closed=p1.closed)
 
 
