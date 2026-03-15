@@ -893,6 +893,22 @@ def randomize3(vertices, r=.1): return [npx.random_in_sphere(r) + x for x in ver
 def conic_sort(edges):
 	return sorted(edges, key=lambda e: npx.angle2(npx.ei(0.0, 2), e.vector))
 
+def sort_by_angle(self, clockwise=False):
+	v = np.asarray(self)
+	c = v.mean(axis=0)
+	a = np.arctan2(v[:,1] - c[1], v[:,0] - c[0])
+	i = np.argsort(a)
+	return v[i[::-1] if clockwise else i]
+
+def sort_by_distance(self, point, reverse=False):
+	p = np.asarray(self)
+	d = ((p - point)**2).sum(1)
+	i = np.argsort(d)
+	return p[i[::-1] if reverse else i]
+
+
+
+
 def incident_edges(point, edges, eps=1e-9):
 	return [e for e in edges if any(np.linalg.norm(v - point) <= eps for v in e)]
 
