@@ -978,17 +978,6 @@ def point_on_segment(segment, point, tol=1e-12):
     v = b - a
     return npx.collinear(v, point - a, tol) and np.dot(point - a, v) >= -tol and np.dot(point - b, v) <= tol
 
-"""def point_on_segment(seg, p, tol=1e-12):	# check if point p is on segment ab
-	a, b = seg
-	ap = p - a
-	ab = b - a
-	if not npx.collinear(ab, ap, tol):
-		return False
-	return -tol <= np.dot(ap, ab) <= np.dot(ab, ab) + tol"""
-
-
-
-
 
 def circle_circle_intersection(c0, c1, tol=1e-9):
 	"""
