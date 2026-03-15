@@ -193,6 +193,13 @@ class line(np.ndarray):	#start = self[0], end = self[1]
 		delta = value - pivot
 		return line(self + delta)
 
+	def coincide(a, b, tol=1e-12):
+		"""Check if two N-dimensional lines coincide."""
+		if not npx.collinear(a.vector, b.vector, tol=tol):
+			return False
+		# check if a point from line b lies on line a
+		return npx.collinear(a.vector, b[0] - a[0], tol=tol)
+
 
 class chord(line):
 	def __init__(self, start, end, theta):
