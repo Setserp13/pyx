@@ -424,12 +424,12 @@ def embed_images(svg_tree, svg_folder):
 
 
 
-def circle(obj, **kwargs): return lxmlx.element("circle", cx=obj.center[0], cy=obj.center[1], r=obj.radius, **kwargs)
-def ellipse(obj, **kwargs): return lxmlx.element("ellipse", cx=obj.center[0], cy=obj.center[1], rx=obj.a, ry=obj.b, **kwargs)
-def polygon(obj, **kwargs): return lxmlx.element("polygon", points=" ".join(f"{x[0]},{x[1]}" for x in obj), **kwargs)
-def polyline(obj, **kwargs): return lxmlx.element("polyline", points=" ".join(f"{x[0]},{x[1]}" for x in obj), **kwargs)
-def rect(obj, **kwargs): return lxmlx.element("rect", x=obj.min[0], y=obj.min[1], width=obj.size[0], height=obj.size[1], **kwargs)
-def line(obj, **kwargs): return lxmlx.element("line", x1=obj[0][0], y1=obj[0][1], x2=obj[1][0], y2=obj[1][1], **kwargs)
+def circle_to_svg(obj, **kwargs): return lxmlx.element("circle", cx=obj.center[0], cy=obj.center[1], r=obj.radius, **kwargs)
+def ellipse_to_svg(obj, **kwargs): return lxmlx.element("ellipse", cx=obj.center[0], cy=obj.center[1], rx=obj.a, ry=obj.b, **kwargs)
+def polygon_to_svg(obj, **kwargs): return lxmlx.element("polygon", points=" ".join(f"{x[0]},{x[1]}" for x in obj), **kwargs)
+def polyline_to_svg(obj, **kwargs): return lxmlx.element("polyline", points=" ".join(f"{x[0]},{x[1]}" for x in obj), **kwargs)
+def rect_to_svg(obj, **kwargs): return lxmlx.element("rect", x=obj.min[0], y=obj.min[1], width=obj.size[0], height=obj.size[1], **kwargs)
+def line_to_svg(obj, **kwargs): return lxmlx.element("line", x1=obj[0][0], y1=obj[0][1], x2=obj[1][0], y2=obj[1][1], **kwargs)
 
 
 def text(cx, cy, s, pivot=np.ones(2) * 0.5, font='arial.ttf', font_size=12, **kwargs): #In SVG, the y attribute of a <text> element refers to the baseline of the text
@@ -442,7 +442,7 @@ def text(cx, cy, s, pivot=np.ones(2) * 0.5, font='arial.ttf', font_size=12, **kw
 	#result = svgx.g(svgx.rect(*rct.min, *rct.size, fill="red"), result)
 	return result
 
-def g(obj, **kwargs): return lxmlx.element("g", children=[x.to_svg_element() for x in obj], **kwargs)
+def group_to_svg(obj, **kwargs): return lxmlx.element("g", children=[x.to_svg_element() for x in obj], **kwargs)
 """def g(*args, **kwargs):
 	result = etree.Element("g", **to_str(kwargs))
 	for x in args:
@@ -485,15 +485,15 @@ import pyx.generic.generic as generic
 
 def get_attrib(obj): return getattr(obj, "attrib", {})
 
-bezier.path.to_svg_element = lambda self: path(self.d(), **get_attrib(self))
-geo.circle.to_svg_element = lambda self: circle(self, **get_attrib(self))
-geo.ellipse.to_svg_element = lambda self: ellipse(self, **get_attrib(self))
-geo.line.to_svg_element = lambda self: line(self, **get_attrib(self))
-geo.polyline.to_svg_element = lambda self: polygon(self, **get_attrib(self)) if self.closed else polyline(self, **get_attrib(self))
+bezier.path.to_svg_element = lambda self: path_to_svg(self.d(), **get_attrib(self))
+geo.circle.to_svg_element = lambda self: circle_to_svg(self, **get_attrib(self))
+geo.ellipse.to_svg_element = lambda self: ellipse_to_svg(self, **get_attrib(self))
+geo.line.to_svg_element = lambda self: line_to_svg(self, **get_attrib(self))
+geo.polyline.to_svg_element = lambda self: polygon_to_svg(self, **get_attrib(self)) if self.closed else polyline_to_svg(self, **get_attrib(self))
 npx.rect.to_svg_element = lambda self, **kwargs: rect(self, **get_attrib(self))
 #geo.group.draw = lambda self: g(*[x.draw() for x in self])
 #geo.group.draw = lambda self: g([x.draw() for x in self], **get_attrib(self))
-geo.group.to_svg_element = lambda self: g(self, **get_attrib(self))
+geo.group.to_svg_element = lambda self: group_to_svg(self, **get_attrib(self))
 
 shapes = [bezier.path, geo.circle, geo.ellipse, geo.line, geo.polyline, npx.rect, geo.group]
 
