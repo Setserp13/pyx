@@ -962,21 +962,33 @@ def rects(offset, sizes, axis=0, align=0.5, gap=0.0):
 	distribute(result, axis=axis, align=align, gap=gap)
 	return result
 
-"""def collinear(u, v, tol=1e-12):	# check if vectors u and v are collinear
-	#return abs(np.cross(u, v)) < tol	# works in 2D only
-	return np.linalg.norm(np.cross(u, v)) < tol	# works in 2D and 3D"""
 
+# ------------------- Point-on checks -------------------
 def point_on_line(line, point, tol=1e-12):
-	a, b = line
-	return npx.collinear(b - a, point - a, tol)
+    a, b = line
+    return npx.collinear(b - a, point - a, tol)
 
-def point_on_segment(seg, p, tol=1e-12):	# check if point p is on segment ab
+def point_on_ray(ray, point, tol=1e-12):
+    a, b = ray
+    v = b - a
+    return npx.collinear(v, point - a, tol) and np.dot(point - a, v) >= -tol
+
+def point_on_segment(segment, point, tol=1e-12):
+    a, b = segment
+    v = b - a
+    return npx.collinear(v, point - a, tol) and np.dot(point - a, v) >= -tol and np.dot(point - b, v) <= tol
+
+"""def point_on_segment(seg, p, tol=1e-12):	# check if point p is on segment ab
 	a, b = seg
 	ap = p - a
 	ab = b - a
 	if not npx.collinear(ab, ap, tol):
 		return False
-	return -tol <= np.dot(ap, ab) <= np.dot(ab, ab) + tol
+	return -tol <= np.dot(ap, ab) <= np.dot(ab, ab) + tol"""
+
+
+
+
 
 def circle_circle_intersection(c0, c1, tol=1e-9):
 	"""
