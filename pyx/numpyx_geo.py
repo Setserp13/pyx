@@ -754,7 +754,21 @@ class polyline(np.ndarray):#list):
 
 	def __rmatmul__(self, M): return self.__matmul__(M)
 	def __matmul__(self, M): return polyline(npx.affine_transform(M, self), closed=self.closed)
-	
+
+	def clip(p1, p2):	#split the edges of polyline p1 wherever they intersect edges of polyline p2
+		result = []
+		for edge in p1.edges():
+			result.append(edge[0])
+			inter = [
+				p for y in p2.edges()
+				if (p := mat.segment_segment_intersection(edge, y)) is not None
+				and not any(np.array_equal(p, v) for v in edge)
+			]
+			if inter:
+				result.extend(geo.sort_by_distance(inter, edge[0]))
+		return polyline(result, closed=p1.closed)
+
+
 class polygon:
 	def internal_angle(n): return polyline.internal_angle_sum(n) / n
 
