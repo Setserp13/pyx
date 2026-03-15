@@ -126,7 +126,7 @@ def from_svg(obj):
 	tag = etree.QName(obj).localname
 	#print(tag)
 	result = obj.from_svg()
-	"""match tag:
+	match tag:
 		case 'circle': result = circle_from_svg(obj)
 		case 'ellipse': result = ellipse_from_svg(obj)
 		case 'g' | 'svg':
@@ -137,7 +137,7 @@ def from_svg(obj):
 		case 'polyline': result = polyline_from_svg(obj)
 		case 'polygon': result = polygon_from_svg(obj)
 		case 'rect': result = rect_from_svg(obj)
-		case 'text': pass"""
+		case 'text': pass
 
 	if result is None:
 		return result
@@ -211,59 +211,8 @@ def parse_points2(s):
 	return np.array(matches, dtype=float)
 def polygon_from_svg(obj):  return geo.polyline(parse_points2(obj.get('points')), closed=True)
 def polyline_from_svg(obj): return geo.polyline(parse_points2(obj.get('points')), closed=False)
-def group_from_svg(obj): return geo.group([x.from_svg() for x in obj])
 
 
-"""def circle_bbox(obj): return circle_from_svg(obj).aabb
-def ellipse_bbox(obj):
-	cx, cy, rx, ry = get(obj, float, 'cx', 'cy', 'rx', 'ry')
-	return npx.rect2(cx - rx, cy - ry, rx * 2, ry * 2)
-def rect_bbox(obj): return rect_from_svg(obj)	#npx.rect2(*get(obj, float, 'x', 'y', 'width', 'height'))
-def line_bbox(obj):	return npx.aabb(*line_from_svg(obj))
-def path_bbox(obj):
-	path = parse_path(obj.get('d', None))
-	try:
-		bbox = path.bbox()
-	except:	#not valid d in path
-		return None
-	transform = get_transform(obj)
-	sc = transform['scale'] if 'scale' in transform else np.ones(2)
-	if len(sc) < 2:
-		sc = np.array(sc * 2)
-	#print(transform, sc)
-	return npx.rect.min_max(np.array([bbox[0] * sc[0], bbox[2] * sc[1]]), np.array([bbox[1] * sc[0], bbox[3] * sc[1]]))
-def polyline_bbox(obj):	return npx.aabb(polyline_from_svg(obj))
-def g_bbox(group):
-	bboxes = []
-	for elem in group.iterdescendants():	#deep search
-		#try:
-		#	b = bbox(elem)
-		#except:
-		#	#print(elem)
-		#	continue
-		#if b is None:
-		#	continue
-		b = bbox(elem)
-		bboxes.append(b)
-	return npx.aabb(bboxes) if len(bboxes) > 0 else None
-#
-def bbox(obj): return {	#Se o grupo tiver transformações (transform="translate(...)" etc), isso não será aplicado
-		'circle': circle_bbox,
-		'ellipse': ellipse_bbox,
-		'image': rect_bbox,
-		'line': line_bbox,
-		'path': path_bbox,
-		'polyline': polyline_bbox,
-		'polygon': polyline_bbox,
-		'rect': rect_bbox,
-		'g': g_bbox
-	}[localname(obj.tag)](obj)
-
-def get_bboxes(objs): return [get_bbox(x) for x in objs]
-
-def find_bboxes(root, tag, get_bbox):
-	ns = {'svg': 'http://www.w3.org/2000/svg'}
-	return [get_bbox(x) for x in root.findall(f'.//svg:{tag}', namespaces=ns)]"""
 
 
 def find_layers(root):
@@ -477,13 +426,6 @@ import pyx.generic.generic as generic
 
 def get_attrib(obj): return getattr(obj, "attrib", {})
 
-bezier.path.from_svg = lambda self: bezier_from_svg(self)
-geo.circle.from_svg = lambda self: circle_from_svg(self)
-geo.ellipse.from_svg = lambda self: ellipse_from_svg(self)
-geo.line.from_svg = lambda self: line_from_svg(self)
-geo.polyline.from_svg = lambda self: polygon_from_svg(self) if self.closed else polyline_from_svg(self)
-npx.rect.from_svg = lambda self: rect_from_svg(self)
-geo.group.from_svg = lambda self: group_from_svg(self)
 
 bezier.path.to_svg = lambda self: path_to_svg(self.d(), **get_attrib(self))
 geo.circle.to_svg = lambda self: circle_to_svg(self, **get_attrib(self))
