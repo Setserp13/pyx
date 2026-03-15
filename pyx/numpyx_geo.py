@@ -1087,7 +1087,40 @@ def circle_line_intersection(c, l, tol=1e-9):
 	return points
 
 
+def line_line_intersection(a, b, tol=1e-12):
+    """
+    Compute intersection of two N-dimensional lines.
+    Returns:
+        - copy of a if lines coincide
+        - None if lines are parallel but separate
+        - intersection point if lines intersect at a single point
+    """
+    if line.coincide(a, b, tol):
+        return a.copy()  # lines are the same
 
+    if npx.collinear(a.vector, b.vector, tol):
+        return None  # parallel but separate
+
+    # Solve a + t * va = b + s * vb
+    va = np.asarray(a.vector)
+    vb = np.asarray(b.vector)
+    p1 = np.asarray(a[0])
+    p2 = np.asarray(b[0])
+
+    # Build matrix to solve: t*va - s*vb = p2 - p1
+    A = np.column_stack((va, -vb))
+    bvec = p2 - p1
+
+    # Use least squares (works in any dimension)
+    sol, residuals, rank, _ = np.linalg.lstsq(A, bvec, rcond=None)
+
+    # If residual is large, no intersection
+    if residuals.size > 0 and residuals[0] > tol:
+        return None
+
+    t = sol[0]
+    intersection_point = p1 + t * va
+    return intersection_point
 
 
 
