@@ -1,5 +1,6 @@
 import numpy as np
 import pyx.numpyx as npx
+from pyx.numpyx import collinear
 import pyx.mat.mat as mat
 from pyx.collectionsx import lshift
 import math
@@ -958,9 +959,9 @@ def rects(offset, sizes, axis=0, align=0.5, gap=0.0):
 	distribute(result, axis=axis, align=align, gap=gap)
 	return result
 
-def collinear(u, v, tol=1e-12):	# check if vectors u and v are collinear
+"""def collinear(u, v, tol=1e-12):	# check if vectors u and v are collinear
 	#return abs(np.cross(u, v)) < tol	# works in 2D only
-	return np.linalg.norm(np.cross(u, v)) < tol	# works in 2D and 3D
+	return np.linalg.norm(np.cross(u, v)) < tol	# works in 2D and 3D"""
 
 def point_on_line(line, point, tol=1e-12):
 	a, b = line
