@@ -481,9 +481,38 @@ def contains(min, max, value) -> bool:
 		raise ValueError("min, max, and value must have the same length")
 	return all(min[i] <= x <= max[i] for i, x in enumerate(value))
 
-def normalize(x):
-	magnitude = np.linalg.norm(x)
-	return x if magnitude == 0 else x / magnitude
+
+#Vector functions. Works in any dimension.
+
+def normalize(u, tol=1e-12):
+	"""
+	Return the unit vector of u. If ‖u‖ < tol, return a zero vector instead.
+	"""
+	#u = np.asarray(u)
+	nu = np.linalg.norm(u)
+
+	if nu < tol:
+		return np.zeros_like(u)
+
+	return u / nu
+
+def collinear(u, v, tol=1e-12):
+	"""
+	Return True if vectors u and v are collinear (parallel or antiparallel), False otherwise.
+	
+	Two vectors are collinear if one is a scalar multiple of the other.
+	This is equivalent to |u·v| = ||u|| * ||v|| or checking if normalize(u) == normalize(v)
+	or normalize(u) == -normalize(v).
+	"""
+	nu = np.linalg.norm(u)
+	nv = np.linalg.norm(v)
+
+	if nu < tol or nv < tol:
+		return True
+
+	return abs(np.dot(u, v)) >= (1 - tol) * nu * nv
+
+
 
 def angle(a, b):
 	result = np.dot(a, b)
