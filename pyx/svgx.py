@@ -217,7 +217,7 @@ def parse_points2(s):
 def polygon_from_svg(obj):  return geo.polyline(parse_points2(obj.get('points')), closed=True)
 def polyline_from_svg(obj): return geo.polyline(parse_points2(obj.get('points')), closed=False)
 
-def circle_bbox(obj): return circle_from_svg(obj).aabb
+"""def circle_bbox(obj): return circle_from_svg(obj).aabb
 def ellipse_bbox(obj):
 	cx, cy, rx, ry = get(obj, float, 'cx', 'cy', 'rx', 'ry')
 	return npx.rect2(cx - rx, cy - ry, rx * 2, ry * 2)
@@ -239,13 +239,13 @@ def polyline_bbox(obj):	return npx.aabb(polyline_from_svg(obj))
 def g_bbox(group):
 	bboxes = []
 	for elem in group.iterdescendants():	#deep search
-		"""try:
-			b = bbox(elem)
-		except:
-			#print(elem)
-			continue
-		if b is None:
-			continue"""
+		#try:
+		#	b = bbox(elem)
+		#except:
+		#	#print(elem)
+		#	continue
+		#if b is None:
+		#	continue
 		b = bbox(elem)
 		bboxes.append(b)
 	return npx.aabb(bboxes) if len(bboxes) > 0 else None
@@ -266,7 +266,7 @@ def get_bboxes(objs): return [get_bbox(x) for x in objs]
 
 def find_bboxes(root, tag, get_bbox):
 	ns = {'svg': 'http://www.w3.org/2000/svg'}
-	return [get_bbox(x) for x in root.findall(f'.//svg:{tag}', namespaces=ns)]
+	return [get_bbox(x) for x in root.findall(f'.//svg:{tag}', namespaces=ns)]"""
 
 
 def find_layers(root):
