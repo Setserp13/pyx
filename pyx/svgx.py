@@ -211,7 +211,7 @@ def parse_points2(s):
 	return np.array(matches, dtype=float)
 def polygon_from_svg(obj):  return geo.polyline(parse_points2(obj.get('points')), closed=True)
 def polyline_from_svg(obj): return geo.polyline(parse_points2(obj.get('points')), closed=False)
-def group_to_svg(obj): return geo.group([x.from_svg() for x in obj])
+def group_from_svg(obj): return geo.group([x.from_svg() for x in obj])
 
 
 """def circle_bbox(obj): return circle_from_svg(obj).aabb
