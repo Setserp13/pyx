@@ -22,12 +22,6 @@ import pyx.lxmlx as lxmlx
 from pyx.mat.transform import Node2D
 from pyx.gamepy.color import Color
 
-"""def vertices(obj):
-	if localname(obj.tag) == 'rect':
-		return [list(x) for x in npx.corners(rect_bbox(obj))]
-	elif localname(obj.tag) == 'path':
-		return [[float(y) for y in x.replace(' ', '').split(',')] for x in obj.get('d', '').split(' ')[1:-1]]"""
-
 def replace_all(root, replacements, exact_match=False):
 	"""
 	replacements: dict {old_text: new_text}
@@ -131,7 +125,8 @@ def from_svg(obj):
 	result = None
 	tag = etree.QName(obj).localname
 	#print(tag)
-	match tag:
+	result = obj.from_svg()
+	"""match tag:
 		case 'circle': result = circle_from_svg(obj)
 		case 'ellipse': result = ellipse_from_svg(obj)
 		case 'g' | 'svg':
@@ -142,7 +137,7 @@ def from_svg(obj):
 		case 'polyline': result = polyline_from_svg(obj)
 		case 'polygon': result = polygon_from_svg(obj)
 		case 'rect': result = rect_from_svg(obj)
-		case 'text': pass
+		case 'text': pass"""
 
 	if result is None:
 		return result
@@ -216,6 +211,8 @@ def parse_points2(s):
 	return np.array(matches, dtype=float)
 def polygon_from_svg(obj):  return geo.polyline(parse_points2(obj.get('points')), closed=True)
 def polyline_from_svg(obj): return geo.polyline(parse_points2(obj.get('points')), closed=False)
+def group_to_svg(obj): return geo.group([x.from_svg() for x in obj])
+
 
 """def circle_bbox(obj): return circle_from_svg(obj).aabb
 def ellipse_bbox(obj):
@@ -442,12 +439,7 @@ def text(cx, cy, s, pivot=np.ones(2) * 0.5, font='arial.ttf', font_size=12, **kw
 	#result = svgx.g(svgx.rect(*rct.min, *rct.size, fill="red"), result)
 	return result
 
-def group_to_svg(obj, **kwargs): return lxmlx.element("g", children=[x.to_svg_element() for x in obj], **kwargs)
-"""def g(*args, **kwargs):
-	result = etree.Element("g", **to_str(kwargs))
-	for x in args:
-		result.append(x)
-	return result"""
+def group_to_svg(obj, **kwargs): return lxmlx.element("g", children=[x.to_svg() for x in obj], **kwargs)
 
 def path(d, **kwargs): return etree.Element("path", d=d, **to_str(kwargs))
 
@@ -485,29 +477,35 @@ import pyx.generic.generic as generic
 
 def get_attrib(obj): return getattr(obj, "attrib", {})
 
-bezier.path.to_svg_element = lambda self: path_to_svg(self.d(), **get_attrib(self))
-geo.circle.to_svg_element = lambda self: circle_to_svg(self, **get_attrib(self))
-geo.ellipse.to_svg_element = lambda self: ellipse_to_svg(self, **get_attrib(self))
-geo.line.to_svg_element = lambda self: line_to_svg(self, **get_attrib(self))
-geo.polyline.to_svg_element = lambda self: polygon_to_svg(self, **get_attrib(self)) if self.closed else polyline_to_svg(self, **get_attrib(self))
-npx.rect.to_svg_element = lambda self, **kwargs: rect(self, **get_attrib(self))
-#geo.group.draw = lambda self: g(*[x.draw() for x in self])
-#geo.group.draw = lambda self: g([x.draw() for x in self], **get_attrib(self))
-geo.group.to_svg_element = lambda self: group_to_svg(self, **get_attrib(self))
+bezier.path.from_svg = lambda self: bezier_from_svg(self)
+geo.circle.from_svg = lambda self: circle_from_svg(self)
+geo.ellipse.from_svg = lambda self: ellipse_from_svg(self)
+geo.line.from_svg = lambda self: line_from_svg(self)
+geo.polyline.from_svg = lambda self: polygon_from_svg(self) if self.closed else polyline_from_svg(self)
+npx.rect.from_svg = lambda self: rect_from_svg(self)
+geo.group.from_svg = lambda self: group_from_svg(self)
+
+bezier.path.to_svg = lambda self: path_to_svg(self.d(), **get_attrib(self))
+geo.circle.to_svg = lambda self: circle_to_svg(self, **get_attrib(self))
+geo.ellipse.to_svg = lambda self: ellipse_to_svg(self, **get_attrib(self))
+geo.line.to_svg = lambda self: line_to_svg(self, **get_attrib(self))
+geo.polyline.to_svg = lambda self: polygon_to_svg(self, **get_attrib(self)) if self.closed else polyline_to_svg(self, **get_attrib(self))
+npx.rect.to_svg = lambda self: rect_to_svg(self, **get_attrib(self))
+geo.group.to_svg = lambda self: group_to_svg(self, **get_attrib(self))
 
 shapes = [bezier.path, geo.circle, geo.ellipse, geo.line, geo.polyline, npx.rect, geo.group]
 
-def to_svg(obj):
+def draw(obj):
 	size = obj.aabb.size
 	obj.aabb = npx.rect(np.zeros(2), size)
 	result = svg(*size)
-	result.append(obj.to_svg_element())
+	result.append(obj.to_svg())
 	return result
 
 for x in shapes:
 	x.set = lambda self, **attrib: generic.set(self, attrib={**getattr(self, "attrib", {}), **attrib})
 	x.get = lambda self, *keys: [self.attrib[k] for k in keys] if hasattr(self, 'attrib') else None
-	x.to_svg = lambda self: to_svg(self)
+	#x.to_svg = lambda self: to_svg(self)
 
 
 
