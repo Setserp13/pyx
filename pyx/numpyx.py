@@ -9,8 +9,6 @@ import random
 from pyx.numpyx_geo import polyline, line
 from itertools import product
 
-def norm(x, ord): sum(abs(x)**ord)**(1./ord)
-
 def slice_by_size(arr, size):	#Divide a 1D array into subarrays of given size. Last chunk may be smaller.
 	return [arr[i:i+size] for i in range(0, len(arr), size)]
 
@@ -92,11 +90,8 @@ def min_max_normalize(arr):
 
 
 
-
-
-
-def raised_norm(a, n=2): return sum(abs(x) ** n for x in a)	#default n=2 means sqr magnitude
-def norm(a, n=2): return raised_norm(a, n) ** (1.0 / n)	#default n=2 means magnitude
+def raised_norm(a, n=2): return sum(abs(a)**n)	#default n=2 means sqr magnitude
+def norm(a, n=2): return raised_norm(a, n) ** (1./n)	#default n=2 means magnitude
 def raised_distance(a, b, n=2): return raised_norm(b - a, n)	#default n=2 means sqr euclidean distance
 def distance(a, b, n=2): return raised_distance(a, b, n) ** (1.0 / n)	#default n=2 means euclidean distance
 
