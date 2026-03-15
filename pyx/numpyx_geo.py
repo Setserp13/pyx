@@ -1,6 +1,5 @@
 import numpy as np
 import pyx.numpyx as npx
-from pyx.numpyx import collinear
 import pyx.mat.mat as mat
 from pyx.collectionsx import lshift
 import math
@@ -972,13 +971,13 @@ def rects(offset, sizes, axis=0, align=0.5, gap=0.0):
 
 def point_on_line(line, point, tol=1e-12):
 	a, b = line
-	return collinear(b - a, point - a, tol)
+	return npx.collinear(b - a, point - a, tol)
 
 def point_on_segment(seg, p, tol=1e-12):	# check if point p is on segment ab
 	a, b = seg
 	ap = p - a
 	ab = b - a
-	if not collinear(ab, ap, tol):
+	if not npx.collinear(ab, ap, tol):
 		return False
 	return -tol <= np.dot(ap, ab) <= np.dot(ab, ab) + tol
 
