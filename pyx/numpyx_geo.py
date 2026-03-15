@@ -193,12 +193,6 @@ class line(np.ndarray):	#start = self[0], end = self[1]
 		return line(self + delta)
 
 
-def point_on_line(line, point, tol=1e-8): #tol: tolerância numérica
-	line_vec = line[1] - line[0]
-	test_vec = point - line[0]
-	cross = np.cross(line_vec, test_vec)
-	return np.abs(cross) < tol
-
 class chord(line):
 	def __init__(self, start, end, theta):
 		super().__init__(start, end)
@@ -967,6 +961,10 @@ def rects(offset, sizes, axis=0, align=0.5, gap=0.0):
 def collinear(u, v, tol=1e-12):	# check if vectors u and v are collinear
 	#return abs(np.cross(u, v)) < tol	# works in 2D only
 	return np.linalg.norm(np.cross(u, v)) < tol	# works in 2D and 3D
+
+def point_on_line(line, point, tol=1e-12):
+	a, b = line
+	return collinear(b - a, point - a, tol)
 
 def point_on_segment(seg, p, tol=1e-12):	# check if point p is on segment ab
 	a, b = seg
