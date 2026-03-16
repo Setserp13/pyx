@@ -753,7 +753,7 @@ class polyline(np.ndarray):#list):
 	def __rmatmul__(self, M): return self.__matmul__(M)
 	def __matmul__(self, M): return polyline(npx.affine_transform(M, self), closed=self.closed)
 
-	def clip(p1, p2):	#split the edges of polyline p1 wherever they intersect edges of polyline p2
+	"""def clip(p1, p2):	#split the edges of polyline p1 wherever they intersect edges of polyline p2
 		result = []
 		for edge in p1.edges():
 			result.append(edge[0])
@@ -764,7 +764,29 @@ class polyline(np.ndarray):#list):
 			]
 			if inter:
 				result.extend(sort_by_distance(inter, edge[0]))
+		return polyline(result, closed=p1.closed)"""
+
+	def clip(p1, p2):  # split the edges of polyline p1 wherever they intersect edges of polyline p2
+		result = []
+		for edge in p1.edges():
+			result.append(edge[0])
+			for y in p2.edges():
+				inter = segment_segment_intersection(edge, y)
+				if inter is None:
+					continue
+				# Flatten: if it's a segment (2 points), treat both as intersection points
+				if isinstance(inter, np.ndarray) and inter.shape[0] == 2 and inter.ndim == 2:
+					points = list(inter)
+				else:
+					points = [inter]
+				# Ignore points equal to endpoints of current edge
+				points = [p for p in points if not any(np.array_equal(p, v) for v in edge)]
+				# Sort by distance from edge[0] and append
+				if points:
+					result.extend(sort_by_distance(points, edge[0]))
 		return polyline(result, closed=p1.closed)
+
+	
 
 	def simplify(self):	# remove points that lie exactly on the line between their neighbors
 		result = [x for i, x in enumerate(self) if not point_on_segment(self.neighbors(i), x)]
