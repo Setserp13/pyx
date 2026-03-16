@@ -759,7 +759,7 @@ class polyline(np.ndarray):#list):
 			result.append(edge[0])
 			inter = [
 				p for y in p2.edges()
-				if (p := mat.segment_segment_intersection(edge, y)) is not None
+				if (p := segment_segment_intersection(edge, y)) is not None	#mat.segment_segment_intersection(edge, y)) is not None
 				and not any(np.array_equal(p, v) for v in edge)
 			]
 			if inter:
@@ -1119,7 +1119,45 @@ def line_line_intersection(a, b, tol=1e-12):
     intersection_point = p1 + t * va
     return intersection_point
 
+# ------------------- Generic clip function -------------------
+def clip_coincident(base, points, check_func):
+    """Return overlapping part of coincident objects (line/ray/segment)."""
+    inside = [p for p in points if check_func(base, p)]
+    if not inside:
+        return None
+    # Single point or multiple points
+    return inside[0] if len(inside) == 1 else np.array([min(inside, key=lambda x: tuple(x)),
+                                                       max(inside, key=lambda x: tuple(x))])
 
+# ------------------- Generic intersection function -------------------
+def line_subsets_intersection(obj1, obj2, point_check1, point_check2=None, tol=1e-12):
+    """
+    Generic intersection between any two 1D objects (line, ray, segment)
+    point_check1: check function for obj1
+    point_check2: check function for obj2 (defaults to point_check1)
+    """
+    if point_check2 is None:
+        point_check2 = point_check1
+
+    inter = line_line_intersection(obj1, obj2, tol)
+    if inter is None:
+        return None
+
+    # Coincident case
+    if isinstance(inter, np.ndarray) and inter.shape == np.asarray(obj1).shape:
+        return clip_coincident(obj1, obj2, point_check1)
+
+    # Single point case
+    if point_check1(obj1, inter) and point_check2(obj2, inter):
+        return inter
+    return None
+
+# ------------------- Specific intersections -------------------
+line_ray_intersection     = lambda line, ray, tol=1e-12: line_subsets_intersection(line, ray, point_on_ray)
+line_segment_intersection = lambda line, seg, tol=1e-12: line_subsets_intersection(line, seg, point_on_segment)
+ray_ray_intersection      = lambda r1, r2, tol=1e-12: line_subsets_intersection(r1, r2, point_on_ray)
+ray_segment_intersection  = lambda ray, seg, tol=1e-12: line_subsets_intersection(ray, seg, point_on_ray, point_on_segment)
+segment_segment_intersection = lambda s1, s2, tol=1e-12: line_subsets_intersection(s1, s2, point_on_segment)
 
 
 
