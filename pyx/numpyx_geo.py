@@ -1182,7 +1182,75 @@ ray_ray_intersection      = lambda r1, r2, tol=1e-12: line_subsets_intersection(
 ray_segment_intersection  = lambda ray, seg, tol=1e-12: line_subsets_intersection(ray, seg, point_on_ray, point_on_segment)
 segment_segment_intersection = lambda s1, s2, tol=1e-12: line_subsets_intersection(s1, s2, point_on_segment)
 
+def project_point_on_circle(p, c):
+	"""Project point p onto hypersphere c."""
+	return c.center + npx.normalize(p - c.center) * c.radius
 
+
+def point_circle_delta(p, c):
+	"""Signed distance from point to circle surface."""
+	return npx.distance(p, c.center) - c.radius
+
+
+def point_circle_distance(p, c):
+	"""Distance from point to circle (0 if inside)."""
+	return max(point_circle_delta(p, c), 0.0)
+
+
+def circle_contains_point(c, p):
+	"""Return True if point is inside or on circle."""
+	return point_circle_delta(p, c) <= 0
+
+
+def circle_circle_delta(a, b):
+	"""Signed distance between circle surfaces."""
+	return npx.distance(a.center, b.center) - (a.radius + b.radius)
+
+
+def circle_circle_distance(a, b):
+	"""Distance between circles (0 if overlapping)."""
+	return max(circle_circle_delta(a, b), 0.0)
+
+
+def circle_intersects_circle(a, b):
+	"""Return True if circles overlap."""
+	return circle_circle_delta(a, b) < 0
+
+
+def circle_tangents_circle(a, b, tol=1e-12):
+	"""Return True if circles are tangent."""
+	return abs(circle_circle_delta(a, b)) < tol
+
+
+def circle_circle_shortest_segment(a, b):
+	"""Shortest segment between two circles."""
+	p1 = project_point_on_circle(b.center, a)
+	p2 = project_point_on_circle(a.center, b)
+	return geo.line([p1, p2])
+
+def segments_shape_intersection(segments, other, func):
+	"""
+	Compute intersections between a list of segments and another object.
+	func must be a segment-shape intersection function.
+	"""
+	result = []
+	for s in segments:
+		inter = func(other, s)
+		if inter is not None:
+			result.append(inter)
+	return result
+
+
+def boundary_line_intersection(polygon, line):
+	return segments_shape_intersection(polygon.edges(), line, line_segment_intersection)
+
+
+def boundary_ray_intersection(polygon, ray):
+	return segments_shape_intersection(polygon.edges(), ray, ray_segment_intersection)
+
+
+def boundary_segment_intersection(polygon, segment):
+	return segments_shape_intersection(polygon.edges(), segment, segment_segment_intersection)
 
 
 
