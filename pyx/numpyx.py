@@ -507,6 +507,54 @@ def collinear(u, v, tol=1e-12):
 
 	return abs(np.dot(u, v)) >= (1 - tol) * nu * nv
 
+def rank(points):
+	"""
+	Rank 0: Coincident (Same Location)
+	Rank 1: Collinear (Same Line)
+	Rank 2: Coplanar (Same Plane)
+	Rank k: Same k-flat
+	"""
+	points = np.array(points)
+	if len(points) == 0:
+		return 0
+	# Shift points so that first point is the origin
+	origin = points[0]
+	shifted = points - origin
+	# Compute the rank (dimension of the span of vectors)
+	return np.linalg.matrix_rank(shifted)
+
+def test_minimum_dimension():
+    test_cases = [
+        # All points identical → dimension 0
+        (np.array([[1, 1], [1, 1], [1, 1]]), 0),
+
+        # Collinear points → dimension 1
+        (np.array([[0, 0], [1, 1], [2, 2]]), 1),
+        (np.array([[0, 0, 0], [1, 0, 0], [2, 0, 0]]), 1),
+
+        # Coplanar points not collinear → dimension 2
+        (np.array([[0,0,0], [1,0,0], [0,1,0]]), 2),
+
+        # Random 3D points → dimension 3
+        (np.array([[0,0,0], [1,0,0], [0,1,0], [0,0,1]]), 3),
+
+        # 4D points in a line → dimension 1
+        (np.array([[0,0,0,0], [1,1,0,0], [2,2,0,0]]), 1),
+
+        # Empty points → dimension 0
+        (np.array([]), 0),
+    ]
+
+    for i, (points, expected) in enumerate(test_cases, 1):
+        result = rank(points)
+        assert result == expected, f"Test {i} failed: expected {expected}, got {result}"
+        print(f"Test {i} passed: dimension = {result}")
+
+# Run the tests
+#test_minimum_dimension()
+
+
+
 
 
 def angle(a, b):
