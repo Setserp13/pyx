@@ -151,7 +151,7 @@ def slope(line):
 	delta = line[1] - line[0]
 	return delta[1] / delta[0] if delta[0] != 0 else float('inf')  # Avoid division by zero
 
-def line_equation_coefficients(l):
+"""def line_equation_coefficients(l):
 	(x1, y1), (x2, y2) = l
 	# Line equation: Ax + By + C = 0
 	A = y2 - y1
@@ -186,24 +186,20 @@ def line_line_intersection(line1, line2):
 
 	return np.array([x, y])
 
-"""def colinear_point_on_ray(ray, pt):
-	return np.dot(ray[1] - ray[0], pt - ray[0]) >= 0	# Checa se projeta no mesmo sentido"""
+def colinear_point_on_ray(ray, pt):
+	return np.dot(ray[1] - ray[0], pt - ray[0]) >= 0	# Checa se projeta no mesmo sentido
 
 def point_on_ray(ray, pt, tol=1e-6):	#ray = (origin, direction)
 	dir = npx.normalize(ray[1])
 	v = pt - ray[0]
 	return np.allclose(npx.normalize(v), dir, atol=tol) and np.dot(v, dir) >= -tol
-	"""d = ray[1] - ray[0]
-	v = pt - ray[0]
-	dist = np.linalg.norm(v - np.dot(v, d) / np.dot(d, d) * d)	# Distance from point to ray line
-	return dist < tol and np.dot(d, v) >= -tol"""
 
-"""def colinear_point_on_segment(seg, pt):	# Checa se ponto está no segmento (entre A e B)
+def colinear_point_on_segment(seg, pt):	# Checa se ponto está no segmento (entre A e B)
 	AB = seg[1] - seg[0]
 	AP = pt - seg[0]
 	dot1 = np.dot(AB, AP)
 	dot2 = np.dot(AB, AB)
-	return 0 <= dot1 <= dot2"""
+	return 0 <= dot1 <= dot2
 	
 def ray_line_intersection(ray, line):
 	pt = line_line_intersection(ray, line)	# Calcula interseção
@@ -234,7 +230,7 @@ def segment_segment_intersection(seg1, seg2):
 	if pt is None:
 		return None
 	return pt if geo.point_on_segment(seg1, pt) and geo.point_on_segment(seg2, pt) else None
-	#return pt if colinear_point_on_segment(seg1, pt) and colinear_point_on_segment(seg2, pt) else None
+	#return pt if colinear_point_on_segment(seg1, pt) and colinear_point_on_segment(seg2, pt) else None"""
 
 def segment_polygon_intersection(seg, polygon):
 	p1, p2 = np.array(seg[0], float), np.array(seg[1], float)
@@ -285,22 +281,22 @@ def segment_rect_intersection(seg, rect): return segment_polygon_intersection(se
 	vector = polar_to_cartesian(random_range(0.0, radius), random_range(0.0, 2.0 * math.pi))
 	return tuple(map(lambda x, y: x + y, center, vector))"""
 
-def project_point_on_line(p, a, b):	#Project point p onto the line defined by points a and b.
-	return a + npx.project(p - a, b - a)
+#def project_point_on_line(p, a, b):	#Project point p onto the line defined by points a and b.
+#	return a + npx.project(p - a, b - a)
 
 def project_circle_on_line(center, radius, a, b):
 	dir = npx.normalize(b - a)
 	proj_center = project_point_on_line(center, a, b)
 	return geo.line([proj_center - dir * radius, proj_center + dir * radius])
 
-def circle_circle_distance(center, radius, circle):
+"""def circle_circle_distance(center, radius, circle):
 	dir_vec = circle.center - center
 	dist_centers = np.linalg.norm(dir_vec)
 	if dist_centers == 0:
 		closest_point = circle.center
 	else:
 		closest_point = circle.center - dir_vec / dist_centers * circle.radius
-	return dist_centers - (circle.radius + radius), closest_point
+	return dist_centers - (circle.radius + radius), closest_point"""
 
 def point_line_distance(p, a, b):
 	proj = project_point_on_line(p, a, b)
