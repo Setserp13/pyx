@@ -160,17 +160,7 @@ def slope(line):
 	return A, B, C
 
 def line_line_intersection(line1, line2):
-	"""(x1, y1), (x2, y2) = line1
-	(x3, y3), (x4, y4) = line2
 
-	# Coeficientes da equação geral da reta: Ax + By + C = 0
-	A1 = y2 - y1
-	B1 = x1 - x2
-	C1 = x2 * y1 - x1 * y2
-
-	A2 = y4 - y3
-	B2 = x3 - x4
-	C2 = x4 * y3 - x3 * y4"""
 	A1, B1, C1 = line_equation_coefficients(line1)
 	A2, B2, C2 = line_equation_coefficients(line2)
 	
@@ -275,14 +265,14 @@ def segment_rect_intersection(seg, rect): return segment_polygon_intersection(se
 	if point == None: return None
 	t = inverse_lerp(segment[0], segment[1], point)
 	if t < 0 or t > 1: return None
-	return point"""
+	return point
 
-"""def random_in_circle(radius, center):
+def random_in_circle(radius, center):
 	vector = polar_to_cartesian(random_range(0.0, radius), random_range(0.0, 2.0 * math.pi))
-	return tuple(map(lambda x, y: x + y, center, vector))"""
+	return tuple(map(lambda x, y: x + y, center, vector))
 
-#def project_point_on_line(p, a, b):	#Project point p onto the line defined by points a and b.
-#	return a + npx.project(p - a, b - a)
+def project_point_on_line(p, a, b):	#Project point p onto the line defined by points a and b.
+	return a + npx.project(p - a, b - a)"""
 
 def project_circle_on_line(center, radius, a, b):
 	dir = npx.normalize(b - a)
