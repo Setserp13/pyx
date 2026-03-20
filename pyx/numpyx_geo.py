@@ -1252,7 +1252,51 @@ def boundary_ray_intersection(polygon, ray):
 def boundary_segment_intersection(polygon, segment):
 	return segments_shape_intersection(polygon.edges(), segment, segment_segment_intersection)
 
+def pairwise_distances(points: np.ndarray) -> np.ndarray:
+	"""
+	Compute sorted list of all pairwise distances
+	"""
+	n = len(points)
+	dists = []
 
+	for i in range(n):
+		for j in range(i + 1, n):
+			d = np.linalg.norm(points[i] - points[j])
+			dists.append(d)
+
+	return np.sort(np.array(dists))
+
+
+def congruent(A: np.ndarray, B: np.ndarray, tol=1e-6) -> bool:
+	"""
+	Check if two point sets are congruent (isometric)
+	"""
+	if A.shape != B.shape:
+		return False
+
+	dA = pairwise_distances(A)
+	dB = pairwise_distances(B)
+
+	return np.allclose(dA, dB, atol=tol)
+
+
+def similar(A: np.ndarray, B: np.ndarray, tol=1e-6) -> bool:
+	"""
+	Check if two point sets are similar (up to scaling)
+	"""
+	if A.shape != B.shape:
+		return False
+
+	dA = pairwise_distances(A)
+	dB = pairwise_distances(B)
+
+	# Avoid division by zero
+	if np.any(dA == 0):
+		return False
+
+	ratios = dB / dA
+
+	return np.allclose(ratios, ratios[0], atol=tol)
 
 
 
