@@ -1182,6 +1182,9 @@ ray_ray_intersection      = lambda r1, r2, tol=1e-12: line_subsets_intersection(
 ray_segment_intersection  = lambda ray, seg, tol=1e-12: line_subsets_intersection(ray, seg, point_on_ray, point_on_segment)
 segment_segment_intersection = lambda s1, s2, tol=1e-12: line_subsets_intersection(s1, s2, point_on_segment)
 
+def project_point_on_line(p, a, b):	#Project point p onto the line defined by points a and b.
+	return a + npx.project(p - a, b - a)
+
 def project_point_on_circle(p, c):
 	"""Project point p onto hypersphere c."""
 	return c.center + npx.normalize(p - c.center) * c.radius
