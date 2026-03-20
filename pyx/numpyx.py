@@ -507,7 +507,7 @@ def collinear(u, v, tol=1e-12):
 
 	return abs(np.dot(u, v)) >= (1 - tol) * nu * nv
 
-def rank(points):
+def rank(points):	#minimum dimension
 	"""
 	Rank 0: Coincident (Same Location)
 	Rank 1: Collinear (Same Line)
@@ -523,7 +523,7 @@ def rank(points):
 	# Compute the rank (dimension of the span of vectors)
 	return np.linalg.matrix_rank(shifted)
 
-def test_minimum_dimension():
+def test_rank():
     test_cases = [
         # All points identical → dimension 0
         (np.array([[1, 1], [1, 1], [1, 1]]), 0),
@@ -551,7 +551,7 @@ def test_minimum_dimension():
         print(f"Test {i} passed: dimension = {result}")
 
 # Run the tests
-#test_minimum_dimension()
+#test_rank()
 
 
 
