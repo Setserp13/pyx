@@ -1,5 +1,6 @@
 import math
 import re
+import numpy as np
 from pyx.collectionsx import List
 import pyx.mat.mat as mat
 
@@ -103,3 +104,51 @@ def roman(n):
 		n = math.floor(n % div)
 		div /= 10
 	return res
+
+# Alphanumeric coordinates
+def to_coord(coord: str):
+    """
+    Split coordinate into (file_str, rank_int)
+    Example: 'ab10' -> ('ab', 10)
+    """
+    match = re.fullmatch(r"([a-zA-Z]+)(\d+)", coord)
+    if not match:
+        raise ValueError(f"Invalid coordinate: {coord}")
+    file_str, rank_str = match.groups()
+    return np.array([to_index(file_str), int(rank_str) - 1])
+
+
+def to_index(s: str) -> int:
+	"""
+	Convert label to index (base-26)
+	'a' -> 0, 'z' -> 25, 'aa' -> 26
+	"""
+	x = 0
+	for char in s.lower():
+		x = x * 26 + (ord(char) - ord('a') + 1)
+	return x - 1
+	
+def to_label(x: int) -> str:
+	"""
+	Convert index back to label
+	0 -> 'a', 26 -> 'aa'
+	"""
+	x += 1
+	result = ""
+	while x > 0:
+		x, rem = divmod(x - 1, 26)
+		result = chr(rem + ord('a')) + result
+	return result
+
+# Alphanumeric coordinates
+def to_coord(coord: str):
+    """
+    Split coordinate into (file_str, rank_int)
+    Example: 'ab10' -> ('ab', 10)
+    """
+    match = re.fullmatch(r"([a-zA-Z]+)(\d+)", coord)
+    if not match:
+        raise ValueError(f"Invalid coordinate: {coord}")
+    file_str, rank_str = match.groups()
+    return np.array([to_index(file_str), int(rank_str) - 1])
+
