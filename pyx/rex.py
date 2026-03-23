@@ -140,7 +140,7 @@ def to_label(x: int) -> str:
 		result = chr(rem + ord('a')) + result
 	return result
 
-# Alphanumeric coordinates
+# An alphanumeric grid (also known as atlas grid) is a simple coordinate system on a grid in which each cell is identified by a combination of a letter and a number.
 def to_coord(coord: str):
     """
     Split coordinate into (file_str, rank_int)
@@ -152,3 +152,12 @@ def to_coord(coord: str):
     file_str, rank_str = match.groups()
     return np.array([to_index(file_str), int(rank_str) - 1])
 
+def to_atlas(coord): return f'{to_label(coord[0])}{coord[1] + 1}'
+
+def extract(pattern, string):
+	"""
+	Extract and remove pattern from a string.
+	"""
+	clean = re.sub(pattern, "", string)
+	match = re.search(pattern, string)
+	return clean, match
