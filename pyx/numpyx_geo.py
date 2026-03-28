@@ -200,7 +200,7 @@ class line(np.ndarray):	#start = self[0], end = self[1]
 
 	def lerp(self, t): return npx.lerp(*self, t)
 
-	def line_lerp(self, ts): return line([self.lerp(t) for t in ts])
+	def lerp_line(self, ts): return line([self.lerp(t) for t in ts])
 
 
 
