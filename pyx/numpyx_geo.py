@@ -1222,7 +1222,7 @@ def circle_segment_delta(c, l): return point_segment_distance(c.center, l) - c.r
 def circle_segment_distance(c, l): return max(circle_segment_delta(c, l), 0.)
 
 def circle_polyline_distance(c, v):
-	return min([circle_segment_distance(c, x) for x in vertices.edges()])
+	return min([circle_segment_distance(c, x) for x in v.edges()])
 
 def circle_rect_distance(c, rect):
 	return circle_polyline_distance(c, npx.rect2.corners(rect))
