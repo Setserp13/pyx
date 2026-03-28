@@ -1182,8 +1182,8 @@ ray_ray_intersection      = lambda r1, r2, tol=1e-12: line_subsets_intersection(
 ray_segment_intersection  = lambda ray, seg, tol=1e-12: line_subsets_intersection(ray, seg, point_on_ray, point_on_segment)
 segment_segment_intersection = lambda s1, s2, tol=1e-12: line_subsets_intersection(s1, s2, point_on_segment)
 
-def project_point_on_line(p, a, b):	#Project point p onto the line defined by points a and b.
-	return a + npx.project(p - a, b - a)
+def project_point_on_line(p, l):	#Project point p onto the line defined by points a and b.
+	return a + npx.project(p - l[0], l.vector)
 
 def project_point_on_circle(p, c):
 	"""Project point p onto hypersphere c."""
@@ -1197,7 +1197,40 @@ def point_circle_delta(p, c):
 
 def point_circle_distance(p, c):
 	"""Distance from point to circle (0 if inside)."""
-	return max(point_circle_delta(p, c), 0.0)
+	return max(point_circle_delta(p, c), 0.)
+
+
+
+def point_line_distance(p, l): return np.linalg.norm(project_point_on_line(p, l) - p)
+
+def point_segment_closest_point(p, l):
+	t = npx.inverse_lerp(*l, p)
+	return npx.lerp(*l, np.clip(t, 0, 1))
+
+def point_segment_distance(p, l): return np.linalg.norm(point_segment_closest_point(p, l) - p)
+
+def circle_line_delta(c, l): return point_line_distance(c.center, l) - c.radius
+"""Subtracting the circle’s radius gives the signed distance from the circle’s edge to the line:
+	If the result is positive, the line is outside the circle.
+	If the result is zero, the line is tangent to the circle.
+	If the result is negative, the line intersects the circle."""
+
+def circle_line_distance(c, l): return max(circle_line_delta(c, l), 0.)
+
+def circle_segment_delta(c, l): return point_segment_distance(c.center, l) - c.radius
+
+def circle_segment_distance(c, l): return max(circle_segment_delta(c, l), 0.)
+
+def circle_polyline_distance(c, v):
+	return min([circle_segment_distance(c, x) for x in vertices.edges()])
+
+def circle_rect_distance(center, radius, rect):
+	return circle_polyline_distance(center, radius, npx.rect2.corners(rect))
+
+
+
+
+
 
 
 def circle_contains_point(c, p):
