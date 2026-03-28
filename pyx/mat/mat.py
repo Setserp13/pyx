@@ -288,6 +288,9 @@ def project_circle_on_line(center, radius, a, b):
 		closest_point = circle.center - dir_vec / dist_centers * circle.radius
 	return dist_centers - (circle.radius + radius), closest_point"""
 
+
+
+"""
 def point_line_distance(p, a, b):
 	proj = project_point_on_line(p, a, b)
 	return np.linalg.norm(proj - p), proj
@@ -316,6 +319,10 @@ def circle_polyline_distance(center, radius, vertices):
 
 def circle_rect_distance(center, radius, rect):
 	return circle_polyline_distance(center, radius, npx.rect2.corners(rect))
+"""
+
+
+
 
 
 def batch(total, size): return [min(total - (i * size), size) for i in range(math.ceil(total / size))]
