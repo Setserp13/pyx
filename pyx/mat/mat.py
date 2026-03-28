@@ -302,10 +302,6 @@ def point_segment_distance(p, a, b):
 	return np.linalg.norm(closest_point - p), closest_point
 
 def circle_line_distance(center, radius, a, b): return point_line_distance(center, a, b) - radius
-"""Subtracting the circle’s radius gives the signed distance from the circle’s edge to the line:
-	If the result is positive, the line is outside the circle.
-	If the result is zero, the line is tangent to the circle.
-	If the result is negative, the line intersects the circle."""
 
 def circle_segment_distance(center, radius, a, b):
 	dist = point_segment_distance(center, a, b)
