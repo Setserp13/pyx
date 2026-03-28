@@ -202,7 +202,8 @@ class line(np.ndarray):	#start = self[0], end = self[1]
 
 	def lerp_line(self, ts): return line([self.lerp(t) for t in ts])
 
-
+class segment(line):
+	pass
 
 class chord(line):
 	def __init__(self, start, end, theta):
@@ -1383,5 +1384,29 @@ def circle_rect_collision(c, r):
 
 
 
+COLLISION_TABLE = {
+	(circle, circle): circle_circle_collision,
+	(circle, line): circle_line_collision,
+	(circle, segment): circle_segment_collision,
+	(circle, polyline): circle_polyline_collision,
+	(circle, npx.rect): circle_rect_collision,
+}
 
+def collision(a, b):
+	key = (type(a), type(b))
+	func = COLLISION_TABLE.get(key)
 
+	if func:
+		return func(a, b)
+
+	# try reversed order
+	key = (type(b), type(a))
+	func = COLLISION_TABLE.get(key)
+
+	if func:
+		res = func(b, a)
+		if res is None:
+			return None
+		return {**res, "normal": -res["normal"]}
+
+	raise NotImplementedError((type(a), type(b)))
