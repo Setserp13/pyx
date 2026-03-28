@@ -27,12 +27,12 @@ def circle_segment_collision(c, l):
 	return { "normal": normal, "penetration": -d, "point": point }	
 
 def circle_polyline_collision(c, v):
-	hits = [geo.circle_segment_collision(c, x) for x in v.edges()]
+	hits = [circle_segment_collision(c, x) for x in v.edges()]
 	hits.sort(key=lambda x: 0. if x is None else x['penetration'], reverse=True)
 	return hits[0]
 
 def circle_rect_collision(c, r):
-	return geo.circle_polyline_collision(c, npx.rect2.corners(r))
+	return circle_polyline_collision(c, npx.rect2.corners(r))
 
 
 
