@@ -8,6 +8,8 @@ from pyx.collectionsx import List
 from pyx.collectionsx import flatten
 from itertools import product
 
+EPSILON = 1e-9
+
 def elbow_connector1(start, end, x=0): return polyline([start, np.array([start[x], end[1 - x]]), end])
 
 def elbow_connector2(start, end, x=0, t=0.5):
@@ -1339,6 +1341,39 @@ def similar(A: np.ndarray, B: np.ndarray, tol=1e-6) -> bool:
 
 
 
+
+def circle_circle_collision(c1, c2):
+	d = circle_circle_delta(c1, c2)
+	if d > 0:
+		return None
+	normal = npx.normalize(c2.center - c1.center)
+	point = c1.center + normal * c1.radius
+	return { "normal": normal, "penetration": -d, "point": point }
+
+def circle_line_collision(c, l):
+	d = circle_line_delta(c, l)
+	if d > 0:
+		return None
+	normal = npx.normalize(project_on_line(c.center, l) - c.center)
+	point = c.center + normal * c.radius
+	return { "normal": normal, "penetration": -d, "point": point }	
+
+def circle_segment_collision(c, l):
+	d = circle_segment_delta(c, l)
+	if d > 0:
+		return None
+	p = point_segment_closest_point(c.center, l)
+	normal = npx.normalize(p - c.center)
+	point = c.center + normal * c.radius
+	return { "normal": normal, "penetration": -d, "point": point }	
+
+def circle_polyline_collision(c, v):
+	hits = [circle_segment_collision(c, x) for x in v.edges()]
+	hits.sort(key=lambda x: 0. if x is None else x['penetration'], reverse=True)
+	return hits[0]
+
+def circle_rect_collision(c, r):
+	return circle_polyline_collision(c, npx.rect2.corners(r))
 
 
 
