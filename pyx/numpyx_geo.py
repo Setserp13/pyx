@@ -89,6 +89,9 @@ class ellipse():
 		self.size = size
 
 	@property
+	def extents(self): return self.size / 2
+	
+	@property
 	def a(self): return max(self.size) / 2	# semi-major
 
 	@property
