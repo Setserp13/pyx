@@ -92,10 +92,10 @@ class ellipse():
 	def extents(self): return self.size / 2
 	
 	@property
-	def a(self): return max(self.size) / 2	# semi-major
+	def a(self): return max(self.extents)	# semi-major
 
 	@property
-	def b(self): return min(self.size) / 2	# semi-minor
+	def b(self): return min(self.extents)	# semi-minor
 
 	@property
 	def orientation(self): return 0 if self.size[0] >= self.size[1] else 1
