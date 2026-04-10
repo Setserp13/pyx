@@ -144,7 +144,7 @@ class ellipse():
 	def get_point(self, theta): return np.array([self.a * math.cos(theta), self.b * math.sin(theta)]) + self.center"""
 
 	def get_point(self, t):	#Standard parametric equation (centered)
-		return np.array([np.cos(t), np.sin(t)]) * self.size + self.center
+		return np.array([np.cos(t), np.sin(t)]) * self.extents + self.center
 	
 	# =========================
 	# Radius from focus (Kepler form)
