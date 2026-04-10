@@ -156,6 +156,25 @@ class ellipse():
 		e = self.eccentricity
 		return self.a * (1 - e**2) / (1 + e * np.cos(theta))
 
+
+	def point_from_focus_angle(self, theta, focus_index=0):
+		"""
+		Return point on ellipse given the angle from a focus (true anomaly)
+		"""
+		r = self.radius_from_focus(theta)
+		
+		focus = self.foci[focus_index]
+	
+		# direction vector
+		v = np.array([np.cos(theta), np.sin(theta)])
+	
+		# rotate if vertical major axis
+		if self.orientation == 1:
+			v = v[::-1]
+	
+		return focus + r * v
+
+	
 	@classmethod
 	def from_a_e(cls, a, e, center=(0, 0), orientation=0):
 		"""
