@@ -161,14 +161,17 @@ class ellipse():
 		"""
 		Return point on ellipse given the angle from a focus (true anomaly)
 		"""
+	
 		r = self.radius_from_focus(theta)
-		
+	
 		focus = self.foci[focus_index]
 	
-		# direction vector
 		v = np.array([np.cos(theta), np.sin(theta)])
 	
-		# rotate if vertical major axis
+		# flip direction if using second focus
+		if focus_index == 1:
+			v = -v
+	
 		if self.orientation == 1:
 			v = v[::-1]
 	
