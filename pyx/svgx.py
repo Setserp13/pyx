@@ -203,7 +203,7 @@ def rotate_page(svg, angle=90):	#angle is in degree
 	return svg
 
 def circle_from_svg(obj): return geo.circle(get(obj, float, 'cx', 'cy'), *get(obj, float, 'r'))
-def ellipse_from_svg(obj): return geo.ellipse(get(obj, float, 'cx', 'cy'), *get(obj, float, 'rx', 'ry'))
+def ellipse_from_svg(obj): return geo.ellipse(get(obj, float, 'cx', 'cy'), get(obj, float, 'rx', 'ry'))
 def rect_from_svg(obj): return npx.rect2(*get(obj, float, 'x', 'y', 'width', 'height'))
 def line_from_svg(obj): return geo.line([get(obj, float, 'x1', 'y1'), get(obj, float, 'x2', 'y2')])
 def parse_points2(s):
@@ -371,7 +371,7 @@ def embed_images(svg_tree, svg_folder):
 
 
 def circle_to_svg(obj, **kwargs): return lxmlx.element("circle", cx=obj.center[0], cy=obj.center[1], r=obj.radius, **kwargs)
-def ellipse_to_svg(obj, **kwargs): return lxmlx.element("ellipse", cx=obj.center[0], cy=obj.center[1], rx=obj.a, ry=obj.b, **kwargs)
+def ellipse_to_svg(obj, **kwargs): return lxmlx.element("ellipse", cx=obj.center[0], cy=obj.center[1], rx=obj.extents[0], ry=obj.extents[1], **kwargs)
 def polygon_to_svg(obj, **kwargs): return lxmlx.element("polygon", points=" ".join(f"{x[0]},{x[1]}" for x in obj), **kwargs)
 def polyline_to_svg(obj, **kwargs): return lxmlx.element("polyline", points=" ".join(f"{x[0]},{x[1]}" for x in obj), **kwargs)
 def rect_to_svg(obj, **kwargs): return lxmlx.element("rect", x=obj.min[0], y=obj.min[1], width=obj.size[0], height=obj.size[1], **kwargs)
