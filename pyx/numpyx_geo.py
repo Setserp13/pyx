@@ -79,12 +79,94 @@ class circle():
 
 
 class ellipse():
-	def __init__(self, center, a, b):	#a and be are semi axes
+	"""def __init__(self, center, a, b):	#a and be are semi axes
 		self.center = np.array(center)
 		self.a = a
-		self.b = b
+		self.b = b"""
 
-	def get_point(self, theta): return np.array([self.a * math.cos(theta), self.b * math.sin(theta)]) + self.center
+	def __init__(self, center, size):
+		self.center = center
+		self.size = size
+
+	@property
+	def a(self): return max(self.size) / 2	# semi-major
+
+	@property
+	def b(self): return min(self.size) / 2	# semi-minor
+
+	@property
+	def orientation(self): return 0 if self.size[0] >= self.size[1] else 1
+
+	@property
+	def c(self): return np.sqrt(self.a**2 - self.b**2)	# Focal distance
+
+	@property
+	def foci(self):
+		"""
+		Returns both foci as np arrays
+		"""
+		d = npx.ei(self.orientation, 2) * self.c
+		#print(d)
+		return self.center + np.array([-d, d])
+
+	@property
+	def eccentricity(self): return self.c / self.a
+
+	@property
+	def area(self): return np.pi * self.a * self.b
+
+	@property
+	def perimeter(self):
+		# Ramanujan approximation
+		h = ((self.a - self.b)*2) / ((self.a + self.b)*2)
+		return np.pi * (self.a + self.b) * (1 + (3*h)/(10 + np.sqrt(4 - 3*h)))
+
+	def directrices(self):
+		"""
+		Returns the two directrix lines as (point, direction)
+		"""
+		e = self.eccentricity
+		d = self.a / e
+		ei = npx.ei(self.orientation, 2)
+		return [line([self.center + ei * d * sgn, ei]) for sgn in [-1, 1]]
+
+	# =========================
+	# Parametric point
+	# =========================
+	"""def point(self, t):
+		x = self.a * np.cos(t)
+		y = self.b * np.sin(t)
+		return self.center + np.array([x, y])[[self.orientation, 1 - self.orientation]]
+
+	def get_point(self, theta): return np.array([self.a * math.cos(theta), self.b * math.sin(theta)]) + self.center"""
+
+	def get_point(self, t):	#Standard parametric equation (centered)
+		return np.array([np.cos(t), np.sin(t)]) * self.size + self.center
+	
+	# =========================
+	# Radius from focus (Kepler form)
+	# =========================
+	def radius_from_focus(self, theta):	#ellipse_radius
+		"""
+		Polar form relative to focus (important for orbits)
+		"""
+		e = self.eccentricity
+		return self.a * (1 - e**2) / (1 + e * np.cos(theta))
+
+	@classmethod
+	def from_a_e(cls, a, e, center=(0, 0), orientation=0):
+		"""
+		Create an ellipse from:
+			a: semi-major axis
+			e: eccentricity (0 <= e < 1)
+			center: (cx, cy)
+		horizontal: major axis orientation
+		"""
+		if not (0 <= e < 1):
+			raise ValueError("Eccentricity must be in [0, 1)")
+
+		b = a * (1 - e*2) * 0.5
+		return cls(center=center, size=np.array([2 * a, 2 * b])[[orientation, 1 - orientation]])
 
 	@property
 	def aabb(self): return npx.rect.center_size(self.center, np.array([self.a, self.b]) * 2)
