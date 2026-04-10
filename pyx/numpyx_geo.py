@@ -169,7 +169,7 @@ class ellipse():
 		v = np.array([np.cos(theta), np.sin(theta)])
 	
 		# flip direction if using second focus
-		if focus_index == 1:
+		if focus_index == 0:
 			v = -v
 	
 		if self.orientation == 1:
