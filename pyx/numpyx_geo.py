@@ -171,6 +171,79 @@ class ellipse():
 		b = a * (1 - e*2) * 0.5
 		return cls(center=center, size=np.array([2 * a, 2 * b])[[orientation, 1 - orientation]])
 
+
+	# =========================
+	# True anomaly from point
+	# =========================
+	def true_anomaly(self, p, focus_index=0):
+		"""
+		Angle of a point on the ellipse measured from a focus
+		"""
+		f = self.foci[focus_index]
+		v = np.array(p) - f
+		return np.arctan2(v[1], v[0])
+	
+	
+	# =========================
+	# True anomaly -> eccentric anomaly
+	# =========================
+	def eccentric_anomaly(self, theta):
+		e = self.eccentricity
+		return 2 * np.arctan(np.sqrt((1 - e)/(1 + e)) * np.tan(theta/2))
+	
+	
+	# =========================
+	# Eccentric anomaly -> true anomaly
+	# =========================
+	def true_from_eccentric(self, E):
+		e = self.eccentricity
+		return 2 * np.arctan(np.sqrt((1 + e)/(1 - e)) * np.tan(E/2))
+	
+	
+	# =========================
+	# Sector area from focus
+	# =========================
+	def sector_area_from_focus(self, theta1, theta2):
+		a = self.a
+		b = self.b
+		e = self.eccentricity
+	
+		E1 = self.eccentric_anomaly(theta1)
+		E2 = self.eccentric_anomaly(theta2)
+	
+		return (a*b/2) * ((E2 - e*np.sin(E2)) - (E1 - e*np.sin(E1)))
+	
+	
+	# =========================
+	# Area swept from focus starting at theta0
+	# =========================
+	def angles_from_area(self, area, theta0=0):
+		"""
+		Return (theta_start, theta_end) that sweep a given area
+		from a focus.
+		"""
+	
+		a = self.a
+		b = self.b
+		e = self.eccentricity
+	
+		E0 = self.eccentric_anomaly(theta0)
+	
+		target = area
+	
+		# Newton solve for E
+		E = E0 + target/(a*b/2)
+	
+		for _ in range(10):
+			f = (a*b/2)*((E - e*np.sin(E)) - (E0 - e*np.sin(E0))) - target
+			df = (a*b/2)*(1 - e*np.cos(E))
+			E -= f/df
+	
+		theta_end = self.true_from_eccentric(E)
+	
+		return theta0, theta_end
+
+	
 	@property
 	def aabb(self): return npx.rect.center_size(self.center, np.array([self.a, self.b]) * 2)
 	@aabb.setter
