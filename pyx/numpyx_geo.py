@@ -253,7 +253,7 @@ class ellipse():
 	
 		target = area
 	
-		# Newton solve for E
+		# initial guess
 		E = E0 + target/(a*b/2)
 	
 		for _ in range(10):
@@ -263,7 +263,10 @@ class ellipse():
 	
 		theta_end = self.true_from_eccentric(E)
 	
-		return theta0, theta_end
+		# normalize to [0, 2π)
+		theta_end = theta_end % (2*np.pi)
+	
+		return theta0 % (2*np.pi), theta_end
 
 	
 	@property
