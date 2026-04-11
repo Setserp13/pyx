@@ -272,12 +272,11 @@ class ellipse():
 
 	
 	@property
-	def aabb(self): return npx.rect.center_size(self.center, np.array([self.a, self.b]) * 2)
+	def aabb(self): return npx.rect.center_size(self.center, self.size)
 	@aabb.setter
 	def aabb(self, value):
 		self.center = value.center
-		self.a = value.extents[0]
-		self.b = value.extents[1]
+		self.size = value.extents * 2
 
 	def __rmatmul__(self, M): return self.__matmul__(M)
 
