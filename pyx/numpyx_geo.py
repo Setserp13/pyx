@@ -98,6 +98,16 @@ class ellipse():
 	def b(self): return min(self.extents)	# semi-minor
 
 	@property
+	def major_axis(self):
+		d = npx.ei(self.orientation, 2) * self.a
+		return line(self.center + np.array([-d, d]))
+
+	@property
+	def minor_axis(self):
+		d = npx.ei(1 - self.orientation, 2) * self.b
+		return line(self.center + np.array([-d, d]))
+
+	@property
 	def orientation(self): return 0 if self.size[0] >= self.size[1] else 1
 
 	@property
