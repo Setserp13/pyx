@@ -211,8 +211,10 @@ class ellipse():
 	# =========================
 	def eccentric_anomaly(self, theta):
 		e = self.eccentricity
-		return 2 * np.arctan(np.sqrt((1 - e)/(1 + e)) * np.tan(theta/2))
-	
+		return 2 * np.arctan2(
+			np.sqrt(1 - e) * np.sin(theta/2),
+			np.sqrt(1 + e) * np.cos(theta/2)
+		)
 	
 	# =========================
 	# Eccentric anomaly -> true anomaly
