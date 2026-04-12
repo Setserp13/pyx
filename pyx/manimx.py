@@ -19,7 +19,7 @@ def get_aabb(mob):
 	return npx.rect.center_size(mob.get_center(), np.array([mob.width, mob.height, 0]))
 
 def MCircle(obj): return Circle(radius = obj.radius).move_to(np.append(obj.center, 0))
-def MEllipse(obj): return Ellipse(width = obj.a * 2, height = obj.b * 2).move_to(np.append(obj.center, 0))
+def MEllipse(obj): return Ellipse(width = obj.size[0], height = obj.size[1]).move_to(np.append(obj.center, 0))
 def MLine(obj): return Line(start = np.append(obj[0], 0), end = np.append(obj[1], 0))
 def MPolygon(obj): return Polygon(*[(*x, 0) for x in obj])
 def MRect(obj): return Rectangle(width = obj.size[0], height = obj.size[1]).move_to(np.append(obj.center, 0))
