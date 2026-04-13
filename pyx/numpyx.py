@@ -9,6 +9,10 @@ import random
 from pyx.numpyx_geo import polyline, line
 from itertools import product
 
+def modular_distance(a, b, n):
+	d = abs(a - b) % n
+	return min(d, n - d)
+
 def slice_by_size(arr, size):	#Divide a 1D array into subarrays of given size. Last chunk may be smaller.
 	return [arr[i:i+size] for i in range(0, len(arr), size)]
 
