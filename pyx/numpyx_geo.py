@@ -328,10 +328,16 @@ class arc(circle):
 		return self.get_point(npx.lerp(self.start, self.end, t))
 
 	def d(self):
-		p = [self.get_point01(t) for t in [0., 1.]]
-		large_arc_flag = 0 if self.theta < math.pi else 1
-		return f'M {p[0][0]} {p[0][1]} A {self.radius} {self.radius} {math.degrees(self.theta)} {large_arc_flag} 0 {p[1][0]} {p[1][1]}'
-
+		p0 = self.get_point01(0.)
+		p1 = self.get_point01(1.)
+	
+		large_arc_flag = 1 if abs(self.theta) > math.pi else 0
+		sweep_flag = 1 if self.theta > 0 else 0
+	
+		return (
+			f"M {p0[0]} {p0[1]} "
+			f"A {self.radius} {self.radius} 0 {large_arc_flag} {sweep_flag} {p1[0]} {p1[1]}"
+		)
 
 class line(np.ndarray):	#start = self[0], end = self[1]
 	def __new__(cls, input_array):
