@@ -682,11 +682,15 @@ class Mesh():
 
 
 class angle(list):
+
+	@property
 	def rays(self): return [line([self[1], self[0]]), line([self[1], self[2]])]
 
-	def vectors(self): return [x.vector for x in self.rays()]
+	@property
+	def vectors(self): return [x.vector for x in self.rays]
 
-	def size(self): return npx.angle(*self.vectors())
+	@property
+	def size(self): return npx.angle(*self.vectors)
 
 EPSILON = 1e-10
 
