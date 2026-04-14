@@ -332,7 +332,7 @@ class arc(circle):
 		p1 = self.get_point01(1.)
 	
 		large_arc_flag = 1 if abs(self.theta) > math.pi else 0
-		sweep_flag = 1 if self.theta > 0 else 0
+		sweep_flag = 0 if self.theta > 0 else 1
 	
 		return (
 			f"M {p0[0]} {p0[1]} "
