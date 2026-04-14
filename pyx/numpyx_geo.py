@@ -320,9 +320,18 @@ class arc(circle):
 		self.start = start
 		self.end = end
 
+	@property
+	def theta(self): return self.end - self.start
+
 	def get_point01(self, t):
 		t = npx.clamp01(t)
 		return self.get_point(npx.lerp(self.start, self.end, t))
+
+	def d(self):
+		p = [self.get_point01(t) for t in [0., 1.]]
+		large_arc_flag = 0 if self.theta < math.pi else 1
+		return f'M {p[0][0]} {p[0][1]} A {self.radius} {self.radius} {math.degrees(x.theta)} {large_arc_flag} 0 {p[1][0]} {p[1][1]}'
+
 
 class line(np.ndarray):	#start = self[0], end = self[1]
 	def __new__(cls, input_array):
@@ -691,6 +700,11 @@ class angle(list):
 
 	@property
 	def size(self): return npx.angle(*self.vectors)
+
+	def to_arc(self, radius):
+		start = npx.angle(np.zeros(2), self.vectors[0])
+		return arc(self[1], radius, start, start + self.size)
+
 
 EPSILON = 1e-10
 
