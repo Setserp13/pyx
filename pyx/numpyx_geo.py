@@ -330,7 +330,7 @@ class arc(circle):
 	def d(self):
 		p = [self.get_point01(t) for t in [0., 1.]]
 		large_arc_flag = 0 if self.theta < math.pi else 1
-		return f'M {p[0][0]} {p[0][1]} A {self.radius} {self.radius} {math.degrees(x.theta)} {large_arc_flag} 0 {p[1][0]} {p[1][1]}'
+		return f'M {p[0][0]} {p[0][1]} A {self.radius} {self.radius} {math.degrees(self.theta)} {large_arc_flag} 0 {p[1][0]} {p[1][1]}'
 
 
 class line(np.ndarray):	#start = self[0], end = self[1]
