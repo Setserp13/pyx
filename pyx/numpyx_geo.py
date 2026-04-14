@@ -702,7 +702,7 @@ class angle(list):
 	def size(self): return npx.angle(*self.vectors)
 
 	def to_arc(self, radius):
-		start = npx.angle(np.zeros(2), self.vectors[0])
+		start = npx.angle(npx.ei(0, 2), self.vectors[0])
 		return arc(self[1], radius, start, start + self.size)
 
 
