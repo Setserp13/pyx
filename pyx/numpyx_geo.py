@@ -716,7 +716,8 @@ class angle(list):
 
 	def to_arc(self, radius):
 		start = npx.angle(npx.ei(0, 2), self.vectors[0])
-		return arc(self[1], radius, start, start + self.size)
+		end = npx.angle(npx.ei(0, 2), self.vectors[1])
+		return arc(self[1], radius, start, end)
 
 
 EPSILON = 1e-10
