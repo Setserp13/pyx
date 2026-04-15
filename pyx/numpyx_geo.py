@@ -314,7 +314,7 @@ class ellipse():
 		
 	def copy(self): return ellipse(self.center.copy(), self.a, self.b)
 
-class arc(circle):
+class arc(geo.circle):
 	def __init__(self, center, radius, start, end): #start is start angle and end is end angle
 		super().__init__(center, radius)
 		self.start = start
@@ -322,14 +322,8 @@ class arc(circle):
 
 	@property
 	def theta(self):
-		d = (self.end - self.start) % (2*math.pi)
-		return d if d <= math.pi else d - 2*math.pi
-	#@property
-	#def theta(self): return (self.end - self.start) % (2 * math.pi)
+		return ((self.end - self.start + math.pi) % (2*math.pi)) - math.pi
 
-	"""def get_point01(self, t):
-		t = npx.clamp01(t)
-		return self.get_point(npx.lerp(self.start, self.end, t))"""
 	def get_point01(self, t):
 		t = npx.clamp01(t)
 		return self.get_point(self.start + self.theta * t)
@@ -339,7 +333,7 @@ class arc(circle):
 		p1 = self.get_point01(1.)
 	
 		large_arc_flag = 1 if abs(self.theta) > math.pi else 0
-		sweep_flag = 0 if self.theta > 0 else 1
+		sweep_flag = 1 if self.theta > 0 else 0
 	
 		return (
 			f"M {p0[0]} {p0[1]} "
@@ -715,8 +709,12 @@ class angle(list):
 	def size(self): return npx.angle(*self.vectors)
 
 	def to_arc(self, radius):
-		start = npx.angle(npx.ei(0, 2), self.vectors[0])
-		end = npx.angle(npx.ei(0, 2), self.vectors[1])
+		v0 = npx.normalize(self.vectors[0])
+		v1 = npx.normalize(self.vectors[1])
+	
+		start = math.atan2(v0[1], v0[0])
+		end   = math.atan2(v1[1], v1[0])
+	
 		return arc(self[1], radius, start, end)
 
 
