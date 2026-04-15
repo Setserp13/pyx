@@ -314,7 +314,7 @@ class ellipse():
 		
 	def copy(self): return ellipse(self.center.copy(), self.a, self.b)
 
-class arc(geo.circle):
+class arc(circle):
 	def __init__(self, center, radius, start, end): #start is start angle and end is end angle
 		super().__init__(center, radius)
 		self.start = start
