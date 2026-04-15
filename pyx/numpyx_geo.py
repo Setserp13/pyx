@@ -323,9 +323,12 @@ class arc(circle):
 	@property
 	def theta(self): return (self.end - self.start) % (2 * math.pi)
 
+	"""def get_point01(self, t):
+		t = npx.clamp01(t)
+		return self.get_point(npx.lerp(self.start, self.end, t))"""
 	def get_point01(self, t):
 		t = npx.clamp01(t)
-		return self.get_point(npx.lerp(self.start, self.end, t))
+		return self.get_point(self.start + self.theta * t)
 
 	def d(self):
 		p0 = self.get_point01(0.)
