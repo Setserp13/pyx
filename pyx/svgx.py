@@ -376,7 +376,7 @@ def polygon_to_svg(obj, **kwargs): return lxmlx.element("polygon", points=" ".jo
 def polyline_to_svg(obj, **kwargs): return lxmlx.element("polyline", points=" ".join(f"{x[0]},{x[1]}" for x in obj), **kwargs)
 def rect_to_svg(obj, **kwargs): return lxmlx.element("rect", x=obj.min[0], y=obj.min[1], width=obj.size[0], height=obj.size[1], **kwargs)
 def line_to_svg(obj, **kwargs): return lxmlx.element("line", x1=obj[0][0], y1=obj[0][1], x2=obj[1][0], y2=obj[1][1], **kwargs)
-
+def arc_to_svg(obj, **kwargs): return lxmlx.element("path", d=obj.d(), **kwargs)
 
 def text(cx, cy, s, pivot=np.ones(2) * 0.5, font='arial.ttf', font_size=12, **kwargs): #In SVG, the y attribute of a <text> element refers to the baseline of the text
 	s = str(s)
@@ -434,8 +434,9 @@ geo.line.to_svg = lambda self: line_to_svg(self, **get_attrib(self))
 geo.polyline.to_svg = lambda self: polygon_to_svg(self, **get_attrib(self)) if self.closed else polyline_to_svg(self, **get_attrib(self))
 npx.rect.to_svg = lambda self: rect_to_svg(self, **get_attrib(self))
 geo.group.to_svg = lambda self: group_to_svg(self, **get_attrib(self))
+geo.arc.to_svg = lambda self: arc_to_svg(self, **get_attrib(self))
 
-shapes = [bezier.path, geo.circle, geo.ellipse, geo.line, geo.polyline, npx.rect, geo.group]
+shapes = [bezier.path, geo.circle, geo.ellipse, geo.line, geo.polyline, npx.rect, geo.group, geo.arc]
 
 def draw(obj):
 	size = obj.aabb.size
