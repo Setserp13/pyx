@@ -3,6 +3,26 @@ import random
 import numpy as np
 from pyx.array_utility import find_index
 
+def equivalence(arr, equals):	#classes de equivalência
+	result = []
+	used = [False]*len(arr)
+
+	for i in range(len(arr)):
+		if used[i]:
+			continue
+
+		group = [i]
+		used[i] = True
+
+		for j in range(i+1, len(arr)):
+			if not used[j] and equals(arr[i], arr[j]):
+				group.append(j)
+				used[j] = True
+
+		result.append(group)
+
+	return result
+
 def get_item(array, indices, dflt=None):	#works for any-dimensional jagged array
 	cur = array
 	for idx in indices:
