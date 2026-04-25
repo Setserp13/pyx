@@ -191,6 +191,9 @@ class rect_like:
 		
 	def copy(self): return type(self).min_size(self.min.copy(), self.size.copy())
 
+	def __repr__(self): return f'{type(self).__name__}(min={self.min}, size={self.size})'
+
+	def __str__(self): return self.__repr__()
 
 
 class rect(rect_like):
@@ -297,10 +300,6 @@ class rect(rect_like):
 		cell_count = np.ceil(self.size / cell_size).astype(int)
 		return [ rect.min_max(x.min, np.minimum(x.max, self.max)) for x in grid(cell_size, offset=self.min).cells(cell_count)]
 		return result
-
-	def __repr__(self): return f'rect(min={self.min}, size={self.size}, max={self.max})'
-
-	def __str__(self): return f'Min: {self.min}, Size: {self.size}, Max: {self.max}'
 
 	def axis_scale(self, value, pivot=0.5, axis=0):
 		delta = value - self.size[axis]
