@@ -128,39 +128,7 @@ def on_sphere(radius=1.0, stacks=16, slices=32, center=np.zeros(3)):
 
 
 
-#POINT-POINT AABB
-@dispatch(np.ndarray, np.ndarray)
-def aabb(a, b): return rect.min_max(np.minimum(a, b), np.maximum(a, b))
 
-#RECT-POINT AABB
-@dispatch(rect, np.ndarray)
-def aabb(a, b): return rect.min_max(np.minimum(a.min, b), np.maximum(a.max, b))
-
-#RECT-RECT AABB
-@dispatch(rect, rect)
-def aabb(a, b): return rect.min_max(np.minimum(a.min, b.min), np.maximum(a.max, b.max))
-
-#@dispatch(list)
-#def aabb(*points):
-#	return rect.min_max(np.minimum.reduce(points), np.maximum.reduce(points))
-
-@dispatch(list)
-def aabb(args): #args can contain np.ndarray and rect
-	if len(args) == 1: return aabb(args[0], args[0])
-	result = aabb(args[0], args[1])
-	for i in range(2, len(args)):
-		result = aabb(result, args[i])
-	return result
-
-@dispatch(np.ndarray)
-def aabb(arr): #args can contain np.ndarray and rect
-	if arr.ndim != 2:
-		raise TypeError("Expected 2D array")
-	return aabb(list(arr))
-
-def set_aabb(p, value):	#p is a list of points
-	current = aabb(p)
-	return [value.denormalize_point(current.normalize_point(x)) for x in p]
 
 def affine_transform(M, arr):
 	"""
