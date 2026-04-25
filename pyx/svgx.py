@@ -369,6 +369,23 @@ def embed_images(svg_tree, svg_folder):
 	return svg_tree
 
 
+class text():
+	def __init__(self, s, position, font='arial.ttf', font_size=12, pivot=np.ones(2) * 0.5):
+		self.s = str(s)
+		self.position = position
+		self.font = font
+		self.font_size = font_size
+		self.pivot = pivot
+
+	@property
+	def size(self): return PILx.get_size(s, font, font_size)
+
+	@property
+	def aabb(self):
+		return npx.rect(np.zeros(2), self.size).set_position(self.pivot, self.position)
+
+def text_to_svg(obj, **kwargs): #In SVG, the y attribute of a <text> element refers to the baseline of the text
+	return  lxmlx.element('text', text=obj.s, x=obj.aabb.min[0], y=obj.aabb.max[1], **{"font-family": osx.filename(self.font), "font-size": self.font_size}, **kwargs)
 
 def circle_to_svg(obj, **kwargs): return lxmlx.element("circle", cx=obj.center[0], cy=obj.center[1], r=obj.radius, **kwargs)
 def ellipse_to_svg(obj, **kwargs): return lxmlx.element("ellipse", cx=obj.center[0], cy=obj.center[1], rx=obj.extents[0], ry=obj.extents[1], **kwargs)
@@ -378,7 +395,7 @@ def rect_to_svg(obj, **kwargs): return lxmlx.element("rect", x=obj.min[0], y=obj
 def line_to_svg(obj, **kwargs): return lxmlx.element("line", x1=obj[0][0], y1=obj[0][1], x2=obj[1][0], y2=obj[1][1], **kwargs)
 def arc_to_svg(obj, **kwargs): return lxmlx.element("path", d=obj.d(), **kwargs)
 
-def text(cx, cy, s, pivot=np.ones(2) * 0.5, font='arial.ttf', font_size=12, **kwargs): #In SVG, the y attribute of a <text> element refers to the baseline of the text
+"""def text(cx, cy, s, pivot=np.ones(2) * 0.5, font='arial.ttf', font_size=12, **kwargs): #In SVG, the y attribute of a <text> element refers to the baseline of the text
 	s = str(s)
 	size = PILx.get_size(s, font, font_size)
 	#print(size)
@@ -386,7 +403,7 @@ def text(cx, cy, s, pivot=np.ones(2) * 0.5, font='arial.ttf', font_size=12, **kw
 	rct = rct.set_position(pivot, np.array([cx, cy]))
 	result = lxmlx.element('text', text=s, x=rct.min[0], y=rct.max[1], **{"font-family": osx.filename(font), "font-size": str(font_size)}, **kwargs)
 	#result = svgx.g(svgx.rect(*rct.min, *rct.size, fill="red"), result)
-	return result
+	return result"""
 
 def group_to_svg(obj, **kwargs): return lxmlx.element("g", children=[x.to_svg() for x in obj], **kwargs)
 
@@ -436,7 +453,9 @@ npx.rect.to_svg = lambda self: rect_to_svg(self, **get_attrib(self))
 geo.group.to_svg = lambda self: group_to_svg(self, **get_attrib(self))
 geo.arc.to_svg = lambda self: arc_to_svg(self, **get_attrib(self))
 
-shapes = [bezier.polybezier, geo.circle, geo.ellipse, geo.line, geo.polyline, npx.rect, geo.group, geo.arc]
+text.to_svg = lambda self: text_to_svg(self, **get_attrib(self))
+
+shapes = [bezier.polybezier, geo.circle, geo.ellipse, geo.line, geo.polyline, npx.rect, geo.group, geo.arc, text]
 
 def draw(obj):
 	size = obj.aabb.size
