@@ -9,6 +9,55 @@ from pyx.collectionsx import flatten
 from itertools import product
 
 EPSILON = 1e-9
+TAU = math.pi * 2.
+
+class points(np.ndarray):
+
+	def __new__(cls, input_array, **attrs):
+		obj = np.asarray(input_array).view(cls)
+
+		for k,v in attrs.items():
+			setattr(obj, k, v)
+
+		return obj
+
+	def __array_finalize__(self, obj):
+
+		if obj is None:
+			return
+
+		# copy attributes automatically
+		for k, v in getattr(obj, "__dict__", {}).items():
+			setattr(self, k, v)
+
+	@property
+	def aabb(self):
+		return npx.aabb(self)
+
+	@aabb.setter
+	def aabb(self, value):
+		self[:] = npx.set_aabb(self, value)
+
+	def transform(self, M):
+		pts = npx.affine_transform(M, self)
+		return type(self)(pts)
+
+	def __matmul__(self, M):
+		return self.transform(M)
+
+	def __rmatmul__(self, M):
+		return self.transform(M)
+
+	def copy(self):
+		obj = type(self)(np.array(self))
+		obj.__dict__.update(self.__dict__)
+		return obj
+
+	def __repr__(self):
+		name = type(self).__name__
+		return f"{name}({np.asarray(self)}, attrs={self.__dict__})"
+
+
 
 def elbow_connector1(start, end, x=0): return polyline([start, np.array([start[x], end[1 - x]]), end])
 
@@ -346,7 +395,7 @@ class arc(circle):
 			f"A {self.radius} {self.radius} 0 {large_arc_flag} {sweep_flag} {p1[0]} {p1[1]}"
 		)
 
-class line(np.ndarray):	#start = self[0], end = self[1]
+"""class line(np.ndarray):	#start = self[0], end = self[1]
 	def __new__(cls, input_array):
 		# Convert input to ndarray and view it as MyArray
 		obj = np.asarray(input_array).view(cls)
@@ -356,8 +405,10 @@ class line(np.ndarray):	#start = self[0], end = self[1]
 		# Called when the object is created via view/slicing
 		if obj is None: return
 		# You can set custom attributes here if needed
-		self.my_attribute = getattr(obj, 'my_attribute', 'default')
+		self.my_attribute = getattr(obj, 'my_attribute', 'default')"""
 
+class line(points):	#start = self[0], end = self[1]
+	
 	@property
 	def vector(self): return self[1] - self[0]
 	
@@ -397,13 +448,13 @@ class line(np.ndarray):	#start = self[0], end = self[1]
 	
 	def subdivide(self, n): return polyline(npx.subdivide(self[0], self[1], n+1), closed=False).edges()
 
-	@property
+	"""@property
 	def aabb(self): return npx.aabb(*self)
 	@aabb.setter
 	def aabb(self, value): self[:] = npx.set_aabb(self, value)
 
 	def __rmatmul__(self, M): return self.__matmul__(M)
-	def __matmul__(self, M): return line(npx.affine_transform(M, self))
+	def __matmul__(self, M): return line(npx.affine_transform(M, self))"""
 
 	def set_position(self, pivot, value):	#pivot is normalized and value is not normalized
 		pivot = npx.lerp(*self, pivot)
@@ -726,8 +777,7 @@ class angle(list):
 
 EPSILON = 1e-10
 
-class polyline(np.ndarray):#list):
-
+"""class polyline(np.ndarray):
 
 	def __new__(cls, input_array, closed=True):
 		# Convert input to ndarray and view it as MyArray
@@ -739,8 +789,15 @@ class polyline(np.ndarray):#list):
 		# Called when the object is created via view/slicing
 		if obj is None: return
 		# You can set custom attributes here if needed
-		self.my_attribute = getattr(obj, 'my_attribute', 'default')
+		self.my_attribute = getattr(obj, 'my_attribute', 'default')"""
 
+class polyline(points):
+
+	def __new__(cls, input_array, closed=True):
+		obj = super().__new__(cls, input_array, closed=closed)
+		return obj
+
+	
 	def edges(p): return [line(x) for x in List.aranges(p, 2, cycle=p.closed)]
 	
 	def edge(p, index): return line([p[index], p[(index + 1) % len(p)]])
@@ -983,13 +1040,13 @@ class polyline(np.ndarray):#list):
 		#print(v, result)
 		return result
 
-	@property
+	"""@property
 	def aabb(self): return npx.aabb(self)
 	@aabb.setter
 	def aabb(self, value): self[:] = npx.set_aabb(self, value)
 
 	def __rmatmul__(self, M): return self.__matmul__(M)
-	def __matmul__(self, M): return polyline(npx.affine_transform(M, self), closed=self.closed)
+	def __matmul__(self, M): return polyline(npx.affine_transform(M, self), closed=self.closed)"""
 
 	"""def clip(p1, p2):	#split the edges of polyline p1 wherever they intersect edges of polyline p2
 		result = []
