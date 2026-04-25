@@ -23,7 +23,7 @@ def MEllipse(obj): return Ellipse(width = obj.size[0], height = obj.size[1]).mov
 def MLine(obj): return Line(start = np.append(obj[0], 0), end = np.append(obj[1], 0))
 def MPolygon(obj): return Polygon(*[(*x, 0) for x in obj])
 def MRect(obj): return Rectangle(width = obj.size[0], height = obj.size[1]).move_to(np.append(obj.center, 0))
-
+def MText(obj):	return Text(obj.s, font=obj.font, font_size=obj.font_size).move_to(np.append(obj.position, 0))
 
 
 class ValueTrackers():
