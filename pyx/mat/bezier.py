@@ -1,16 +1,18 @@
 import math
 import numpy as np
 import pyx.numpyx as npx
-from pyx.numpyx_geo import polyline
+from pyx.numpyx_geo import polyline, points
 
-class bezier(np.ndarray):
+"""class bezier(np.ndarray):
 	def __new__(cls, input_array):
 		obj = np.asarray(input_array).view(cls)
 		return obj
 
 	def __array_finalize__(self, obj):
-		if obj is None: return
+		if obj is None: return"""
 
+class bezier(points):
+	
 	def get_point(p, t):
 		# Recursive Bézier evaluation (De Casteljau's algorithm)
 		if len(p) == 1:
@@ -45,12 +47,13 @@ class bezier(np.ndarray):
 		#print(length, size, steps)
 		return p.sample(steps)
 
-	@property
+	"""@property
 	def aabb(self): return npx.aabb(self)
 	@aabb.setter
-	def aabb(self, value): self[:] = npx.set_aabb(self, value)
+	def aabb(self, value): self[:] = npx.set_aabb(self, value)"""
 
-class polybezier(np.ndarray):	#composite Bézier curve or Bézier spline
+"""class polybezier(np.ndarray):	#composite Bézier curve or Bézier spline
+	
 	def __new__(cls, input_array, endpoints=None, closed=False):
 		# Convert input to ndarray and view it as MyArray
 		obj = np.asarray(input_array).view(cls)
@@ -63,8 +66,14 @@ class polybezier(np.ndarray):	#composite Bézier curve or Bézier spline
 		# Called when the object is created via view/slicing
 		if obj is None: return
 		# You can set custom attributes here if needed
-		self.my_attribute = getattr(obj, 'my_attribute', 'default')
+		self.my_attribute = getattr(obj, 'my_attribute', 'default')"""
 
+class polybezier(points):	#composite Bézier curve or Bézier spline
+
+	def __new__(cls, input_array, endpoints=None, closed=False):
+		obj = super().__new__(cls, input_array, closed=closed, endpoints=list(range(len(input_array))) if endpoints is None else endpoints)
+		return obj
+	
 	def get_endpoints(self): return polyline([self[i] for i in self.endpoints], closed=self.closed)
 	
 	@property
@@ -105,13 +114,13 @@ class polybezier(np.ndarray):	#composite Bézier curve or Bézier spline
 		#print(d)
 		return d
 
-	@property
+	"""@property
 	def aabb(self): return npx.aabb(self)
 	@aabb.setter
 	def aabb(self, value): self[:] = npx.set_aabb(self, value)
 
 	def __rmatmul__(self, M): return self.__matmul__(M)
-	def __matmul__(self, M): return polybezier(npx.affine_transform(M, self), endpoints=self.endpoints, closed=self.closed)
+	def __matmul__(self, M): return polybezier(npx.affine_transform(M, self), endpoints=self.endpoints, closed=self.closed)"""
 
 def smooth_control_points(p, index, extents=10):
 	angle = p.vertex_angle(index)
