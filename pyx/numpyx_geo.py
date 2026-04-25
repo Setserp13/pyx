@@ -43,6 +43,12 @@ class circle():
 	@property
 	def area(self): return 2 * math.pi * self.radius ** 2
 
+	def tangent(self, theta):
+		p = self.get_point(theta)
+		r = p - self.center
+		t = np.array([-r[1], r[0]])  # 90° rotation
+		return line([p, p + t])
+	
 	@property
 	def aabb(self): return npx.rect.center_size(self.center, np.ones(2) * self.diameter)
 	@aabb.setter
