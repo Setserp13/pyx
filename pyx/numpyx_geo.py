@@ -395,18 +395,6 @@ class arc(circle):
 			f"A {self.radius} {self.radius} 0 {large_arc_flag} {sweep_flag} {p1[0]} {p1[1]}"
 		)
 
-"""class line(np.ndarray):	#start = self[0], end = self[1]
-	def __new__(cls, input_array):
-		# Convert input to ndarray and view it as MyArray
-		obj = np.asarray(input_array).view(cls)
-		return obj
-
-	def __array_finalize__(self, obj):
-		# Called when the object is created via view/slicing
-		if obj is None: return
-		# You can set custom attributes here if needed
-		self.my_attribute = getattr(obj, 'my_attribute', 'default')"""
-
 class line(points):	#start = self[0], end = self[1]
 	
 	@property
@@ -427,11 +415,6 @@ class line(points):	#start = self[0], end = self[1]
 	@property	#angle of inclination, from x-axis
 	def angle(self): return math.atan2(self.vector[1], self.vector[0])
 
-	"""def normal(self, left=True):
-		v = self.vector
-		n = np.array([-v[1], v[0]]) if left else np.array([v[1], -v[0]])
-		return n if np.array_equal(self[0], self[1]) else npx.normalize(n)"""
-
 	def padding(self, left, right, relative=False):
 		if relative:
 			left *= self.length
@@ -447,14 +430,6 @@ class line(points):	#start = self[0], end = self[1]
 		return line([origin - dir * value * (1 - pivot), origin + dir * value * pivot])
 	
 	def subdivide(self, n): return polyline(npx.subdivide(self[0], self[1], n+1), closed=False).edges()
-
-	"""@property
-	def aabb(self): return npx.aabb(*self)
-	@aabb.setter
-	def aabb(self, value): self[:] = npx.set_aabb(self, value)
-
-	def __rmatmul__(self, M): return self.__matmul__(M)
-	def __matmul__(self, M): return line(npx.affine_transform(M, self))"""
 
 	def set_position(self, pivot, value):	#pivot is normalized and value is not normalized
 		pivot = npx.lerp(*self, pivot)
@@ -774,30 +749,12 @@ class angle(list):
 	
 		return arc(self[1], radius, start, end)
 
-
-EPSILON = 1e-10
-
-"""class polyline(np.ndarray):
-
-	def __new__(cls, input_array, closed=True):
-		# Convert input to ndarray and view it as MyArray
-		obj = np.asarray(input_array).view(cls)
-		obj.closed = closed
-		return obj
-
-	def __array_finalize__(self, obj):
-		# Called when the object is created via view/slicing
-		if obj is None: return
-		# You can set custom attributes here if needed
-		self.my_attribute = getattr(obj, 'my_attribute', 'default')"""
-
 class polyline(points):
 
 	def __new__(cls, input_array, closed=True):
 		obj = super().__new__(cls, input_array, closed=closed)
 		return obj
 
-	
 	def edges(p): return [line(x) for x in List.aranges(p, 2, cycle=p.closed)]
 	
 	def edge(p, index): return line([p[index], p[(index + 1) % len(p)]])
@@ -1039,14 +996,6 @@ class polyline(points):
 				result[i][axis] -= result[i - 1][axis]
 		#print(v, result)
 		return result
-
-	"""@property
-	def aabb(self): return npx.aabb(self)
-	@aabb.setter
-	def aabb(self, value): self[:] = npx.set_aabb(self, value)
-
-	def __rmatmul__(self, M): return self.__matmul__(M)
-	def __matmul__(self, M): return polyline(npx.affine_transform(M, self), closed=self.closed)"""
 
 	"""def clip(p1, p2):	#split the edges of polyline p1 wherever they intersect edges of polyline p2
 		result = []
