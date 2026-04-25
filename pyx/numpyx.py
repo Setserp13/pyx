@@ -139,7 +139,7 @@ class rect_like:
 	@property
 	def extents(self): return self.size * 0.5
 	@extents.setter
-	def extents(self, value): self.size = value * 2
+	def extents(self, value): self.size = value * 2.
 	
 	@property
 	def max(self): return self.min + self.size
@@ -194,6 +194,10 @@ class rect_like:
 	def __repr__(self): return f'{type(self).__name__}(min={self.min}, size={self.size})'
 
 	def __str__(self): return self.__repr__()
+
+	def astype(self, dtype): return type(self).min_size(self.min.astype(dtype), self.size.astype(dtype))
+
+	def asint(self): return self.astype(int)
 
 
 class rect(rect_like):
@@ -283,8 +287,6 @@ class rect(rect_like):
 			stop.append(interval[1])
 		return rect.min_max(np.array(start), np.array(stop))
 
-	def asint(self): return rect(self.min.astype(int), self.size.astype(int))
-
 	def volume(self): return np.prod(self.size)
 
 	def contains_rect_percent(self, other, percent=1.0):
@@ -335,14 +337,6 @@ class rect2(rect):
 	def __init__(self, x, y, width, height):
 		super().__init__(np.array([x, y]), np.array([width, height]))
 
-	"""def bottom_left(rect): return rect.denormalize_point(np.array([0, 0]))
-	def bottom_right(rect): return rect.denormalize_point(np.array([0, 1]))
-	def top_left(rect): return rect.denormalize_point(np.array([1, 0]))
-	def top_right(rect): return rect.denormalize_point(np.array([1, 1]))
-	def left(rect): return [rect2.bottom_left(rect), rect2.top_left(rect)]
-	def right(rect): return [rect2.bottom_right(rect), rect2.top_right(rect)]
-	def bottom(rect): return [rect2.bottom_left(rect), rect2.bottom_right(rect)]
-	def top(rect): return [rect2.top_left(rect), rect2.top_right(rect)]"""
 	def bottom_left(rect): return rect.denormalize_point(np.array([0, 0]))
 	def bottom_right(rect): return rect.denormalize_point(np.array([1, 0]))
 	def top_left(rect): return rect.denormalize_point(np.array([0, 1]))
