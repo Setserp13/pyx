@@ -133,19 +133,11 @@ class circle():
 	def copy(self): return circle(self.center.copy(), self.radius)
 
 
-class ellipse():
-	"""def __init__(self, center, a, b):	#a and be are semi axes
-		self.center = np.array(center)
-		self.a = a
-		self.b = b"""
+class ellipse(npx.rect_like):
 
 	def __init__(self, center, size):
-		self.center = center
-		self.size = size
+		super().__init__(self.center - self.size * 0.5, self.size)
 
-	@property
-	def extents(self): return self.size / 2
-	
 	@property
 	def a(self): return max(self.extents)	# semi-major
 
@@ -201,13 +193,6 @@ class ellipse():
 	# =========================
 	# Parametric point
 	# =========================
-	"""def point(self, t):
-		x = self.a * np.cos(t)
-		y = self.b * np.sin(t)
-		return self.center + np.array([x, y])[[self.orientation, 1 - self.orientation]]
-
-	def get_point(self, theta): return np.array([self.a * math.cos(theta), self.b * math.sin(theta)]) + self.center"""
-
 	def get_point(self, t):	#Standard parametric equation (centered)
 		return np.array([np.cos(t), np.sin(t)]) * self.extents + self.center
 	
@@ -335,39 +320,6 @@ class ellipse():
 	
 		return theta0 % (2*np.pi), theta_end
 
-	
-	@property
-	def aabb(self): return npx.rect.center_size(self.center, self.size)
-	@aabb.setter
-	def aabb(self, value):
-		self.center = value.center
-		self.size = value.extents * 2
-
-	def __rmatmul__(self, M): return self.__matmul__(M)
-
-	def __matmul__(self, M):
-		M = np.asarray(M, dtype=float)
-
-		if M.shape != (3, 3):
-			raise ValueError("Expected a 3x3 affine matrix")
-
-		# Transform center
-		center_h = np.append(self.center, 1)
-		center = (M @ center_h)[:2]
-
-		# Linear part
-		A = M[:2, :2]
-
-		# Transform axis vectors
-		a_vec = A @ np.array([self.a, 0])
-		b_vec = A @ np.array([0, self.b])
-
-		a = np.linalg.norm(a_vec)
-		b = np.linalg.norm(b_vec)
-
-		return ellipse(center, a, b)
-		
-	def copy(self): return ellipse(self.center.copy(), self.a, self.b)
 
 class arc(circle):
 	def __init__(self, center, radius, start, end): #start is start angle and end is end angle
