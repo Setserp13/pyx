@@ -354,11 +354,11 @@ class points(np.ndarray):
 
 	@property
 	def aabb(self):
-		return npx.aabb(self)
+		return aabb(self)
 
 	@aabb.setter
 	def aabb(self, value):
-		self[:] = npx.set_aabb(self, value)
+		self[:] = set_aabb(self, value)
 
 	def transform(self, M):
 		pts = npx.affine_transform(M, self)
@@ -421,7 +421,7 @@ class circle():
 		return line([p, p + t])
 	
 	@property
-	def aabb(self): return npx.rect.center_size(self.center, np.ones(2) * self.diameter)
+	def aabb(self): return geo.rect.center_size(self.center, np.ones(2) * self.diameter)
 	@aabb.setter
 	def aabb(self, value):
 		self.center = value.center
@@ -1482,7 +1482,7 @@ def angle_vector_plane(v, p1, p2):	#p1 and p2 are vectors that define the plane
 class group(list):
 	@property
 	def aabb(self):
-		return npx.aabb([x.aabb for x in self])
+		return aabb([x.aabb for x in self])
 
 	@aabb.setter
 	def aabb(self, value):
@@ -1497,7 +1497,7 @@ def distribute(arr, axis=0, align=.5, gap=0.0):
 
 def rects(offset, sizes, axis=0, align=0.5, gap=0.0):
 	dim = len(sizes[0])
-	result = group([npx.rect(np.zeros(dim), x) for x in sizes])
+	result = group([rect(np.zeros(dim), x) for x in sizes])
 	result[0].min = offset
 	#print(offset)
 	distribute(result, axis=axis, align=align, gap=gap)
@@ -1743,7 +1743,7 @@ def circle_polyline_distance(c, v):
 	return min([circle_segment_distance(c, x) for x in v.edges()])
 
 def circle_rect_distance(c, rect):
-	return circle_polyline_distance(c, npx.rect2.corners(rect))
+	return circle_polyline_distance(c, rect2.corners(rect))
 
 
 
