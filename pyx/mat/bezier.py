@@ -50,7 +50,7 @@ class bezier(np.ndarray):
 	@aabb.setter
 	def aabb(self, value): self[:] = npx.set_aabb(self, value)
 
-class polybezier(np.ndarray):	#path(np.ndarray):composite Bézier curve or Bézier spline
+class polybezier(np.ndarray):	#composite Bézier curve or Bézier spline
 	def __new__(cls, input_array, endpoints=None, closed=False):
 		# Convert input to ndarray and view it as MyArray
 		obj = np.asarray(input_array).view(cls)
@@ -111,7 +111,7 @@ class polybezier(np.ndarray):	#path(np.ndarray):composite Bézier curve or Bézi
 	def aabb(self, value): self[:] = npx.set_aabb(self, value)
 
 	def __rmatmul__(self, M): return self.__matmul__(M)
-	def __matmul__(self, M): return path(npx.affine_transform(M, self), endpoints=self.endpoints, closed=self.closed)
+	def __matmul__(self, M): return polybezier(npx.affine_transform(M, self), endpoints=self.endpoints, closed=self.closed)
 
 def smooth_control_points(p, index, extents=10):
 	angle = p.vertex_angle(index)
