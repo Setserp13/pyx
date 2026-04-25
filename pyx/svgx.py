@@ -378,7 +378,7 @@ class text():
 		self.pivot = pivot
 
 	@property
-	def size(self): return PILx.get_size(s, font, font_size)
+	def size(self): return PILx.get_size(self.s, self.font, self.font_size)
 
 	@property
 	def aabb(self):
