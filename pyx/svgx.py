@@ -180,7 +180,7 @@ def from_svg(obj):
 
 def page_rect(obj):
 	viewBox = obj.get('viewBox')
-	return npx.rect2(0, 0, *get(obj, float, 'width', 'height')) if viewBox is None else npx.rect2(*[float(x) for x in viewBox.split(' ')])
+	return geo.rect2(0, 0, *get(obj, float, 'width', 'height')) if viewBox is None else geo.rect2(*[float(x) for x in viewBox.split(' ')])
 
 def set_page_size(svg, size):
 	set(svg, viewBox=f"0 0 {size[0]} {size[1]}", width=size[0], height=size[1])	
@@ -204,7 +204,7 @@ def rotate_page(svg, angle=90):	#angle is in degree
 
 def circle_from_svg(obj): return geo.circle(get(obj, float, 'cx', 'cy'), *get(obj, float, 'r'))
 def ellipse_from_svg(obj): return geo.ellipse(np.array(get(obj, float, 'cx', 'cy')), np.array(get(obj, float, 'rx', 'ry')) * 2.)
-def rect_from_svg(obj): return npx.rect2(*get(obj, float, 'x', 'y', 'width', 'height'))
+def rect_from_svg(obj): return geo.rect2(*get(obj, float, 'x', 'y', 'width', 'height'))
 def line_from_svg(obj): return geo.line([get(obj, float, 'x1', 'y1'), get(obj, float, 'x2', 'y2')])
 def parse_points2(s):
 	matches = re.findall(r'(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)', s)
@@ -382,7 +382,7 @@ class text():
 
 	@property
 	def aabb(self):
-		return npx.rect(np.zeros(2), self.size).set_position(self.pivot, self.position)
+		return geo.rect(np.zeros(2), self.size).set_position(self.pivot, self.position)
 
 	@aabb.setter
 	def aabb(self, value):
@@ -399,15 +399,7 @@ def rect_to_svg(obj, **kwargs): return lxmlx.element("rect", x=obj.min[0], y=obj
 def line_to_svg(obj, **kwargs): return lxmlx.element("line", x1=obj[0][0], y1=obj[0][1], x2=obj[1][0], y2=obj[1][1], **kwargs)
 def arc_to_svg(obj, **kwargs): return lxmlx.element("path", d=obj.d(), **kwargs)
 
-"""def text(cx, cy, s, pivot=np.ones(2) * 0.5, font='arial.ttf', font_size=12, **kwargs): #In SVG, the y attribute of a <text> element refers to the baseline of the text
-	s = str(s)
-	size = PILx.get_size(s, font, font_size)
-	#print(size)
-	rct = npx.rect(np.zeros(2), size)
-	rct = rct.set_position(pivot, np.array([cx, cy]))
-	result = lxmlx.element('text', text=s, x=rct.min[0], y=rct.max[1], **{"font-family": osx.filename(font), "font-size": str(font_size)}, **kwargs)
-	#result = svgx.g(svgx.rect(*rct.min, *rct.size, fill="red"), result)
-	return result"""
+
 
 def group_to_svg(obj, **kwargs): return lxmlx.element("g", children=[x.to_svg() for x in obj], **kwargs)
 
@@ -453,17 +445,17 @@ geo.circle.to_svg = lambda self: circle_to_svg(self, **get_attrib(self))
 geo.ellipse.to_svg = lambda self: ellipse_to_svg(self, **get_attrib(self))
 geo.line.to_svg = lambda self: line_to_svg(self, **get_attrib(self))
 geo.polyline.to_svg = lambda self: polygon_to_svg(self, **get_attrib(self)) if self.closed else polyline_to_svg(self, **get_attrib(self))
-npx.rect.to_svg = lambda self: rect_to_svg(self, **get_attrib(self))
+geo.rect.to_svg = lambda self: rect_to_svg(self, **get_attrib(self))
 geo.group.to_svg = lambda self: group_to_svg(self, **get_attrib(self))
 geo.arc.to_svg = lambda self: arc_to_svg(self, **get_attrib(self))
 
 text.to_svg = lambda self: text_to_svg(self, **get_attrib(self))
 
-shapes = [bezier.polybezier, geo.circle, geo.ellipse, geo.line, geo.polyline, npx.rect, geo.group, geo.arc, text]
+shapes = [bezier.polybezier, geo.circle, geo.ellipse, geo.line, geo.polyline, geo.rect, geo.group, geo.arc, text]
 
 def draw(obj):
 	size = obj.aabb.size
-	obj.aabb = npx.rect(np.zeros(2), size)
+	obj.aabb = geo.rect(np.zeros(2), size)
 	result = svg(*size)
 	result.append(obj.to_svg())
 	return result
