@@ -421,7 +421,7 @@ class circle():
 		return line([p, p + t])
 	
 	@property
-	def aabb(self): return geo.rect.center_size(self.center, np.ones(2) * self.diameter)
+	def aabb(self): return rect.center_size(self.center, np.ones(2) * self.diameter)
 	@aabb.setter
 	def aabb(self, value):
 		self.center = value.center
