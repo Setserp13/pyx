@@ -384,6 +384,10 @@ class text():
 	def aabb(self):
 		return npx.rect(np.zeros(2), self.size).set_position(self.pivot, self.position)
 
+	@aabb.setter
+	def aabb(self, value):
+		self.position = value.denormalize_point(self.pivot)
+
 def text_to_svg(obj, **kwargs): #In SVG, the y attribute of a <text> element refers to the baseline of the text
 	return  lxmlx.element('text', text=obj.s, x=obj.aabb.min[0], y=obj.aabb.max[1], **{"font-family": osx.filename(obj.font), "font-size": obj.font_size}, **kwargs)
 
