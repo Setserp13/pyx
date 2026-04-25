@@ -148,15 +148,15 @@ class rect_like:
 
 	@classmethod
 	def min_size(cls, min, size):
-		obj = rect_like(min, size)
-		obj.__class__ = cls
+		obj = cls.__new__(cls)     # cria objeto da classe correta
+		rect_like.__init__(obj, min, size)  # inicializa como rect_like
 		return obj
 
 	@classmethod
-	def center_size(cls, center, size): return cls.min_size(center - size * 0.5, size)
+	def min_max(cls, min, max): return cls.min_size(min, max - min)
 
 	@classmethod
-	def min_max(cls, min, max): return cls.min_size(min, max - min)
+	def center_size(cls, center, size): return cls.min_size(center - size * 0.5, size)
 
 	@property
 	def aabb(self): return rect(self.min, self.size)
