@@ -126,7 +126,7 @@ def on_sphere(radius=1.0, stacks=16, slices=32, center=np.zeros(3)):
 			v.append(spherical_to_cartesian(radius, theta, phi) + center)
 	return v
 
-class rect:
+class rect_like:
 	def __init__(self, min, size):
 		self.min = np.array(min)
 		self.size = np.array(size)
@@ -146,6 +146,49 @@ class rect:
 	@max.setter
 	def max(self, value): self.min = value - self.size
 
+	@classmethod
+	def center_size(cls, center, size): return cls(center - size * 0.5, size)
+
+	@classmethod
+	def min_max(min, max): return cls(min, max - min)
+
+	@property
+	def aabb(self): return rect(self.min, self.size)
+	@aabb.setter
+	def aabb(self, value):
+		self.min = value.min
+		self.size = value.size
+
+	def __add__(self, vector): return rect(self.min + vector, self.size)
+
+	def __sub__(self, vector): return rect(self.min - vector, self.size)
+	
+	@property
+	def dim(self): return len(self.min)
+
+	def __rmatmul__(self, M): return self.__matmul__(M)
+
+	def __matmul__(self, M):	#Applies a (n+1)x(n+1) affine transform
+		M = np.asarray(M, dtype=float)
+		if M.shape != (self.dim + 1, self.dim + 1):
+			raise ValueError("Expected a (n+1)x(n+1) affine matrix")
+
+		# position (affected by translation)
+		min_h = np.append(self.min, 1)
+		min = (M @ min_h)[:self.dim]
+
+		# size (direction vector, no translation)
+		size_h = np.append(self.size, 0)
+		size = (M @ size_h)[:self.dim]
+
+		return type(self)(min, size)
+		
+	def copy(self): return type(self)(self.min.copy(), self.size.copy())
+
+
+
+class rect(rect_like):
+	
 	def normalize_point(self, value):
 		size = self.size
 		size = np.where(size == 0, 1, size)
@@ -188,18 +231,6 @@ class rect:
 
 	def contains_rect(self, rect):
 		return self.contains_point(rect.min) and self.contains_point(rect.max)
-
-	#STATIC
-	def center_size(center, size): return rect(center - size * 0.5, size)
-
-	def min_max(min, max): return rect(min, max - min)
-
-	@property
-	def aabb(self): return rect(self.min, self.size)
-	@aabb.setter
-	def aabb(self, value):
-		self.min = value.min
-		self.size = value.size
 
 	def distances(a, b):
 		return [max(a.min[i] - b.max[i], b.min[i] - a.max[i], 0) for i in range(len(a.min))]
@@ -265,10 +296,6 @@ class rect:
 
 	def __str__(self): return f'Min: {self.min}, Size: {self.size}, Max: {self.max}'
 
-	def __add__(self, vector): return rect(self.min + vector, self.size)
-
-	def __sub__(self, vector): return rect(self.min - vector, self.size)
-
 	def axis_scale(self, value, pivot=0.5, axis=0):
 		delta = value - self.size[axis]
 		self.min[axis] -= delta * pivot
@@ -294,28 +321,9 @@ class rect:
 	def ndfaces(self, axes):
 		centers = self.ndface_centers(axes)
 		return [rect.center_size(center, np.array([self.size[i] if i in axes else 0.0 for i in range(self.dim)])) for center in centers]
-	
-	@property
-	def dim(self): return len(self.min)
 
-	def __rmatmul__(self, M): return self.__matmul__(M)
 
-	def __matmul__(self, M):	#Applies a (n+1)x(n+1) affine transform
-		M = np.asarray(M, dtype=float)
-		if M.shape != (self.dim + 1, self.dim + 1):
-			raise ValueError("Expected a (n+1)x(n+1) affine matrix")
 
-		# position (affected by translation)
-		min_h = np.append(self.min, 1)
-		min = (M @ min_h)[:self.dim]
-
-		# size (direction vector, no translation)
-		size_h = np.append(self.size, 0)
-		size = (M @ size_h)[:self.dim]
-
-		return rect(min, size)
-		
-	def copy(self): return rect(self.min.copy(), self.size.copy())
 
 
 class rect2(rect):
