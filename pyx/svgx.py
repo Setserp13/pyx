@@ -101,7 +101,7 @@ def bezier_from_svg(obj):
 		pos = v[-1]
 	#print(points)
 	#miss Aa
-	return bezier.path(points, endpoints=endpoints, closed=closed)
+	return bezier.polybezier(points, endpoints=endpoints, closed=closed)
 
 def transform_from_svg(obj):
 	transform = get_transform(obj)
@@ -133,7 +133,7 @@ def from_svg(obj):
 			children = [from_svg(x) for x in obj]
 			result = geo.group([x for x in children if not x is None])
 		case 'line': result = line_from_svg(obj)
-		case 'path': result = bezier_from_svg(obj)
+		case 'polybezier': result = bezier_from_svg(obj)
 		case 'polyline': result = polyline_from_svg(obj)
 		case 'polygon': result = polygon_from_svg(obj)
 		case 'rect': result = rect_from_svg(obj)
@@ -427,7 +427,7 @@ import pyx.generic.generic as generic
 def get_attrib(obj): return getattr(obj, "attrib", {})
 
 
-bezier.path.to_svg = lambda self: path_to_svg(self.d(), **get_attrib(self))
+bezier.polybezier.to_svg = lambda self: polybezier_to_svg(self.d(), **get_attrib(self))
 geo.circle.to_svg = lambda self: circle_to_svg(self, **get_attrib(self))
 geo.ellipse.to_svg = lambda self: ellipse_to_svg(self, **get_attrib(self))
 geo.line.to_svg = lambda self: line_to_svg(self, **get_attrib(self))
@@ -436,7 +436,7 @@ npx.rect.to_svg = lambda self: rect_to_svg(self, **get_attrib(self))
 geo.group.to_svg = lambda self: group_to_svg(self, **get_attrib(self))
 geo.arc.to_svg = lambda self: arc_to_svg(self, **get_attrib(self))
 
-shapes = [bezier.path, geo.circle, geo.ellipse, geo.line, geo.polyline, npx.rect, geo.group, geo.arc]
+shapes = [bezier.polybezier, geo.circle, geo.ellipse, geo.line, geo.polyline, npx.rect, geo.group, geo.arc]
 
 def draw(obj):
 	size = obj.aabb.size
