@@ -1,6 +1,6 @@
 import numpy as np
-import pyx.numpyx as npx
 from pyx.numpyx import rect_like
+import pyx.numpyx as npx
 import pyx.mat.mat as mat
 from pyx.collectionsx import lshift
 import math
