@@ -1,5 +1,4 @@
 import numpy as np
-from pyx.numpyx import rect_like
 import pyx.numpyx as npx
 import pyx.mat.mat as mat
 from pyx.collectionsx import lshift
@@ -11,6 +10,295 @@ from itertools import product
 
 EPSILON = 1e-9
 TAU = math.pi * 2.
+
+class rect_like:
+	def __init__(self, min, size):
+		self.min = np.array(min)
+		self.size = np.array(size)
+
+	@property
+	def center(self): return self.min + self.extents
+	@center.setter
+	def center(self, value): self.min = value - self.extents
+	
+	@property
+	def extents(self): return self.size * 0.5
+	@extents.setter
+	def extents(self, value): self.size = value * 2.
+	
+	@property
+	def max(self): return self.min + self.size
+	@max.setter
+	def max(self, value): self.min = value - self.size
+
+	@classmethod
+	def min_size(cls, min, size):
+		obj = cls.__new__(cls)     # cria objeto da classe correta
+		rect_like.__init__(obj, min, size)  # inicializa como rect_like
+		return obj
+
+	@classmethod
+	def min_max(cls, min, max): return cls.min_size(min, max - min)
+
+	@classmethod
+	def center_size(cls, center, size): return cls.min_size(center - size * 0.5, size)
+
+	@property
+	def aabb(self): return rect(self.min, self.size)
+	@aabb.setter
+	def aabb(self, value):
+		self.min = value.min
+		self.size = value.size
+
+	def __add__(self, vector): return type(self).min_size(self.min + vector, self.size)
+
+	def __sub__(self, vector): return type(self).min_size(self.min - vector, self.size)
+	
+	@property
+	def dim(self): return len(self.min)
+
+	def __rmatmul__(self, M): return self.__matmul__(M)
+
+	def __matmul__(self, M):	#Applies a (n+1)x(n+1) affine transform
+		M = np.asarray(M, dtype=float)
+		if M.shape != (self.dim + 1, self.dim + 1):
+			raise ValueError("Expected a (n+1)x(n+1) affine matrix")
+
+		# position (affected by translation)
+		min_h = np.append(self.min, 1)
+		min = (M @ min_h)[:self.dim]
+
+		# size (direction vector, no translation)
+		size_h = np.append(self.size, 0)
+		size = (M @ size_h)[:self.dim]
+
+		return type(self).min_size(min, size)
+		
+	def copy(self): return type(self).min_size(self.min.copy(), self.size.copy())
+
+	def __repr__(self): return f'{type(self).__name__}(min={self.min}, size={self.size})'
+
+	def __str__(self): return self.__repr__()
+
+	def astype(self, dtype): return type(self).min_size(self.min.astype(dtype), self.size.astype(dtype))
+
+	def asint(self): return self.astype(int)
+
+
+class rect(rect_like):
+	
+	def normalize_point(self, value):
+		size = self.size
+		size = np.where(size == 0, 1, size)
+		return (value - self.min) / size
+	def normalize_point_component(self, value, axis=0): return (value - self.min[axis]) / self.size[axis]
+
+	def denormalize_point(self, value): return value * self.size + self.min
+	def denormalize_point_component(self, value, axis=0): return value * self.size[axis] + self.min[axis]
+
+	def denormalize_points(self, value): return [self.denormalize_point(x) for x in value]
+	
+	def normalize_vector(self, value):
+		size = self.size
+		size = np.where(size == 0, 1, size)
+		return value / size
+
+	def denormalize_vector(self, value): return value * self.size
+
+	def normalize_rect(self, value):
+		return rect(self.normalize_point(value.min), self.normalize_vector(value.size))
+
+	def denormalize_rect(self, value):
+		return rect(self.denormalize_point(value.min), self.denormalize_vector(value.size))
+
+	def set_axis_position(self, pivot, value, axis=0): #pivot is normalized and value is not normalized
+		result = rect(self.min, self.size)
+		result.min[axis] += (value - result.denormalize_point_component(pivot, axis=axis))
+		return result
+		
+	def set_position(self, pivot, value): #pivot is normalized and value is not normalized
+		return rect(self.min + (value - self.denormalize_point(pivot)), self.size)
+
+	def clamp(self, point): return clamp(point, self.min, self.max)
+
+	def clamp_rect(self, value): return rect.min_max(self.clamp(value.min), self.clamp(value.max))
+	
+	def contains_point(self, point):
+		return contains(self.min, self.max, point)
+		#return all(self.min[i] <= x and x <= self.max[i] for i, x in enumerate(point))
+
+	def contains_rect(self, rect):
+		return self.contains_point(rect.min) and self.contains_point(rect.max)
+
+	def distances(a, b):
+		return [max(a.min[i] - b.max[i], b.min[i] - a.max[i], 0) for i in range(len(a.min))]
+
+	def chebyshev_distance(a, b): return max(rect.distances(a, b))
+	
+	def euclidean_distance(a, b): return sqrt(sum(x ** 2 for x in rect.distances(a, b)))
+
+	def manhattan_distance(a, b): return sum(rect.distances(a, b))
+
+	def padding(self, left, right, relative=False):
+		if relative:
+			left = self.denormalize_vector(left)
+			right = self.denormalize_vector(right)
+		return rect.min_max(self.min + left, self.max - right)
+
+	def expand(self, amount):
+		padding = -np.full(len(self.min), amount)
+		return self.padding(padding, padding)
+
+	def bounds(self, obj_size, obj_pivot=None):
+		if obj_pivot is None:
+			obj_pivot = np.full(len(obj_size), 0.5)
+		return self.padding(obj_size * obj_pivot, obj_size * (1 - obj_pivot))
+
+	def random_point(self): return random_range(self.min, self.max)
+		
+	def axis_intersection(a, b, axis=0):
+		start = max(a.min[axis], b.min[axis])
+		stop = min(a.max[axis], b.max[axis])
+		return None if stop < start else (start, stop)
+
+	def intersection(a, b):
+		start = []
+		stop = []
+		for i in range(len(a.min)):
+			interval = rect.axis_intersection(a, b, i)
+			if interval is None:
+				return None
+			start.append(interval[0])
+			stop.append(interval[1])
+		return rect.min_max(np.array(start), np.array(stop))
+
+	def volume(self): return np.prod(self.size)
+
+	def contains_rect_percent(self, other, percent=1.0):
+		inter = rect.intersection(self, other)
+		return False if inter is None else inter.volume() / other.volume() >= percent
+
+	def subrects(self, ls, normalized=False):
+		return [self.normalize_rect(x) if normalized else x for x in ls if self.contains_rect(x)]
+
+	def slice_by_cell_count(self, cell_count): return self.slice_by_cell_size(self.size / np.array(cell_count, dtype=float))
+
+	def slice_by_cell_size(self, cell_size):
+		cell_count = np.ceil(self.size / cell_size).astype(int)
+		return [ rect.min_max(x.min, np.minimum(x.max, self.max)) for x in grid(cell_size, offset=self.min).cells(cell_count)]
+		return result
+
+	def axis_scale(self, value, pivot=0.5, axis=0):
+		delta = value - self.size[axis]
+		self.min[axis] -= delta * pivot
+		self.size[axis] = value
+	
+	def scale(self, value, pivot=np.full(2, 0.5)):
+		delta = value - self.size
+		self.min -= delta * pivot
+		self.size = value
+
+	def face_center(rect, axis, dir):  # dir -> -1: left/down/back and so on..., 1: right/up/front and so on...
+		return rect.center + rect.extents[axis] * ei(axis, len(rect.center)) * dir
+	
+	def face(rect, axis, dir):  # dir -> -1: left/down/back, 1: right/up/front
+		size = np.concatenate((rect.size[:axis], [0.0], rect.size[axis+1:]), axis=0)
+		return rect.center_size(rect.face_center(axis, dir), size)
+
+	def ndface_centers(self, axes):	#The faces are parallel to the Euclidean space defined by the axes
+		p = [[0.5] if i in axes else [0.0, 1.0] for i in range(self.dim)]
+		#print(p)
+		return [self.denormalize_point(np.array(x)) for x in product(*p)]
+
+	def ndfaces(self, axes):
+		centers = self.ndface_centers(axes)
+		return [rect.center_size(center, np.array([self.size[i] if i in axes else 0.0 for i in range(self.dim)])) for center in centers]
+
+
+
+
+
+class rect2(rect):
+	def __init__(self, x, y, width, height):
+		super().__init__(np.array([x, y]), np.array([width, height]))
+
+	def bottom_left(rect): return rect.denormalize_point(np.array([0, 0]))
+	def bottom_right(rect): return rect.denormalize_point(np.array([1, 0]))
+	def top_left(rect): return rect.denormalize_point(np.array([0, 1]))
+	def top_right(rect): return rect.denormalize_point(np.array([1, 1]))
+	
+	def side(rect, axis, dir):  # dir -> 0: left/down, 1: right/up
+		return line([
+			rect.denormalize_point(np.array([dir, i])[[axis, 1 - axis]])
+			for i in [0.0, 1.0]
+		])
+	def left(rect): return rect2.side(rect, axis=0, dir=0)
+	def right(rect): return rect2.side(rect, axis=0, dir=1)
+	def bottom(rect): return rect2.side(rect, axis=1, dir=0)
+	def top(rect): return rect2.side(rect, axis=1, dir=1)
+
+	def corners(rect): return polyline([rect2.bottom_left(rect), rect2.top_left(rect), rect2.top_right(rect), rect2.bottom_right(rect)], closed=True)
+	def area(rect): return rect.size[0] * rect.size[1]
+
+	def line_at(rect, t, axis=0):	#result is a line parallel to axis
+		u = ei(1 - axis, 2) * t
+		v = ei(axis, 2)
+		return line([rect.denormalize_point(u + v * i) for i in range(2)])
+
+	def lines(rect, n, axis=0):
+		return [rect2.line_at(rect, t, axis=axis) for t in subdivide(0.0, 1.0, n)]
+
+def rect3(x, y, z, width, height, depth): return rect(np.array([x, y, z]), np.array([width, height, depth]))
+
+class grid:
+	def __init__(self, cell_size, offset=None, cell_gap=None):
+		self.cell_size = np.array(cell_size)
+		self.offset = np.zeros(len(cell_size)) if offset is None else np.array(offset)
+		self.cell_gap = np.zeros(len(cell_size)) if cell_gap is None else np.array(cell_gap)
+
+	def cell_min(self, index):
+		return self.offset + (self.cell_size + self.cell_gap) * index
+
+	def cell_index(self, point):
+		return (point - self.offset) // (self.cell_size + self.cell_gap)
+
+	def snap_point(self, point, to=np.zeros(2)):
+		index = self.cell_index(point).astype(int)
+		return self.cell(index).denormalize_point(to)
+
+	def snap_points(self, points, to=np.zeros(2)): return [self.snap_point(x, to) for x in points]
+
+	def snap_rect(self, rct): return rect.min_max(self.snap_point(rct.min, np.zeros(2)), self.snap_point(rct.max, np.ones(2)))
+		
+	def cell(self, index):
+		return rect(self.cell_min(index), self.cell_size)
+
+	def lines(self, min_index, max_index, axis=None):
+		result = []
+		if axis is None:
+			for i in range(len(min_index)):
+				result += self.lines(min_index, max_index, i)
+		else:
+			for i in range(min_index[axis], max_index[axis]):
+				a = np.array(min_index)
+				b = np.array(max_index)
+				a[axis] = b[axis] = i
+				result.append(line([self.cell_min(a), self.cell_min(b)]))
+		return result
+
+	def cells(self, stop, start=np.zeros(2), swizzle=[0,1]):
+		start = ls.items(start, swizzle)
+		stop = ls.items(stop, swizzle)
+		ranges = [list(range(int(start[i]), int(stop[i]))) for i in range(len(start))]
+		indices = itertools.product(*ranges)
+		indices = [ls.items(x, swizzle) for x in indices]
+		return [self.cell(np.array(x)) for x in indices]
+
+
+
+
+
+
 
 class points(np.ndarray):
 
