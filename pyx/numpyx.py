@@ -156,7 +156,7 @@ class rect_like:
 	def center_size(cls, center, size): return cls.min_size(center - size * 0.5, size)
 
 	@classmethod
-	def min_max(min, max): return cls.min_size(min, max - min)
+	def min_max(cls, min, max): return cls.min_size(min, max - min)
 
 	@property
 	def aabb(self): return rect(self.min, self.size)
