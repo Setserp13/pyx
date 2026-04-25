@@ -50,7 +50,7 @@ class bezier(np.ndarray):
 	@aabb.setter
 	def aabb(self, value): self[:] = npx.set_aabb(self, value)
 
-class path(np.ndarray):	#composite Bézier curve or Bézier spline
+class polybezier(np.ndarray):	#path(np.ndarray):composite Bézier curve or Bézier spline
 	def __new__(cls, input_array, endpoints=None, closed=False):
 		# Convert input to ndarray and view it as MyArray
 		obj = np.asarray(input_array).view(cls)
