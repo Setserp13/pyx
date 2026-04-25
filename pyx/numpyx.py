@@ -147,10 +147,16 @@ class rect_like:
 	def max(self, value): self.min = value - self.size
 
 	@classmethod
-	def center_size(cls, center, size): return cls(center - size * 0.5, size)
+	def min_size(cls, min, size):
+		obj = rect_like(min, size)
+		obj.__class__ = cls
+		return obj
 
 	@classmethod
-	def min_max(min, max): return cls(min, max - min)
+	def center_size(cls, center, size): return cls.min_size(center - size * 0.5, size)
+
+	@classmethod
+	def min_max(min, max): return cls.min_size(min, max - min)
 
 	@property
 	def aabb(self): return rect(self.min, self.size)
@@ -159,9 +165,9 @@ class rect_like:
 		self.min = value.min
 		self.size = value.size
 
-	def __add__(self, vector): return rect(self.min + vector, self.size)
+	def __add__(self, vector): return type(self).min_size(self.min + vector, self.size)
 
-	def __sub__(self, vector): return rect(self.min - vector, self.size)
+	def __sub__(self, vector): return type(self).min_size(self.min - vector, self.size)
 	
 	@property
 	def dim(self): return len(self.min)
@@ -181,9 +187,9 @@ class rect_like:
 		size_h = np.append(self.size, 0)
 		size = (M @ size_h)[:self.dim]
 
-		return type(self)(min, size)
+		return type(self).min_size(min, size)
 		
-	def copy(self): return type(self)(self.min.copy(), self.size.copy())
+	def copy(self): return type(self).min_size(self.min.copy(), self.size.copy())
 
 
 
