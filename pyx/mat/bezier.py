@@ -3,14 +3,6 @@ import numpy as np
 import pyx.numpyx as npx
 from pyx.numpyx_geo import polyline, points
 
-"""class bezier(np.ndarray):
-	def __new__(cls, input_array):
-		obj = np.asarray(input_array).view(cls)
-		return obj
-
-	def __array_finalize__(self, obj):
-		if obj is None: return"""
-
 class bezier(points):
 	
 	def get_point(p, t):
@@ -46,27 +38,6 @@ class bezier(points):
 		steps = max(2, int(math.ceil(length / size)))	#minimum 2 samples
 		#print(length, size, steps)
 		return p.sample(steps)
-
-	"""@property
-	def aabb(self): return npx.aabb(self)
-	@aabb.setter
-	def aabb(self, value): self[:] = npx.set_aabb(self, value)"""
-
-"""class polybezier(np.ndarray):	#composite Bézier curve or Bézier spline
-	
-	def __new__(cls, input_array, endpoints=None, closed=False):
-		# Convert input to ndarray and view it as MyArray
-		obj = np.asarray(input_array).view(cls)
-		#obj.endpoints = [True] * len(input_array) if endpoints is None else endpoints
-		obj.endpoints = list(range(len(input_array))) if endpoints is None else endpoints
-		obj.closed = closed
-		return obj
-
-	def __array_finalize__(self, obj):
-		# Called when the object is created via view/slicing
-		if obj is None: return
-		# You can set custom attributes here if needed
-		self.my_attribute = getattr(obj, 'my_attribute', 'default')"""
 
 class polybezier(points):	#composite Bézier curve or Bézier spline
 
@@ -113,14 +84,6 @@ class polybezier(points):	#composite Bézier curve or Bézier spline
 			d += ' ' + ' '.join([str(y) for y in x.flatten()]) + ' '
 		#print(d)
 		return d
-
-	"""@property
-	def aabb(self): return npx.aabb(self)
-	@aabb.setter
-	def aabb(self, value): self[:] = npx.set_aabb(self, value)
-
-	def __rmatmul__(self, M): return self.__matmul__(M)
-	def __matmul__(self, M): return polybezier(npx.affine_transform(M, self), endpoints=self.endpoints, closed=self.closed)"""
 
 def smooth_control_points(p, index, extents=10):
 	angle = p.vertex_angle(index)
