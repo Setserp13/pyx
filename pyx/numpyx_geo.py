@@ -1,5 +1,6 @@
 import numpy as np
 import pyx.numpyx as npx
+from pyx.numpyx import rect_like
 import pyx.mat.mat as mat
 from pyx.collectionsx import lshift
 import math
@@ -133,7 +134,7 @@ class circle():
 	def copy(self): return circle(self.center.copy(), self.radius)
 
 
-class ellipse(npx.rect_like):
+class ellipse(rect_like):
 
 	def __init__(self, center, size):
 		super().__init__(self.center - self.size * 0.5, self.size)
