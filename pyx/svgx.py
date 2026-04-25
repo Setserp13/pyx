@@ -385,7 +385,7 @@ class text():
 		return npx.rect(np.zeros(2), self.size).set_position(self.pivot, self.position)
 
 def text_to_svg(obj, **kwargs): #In SVG, the y attribute of a <text> element refers to the baseline of the text
-	return  lxmlx.element('text', text=obj.s, x=obj.aabb.min[0], y=obj.aabb.max[1], **{"font-family": osx.filename(self.font), "font-size": self.font_size}, **kwargs)
+	return  lxmlx.element('text', text=obj.s, x=obj.aabb.min[0], y=obj.aabb.max[1], **{"font-family": osx.filename(obj.font), "font-size": obj.font_size}, **kwargs)
 
 def circle_to_svg(obj, **kwargs): return lxmlx.element("circle", cx=obj.center[0], cy=obj.center[1], r=obj.radius, **kwargs)
 def ellipse_to_svg(obj, **kwargs): return lxmlx.element("ellipse", cx=obj.center[0], cy=obj.center[1], rx=obj.extents[0], ry=obj.extents[1], **kwargs)
