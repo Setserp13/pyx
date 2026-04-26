@@ -699,7 +699,8 @@ class arc(circle):
 				angles.append(a)
 	
 		points = [self.get_point(a) for a in angles]
-	
+		print(points)
+		print(aabb(points))
 		return aabb(points)
 
 class line(points):	#start = self[0], end = self[1]
