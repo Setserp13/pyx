@@ -8,6 +8,7 @@ from pyx.collectionsx import List
 from pyx.collectionsx import flatten
 from itertools import product
 from multipledispatch import dispatch
+import copy
 
 EPSILON = 1e-9
 TAU = math.pi * 2.
@@ -53,7 +54,7 @@ class rect_like:
 
 	def __add__(self, vector): return type(self).min_size(self.min + vector, self.size)
 
-	def __sub__(self, vector): return type(self).min_size(self.min - vector, self.size)
+	def __sub__(self, vector): return self.__add__(-vector)
 	
 	@property
 	def dim(self): return len(self.min)
@@ -453,6 +454,13 @@ class circle():
 		return circle(center, radius)
 		
 	def copy(self): return circle(self.center.copy(), self.radius)
+
+	def __add__(self, vector):
+		obj = copy.deepcopy(self)
+		obj.center += vector
+		return obj
+
+	def __sub__(self, vector): return self.__add__(-vector)
 
 
 class ellipse(rect_like):
