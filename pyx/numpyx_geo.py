@@ -706,18 +706,12 @@ class arc(circle):
 	def aabb(self, value):
 		cur = self.aabb
 	
-		cur_min, cur_max = cur
-		new_min, new_max = value
-	
-		cur_size = cur_max - cur_min
-		new_size = new_max - new_min
-	
-		scale = new_size / cur_size
+		scale = value.size / cur.size
 	
 		# arcs must remain circular → use uniform scale
 		s = min(scale)
 	
-		self.center = (self.center - cur_min) * s + new_min
+		self.center = (self.center - cur.min) * s + value.min
 		self.radius *= s
 
 
