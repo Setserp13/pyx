@@ -677,6 +677,31 @@ class arc(circle):
 			f"A {self.radius} {self.radius} 0 {large_arc_flag} {sweep_flag} {p1[0]} {p1[1]}"
 		)
 
+	def contains_angle(self, a):
+		s = self.start
+		t = self.theta
+	
+		if t >= 0:
+			return 0 <= (a - s) % (2*math.pi) <= t
+		else:
+			return 0 >= (a - s) % (2*math.pi) >= t
+
+	@property
+	def aabb(self):
+		c = self.center
+		r = self.radius
+	
+		angles = [self.start, self.end]
+	
+		for i in range(4):
+			a = math.pi/2. * i
+			if self.contains_angle(a):
+				angles.append(a)
+	
+		points = [self.get_point(a) for a in angles]
+	
+		return aabb(points)
+
 class line(points):	#start = self[0], end = self[1]
 	
 	@property
