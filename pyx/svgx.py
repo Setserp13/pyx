@@ -440,9 +440,10 @@ import pyx.generic.generic as generic
 def get_attrib(obj):
 	attrib = getattr(obj, "attrib", {})
 	for k in ['fill', 'stroke']:
-		if isinstance(attrib[k], Color):
-			attrib[k + '-opacity'] = color.a
-			attrib[k] = color.hex[:-2]
+		if k in attrib:
+			if isinstance(attrib[k], Color):
+				attrib[k + '-opacity'] = color.a
+				attrib[k] = color.hex[:-2]
 	return attrib
 
 bezier.polybezier.to_svg = lambda self: polybezier_to_svg(self.d(), **get_attrib(self))
