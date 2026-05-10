@@ -19,7 +19,7 @@ import pyx.numpyx as npx
 import pyx.numpyx_geo as geo
 import pyx.mat.bezier as bezier
 import pyx.lxmlx as lxmlx
-from pyx.mat.transform import Node2D
+from pyx.mat.transform import Node2D, Transform
 from pyx.gamepy.color import Color
 
 def replace_all(root, replacements, exact_match=False):
@@ -457,7 +457,7 @@ geo.arc.to_svg = lambda self: arc_to_svg(self, **get_attrib(self))
 
 text.to_svg = lambda self: text_to_svg(self, **get_attrib(self))
 
-shapes = [bezier.polybezier, geo.circle, geo.ellipse, geo.line, geo.polyline, geo.rect, geo.group, geo.arc, text]
+shapes = [bezier.polybezier, geo.circle, geo.ellipse, geo.line, geo.polyline, geo.rect, geo.group, geo.arc, text, Transform]
 
 def draw(obj):
 	size = obj.aabb.size
