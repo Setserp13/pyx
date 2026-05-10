@@ -1,15 +1,13 @@
 import numpy as np
 import pyx.numpyx as npx
 import pyx.mat.mat as mat
-from pyx.collectionsx import lshift
+from pyx.collectionsx import flatten, List, lshift
 import math
 import pyx.osx as osx
-from pyx.collectionsx import List
-from pyx.collectionsx import flatten
+import itertools
 from itertools import product
 from multipledispatch import dispatch
 import copy
-from pyx.collectionsx import List
 
 EPSILON = 1e-9
 TAU = math.pi * 2.
