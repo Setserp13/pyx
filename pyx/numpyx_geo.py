@@ -9,6 +9,7 @@ from pyx.collectionsx import flatten
 from itertools import product
 from multipledispatch import dispatch
 import copy
+from pyx.collectionsx import List
 
 EPSILON = 1e-9
 TAU = math.pi * 2.
@@ -289,11 +290,11 @@ class grid:
 		return result
 
 	def cells(self, stop, start=np.zeros(2), swizzle=[0,1]):
-		start = ls.items(start, swizzle)
-		stop = ls.items(stop, swizzle)
+		start = List.items(start, swizzle)
+		stop = List.items(stop, swizzle)
 		ranges = [list(range(int(start[i]), int(stop[i]))) for i in range(len(start))]
 		indices = itertools.product(*ranges)
-		indices = [ls.items(x, swizzle) for x in indices]
+		indices = [List.items(x, swizzle) for x in indices]
 		return [self.cell(np.array(x)) for x in indices]
 
 
