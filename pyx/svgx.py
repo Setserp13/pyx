@@ -125,7 +125,7 @@ def from_svg(obj):
 	result = None
 	tag = etree.QName(obj).localname
 	#print(tag)
-	result = obj.from_svg()
+	result = from_svg(obj)
 	match tag:
 		case 'circle': result = circle_from_svg(obj)
 		case 'ellipse': result = ellipse_from_svg(obj)
