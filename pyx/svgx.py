@@ -456,7 +456,6 @@ geo.arc.to_svg = lambda self: arc_to_svg(self, **get_attrib(self))
 
 text.to_svg = lambda self: text_to_svg(self, **get_attrib(self))
 
-shapes = [bezier.polybezier, geo.circle, geo.ellipse, geo.line, geo.polyline, geo.rect, geo.group, geo.arc, text, Transform]
 
 def draw(obj):
 	size = obj.aabb.size
@@ -465,10 +464,7 @@ def draw(obj):
 	result.append(obj.to_svg())
 	return result
 
-for x in shapes:
-	x.set = lambda self, **attrib: generic.set(self, attrib={**getattr(self, "attrib", {}), **attrib})
-	x.get = lambda self, *keys: [self.attrib[k] for k in keys] if hasattr(self, 'attrib') else None
-	#x.to_svg = lambda self: to_svg(self)
+
 
 
 
