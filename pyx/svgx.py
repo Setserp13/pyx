@@ -367,24 +367,7 @@ def embed_images(svg_tree, svg_folder):
 	return svg_tree
 
 
-class text():
-	def __init__(self, s, position, font='arial.ttf', font_size=12, pivot=np.ones(2) * 0.5):
-		self.s = str(s)
-		self.position = position
-		self.font = font
-		self.font_size = font_size
-		self.pivot = pivot
 
-	@property
-	def size(self): return PILx.get_size(self.s, self.font, self.font_size)
-
-	@property
-	def aabb(self):
-		return geo.rect(np.zeros(2), self.size).set_position(self.pivot, self.position)
-
-	@aabb.setter
-	def aabb(self, value):
-		self.position = value.denormalize_point(self.pivot)
 
 def text_to_svg(obj, **kwargs): #In SVG, the y attribute of a <text> element refers to the baseline of the text
 	return  lxmlx.element('text', text=obj.s, x=obj.aabb.min[0], y=obj.aabb.max[1], **{"font-family": osx.filename(obj.font), "font-size": obj.font_size}, **kwargs)
