@@ -435,7 +435,7 @@ geo.rect.to_svg = lambda self: rect_to_svg(self, **get_attrib(self))
 geo.group.to_svg = lambda self: group_to_svg(self, **get_attrib(self))
 geo.arc.to_svg = lambda self: arc_to_svg(self, **get_attrib(self))
 
-text.to_svg = lambda self: text_to_svg(self, **get_attrib(self))
+geo.text.to_svg = lambda self: text_to_svg(self, **get_attrib(self))
 
 
 def draw(obj):
