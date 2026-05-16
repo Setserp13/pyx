@@ -36,6 +36,8 @@ geo.rect.to_mob = lambda obj: Rectangle(width = obj.size[0], height = obj.size[1
 geo.group.to_mob = lambda obj: Group(*[x.to_mob() for x in obj]).set(**getattr(obj, "attrib", {}))
 #geo.arc.to_svg = lambda obj: arc_to_svg(self, **get_attrib(self))
 
+geo.text.to_mob = lambda obj: MathTex(obj).move_to(np.append(obj.position, 0)).set(**getattr(obj, "attrib", {}))
+
 
 
 class ValueTrackers():
