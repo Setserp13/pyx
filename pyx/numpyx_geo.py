@@ -963,7 +963,7 @@ class Mesh():
 
 	@aabb.setter
 	def aabb(self, value):
-		self.vertices = set_aabb(self, value)
+		self.vertices = set_aabb(self.vertices, value)
 	
 	@property
 	def pivot(self): return self.bounds.normalize_point(np.zeros(3))
