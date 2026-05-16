@@ -959,8 +959,12 @@ class Mesh():
 		self.vertices = [x * vector for x in self.vertices]
 
 	@property
-	def aabb(self): return npx.aabb(self.vertices)	#bounds
+	def aabb(self): return aabb(self.vertices)	#bounds
 
+	@aabb.setter
+	def aabb(self, value):
+		self.vertices = set_aabb(self, value)
+	
 	@property
 	def pivot(self): return self.bounds.normalize_point(np.zeros(3))
 
