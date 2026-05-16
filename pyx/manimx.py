@@ -31,7 +31,7 @@ def MText(obj):	return Text(obj.s, font=obj.font, font_size=obj.font_size).move_
 geo.circle.to_mob = lambda obj: Circle(radius = obj.radius).move_to(np.append(obj.center, 0)).set(**getattr(obj, "attrib", {}))
 geo.ellipse.to_mob = lambda obj: Ellipse(width = obj.size[0], height = obj.size[1]).move_to(np.append(obj.center, 0)).set(**getattr(obj, "attrib", {}))
 geo.line.to_mob = lambda obj: Line(start = np.append(obj[0], 0), end = np.append(obj[1], 0)).set(**getattr(obj, "attrib", {}))
-geo.polyline.to_mob = lambda obj: Polygon(*[(*x, 0) for x in obj]).set(**getattr(obj, "attrib", {})) if obj.closed else VMobject(*[(*x, 0) for x in obj]).set(**getattr(obj, "attrib", {}))
+geo.polyline.to_mob = lambda obj: Polygon(*[(*x, 0) if len(x) < 3 else x for x in obj]).set(**getattr(obj, "attrib", {})) if obj.closed else VMobject(*[(*x, 0) if len(x) < 3 else x for x in obj]).set(**getattr(obj, "attrib", {}))
 geo.rect.to_mob = lambda obj: Rectangle(width = obj.size[0], height = obj.size[1]).move_to(np.append(obj.center, 0)).set(**getattr(obj, "attrib", {}))
 geo.group.to_mob = lambda obj: Group(*[x.to_mob() for x in obj]).set(**getattr(obj, "attrib", {}))
 #geo.arc.to_svg = lambda obj: arc_to_svg(self, **get_attrib(self))
