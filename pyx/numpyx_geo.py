@@ -8,7 +8,6 @@ import itertools
 from itertools import product
 from multipledispatch import dispatch
 import copy
-import pyx.mat.bezier as bezier
 from pyx.mat.transform import Transform
 
 EPSILON = 1e-9
@@ -2018,7 +2017,7 @@ def similar(A: np.ndarray, B: np.ndarray, tol=1e-6) -> bool:
 
 
 
-shapes = [bezier.polybezier, circle, ellipse, line, polyline, rect, group, arc, text, Transform]
+shapes = [polybezier, circle, ellipse, line, polyline, rect, group, arc, text, Transform]
 for x in shapes:
 	x.set = lambda self, **attrib: generic.set(self, attrib={**getattr(self, "attrib", {}), **attrib})
 	x.get = lambda self, *keys: [self.attrib[k] for k in keys] if hasattr(self, 'attrib') else None
