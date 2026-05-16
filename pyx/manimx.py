@@ -28,6 +28,17 @@ def MRect(obj): return Rectangle(width = obj.size[0], height = obj.size[1]).move
 def MText(obj):	return Text(obj.s, font=obj.font, font_size=obj.font_size).move_to(np.append(obj.position, 0))
 
 
+#bezier.polybezier.to_svg = lambda obj: path(self.d(), **get_attrib(self))
+geo.circle.to_mob = lambda obj: Circle(radius = obj.radius).move_to(np.append(obj.center, 0)).set(**getattr(obj, "attrib", {}))
+geo.ellipse.to_mob = lambda obj: Ellipse(width = obj.size[0], height = obj.size[1]).move_to(np.append(obj.center, 0)).set(**getattr(obj, "attrib", {}))
+geo.line.to_mob = lambda obj: Line(start = np.append(obj[0], 0), end = np.append(obj[1], 0)).set(**getattr(obj, "attrib", {}))
+geo.polyline.to_mob = lambda obj: Polygon(*[(*x, 0) for x in obj]).set(**getattr(obj, "attrib", {})) if self.closed else VMobject(*[(*x, 0) for x in obj]).set(**getattr(obj, "attrib", {}))
+geo.rect.to_mob = lambda obj: Rectangle(width = obj.size[0], height = obj.size[1]).move_to(np.append(obj.center, 0)).set(**getattr(obj, "attrib", {}))
+geo.group.to_mob = lambda obj: Group(*[x.to_mob() for x in obj]).set(**getattr(obj, "attrib", {}))
+#geo.arc.to_svg = lambda obj: arc_to_svg(self, **get_attrib(self))
+
+
+
 class ValueTrackers():
 	def __init__(self, **values):
 		self.values = {	k: ValueTracker(values[k]) for k in values }
