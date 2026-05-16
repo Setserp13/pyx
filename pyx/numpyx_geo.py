@@ -2031,7 +2031,8 @@ def similar(A: np.ndarray, B: np.ndarray, tol=1e-6) -> bool:
 
 
 
-
+#ADD SHAPE SVG DRAW METHODS
+import pyx.generic.generic as generic
 
 
 shapes = [polybezier, circle, ellipse, line, polyline, rect, group, arc, text, Transform]
