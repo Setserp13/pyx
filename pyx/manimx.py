@@ -1,7 +1,6 @@
 import os
 from manim import *
 import re
-
 from functools import reduce
 from pyx.numpyx import *
 import numpy as np
