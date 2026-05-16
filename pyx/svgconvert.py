@@ -20,7 +20,7 @@ def svg_to_png(root, output_png, rect=None, dpi=10):
 	cairosvg.svg2png(file_obj=svg_buffer, write_to=output_png, output_width=rect.size[0], output_height=rect.size[1], dpi=dpi)
 
 def element_to_png(element, output_png, dpi=10):	#96):
-	bbox = svgx.bbox(element)
+	bbox = svgx.from_svg(element).aabb
 	if not bbox:
 		return
 
