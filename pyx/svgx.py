@@ -17,7 +17,6 @@ from pyx.lxmlx import *	#localname
 import numpy as np
 import pyx.numpyx as npx
 import pyx.numpyx_geo as geo
-import pyx.mat.bezier as bezier
 import pyx.lxmlx as lxmlx
 from pyx.mat.transform import Node2D, Transform
 from pyx.gamepy.color import Color
@@ -101,7 +100,7 @@ def bezier_from_svg(obj):
 		pos = v[-1]
 	#print(points)
 	#miss Aa
-	return bezier.polybezier(points, endpoints=endpoints, closed=closed)
+	return geo.polybezier(points, endpoints=endpoints, closed=closed)
 
 def transform_from_svg(obj):
 	transform = get_transform(obj)
@@ -445,7 +444,7 @@ def get_attrib(obj):
 				attrib[k] = color.hex[:-2]
 	return attrib
 
-bezier.polybezier.to_svg = lambda self: path(self.d(), **get_attrib(self))
+geo.polybezier.to_svg = lambda self: path(self.d(), **get_attrib(self))
 geo.circle.to_svg = lambda self: circle_to_svg(self, **get_attrib(self))
 geo.ellipse.to_svg = lambda self: ellipse_to_svg(self, **get_attrib(self))
 geo.line.to_svg = lambda self: line_to_svg(self, **get_attrib(self))
