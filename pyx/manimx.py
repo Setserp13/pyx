@@ -6,9 +6,11 @@ from functools import reduce
 from pyx.numpyx import *
 import numpy as np
 import pyx.numpyx as npx
+import pyx.numpyx_geo as geo
 from pyx.numpyx_geo import radar_chart
 
-def frame_rect(): return npx.rect(np.array([-config.frame_width * 0.5, -config.frame_height * 0.5, 0.0]), np.array([config.frame_width, config.frame_height, 0.0]))
+def frame_size(): return np.array([config.frame_width, config.frame_height, 0.0])
+def frame_rect(): return geo.rect(-frame_size() * .5, frame_size())
 
 def set_aabb(mob, value):
 	mob.stretch_to_fit_width(value.size[0])
