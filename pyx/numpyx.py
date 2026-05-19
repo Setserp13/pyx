@@ -110,8 +110,8 @@ def linear_layout(n, offset=np.zeros(3), dir=np.array([1, 0, 0]), cell_size=1, a
 	offset = offset - size * align * dir
 	return subdivide(offset, offset + size * dir, n)
 
-@dispatch(np.ndarray, np.ndarray)
-def random_range(start, stop): return np.array(list(map(lambda x, y: random_range(x, y), start, stop)))
+#@dispatch(np.ndarray, np.ndarray)
+#def random_range(start, stop): return np.array(list(map(lambda x, y: random_range(x, y), start, stop)))
 
 def on_circle(n, r=1.0, center=np.zeros(2), start=0.0):	#regular polygon
 	return polyline([polar_to_cartesian(r, start + 2.0 * math.pi * (i / n)) + center for i in range(n)])
