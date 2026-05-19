@@ -156,7 +156,7 @@ class rect(rect_like):
 			obj_pivot = np.full(len(obj_size), 0.5)
 		return self.padding(obj_size * obj_pivot, obj_size * (1 - obj_pivot))
 
-	def random_point(self): return npx.random_range(self.min, self.max)
+	def random_point(self): return np.random.uniform(self.min, self.max)	#npx.random_range(self.min, self.max)
 		
 	def axis_intersection(a, b, axis=0):
 		start = max(a.min[axis], b.min[axis])
