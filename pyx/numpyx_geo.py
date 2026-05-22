@@ -1148,13 +1148,21 @@ class polyline(points):
 			result.append(npx.normalize(t))
 		return result
 
-	def normal(edge, outward=True): return line(edge).normal * -1 if outward else 1
+	"""def normal(edge, outward=True): return line(edge).normal * -1 if outward else 1
 
 	def normals(p, outward=True): return [polyline.normal(x, outward=outward) for x in p.edges()]
 	
-	def vertex_normals(vertices, outward=True):
-		return [npx.normalize(np.sum([polyline.normal(x, outward=outward) for x in p.incident_edges(i)], axis=0)) for i in range(len(p))]
+	def vertex_normals(p, outward=True):
+		return np.array([npx.normalize(np.sum([polyline.normal(x, outward=outward) for x in p.incident_edges(i)], axis=0)) for i in range(len(p))])"""
 
+	#def normal(edge): return line(edge).normal
+
+	def normals(p): return np.array([x.normal for x in p.edges()])
+	
+	def vertex_normals(p):
+		return np.array([npx.normalize(np.sum([x.normal for x in p.incident_edges(i)], axis=0)) for i in range(len(p))])
+
+	
 	def expand(self, amount, outward=True):
 		return polyline([self[i] + x * float(amount) for i, x in enumerate(self.vertex_normals(outward=outward, closed=self.closed))], closed=self.closed)
 	
