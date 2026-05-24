@@ -1112,7 +1112,7 @@ class polyline(points):
 		return polyline(result, closed=p.closed)
 
 	def incident_edges(p, vertex): #vertex is an index
-		edges = [List.arange(p, 2, start=vertex - 1), List.arange(p, 2, start=vertex)]
+		edges = [line(List.arange(p, 2, start=vertex - 1)), line(List.arange(p, 2, start=vertex))]
 		if not p.closed:
 			if vertex == 0:
 				return edges[1:]
