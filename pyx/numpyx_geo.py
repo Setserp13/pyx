@@ -1119,7 +1119,7 @@ class polyline(points):
 			elif vertex == len(p) - 1:
 				return edges[:-1]
 		return edges"""
-	def incident_edges(p, v):
+	def incident_edges(v):
 		e = [line(List.arange(p, 2, start=v - 1)), line(List.arange(p, 2, start=v))]
 		return e[v > 0 : 2 if p.closed or v < len(p) - 1 else 1]
 	
