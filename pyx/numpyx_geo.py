@@ -1111,17 +1111,17 @@ class polyline(points):
 			result.append(vertices[-1])
 		return polyline(result, closed=p.closed)
 
-	"""def incident_edges(p, vertex): #vertex is an index
+	def incident_edges(p, vertex): #vertex is an index
 		edges = [List.arange(p, 2, start=vertex - 1), List.arange(p, 2, start=vertex)]
 		if not p.closed:
 			if vertex == 0:
 				return edges[1:]
 			elif vertex == len(p) - 1:
 				return edges[:-1]
-		return edges"""
-	def incident_edges(p, v):
+		return edges
+	"""def incident_edges(p, v):
 		e = [line(List.arange(p, 2, start=v - 1)), line(List.arange(p, 2, start=v))]
-		return e[v > 0 : 2 if p.closed or v < len(p) - 1 else 1]
+		return e[v > 0 : 2 if p.closed or v < len(p) - 1 else 1]"""
 	
 	def neighbors(v, i):	#return ith-vertex-adjacent vertices
 		n = len(v)
