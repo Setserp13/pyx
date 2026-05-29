@@ -1548,7 +1548,7 @@ class text():
 
 	@property
 	def aabb(self):
-		return geo.rect(np.zeros(2), self.size).set_position(self.pivot, self.position)
+		return rect(np.zeros(2), self.size).set_position(self.pivot, self.position)
 
 	@aabb.setter
 	def aabb(self, value):
