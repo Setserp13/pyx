@@ -9,6 +9,7 @@ from itertools import product
 from multipledispatch import dispatch
 import copy
 from pyx.mat.transform import Transform
+import pyx.PILx as PILx
 
 EPSILON = 1e-9
 TAU = math.pi * 2.
