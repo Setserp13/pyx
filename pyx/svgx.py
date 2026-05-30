@@ -369,8 +369,6 @@ def embed_images(svg_tree, svg_folder):
 
 
 
-def text_to_svg(obj, **kwargs): #In SVG, the y attribute of a <text> element refers to the baseline of the text
-	return  lxmlx.element('text', text=obj.s, x=obj.aabb.min[0], y=obj.aabb.max[1], **{"font-family": osx.filename(obj.font), "font-size": obj.font_size}, **kwargs)
 
 def circle_to_svg(obj, **kwargs): return lxmlx.element("circle", cx=obj.center[0], cy=obj.center[1], r=obj.radius, **kwargs)
 def ellipse_to_svg(obj, **kwargs): return lxmlx.element("ellipse", cx=obj.center[0], cy=obj.center[1], rx=obj.extents[0], ry=obj.extents[1], **kwargs)
@@ -413,6 +411,18 @@ def polygon_arcs(vertices, closed=True, mask=None, radius=0.5, **kwargs):
 
 
 
+def tspan_to_svg(obj, **kwargs): #In SVG, the y attribute of a <text> element refers to the baseline of the text
+	return  lxmlx.element('tspan', text=obj.inner_text, x=obj.aabb.min[0], y=obj.aabb.max[1], **{"font-family": osx.filename(obj.font), "font-size": obj.font_size}, **kwargs)
+
+def text_to_svg(obj, **kwargs): #In SVG, the y attribute of a <text> element refers to the baseline of the text
+	#g = lxmlx.element('text', x=obj.aabb.min[0], y=obj.aabb.max[1], **{"font-family": osx.filename(obj.font), "font-size": obj.font_size}, **kwargs)
+	g = lxmlx.element('text', **{"font-family": osx.filename(obj.font), "font-size": obj.font_size}, **kwargs)
+	for x in obj.lines:
+		g.append(x.to_svg())
+	#print(g)
+	return g
+
+
 
 
 
@@ -434,8 +444,9 @@ geo.polyline.to_svg = lambda self: polygon_to_svg(self, **get_attrib(self)) if s
 geo.rect.to_svg = lambda self: rect_to_svg(self, **get_attrib(self))
 geo.group.to_svg = lambda self: group_to_svg(self, **get_attrib(self))
 geo.arc.to_svg = lambda self: arc_to_svg(self, **get_attrib(self))
-
+geo.tspan.to_svg = lambda self: tspan_to_svg(self, **get_attrib(self))
 geo.text.to_svg = lambda self: text_to_svg(self, **get_attrib(self))
+
 
 
 def draw(obj):
