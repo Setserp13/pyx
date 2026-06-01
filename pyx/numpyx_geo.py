@@ -1095,7 +1095,9 @@ class polyline(points):
 	
 	def perimeter(p): return sum(p.lengths())
 	
-	def midpoints(p): return [x.midpoint for x in p.edges()]
+	#def midpoints(p): return [x.midpoint for x in p.edges()]
+	@property
+	def dual(p): return polyline([x.midpoint for x in p.edges()], closed=p.closed)
 	
 	def point_from_proportion(self, t):
 		p = self.perimeter()
