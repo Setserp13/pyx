@@ -426,10 +426,18 @@ def draw(obj):
 	result.append(obj.to_svg())
 	return result
 
-geo.group.save_svg = lambda self, path='drawing': lxmlx.save(
-	draw(self),
-	path if path.endswith('.svg') else path + '.svg'
-)
+def save_svg(obj, path='drawing.svg', overwrite=False):
+	if not path.lower().endswith('.svg'):
+		path += '.svg'
+
+	if not overwrite:
+		path = osx.to_distinct(path)
+
+	lxmlx.save(obj, path)
+
+	return path
+
+geo.group.save_svg = lambda self, path='drawing.svg', overwrite=False: save_svg(self, path, overwrite)
 
 
 
