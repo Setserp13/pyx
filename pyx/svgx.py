@@ -426,7 +426,7 @@ def draw(obj):
 	result.append(obj.to_svg())
 	return result
 
-geo.group.save_svg = lambda self, path: lxmlx.save(
+geo.group.save_svg = lambda self, path='drawing': lxmlx.save(
 	draw(self),
 	path if path.endswith('.svg') else path + '.svg'
 )
