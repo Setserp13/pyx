@@ -977,12 +977,22 @@ class Mesh():
 	@pivot.setter	#pivot is normalized
 	def pivot(self, value): self.translate(-self.bounds.denormalize_point(value))
 
-	def merge(*args):
+	def merge(meshes):
 		vertices = []
 		faces = []
-		for x in args:
-			faces += [[len(vertices) + z for z in y] for y in x.faces]
-			vertices += x.vertices
+	
+		offset = 0
+	
+		for mesh in meshes:
+			faces.extend(
+				[[offset + i for i in face] for face in mesh.faces]
+			)
+	
+			vertices.append(mesh.vertices)
+			offset += len(mesh.vertices)
+	
+		vertices = np.concatenate(vertices)
+	
 		return Mesh(vertices, faces)
 
 	def make_double_sided(mesh):
