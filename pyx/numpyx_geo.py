@@ -289,7 +289,9 @@ class grid:
 				result.append(line([self.cell_min(a), self.cell_min(b)]))
 		return result
 
-	def cells(self, stop, start=np.zeros(2), swizzle=[0,1]):
+	def cells(self, stop, start=None, swizzle=None):
+		start = np.zeros(len(stop)) if start is None else start
+		swizzle = list(range(len(stop))) if swizzle is None else swizzle
 		start = List.items(start, swizzle)
 		stop = List.items(stop, swizzle)
 		ranges = [list(range(int(start[i]), int(stop[i]))) for i in range(len(start))]
