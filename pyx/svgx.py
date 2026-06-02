@@ -426,7 +426,7 @@ def draw(obj):
 	result.append(obj.to_svg())
 	return result
 
-def save_svg(obj, path='drawing.svg', overwrite=False):
+def save_svg(obj, path='drawing.svg', overwrite=True):
 	if not path.lower().endswith('.svg'):
 		path += '.svg'
 
@@ -437,7 +437,7 @@ def save_svg(obj, path='drawing.svg', overwrite=False):
 
 	return path
 
-geo.group.save_svg = lambda self, path='drawing.svg', overwrite=False: save_svg(self, path, overwrite)
+geo.group.save_svg = lambda self, path='drawing.svg', overwrite=True: save_svg(self, path, overwrite)
 
 
 
