@@ -402,8 +402,8 @@ def get_attrib(obj):
 	for k in ['fill', 'stroke']:
 		if k in attrib:
 			if isinstance(attrib[k], Color):
-				attrib[k + '-opacity'] = color.a
-				attrib[k] = color.hex[:-2]
+				attrib[k + '-opacity'] = attrib[k].a
+				attrib[k] = attrib[k].hex[:-2]
 	return attrib
 
 geo.polybezier.to_svg = lambda self: path(self.d(), **get_attrib(self))
