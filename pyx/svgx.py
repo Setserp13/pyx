@@ -433,7 +433,7 @@ def save_svg(obj, path='drawing.svg', overwrite=False):
 	if not overwrite:
 		path = osx.to_distinct(path)
 
-	lxmlx.save(obj, path)
+	lxmlx.save(draw(obj), path)
 
 	return path
 
