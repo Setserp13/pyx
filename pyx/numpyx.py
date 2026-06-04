@@ -452,3 +452,92 @@ def quadratic(a, b, c):
 
 
 
+class lsystem:	#L-system or Lindenmayer system	#str based
+	def __init__(self, alphabet, start, rules):	#alphabet contains variables and constants
+		self.alphabet = alphabet
+		self.start = start	#axiom, initiator
+		self.rules = rules	#production rules, productions
+
+	def rewrite(self, steps=1, state=None):
+
+		if state is None:
+			state = self.start
+
+		for _ in range(steps):
+
+			new_state = []
+
+			for symbol in state:
+
+				if symbol in self.rules:
+					replacement = self.rules[symbol]
+
+					if isinstance(replacement, str):
+						new_state.extend(replacement)
+					else:
+						new_state.extend(replacement)
+
+				else:
+					new_state.append(symbol)
+
+			if isinstance(state, str):
+				state = ''.join(new_state)
+			else:
+				state = type(state)(new_state)
+
+		return state
+
+class block_lsystem(lsystem):
+	def rewrite(self, steps=1, state=None):	#String Rewriting System
+		if state is None:
+			state = self.start
+		state = np.asarray(state)
+
+		if steps <= 0:
+			return state
+
+		block_shape = next(iter(self.rules.values())).shape
+		dim = len(block_shape)
+
+		if any(r.shape != block_shape for r in self.rules.values()):
+			raise ValueError('all replacement patterns must have the same shape')
+
+		for _ in range(steps):
+
+			new_shape = tuple(
+				state.shape[i] * block_shape[i]
+				for i in range(dim)
+			)
+
+			new_state = np.empty(new_shape, dtype=state.dtype)
+
+			for index in np.ndindex(state.shape):
+
+				symbol = state[index]
+
+				if symbol not in self.rules:
+					raise KeyError(f'no rule for symbol {symbol}')
+
+				pattern = self.rules[symbol]
+
+				slices = tuple(
+					slice(
+						index[i] * block_shape[i],
+						(index[i] + 1) * block_shape[i]
+					)
+					for i in range(dim)
+				)
+
+				new_state[slices] = pattern
+
+			state = new_state
+
+		return state
+
+
+
+def all_ndarrays(shape, number):
+	n = np.prod(shape)
+	return np.array(
+		list(product(range(number), repeat=n))
+	).reshape((-1,) + tuple(shape))
