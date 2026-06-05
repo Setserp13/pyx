@@ -7,7 +7,7 @@ import itertools
 from pyx.collectionsx import List as ls
 import random
 from pyx.numpyx_geo import polyline, line
-from itertools import product
+from itertools import permutations, product
 
 def modular_distance(a, b, n):
 	d = abs(a - b) % n
@@ -541,3 +541,38 @@ def all_ndarrays(shape, number):
 	return np.array(
 		list(product(range(number), repeat=n))
 	).reshape((-1,) + tuple(shape))
+
+
+def ndarray_symmetries(arr):	#generates all symmetries of an ndarray
+	n = arr.ndim
+
+	for perm in permutations(range(n)):
+		p = np.transpose(arr, perm)
+
+		for flips in product([False, True], repeat=n):
+			q = p
+
+			for axis, flip in enumerate(flips):
+				if flip:
+					q = np.flip(q, axis)
+
+			yield q
+
+def canonical_ndarray(arr):
+	return min(
+		s.tobytes()
+		for s in ndarray_symmetries(arr)
+	)
+
+def unique_ndarrays(arrays):
+	seen = set()
+	result = []
+
+	for arr in arrays:
+		key = canonical_ndarray(arr)
+
+		if key not in seen:
+			seen.add(key)
+			result.append(arr)
+
+	return result
