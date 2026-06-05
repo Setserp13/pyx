@@ -453,6 +453,8 @@ def quadratic(a, b, c):
 #rewriting systems,
 #substitution systems
 
+#string rewriting system
+
 class lsystem:	#L-system or Lindenmayer system	#str based
 	def __init__(self, alphabet, start, rules):	#alphabet contains variables and constants
 		self.alphabet = alphabet
