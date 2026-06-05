@@ -450,7 +450,8 @@ def quadratic(a, b, c):
 		(-b - sqrt_delta) / den
 	)
 
-
+#rewriting systems,
+#substitution systems
 
 class lsystem:	#L-system or Lindenmayer system	#str based
 	def __init__(self, alphabet, start, rules):	#alphabet contains variables and constants
@@ -487,7 +488,7 @@ class lsystem:	#L-system or Lindenmayer system	#str based
 
 		return state
 
-class block_lsystem(lsystem):
+class block_substitution_system(lsystem):
 	def rewrite(self, steps=1, state=None):	#String Rewriting System
 		if state is None:
 			state = self.start
