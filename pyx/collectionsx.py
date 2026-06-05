@@ -100,8 +100,10 @@ class bag(list):	#each item in bag is a tuple like (item, count)
 		for x in ls:
 			result.append(x)
 		return result
-	
-def For(start, stop, step=None, func=None):
+
+from itertools import product
+
+"""def For(start, stop, step=None, func=None):
 	if func is None:
 		raise ValueError("You must provide a function")
 
@@ -122,7 +124,7 @@ def For(start, stop, step=None, func=None):
 
 	recursive_loop([])
 
-from itertools import product
+
 
 def Map(start, stop=None, step=None, func=None):
     # Converte para listas de inteiros
@@ -164,7 +166,7 @@ def Map(start, stop=None, step=None, func=None):
         index = [start[i] + step[i] * offset[i] for i in range(len(start))]
         set_value(result, offset, func(*index))	#index))
 
-    return result
+    return result"""
 
 """def flatten(lst):
 	result = []
@@ -288,7 +290,7 @@ List (a.k.a. Sequence) → Order matters, Duplicates matter.
 Bag (a.k.a. Multiset) → Order does not matter, Duplicates matter.
 Set → Order does not matter, Duplicates do not matter.
 """
-def ndfor(arr, func, index=None):	#it does work with jagged (ragged) arrays
+"""def ndfor(arr, func, index=None):	#it does work with jagged (ragged) arrays
 	if index is None:
 		index = []
 
@@ -307,6 +309,29 @@ def ndmap(arr, func, index=None):	#it does work with jagged (ragged) arrays
 
 	return [
 		ndmap(item, func, index + [i])
+		for i, item in enumerate(arr)
+	]"""
+
+
+def ifor(arr, func, index=None):	#indexed for.	iwalk
+	if index is None:
+		index = []
+
+	if not isinstance(arr, (list)):	#, tuple)):
+		return func(arr, *index)
+
+	for i, item in enumerate(arr):
+		ifor(item, func, index + [i])
+
+def imap(arr, func, index=None):	#indexed map.	Apply a function to each element of a jagged array (list), and its index
+	if index is None:
+		index = []
+
+	if not isinstance(arr, (list)):	#, tuple)):
+		return func(arr, *index)
+
+	return [
+		imap(item, func, index + [i])
 		for i, item in enumerate(arr)
 	]
 
