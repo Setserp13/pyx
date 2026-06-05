@@ -6,7 +6,7 @@ from pyx.numpyx_geo import Mesh
 from pyx.mat.transform import Node3D
 import struct
 import json
-from pyx.collectionsx import flatten, Map
+from pyx.collectionsx import flatten#, Map
 import copy
 import pyx.mat.mat as mat
 import pyx.rex as rex
@@ -277,7 +277,8 @@ def grid_triangulation(cell_count, closed=[False, False]):
 			npx.column_major_order(cell_count, np.array([index[0] + 1, index[1] + 1])),
 			npx.column_major_order(cell_count, np.array([index[0] + 1, index[1]]))
 			])
-	return flatten(Map([0, 0], stop=[cell_count[0] - (0 if closed[0] else 1), cell_count[1] - (0 if closed[1] else 1)], step=None, func=lambda *index: dt(index)), 2)
+	shape = [cell_count[i] - (0 if closed[i] else 1) for i in range(2)]
+	return flatten(np.fromfunction(lambda *index: dt(index), shape), 2)
 
 def plane(offset=np.zeros(2), cell_size=np.ones(2), cell_count=np.ones(2) * 10):
 	#vertices = flatten(Map([0, 0, 0], stop=[cell_count[0], 1, cell_count[1]], step=None, func=lambda *index: np.array(index)), 2)
