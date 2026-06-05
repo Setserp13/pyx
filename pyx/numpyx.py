@@ -450,10 +450,23 @@ def quadratic(a, b, c):
 		(-b - sqrt_delta) / den
 	)
 
-#rewriting systems,
-#substitution systems
-
-#string rewriting system
+"""
+Substitution System
+│
+├── String Rewriting System
+│   │
+│   ├── L-System
+│   ├── Thue System
+│   ├── Semi-Thue System
+│   └── Grammar Rewriting Systems
+│
+├── Block Substitution System
+│   ├── Sierpiński Carpet Rules
+│   ├── Menger Sponge Rules
+│   └── Cellular Substitution Fractals
+│
+└── Other Substitution Systems
+"""
 
 class lsystem:	#L-system or Lindenmayer system	#str based
 	def __init__(self, alphabet, start, rules):	#alphabet contains variables and constants
