@@ -383,7 +383,11 @@ class points(np.ndarray):
 		name = type(self).__name__
 		return f"{name}({np.asarray(self)}, attrs={self.__dict__})"
 
+	@property
+	def mean(p): return np.mean(p, axis=0)
 
+	@mean.setter
+	def mean(p, value): return p + (value - p.mean)
 
 def elbow_connector1(start, end, x=0): return polyline([start, np.array([start[x], end[1 - x]]), end])
 
@@ -755,7 +759,7 @@ class line(points):	#start = self[0], end = self[1]
 		dir = self.direction
 		return line([origin - dir * value * (1 - pivot), origin + dir * value * pivot])
 	
-	def subdivide(self, n): return polyline(npx.subdivide(self[0], self[1], n+1), closed=False).edges()
+	def subdivide(self, n): return polyline(npx.subdivide(self[0], self[1], n+1), closed=False).edges
 
 	def set_position(self, pivot, value):	#pivot is normalized and value is not normalized
 		pivot = npx.lerp(*self, pivot)
@@ -829,7 +833,7 @@ def add_symmetrical_handles(vertices, handle_length=.1, closed=True):
 
 def truncate(vertices, t=.25):	#, closed=True):
 	result = []
-	for x in vertices.edges(closed=vertices.closed):	#polyline.edges(vertices, closed=closed):
+	for x in vertices.edges:
 		result += [npx.lerp(x[0], x[1], float(t)), npx.lerp(x[0], x[1], 1-float(t))]
 	if not vertices.closed:
 		result[0] = vertices[0]
@@ -904,7 +908,7 @@ class Mesh():
 	def get_faces(self): return group([self.get_face(i) for i in range(len(self.faces))])
 
 	@property
-	def edges(self): return flatten([polyline.edges(x) for x in self.get_faces()])
+	def edges(self): return flatten([x.edges for x in self.get_faces()])
 	
 	def to_obj(self, path):
 		lines = [f"v {x} {y} {z}" for x, y, z in self.vertices]
@@ -952,7 +956,7 @@ class Mesh():
 	def extrude(self, dir, face, flip=True):
 		face = self.get_face(face)
 		self.add_face([x + dir for x in face])
-		for x in polyline.edges(face):
+		for x in face.edges:
 			self.add_face([x[0], x[1], x[1] + dir, x[0] + dir])
 		if flip:
 			for i in range(len(self.faces) - 5, len(self.faces)):
@@ -1095,6 +1099,7 @@ class polyline(points):
 		obj = super().__new__(cls, input_array, closed=closed)
 		return obj
 
+	@property
 	def edges(p): return [line(x) for x in List.aranges(p, 2, cycle=p.closed)]
 	
 	def edge(p, index): return line([p[index], p[(index + 1) % len(p)]])
@@ -1103,18 +1108,18 @@ class polyline(points):
 	
 	def vertex_angles(p): return [p.vertex_angle(i) for i in range(0 if p.closed else 1, len(p) - (0 if p.closed else 1))]
 
-	def lengths(p): return [x.length for x in p.edges()]
-	
+	def lengths(p): return [x.length for x in p.edges]
+
+	@property
 	def perimeter(p): return sum(p.lengths())
 	
-	#def midpoints(p): return [x.midpoint for x in p.edges()]
 	@property
-	def dual(p): return polyline([x.midpoint for x in p.edges()], closed=p.closed)
+	def dual(p): return polyline([x.midpoint for x in p.edges], closed=p.closed)	#midpoint polygon
 	
 	def point_from_proportion(self, t):
 		p = self.perimeter()
 		a = 0.0
-		for x in self.edges():
+		for x in self.edges:
 			b = a + x.length / p
 			if a <= t and t <= b:
 				return npx.lerp(x[0], x[1], (t - a) / (b - a))
@@ -1123,7 +1128,7 @@ class polyline(points):
 
 	def subdivide(p, n):
 		result = []
-		for x in p.edges():
+		for x in p.edges:
 			result += [npx.lerp(x[0], x[1], i / n) for i in range(n)]
 		if not p.closed:
 			result.append(vertices[-1])
@@ -1178,14 +1183,16 @@ class polyline(points):
 
 	#def normal(edge): return line(edge).normal
 
-	def normals(p): return np.array([x.normal for x in p.edges()])
-	
+	@property
+	def normals(p): return np.array([x.normal for x in p.edges])
+
+	@property
 	def vertex_normals(p):
 		return np.array([npx.normalize(np.sum([x.normal for x in p.incident_edges(i)], axis=0)) for i in range(len(p))])
 
 	
-	def expand(self, amount, outward=True):
-		return polyline([self[i] + x * float(amount) for i, x in enumerate(self.vertex_normals(outward=outward, closed=self.closed))], closed=self.closed)
+	def expand(self, amount):
+		return polyline([self[i] + x * float(amount) for i, x in enumerate(self.vertex_normals)], closed=self.closed)
 	
 	def internal_angle_sum(n): return math.pi * (n - 2)
 
@@ -1193,17 +1200,22 @@ class polyline(points):
 		mid = np.mean(edge, axis=0)
 		return [mid, mid + polyline.normal(edge, outward=False)]
 
-	def perpendicular_bisectors(p): return [polyline.perpendicular_bisector(x) for x in p.edges()]
+	def perpendicular_bisectors(p): return [polyline.perpendicular_bisector(x) for x in p.edges]
 
 	def circumcenter(p): return mat.line_line_intersection(*p.perpendicular_bisectors()[:2])
 
+	"""@property
+	def area(v):
+		area = 0.0
+		n = len(v)
+		for i in range(n):
+			x1, y1 = v[i]
+			x2, y2 = v[(i + 1) % n]
+			area += (x1 * y2 - x2 * y1)
+		return area * 0.5	#abs(area) * 0.5, let it return negative numbers too, to triangulate works fine
+
+	@property
 	def centroid(p): return np.mean(p, axis = 0)
-
-	def line_intersection(p, line): return [mat.segment_line_intersection(x, line) for x in p.edges()]
-
-	def ray_intersection(p, ray): return [mat.segment_ray_intersection(x, ray) for x in p.edges()]
-
-	def segment_intersection(p, seg): return [mat.segment_segment_intersection(x, seg) for x in p.edges()]
 
 	def is_clockwise(polygon):
 		sum = 0
@@ -1211,16 +1223,46 @@ class polyline(points):
 			x1, y1 = polygon[i]
 			x2, y2 = polygon[(i + 1) % len(polygon)]
 			sum += (x2 - x1) * (y2 + y1)
-		return sum > 0
+		return sum > 0"""
 
-	def area(vertices):
-		area = 0.0
-		n = len(vertices)
-		for i in range(n):
-			x1, y1 = vertices[i]
-			x2, y2 = vertices[(i + 1) % n]
-			area += (x1 * y2 - x2 * y1)
-		return area * 0.5	#abs(area) * 0.5, let it return negative numbers too, to triangulate works fine
+	@property
+	def shoelace(v): return sum([np.cross(*x) for x in v.edges])	#Shoelace formula
+		
+	@property
+	def isclockwise(v): return v.shoelace > 0
+
+	@property
+	def area(v): return 0.5 * v.shoelace	#If the polygon is negatively oriented, then the result is negative
+	
+	@property
+	def centroid(v):
+
+		A = v.area
+	
+		if abs(A) < 1e-12:
+			return v.mean
+	
+		s = np.zeros_like(v[0])
+
+		for x in v.edges:
+			s += np.sum(x, axis=0) * np.cross(*x)
+	
+		return s / (6 * A)
+	
+	def scale(self, factor, pivot=None):
+		if pivot is None:
+			pivot = np.zeros_like(self[0])
+		result = copy.deepcopy(self)
+		result[:] = pivot + (self - pivot) * factor
+		return result
+	
+	def line_intersection(p, line): return [mat.segment_line_intersection(x, line) for x in p.edges]
+
+	def ray_intersection(p, ray): return [mat.segment_ray_intersection(x, ray) for x in p.edges]
+
+	def segment_intersection(p, seg): return [mat.segment_segment_intersection(x, seg) for x in p.edges]
+
+
 
 	"""def contains_point(vertices, point):
 		ray = [point, point + np.array([1e6, 0])]	# Make a ray starting from the point → far to the right (for odd-even test)
@@ -1247,7 +1289,7 @@ class polyline(points):
 			return []
 	
 		indices = list(range(n))
-		if polyline.is_clockwise(vertices):
+		if vertices.isclockwise:
 			indices.reverse()
 	
 		triangles = []
@@ -1260,7 +1302,7 @@ class polyline(points):
 				i2 = indices[(i + 2) % len(indices)]
 	
 				tri = [vertices[i0], vertices[i1], vertices[i2]]
-				if polyline.area(tri) <= 0:
+				if tri.area <= 0:
 					continue
 	
 				ear_found = True
@@ -1296,21 +1338,21 @@ class polyline(points):
 				v[-1] += npx.normalize(v[-1] - v[-2]) * width * 0.5
 		result = []
 		if join == 'bevel':
-			for x in v.edges():
+			for x in v.edges:
 				normal = polyline.normal(x, outward=True)
 				result.append(x[0] + normal * width * (1.0 - align))
 				result.append(x[1] + normal * width * (1.0 - align))
 				result.insert(0, x[0] - normal * width * align)
 				result.insert(0, x[1] - normal * width * align)
 		elif join == 'butt':
-			for i, x in enumerate(v.vertex_normals(outward=True)):
+			for i, x in enumerate(v.vertex_normals):
 				result.append(v[i] + x * width * (1.0 - align))
 				result.insert(0, v[i] - x * width * align)
 		elif join == 'miter':
 			angles = [x.size() for x in polyline.vertex_angles(v, closed=closed)]
 			if not v.closed:
 				angles = [math.pi] + angles + [math.pi]
-			for i, x in enumerate(v.vertex_normals(outward=True)):
+			for i, x in enumerate(v.vertex_normals):
 				s = math.sin(angles[i] / 2)
 				result.append(v[i] + x * (width * (1.0 - align)) / s)
 				result.insert(0, v[i] - (x * width * align) / s)
@@ -1365,10 +1407,10 @@ class polyline(points):
 
 	def clip(p1, p2):  # split the edges of polyline p1 wherever they intersect edges of polyline p2
 		result = []
-		for edge in p1.edges():
+		for edge in p1.edges:
 			result.append(edge[0])
 			points = []
-			for y in p2.edges():
+			for y in p2.edges:
 				inter = segment_segment_intersection(edge, y)
 				if inter is None:
 					continue
@@ -1973,7 +2015,7 @@ def circle_segment_delta(c, l): return point_segment_distance(c.center, l) - c.r
 def circle_segment_distance(c, l): return max(circle_segment_delta(c, l), 0.)
 
 def circle_polyline_distance(c, v):
-	return min([circle_segment_distance(c, x) for x in v.edges()])
+	return min([circle_segment_distance(c, x) for x in v.edges])
 
 def circle_rect_distance(c, rect):
 	return circle_polyline_distance(c, rect2.corners(rect))
@@ -2029,15 +2071,15 @@ def segments_shape_intersection(segments, other, func):
 
 
 def boundary_line_intersection(polygon, line):
-	return segments_shape_intersection(polygon.edges(), line, line_segment_intersection)
+	return segments_shape_intersection(polygon.edges, line, line_segment_intersection)
 
 
 def boundary_ray_intersection(polygon, ray):
-	return segments_shape_intersection(polygon.edges(), ray, ray_segment_intersection)
+	return segments_shape_intersection(polygon.edges, ray, ray_segment_intersection)
 
 
 def boundary_segment_intersection(polygon, segment):
-	return segments_shape_intersection(polygon.edges(), segment, segment_segment_intersection)
+	return segments_shape_intersection(polygon.edges, segment, segment_segment_intersection)
 
 def pairwise_distances(points: np.ndarray) -> np.ndarray:
 	"""
