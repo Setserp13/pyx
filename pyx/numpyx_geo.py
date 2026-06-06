@@ -1379,7 +1379,7 @@ class polyline(points):
 
 	def rotate_around(p, angle, center=np.zeros(2)): return polyline([npx.rotate_around(x, angle, center) for x in p], closed=p.closed)
 
-	def from_vectors(v, axis=None, start=np.zeros(2)):	#concatenation of n vectors (or edges) end-to-end starting from start
+	"""def from_vectors(v, axis=None, start=np.zeros(2)):	#concatenation of n vectors (or edges) end-to-end starting from start
 		result = polyline(v)
 		if axis is None:
 			result[0] += start
@@ -1405,8 +1405,33 @@ class polyline(points):
 			else:
 				result[i][axis] -= result[i - 1][axis]
 		#print(v, result)
-		return result
+		return result"""
 
+	def from_vectors(v, axis=None, start=np.zeros(2)):	#concatenation of n vectors (or edges) end-to-end starting from start
+		result = np.array(v, copy=True)
+	
+		if axis is None:
+			result = np.cumsum(result, axis=0)
+			result += start
+		else:
+			result[:, axis] = np.cumsum(result[:, axis])
+			result[:, axis] += start[axis]
+	
+		return polyline(result)
+
+	def to_vectors(v, axis=None, start=np.zeros(2)):
+		result = np.empty_like(v)
+	
+		if axis is None:
+			result[0] = v[0] - start
+			result[1:] = v[1:] - v[:-1]
+		else:
+			result[:] = v
+			result[0, axis] -= start[axis]
+			result[1:, axis] -= v[:-1, axis]
+	
+		return polyline(result)
+	
 	"""def clip(p1, p2):	#split the edges of polyline p1 wherever they intersect edges of polyline p2
 		result = []
 		for edge in p1.edges():
@@ -1459,17 +1484,13 @@ class polygon:
 
 
 class triangle(polyline):
-	def angle_bisectors(vertices):
-		result = []
-		for i in range(3):
-			A, B, C = List.arange(vertices, 3, i)
-			b = np.linalg.norm(C - A)
-			c = np.linalg.norm(A - B)
-			P = (B * b + C * c) / (b + c)
-			result.append([A, P])
-		return result
+	def angle_bisectors(v): return group([line([x[1], line_line_intersection(x[1] + x.bisector, line(x[[0, 2]]))]) for x in v.vertex_angles])
 	
-	def altitudes(vertices):
+	def altitudes(v): return group([line([x[1], project_point_on_line(x[1], line(x[[0, 2]]))]) for x in v.vertex_angles])
+
+	def medians(v): return group([line([x[1], line(x[[0, 2]]).midpoint]) for x in v.vertex_angles])
+	
+	"""def altitudes(vertices):
 		result = []
 		for i in range(3):
 			P, A, B = List.arange(vertices, 3, i)
@@ -1479,9 +1500,18 @@ class triangle(polyline):
 			result.append([P, foot])
 		return result
 
-	def medians(vertices):
-		return list(zip(vertices, lshift(polyline.midpoints(vertices, closed=True))))
-	
+	def medians(v): return list(zip(v, lshift(v.dual)))
+
+	def angle_bisectors(vertices):
+		result = []
+		for i in range(3):
+			A, B, C = List.arange(vertices, 3, i)
+			b = np.linalg.norm(C - A)
+			c = np.linalg.norm(A - B)
+			P = (B * b + C * c) / (b + c)
+			result.append([A, P])
+		return result"""
+
 	def incenter(v):
 		sides = v.lengths[[1, 2, 0]]
 		return np.sum(v * sides[:, None], axis=0) / np.sum(sides)
@@ -2093,6 +2123,43 @@ def boundary_ray_intersection(polygon, ray):
 
 def boundary_segment_intersection(polygon, segment):
 	return segments_shape_intersection(polygon.edges, segment, segment_segment_intersection)
+
+
+
+
+
+def segment_contains_segment(a, b):	# check if segment a contains segment b
+	return all(point_on_segment(a, x) for x in b)
+
+def arrow_contains_arrow(a, b):	# check if arrow a contains arrow b
+	if segment_contains_segment(a, b):
+		return np.array_equal(line(a).direction, line(b).direction)
+	return False
+
+
+def boundary_contains_point(p, point): return any(point_on_segment(e, point) for e in p.edges)
+
+def interior_contains_point(p, point): return p.contains_point(point) and not boundary_contains_point(p, point)
+
+def polygon_contains_point(p, point): return p.contains_point(point) or boundary_contains_point(p, point)
+
+
+def boundary_contains_points(p, points): return all(boundary_contains_point(p, pt) for pt in points)
+
+def interior_contains_points(p, points): return all(interior_contains_point(p, pt) for pt in points)
+
+def polygon_contains_points(p, points): return all(polygon_contains_point(p, pt) for pt in points)
+
+
+def boundary_contains_segment(p, s): return any(segment_contains_segment(x, s) for x in p.edges)
+
+def interior_contains_segment(p, s):
+	if not interior_contains_points(p, s):
+		return False
+	return not any(segment_segment_intersection(e, s) for e in p.edges)
+
+def polygon_contains_segment(p, s): return boundary_contains_segment(p, s) or interior_contains_segment(p, s)
+
 
 def pairwise_distances(points: np.ndarray) -> np.ndarray:
 	"""
