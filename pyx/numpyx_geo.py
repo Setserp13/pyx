@@ -1157,23 +1157,6 @@ class polyline(points):
 			for i in (vertex - 1, vertex + 1)
 			if p.closed or (0 <= i < len(p))
 		]
-
-	def tangents(v):
-		n = len(v)
-		result = []
-		for i in range(n):
-			if v.closed:
-				t = v[(i + 1) % n] - v[(i - 1) % n]	# Índices com wrap-around
-				#print(t)
-			else:
-				if i == 0:
-					t = v[1] - v[0]
-				elif i == n - 1:
-					t = v[-1] - v[-2]
-				else:
-					t = (v[i+1] - v[i-1]) * 0.5
-			result.append(npx.normalize(t))
-		return result
 	
 	"""def incident_edges(p, vertex):	
 		edges = [line(List.arange(p, 2, start=vertex - 1)), line(List.arange(p, 2, start=vertex))]
@@ -1220,6 +1203,9 @@ class polyline(points):
 	@property
 	def vertex_normals(p):
 		return np.array([npx.normalize(np.sum([x.normal for x in p.incident_edges(i)], axis=0)) for i in range(len(p))])
+
+	@property
+	def tangents(p): return np.array([np.array([-x[1], x[0]]) for x in p.vertex_normals])
 
 	@property
 	def perpendicular_bisectors(p): return np.array([x.perpendicular_bisector for x in p.edges])
