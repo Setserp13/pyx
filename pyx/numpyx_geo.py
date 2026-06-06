@@ -1492,49 +1492,12 @@ class triangle(polyline):
 
 	@property
 	def medians(v): return group([line([x[1], line(x[[0, 2]]).midpoint]) for x in v.vertex_angles])
-	
-	"""def altitudes(vertices):
-		result = []
-		for i in range(3):
-			P, A, B = List.arange(vertices, 3, i)
-			AB = B - A
-			t = np.dot(P - A, AB) / np.dot(AB, AB)
-			foot = A + t * AB
-			result.append([P, foot])
-		return result
 
-	def medians(v): return list(zip(v, lshift(v.dual)))
+	@property
+	def incenter(v): return line_line_intersection(*v.angle_bisectors[:2])
 
-	def angle_bisectors(vertices):
-		result = []
-		for i in range(3):
-			A, B, C = List.arange(vertices, 3, i)
-			b = np.linalg.norm(C - A)
-			c = np.linalg.norm(A - B)
-			P = (B * b + C * c) / (b + c)
-			result.append([A, P])
-		return result"""
-
-	def incenter(v):
-		sides = v.lengths[[1, 2, 0]]
-		return np.sum(v * sides[:, None], axis=0) / np.sum(sides)
-	
-
-
-	def orthocenter(vertices):
-		A, B, C = vertices
-		def altitude_line(p_vertex, p1, p2):
-			edge_vec = p2 - p1
-			perp_vec = np.array([-edge_vec[1], edge_vec[0]])
-			return p_vertex, perp_vec
-	
-		h1, d1 = altitude_line(A, B, C)
-		h2, d2 = altitude_line(B, A, C)
-	
-		A_mat = np.array([d1, -d2]).T
-		b_vec = h2 - h1
-		t = np.linalg.solve(A_mat, b_vec)
-		return h1 + t[0] * d1
+	@property
+	def orthocenter(v): return line_line_intersection(*v.altitudes[:2])
 
 
 
