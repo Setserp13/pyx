@@ -1218,11 +1218,8 @@ class polyline(points):
 	def normals(p): return np.array([x.normal for x in p.edges])
 
 	@property
-	def vertex_normals(p): return np.array([-x.bisector for x in p.vertex_angles])
-
-	"""@property
 	def vertex_normals(p):
-		return np.array([npx.normalize(np.sum([x.normal for x in p.incident_edges(i)], axis=0)) for i in range(len(p))])"""
+		return np.array([npx.normalize(np.sum([x.normal for x in p.incident_edges(i)], axis=0)) for i in range(len(p))])
 
 	@property
 	def perpendicular_bisectors(p): return np.array([x.perpendicular_bisector for x in p.edges])
