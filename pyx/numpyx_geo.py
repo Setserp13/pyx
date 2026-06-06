@@ -384,10 +384,12 @@ class points(np.ndarray):
 		return f"{name}({np.asarray(self)}, attrs={self.__dict__})"
 
 	@property
-	def mean(p): return np.mean(p, axis=0)
-
+	def mean(p):
+		return np.mean(p, axis=0)
+	
 	@mean.setter
-	def mean(p, value): return p + (value - p.mean)
+	def mean(p, value):
+		p[:] += value - p.mean
 
 def elbow_connector1(start, end, x=0): return polyline([start, np.array([start[x], end[1 - x]]), end])
 
