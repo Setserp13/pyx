@@ -747,6 +747,9 @@ class line(points):	#start = self[0], end = self[1]
 	@property	#angle of inclination, from x-axis
 	def angle(self): return math.atan2(self.vector[1], self.vector[0])
 
+	@property
+	def perpendicular_bisector(self): return line([self.midpoint, self.midpoint + self.normal])
+	
 	def padding(self, left, right, relative=False):
 		if relative:
 			left *= self.length
@@ -1192,17 +1195,13 @@ class polyline(points):
 	def vertex_normals(p):
 		return np.array([npx.normalize(np.sum([x.normal for x in p.incident_edges(i)], axis=0)) for i in range(len(p))])
 
-	
+	@property
+	def perpendicular_bisectors(p): return [x.perpendicular_bisector for x in p.edges]
+
 	def expand(self, amount):
 		return polyline([self[i] + x * float(amount) for i, x in enumerate(self.vertex_normals)], closed=self.closed)
 	
 	def internal_angle_sum(n): return math.pi * (n - 2)
-
-	def perpendicular_bisector(edge):
-		mid = np.mean(edge, axis=0)
-		return [mid, mid + polyline.normal(edge, outward=False)]
-
-	def perpendicular_bisectors(p): return [polyline.perpendicular_bisector(x) for x in p.edges]
 
 	def circumcenter(p): return mat.line_line_intersection(*p.perpendicular_bisectors()[:2])
 
