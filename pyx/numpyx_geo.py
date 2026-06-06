@@ -1078,16 +1078,19 @@ class Mesh():
 		])
 
 
-class angle(list):
+class angle(points):	#list):
 
 	@property
 	def rays(self): return [line([self[1], self[0]]), line([self[1], self[2]])]
 
 	@property
-	def vectors(self): return [x.vector for x in self.rays]
+	def vectors(self): return np.array([x.vector for x in self.rays])
 
 	@property
 	def size(self): return npx.angle(*self.vectors)
+
+	@property
+	def bisector(self): return npx.normalize(np.sum([x.direction for x in self.rays], axis=0))
 
 	def to_arc(self, radius):
 		v0 = npx.normalize(self.vectors[0])
@@ -1110,10 +1113,12 @@ class polyline(points):
 	def edge(p, index): return line([p[index], p[(index + 1) % len(p)]])
 	
 	def vertex_angle(p, index): return angle(List.arange(p, 3, start=index - 1))
-	
+
+	@property
 	def vertex_angles(p): return [p.vertex_angle(i) for i in range(0 if p.closed else 1, len(p) - (0 if p.closed else 1))]
 
-	def lengths(p): return [x.length for x in p.edges]
+	@property
+	def lengths(p): return np.array([x.length for x in p.edges])
 
 	@property
 	def perimeter(p): return sum(p.lengths())
@@ -1139,7 +1144,38 @@ class polyline(points):
 			result.append(vertices[-1])
 		return polyline(result, closed=p.closed)
 
-	def incident_edges(p, vertex): #vertex is an index
+	def incident_edges(p, vertex):
+		return [
+			line(List.arange(p, 2, start=i, closed=True))
+			for i in [vertex - 1, vertex]
+			if p.closed or (0 <= i < len(p) - 1)
+		]
+
+	def neighbors(p, vertex):	#return vertex-adjacent vertices
+		return [
+			p[i % len(p)]
+			for i in (vertex - 1, vertex + 1)
+			if p.closed or (0 <= i < len(p))
+		]
+
+	def tangents(v):
+		n = len(v)
+		result = []
+		for i in range(n):
+			if v.closed:
+				t = v[(i + 1) % n] - v[(i - 1) % n]	# Índices com wrap-around
+				#print(t)
+			else:
+				if i == 0:
+					t = v[1] - v[0]
+				elif i == n - 1:
+					t = v[-1] - v[-2]
+				else:
+					t = (v[i+1] - v[i-1]) * 0.5
+			result.append(npx.normalize(t))
+		return result
+	
+	"""def incident_edges(p, vertex):	
 		edges = [line(List.arange(p, 2, start=vertex - 1)), line(List.arange(p, 2, start=vertex))]
 		if not p.closed:
 			if vertex == 0:
@@ -1147,9 +1183,6 @@ class polyline(points):
 			elif vertex == len(p) - 1:
 				return edges[:-1]
 		return edges
-	"""def incident_edges(p, v):
-		e = [line(List.arange(p, 2, start=v - 1)), line(List.arange(p, 2, start=v))]
-		return e[v > 0 : 2 if p.closed or v < len(p) - 1 else 1]"""
 	
 	def neighbors(v, i):	#return ith-vertex-adjacent vertices
 		n = len(v)
@@ -1177,7 +1210,7 @@ class polyline(points):
 				else:
 					t = (v[i+1] - v[i-1]) * 0.5
 			result.append(npx.normalize(t))
-		return result
+		return result"""
 
 
 
@@ -1185,18 +1218,22 @@ class polyline(points):
 	def normals(p): return np.array([x.normal for x in p.edges])
 
 	@property
+	def vertex_normals(p): return np.array([-x.bisector for x in p.vertex_angles])
+
+	"""@property
 	def vertex_normals(p):
-		return np.array([npx.normalize(np.sum([x.normal for x in p.incident_edges(i)], axis=0)) for i in range(len(p))])
+		return np.array([npx.normalize(np.sum([x.normal for x in p.incident_edges(i)], axis=0)) for i in range(len(p))])"""
 
 	@property
-	def perpendicular_bisectors(p): return [x.perpendicular_bisector for x in p.edges]
+	def perpendicular_bisectors(p): return np.array([x.perpendicular_bisector for x in p.edges])
 
 	def expand(self, amount):
-		return polyline([self[i] + x * float(amount) for i, x in enumerate(self.vertex_normals)], closed=self.closed)
+		return self + self.vertex_normals * amount
+		#return polyline([self[i] + x * float(amount) for i, x in enumerate(self.vertex_normals)], closed=self.closed)
 	
 	def internal_angle_sum(n): return math.pi * (n - 2)
 
-	def circumcenter(p): return mat.line_line_intersection(*p.perpendicular_bisectors()[:2])
+	def circumcenter(p): return line_line_intersection(*p.perpendicular_bisectors[:2])
 
 	"""@property
 	def area(v):
@@ -1223,7 +1260,10 @@ class polyline(points):
 	def shoelace(v): return sum([np.cross(*x) for x in v.edges])	#Shoelace formula
 		
 	@property
-	def isclockwise(v): return v.shoelace > 0
+	def iscw(v): return v.shoelace < 0	#is clockwise
+
+	@property
+	def isacw(v): return v.shoelace > 0	#is anticlockwise
 
 	@property
 	def area(v): return 0.5 * v.shoelace	#If the polygon is negatively oriented, then the result is negative
@@ -1277,13 +1317,13 @@ class polyline(points):
 					inside = not inside
 		return inside
 	
-	def triangulate(vertices):
-		n = len(vertices)
+	def triangulate(v):
+		n = len(v)
 		if n < 3:
 			return []
 	
 		indices = list(range(n))
-		if vertices.isclockwise:
+		if v.iscw:
 			indices.reverse()
 	
 		triangles = []
@@ -1291,25 +1331,23 @@ class polyline(points):
 		while len(indices) > 3:
 			found_ear = False
 			for i in range(len(indices)):
-				i0 = indices[i]
-				i1 = indices[(i + 1) % len(indices)]
-				i2 = indices[(i + 2) % len(indices)]
-	
-				tri = [vertices[i0], vertices[i1], vertices[i2]]
-				if tri.area <= 0:
+				ti = List.arange(indices, 3, start=i, closed=True)
+
+				t = v[ti]
+				if not t.isacw:
 					continue
 	
 				ear_found = True
 				for j in indices:
-					if j in (i0, i1, i2):
+					if j in ti:
 						continue
-					if polyline.contains_point(tri, vertices[j]):
+					if polyline.contains_point(t, v[j]):
 						ear_found = False
 						break
 	
 				if ear_found:
-					triangles.append([i0, i1, i2])
-					del indices[(i + 1) % len(indices)]
+					triangles.append(t.copy())
+					del indices[ti[1]]
 					found_ear = True
 					break
 	
@@ -1461,11 +1499,9 @@ class triangle(polyline):
 	def medians(vertices):
 		return list(zip(vertices, lshift(polyline.midpoints(vertices, closed=True))))
 	
-	def incenter(vertices):
-		A, B, C = vertices
-		c, a, b = polyline.lengths(vertices, closed=True)
-		P = a + b + c
-		return (a*A + b*B + c*C) / P
+	def incenter(v):
+		sides = v.lengths[[1, 2, 0]]
+		return np.sum(v * sides[:, None], axis=0) / np.sum(sides)
 	
 
 
