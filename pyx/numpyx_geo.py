@@ -1485,7 +1485,7 @@ class polygon:
 
 class triangle(polyline):
 	@property
-	def angle_bisectors(v): return group([line([x[1], line_line_intersection(x[1] + x.bisector, line(x[[0, 2]]))]) for x in v.vertex_angles])
+	def angle_bisectors(v): return group([line([x[1], line_line_intersection(line([x[1], x[1] + x.bisector]), line(x[[0, 2]]))]) for x in v.vertex_angles])
 
 	@property
 	def altitudes(v): return group([line([x[1], project_point_on_line(x[1], line(x[[0, 2]]))]) for x in v.vertex_angles])
