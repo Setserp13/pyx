@@ -1122,7 +1122,7 @@ class polyline(points):
 	def dual(p): return polyline([x.midpoint for x in p.edges], closed=p.closed)	#midpoint polygon
 	
 	def point_from_proportion(self, t):
-		p = self.perimeter()
+		p = self.perimeter
 		a = 0.0
 		for x in self.edges:
 			b = a + x.length / p
@@ -1179,14 +1179,7 @@ class polyline(points):
 			result.append(npx.normalize(t))
 		return result
 
-	"""def normal(edge, outward=True): return line(edge).normal * -1 if outward else 1
 
-	def normals(p, outward=True): return [polyline.normal(x, outward=outward) for x in p.edges()]
-	
-	def vertex_normals(p, outward=True):
-		return np.array([npx.normalize(np.sum([polyline.normal(x, outward=outward) for x in p.incident_edges(i)], axis=0)) for i in range(len(p))])"""
-
-	#def normal(edge): return line(edge).normal
 
 	@property
 	def normals(p): return np.array([x.normal for x in p.edges])
