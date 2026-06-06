@@ -384,12 +384,12 @@ class points(np.ndarray):
 		return f"{name}({np.asarray(self)}, attrs={self.__dict__})"
 
 	@property
-	def mean(p):
+	def vertex_centroid(p):
 		return np.mean(p, axis=0)
 	
-	@mean.setter
-	def mean(p, value):
-		p[:] += value - p.mean
+	@vertex_centroid.setter
+	def vertex_centroid(p, value):
+		p[:] += value - p.vertex_centroid
 
 def elbow_connector1(start, end, x=0): return polyline([start, np.array([start[x], end[1 - x]]), end])
 
@@ -1242,7 +1242,7 @@ class polyline(points):
 		A = v.area
 	
 		if abs(A) < 1e-12:
-			return v.mean
+			return v.vertex_centroid
 	
 		s = np.zeros_like(v[0])
 
