@@ -395,7 +395,10 @@ def text_to_svg(obj, **kwargs): #In SVG, the y attribute of a <text> element ref
 
 
 
+def transform_to_svg(obj):	#order matters
+	return f'translate({obj.position[0]} {obj.position[1]}) scale({obj.scale[0]} {obj.scale[1]}) rotate({math.degrees(obj.rotation)})'
 
+Node2D.to_svg = lambda self: transform_to_svg(self)
 
 def get_attrib(obj):
 	attrib = getattr(obj, "attrib", {})
@@ -404,6 +407,9 @@ def get_attrib(obj):
 			if isinstance(attrib[k], Color):
 				attrib[k + '-opacity'] = attrib[k].a
 				attrib[k] = attrib[k].hex[:-2]
+	for k in ['transform']:
+		hasattr(attrib[k], "to_svg"):
+			attrib[k] = attrib[k].to_svg()
 	return attrib
 
 geo.polybezier.to_svg = lambda self: path(self.d(), **get_attrib(self))
