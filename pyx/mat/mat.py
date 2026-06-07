@@ -56,6 +56,16 @@ def floor(value, step): return math.floor(value / step) * step #returns the grea
 @dispatch(Number, Number)
 def ceil(value, step): return math.ceil(value / step) * step #returns the smallest multiple of step greater than or equal to value
 
+
+"""def min_exp(n, base):
+	if n <= 1:
+		return 0
+	return math.ceil(math.log(n, base))
+def max_exp(n, base):
+	if n <= 1:
+		return 0
+	return math.floor(math.log(n, base))"""
+
 def largest_power(n, base):	#largest power of the base b that is less than or equal to n
 	#return b ** math.floor(math.log(n, b))	#this method can be wrong because of floating errors
 	if n <= 0:
