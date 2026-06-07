@@ -288,3 +288,27 @@ def plane(offset=np.zeros(2), cell_size=np.ones(2), cell_count=np.ones(2) * 10):
 	triangles = grid_triangulation(cell_count, closed=[False, False])
 	#print(triangles)
 	return Mesh(vertices, triangles, uvs)
+
+def cube(position, size, pivot=np.ones(3) * 0.5):
+
+	o = position - size * pivot
+
+	vertices = []
+
+	for i in range(8):
+		x = (i >> 0) & 1
+		y = (i >> 1) & 1
+		z = (i >> 2) & 1
+
+		vertices.append(o + size * np.array([x, y, z]))
+
+	faces = [
+		[0, 1, 3, 2],  # z = 0
+		[4, 5, 7, 6],  # z = 1
+		[0, 1, 5, 4],  # y = 0
+		[2, 3, 7, 6],  # y = 1
+		[0, 2, 6, 4],  # x = 0
+		[1, 3, 7, 5],  # x = 1
+	]
+
+	return Mesh(vertices, faces)
