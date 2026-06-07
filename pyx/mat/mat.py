@@ -62,19 +62,46 @@ def ceil(value, step): return math.ceil(value / step) * step #returns the smalle
 		return 0
 	return math.ceil(math.log(n, base))
 def max_exp(n, base):
+"""
+def min_exp(n, base):
+	#return 0 if n <= 1 else math.ceil(math.log(n, base))
 	if n <= 1:
 		return 0
-	return math.floor(math.log(n, base))"""
+	if base <= 1:
+		raise ValueError("base must be greater than 1")
 
-def next_power(n, m):
-	if n < 0 and m % 2 == 0:
-		raise ValueError("No real even root for negative n")
+	exp = 0
+	p = 1
 
-	k = math.ceil(abs(n) ** (1 / m))
+	while p < n:
+		p *= base
+		exp += 1
 
-	return k ** m
+	return exp
+
+def max_exp(n, base):
+	#return 0 if n <= 1 else math.floor(math.log(n, base))
+	if n <= 0:
+		raise ValueError("n must be positive")
+	if base <= 1:
+		raise ValueError("base must be greater than 1")
+
+	exp = 0
+	p = 1
+
+	while p * base <= n:
+		p *= base
+		exp += 1
+
+	return exp
+
+def smallest_power(n, base):
+	return base ** min_exp(n, base)
 
 def largest_power(n, base):	#largest power of the base b that is less than or equal to n
+	return base ** max_exp(n, base)
+
+"""def largest_power(n, base):	
 	#return b ** math.floor(math.log(n, b))	#this method can be wrong because of floating errors
 	if n <= 0:
 		raise ValueError("n must be positive")
@@ -83,8 +110,15 @@ def largest_power(n, base):	#largest power of the base b that is less than or eq
 	p = 1
 	while p * base <= n:
 		p *= base
-	return p
+	return p"""
 
+def next_power(n, m):
+	if n < 0 and m % 2 == 0:
+		raise ValueError("No real even root for negative n")
+
+	k = math.ceil(abs(n) ** (1 / m))
+
+	return k ** m
 
 def mean(iterable): return sum(iterable) / len(iterable)
 
