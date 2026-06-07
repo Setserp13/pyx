@@ -66,6 +66,14 @@ def max_exp(n, base):
 		return 0
 	return math.floor(math.log(n, base))"""
 
+def next_power(n, m):
+	if n < 0 and m % 2 == 0:
+		raise ValueError("No real even root for negative n")
+
+	k = math.ceil(abs(n) ** (1 / m))
+
+	return k ** m
+
 def largest_power(n, base):	#largest power of the base b that is less than or equal to n
 	#return b ** math.floor(math.log(n, b))	#this method can be wrong because of floating errors
 	if n <= 0:
