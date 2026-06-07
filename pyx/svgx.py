@@ -408,8 +408,9 @@ def get_attrib(obj):
 				attrib[k + '-opacity'] = attrib[k].a
 				attrib[k] = attrib[k].hex[:-2]
 	for k in ['transform']:
-		if hasattr(attrib[k], "to_svg"):
-			attrib[k] = attrib[k].to_svg()
+		if k in attrib:
+			if hasattr(attrib[k], "to_svg"):
+				attrib[k] = attrib[k].to_svg()
 	return attrib
 
 geo.polybezier.to_svg = lambda self: path(self.d(), **get_attrib(self))
