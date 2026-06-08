@@ -992,10 +992,10 @@ class Mesh():
 		self.vertices = set_aabb(self.vertices, value)
 	
 	@property
-	def pivot(self): return self.bounds.normalize_point(np.zeros(3))
+	def pivot(self): return self.aabb.normalize_point(np.zeros(3))
 
 	@pivot.setter	#pivot is normalized
-	def pivot(self, value): self.translate(-self.bounds.denormalize_point(value))
+	def pivot(self, value): self.translate(-self.aabb.denormalize_point(value))
 
 	def merge(meshes):
 		vertices = []
