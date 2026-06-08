@@ -1,7 +1,7 @@
 import numpy as np
 import pyx.numpyx as npx
 import pyx.mat.mat as mat
-from pyx.collectionsx import flatten, List, lshift
+from pyx.collectionsx import flatten, List, lshift, graph
 import math
 import pyx.osx as osx
 import itertools
@@ -898,9 +898,9 @@ class radar_chart:
 
 
 class Mesh():
-	def __init__(self, vertices=None, faces=None, uvs=None):
+	def __init__(self, vertices=None, indices=None, uvs=None):
 		self.vertices = np.array(vertices if vertices is not None else [])
-		self.faces = faces.copy() if faces is not None else []
+		self.indices = indices.copy() if indices is not None else []
 		self.uvs = uvs.copy() if uvs is not None else []
 		self.normals_interpolation = 'face_varying'	#constant (one value for entire primitive), face_varying (one value per face corner), vertex (one value per vertex), uniform (one value per face)
 		self.uvs_interpolation = 'face_varying'
@@ -908,26 +908,37 @@ class Mesh():
 		self.colors_interpolation = 'face_varying'
 		self.double_sided = False
 	
-	def get_face(self, i): return polyline(List.items(self.vertices, self.faces[i]))
-
-	def get_faces(self): return group([self.get_face(i) for i in range(len(self.faces))])
+	def face(self, i): return polyline(List.items(self.vertices, self.indices[i]), closed=True)
 
 	@property
-	def edges(self): return flatten([x.edges for x in self.get_faces()])
-	
+	def faces(self): return group([self.face(i) for i in range(len(self.indices))])
+
+	@property
+	def edges(self): return flatten([x.edges for x in self.faces])
+
+	def edge_indices_of(self, face_index): return np.array([x for x in List.aranges(self.indices[face_index], 2, cycle=True)])
+
+	@property
+	def edge_indices(self): return np.array([self.edge_indices_of(i) for i in range(len(self.indices))])
+
+	def to_graph(self):
+		result = graph(*self.vertices)
+		result.add_edges(flatten(self.edges_indices))
+		return result
+
 	def to_obj(self, path):
 		lines = [f"v {x} {y} {z}" for x, y, z in self.vertices]
 		if self.uvs is not None and len(self.uvs) > 0:
 			lines += [f"vt {u} {v}" for u, v in self.uvs]
-			lines += ["f " + " ".join(f"{i+1}/{i+1}" for i in face) for face in self.faces]
+			lines += ["f " + " ".join(f"{i+1}/{i+1}" for i in x) for x in self.indices]
 		else:
-			lines += [f"f {' '.join(str(i + 1) for i in face)}" for face in self.faces]
+			lines += [f"f {' '.join(str(i + 1) for i in x)}" for x in self.indices]
 		osx.write(path, '\n'.join(lines) + '\n')
 
 	def from_obj(path):
 		vertices = []
 		uvs = []
-		faces = []
+		indices = []
 		for line in osx.read(path).split('\n'):
 			if line.startswith('v '):
 				_, x, y, z = line.strip().split()
@@ -937,34 +948,34 @@ class Mesh():
 				uvs.append([float(u), float(v)])
 			elif line.startswith('f '):
 				parts = line.strip().split()[1:]
-				face = []
+				f = []
 				for p in parts:
 					tokens = p.split('/')
 					vertex_index = int(tokens[0]) - 1
-					face.append(vertex_index)
+					f.append(vertex_index)
 					# Optional: If you want to store UV indices separately, you can do:
 					# if len(tokens) > 1 and tokens[1]:
 					#     uv_index = int(tokens[1]) - 1
 					#     self.face_uv_indices.append(uv_index)
-				faces.append(face)
-		return Mesh(vertices, faces, uvs)
+				indices.append(f)
+		return Mesh(vertices, indices, uvs)
 	
 	def add_face(self, vertices):
 		start_index = len(self.vertices)
 		self.vertices.extend(vertices)
-		self.faces.append(list(range(start_index, start_index + len(vertices))))
+		self.indices.append(np.arange(start_index, start_index + len(vertices)))
 
 	def add_faces(self, faces):
 		for x in faces:
 			self.add_face(x)
 
-	def extrude(self, dir, face, flip=True):
-		face = self.get_face(face)
-		self.add_face([x + dir for x in face])
-		for x in face.edges:
+	def extrude(self, dir, face_index, flip=True):
+		f = self.face(face_index)
+		self.add_face([x + dir for x in f])
+		for x in f.edges:
 			self.add_face([x[0], x[1], x[1] + dir, x[0] + dir])
 		if flip:
-			for i in range(len(self.faces) - 5, len(self.faces)):
+			for i in range(len(self.indices) - 5, len(self.indices)):
 				self.flip_normal(i)
 
 	def translate(self, vector):
@@ -988,13 +999,13 @@ class Mesh():
 
 	def merge(meshes):
 		vertices = []
-		faces = []
+		indices = []
 	
 		offset = 0
 	
 		for mesh in meshes:
-			faces.extend(
-				[[offset + i for i in face] for face in mesh.faces]
+			indices.extend(
+				[[offset + i for i in x] for x in mesh.indices]
 			)
 	
 			vertices.append(mesh.vertices)
@@ -1002,25 +1013,25 @@ class Mesh():
 	
 		vertices = np.concatenate(vertices)
 	
-		return Mesh(vertices, faces)
+		return Mesh(vertices, indices)
 
 	def make_double_sided(mesh):
-		mesh.faces += [list(reversed(x)) for x in mesh.faces]
+		mesh.indices += [list(reversed(x)) for x in mesh.indices]
 
 	def flip_normal(mesh, i):
-		mesh.faces[i] = list(reversed(mesh.faces[i]))
+		mesh.indices[i] = list(reversed(mesh.indices[i]))
 
 	def flip_normals(mesh):
-		mesh.faces = [list(reversed(x)) for x in mesh.faces]
+		mesh.indices = [list(reversed(x)) for x in mesh.indices]
 
 	def make_vertices_unique(self):
 		result = Mesh()
-		for x in self.get_faces():
+		for x in self.faces:
 			result.add_face(*x)
 		return result
 
 	def face_normal(self, i):
-		pts = self.get_face(i)
+		pts = self.face(i)
 		n = np.zeros(3)
 
 		for i in range(len(pts)):
@@ -1035,7 +1046,7 @@ class Mesh():
 
 	@property
 	def face_normals(self):	#uniform
-		return [self.face_normal(i) for i in range(len(self.faces))]
+		return [self.face_normal(i) for i in range(len(self.indices))]
 
 	@property
 	def normal(self):	#constant, one normal for the entire mesh
@@ -1050,8 +1061,8 @@ class Mesh():
 
 		fnormals = self.face_normals
 
-		for fi, face in enumerate(self.faces):
-			for vi in face:
+		for fi, f in enumerate(self.indices):
+			for vi in f:
 				acc[vi] += fnormals[fi]
 
 		# normalize
@@ -1064,8 +1075,8 @@ class Mesh():
 		fnormals = self.face_normals
 		return np.asarray([
 			fnormals[fi]
-			for fi, face in enumerate(self.faces)
-			for _ in face
+			for fi, f in enumerate(self.indices)
+			for _ in f
 		])
 
 	@property
@@ -1073,8 +1084,8 @@ class Mesh():
 		vnormals = self.vertex_normals
 		return np.asarray([
 			vnormals[vi]
-			for face in self.faces
-			for vi in face
+			for f in self.indices
+			for vi in f
 		])
 
 
@@ -1722,10 +1733,10 @@ def gyroelongated_bipyramid(count, r=1, height=1): return enlongated(1, count, c
 
 def ring(count, r=1, R=2, height=1):
 	vertices = [np.array([pt[0], h, pt[1]]) for radius, h in product([r, R], [0, height]) for pt in npx.on_circle(count, r=radius)]
-	faces = []
+	indices = []
 	for a, b in [(0, 1), (0, 2), (1, 3), (2, 3)]:
-		faces += prism_laterals(count, start_index1=count * a, start_index2=count * b)
-	return vertices, faces
+		indices += prism_laterals(count, start_index1=count * a, start_index2=count * b)
+	return vertices, indices
 
 def randomize2(vertices, r=.1): return [npx.random_in_circle(r) + x for x in vertices]
 
