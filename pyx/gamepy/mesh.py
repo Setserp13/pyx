@@ -317,3 +317,11 @@ def cube(position, size, pivot=np.ones(3) * 0.5):
 
 def grid_uv(cell_count, swizzle=[1, 0]):
 	return npx.cartesian_product([npx.subdivide(0., 1., cell_count[i]) for i in range(2)], swizzle=swizzle)
+
+def polygon_uv(vertices):
+	bbox = npx.aabb(vertices)
+	return np.array([bbox.normalize_point(x) for x in vertices])
+
+
+
+
