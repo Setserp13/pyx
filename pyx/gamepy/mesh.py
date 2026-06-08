@@ -312,3 +312,8 @@ def cube(position, size, pivot=np.ones(3) * 0.5):
 	]
 
 	return Mesh(vertices, faces)
+
+
+
+def grid_uv(cell_count, swizzle=[1, 0]):
+	return npx.cartesian_product([npx.subdivide(0., 1., cell_count[i]) for i in range(2)], swizzle=swizzle)
