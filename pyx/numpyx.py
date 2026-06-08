@@ -9,6 +9,18 @@ import random
 from pyx.numpyx_geo import polyline, line
 from itertools import permutations, product
 
+def cartesian_product(arrays, swizzle=None):
+	arrays = [np.asarray(a) for a in arrays]
+
+	mesh = np.meshgrid(*arrays, indexing='ij')
+	result = np.stack(mesh, axis=-1).reshape(-1, len(arrays))
+
+	if swizzle is not None:
+		result = result[:, swizzle]
+
+	return result
+
+
 def modular_distance(a, b, n):
 	d = abs(a - b) % n
 	return min(d, n - d)
