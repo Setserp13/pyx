@@ -317,7 +317,7 @@ def ifor(arr, func, index=None):	#indexed for.	iwalk
 	if index is None:
 		index = []
 
-	if not isinstance(arr, (list)):	#, tuple)):
+	if not isinstance(arr, (list, np.ndarray)):	#, tuple)):
 		return func(arr, *index)
 
 	for i, item in enumerate(arr):
@@ -327,7 +327,7 @@ def imap(arr, func, index=None):	#indexed map.	Apply a function to each element 
 	if index is None:
 		index = []
 
-	if not isinstance(arr, (list)):	#, tuple)):
+	if not isinstance(arr, (list, np.ndarray)):	#, tuple)):
 		return func(arr, *index)
 
 	return [
