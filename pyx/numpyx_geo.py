@@ -14,6 +14,26 @@ import pyx.PILx as PILx
 EPSILON = 1e-9
 TAU = math.pi * 2.
 
+class shape:
+    def __add__(self, value):
+        raise NotImplementedError
+
+    def __sub__(self, value):
+        raise NotImplementedError
+
+    def __mul__(self, value):
+        raise NotImplementedError
+
+    __rmul__ = __mul__
+
+    def scale(self, factor, pivot=None):
+        if pivot is None:
+            pivot = np.zeros(self.ndim)
+
+        result = copy.deepcopy(self)
+        return pivot + (result - pivot) * factor
+
+
 class rect_like:
 	def __init__(self, min, size):
 		self.min = np.array(min)
