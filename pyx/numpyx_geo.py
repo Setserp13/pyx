@@ -1,6 +1,7 @@
 import numpy as np
 import pyx.numpyx as npx
 import pyx.mat.mat as mat
+from pyx.array_utility import find_indices
 from pyx.collectionsx import flatten, List, lshift, graph
 import math
 import pyx.osx as osx
@@ -2217,4 +2218,13 @@ shapes = [polybezier, circle, ellipse, line, polyline, rect, group, arc, tspan, 
 for x in shapes:
 	x.set = lambda self, **attrib: generic.set(self, attrib={**getattr(self, "attrib", {}), **attrib})
 	x.get = lambda self, *keys: [self.attrib[k] for k in keys] if hasattr(self, 'attrib') else None
+
+
+
+def findall_at_distance(point, others, dist, tol=1e-6, metric=lambda x, y: np.linalg.norm(x - y), mask=None):
+	return find_indices(others, lambda x: abs(metric(point, x) - dist) < tol, mask=mask)
+
+def findall_in_distance(point, others, dist, tol=1e-6, metric=lambda x, y: np.linalg.norm(x - y), mask=None):
+	return find_indices(others, lambda x: metric(point, x) <= dist + tol, mask=mask)
+
 
