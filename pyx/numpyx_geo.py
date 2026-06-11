@@ -1173,7 +1173,7 @@ class polyline(points):
 		for x in p.edges:
 			result += [npx.lerp(x[0], x[1], i / n) for i in range(n)]
 		if not p.closed:
-			result.append(vertices[-1])
+			result.append(p[-1])
 		return polyline(result, closed=p.closed)
 
 	def incident_edges(p, vertex):
