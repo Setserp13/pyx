@@ -64,7 +64,9 @@ class Color(np.ndarray):
 		r, g, b = ImageColor.getrgb(value)
 		return r/255.0, g/255.0, b/255.0, 1.0
 
-
+	@classmethod
+	def parse(cls, value):
+		return cls.__new__(cls._parse_color(value))
 	# -------- Properties -------- #
 
 	@property
