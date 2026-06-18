@@ -66,7 +66,7 @@ class Color(np.ndarray):
 
 	@classmethod
 	def parse(cls, value):
-		return cls.__new__(cls._parse_color(value))
+		return cls(*cls._parse_color(value))
 	# -------- Properties -------- #
 
 	@property
