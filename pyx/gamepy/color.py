@@ -33,6 +33,9 @@ class Color(np.ndarray):
 
 	@classmethod
 	def _parse_color(cls, value):
+		if isinstance(value, str):
+			if value.lower() in ['none']:
+				return 0., 0., 0., 0.
 		# --- Case 1: list/tuple ---
 		if isinstance(value, (list, tuple, np.ndarray)):
 			if len(value) not in (3, 4):
