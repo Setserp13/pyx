@@ -1,5 +1,6 @@
 import numpy as np
 import pyx.numpyx as npx
+import pyx.numpyx_geo as geo
 from pyx.gamepy.color import Color
 import pyx.PILx as PILx
 from pyx.mat.transform import Node2D, Node3D
@@ -37,16 +38,16 @@ class Sprite2D(Node2D):
 	def size(self, value): self.scale = value / (self.texture.size * self.region_rect.size)
 
 	@property
-	def self_aabb(self): return npx.rect(np.zeros(2), self.size).set_position(self.pivot, self.position)
+	def self_aabb(self): return geo.rect(np.zeros(2), self.size).set_position(self.pivot, self.position)
 
 	@property
-	def aabb(self): return npx.aabb([x.self_aabb for x in [self, *self.descendants()] if hasattr(x, 'self_aabb')])
+	def aabb(self): return geo.aabb([x.self_aabb for x in [self, *self.descendants()] if hasattr(x, 'self_aabb')])
 
 	@property
 	def border_pixels(self): return np.concatenate((self.border[:2] * self.texture.size, self.border[2:] * self.texture.size))
 
 	@property
-	def region_rect_pixels(self): return npx.rect(np.zeros(2), self.texture.size).denormalize_rect(self.region_rect)
+	def region_rect_pixels(self): return geo.rect(np.zeros(2), self.texture.size).denormalize_rect(self.region_rect)
 
 class MeshInstance3D(Node3D):
 	def __init__(self, mesh=None, pivot=np.ones(3) * 0.5, **kwargs):	#mesh can be a PrimitiveMesh, a path, or a Mesh
