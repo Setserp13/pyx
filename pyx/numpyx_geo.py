@@ -499,7 +499,7 @@ class circle():
 class ellipse(rect_like):
 
 	def __init__(self, center, size):
-		super().__init__(self.center - self.size * 0.5, self.size)
+		super().__init__(center - size * 0.5, size)
 
 	@property
 	def a(self): return max(self.extents)	# semi-major
