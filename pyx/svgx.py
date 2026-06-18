@@ -170,7 +170,49 @@ def transform_from_svg(obj):
 	result.desc = {} if desc is None else rex.strpdict(desc.text, sep=[';', '='])
 	return result
 """
+def from_svg(obj):
+	
+	shape = None
+	tag = etree.QName(obj).localname
 
+	node = transform_from_svg(obj)
+
+	#print(tag)
+	match tag:
+		case 'circle': shape = circle_from_svg(obj)
+		case 'ellipse': shape = ellipse_from_svg(obj)
+		case 'g' | 'svg':
+			children = [from_svg(x) for x in obj]
+			node.extend(children)
+		case 'line': shape = line_from_svg(obj)
+		case 'polybezier': shape = bezier_from_svg(obj)
+		case 'polyline': shape = polyline_from_svg(obj)
+		case 'polygon': shape = polygon_from_svg(obj)
+		case 'rect': shape = rect_from_svg(obj)
+		case 'text': pass
+
+	node.shape = shape
+	node.set(**obj.attrib)
+	style = get_style(obj)
+	#print(style)
+	for k in ('fill', 'stroke'):
+		if k in style:
+			node.attrib[k] = style[k]
+		v = Color([0., 0., 0., 1.])
+		if k in node.attrib:
+			v = Color.parse(node.attrib[k])
+		a = f'{k}-opacity'
+		if a in style:
+			node.attrib[a] = style[a]
+		if a in node.attrib:
+			v[3] = float(node.attrib[a])
+		#print(v)
+		node.attrib[k] = v
+
+	desc = lxmlx.find(obj, lambda x: etree.QName(x).localname == "desc", iter=lambda e: e)
+	#print(desc)
+	node.desc = {} if desc is None else rex.strpdict(desc.text, sep=[';', '='])
+	return node
 
 
 
