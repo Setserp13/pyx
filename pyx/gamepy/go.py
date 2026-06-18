@@ -21,7 +21,7 @@ class Texture2D():
 	def size(self): return np.array(self.array.shape[:2])
 
 class Sprite2D(Node2D):
-	def __init__(self, texture=None, pivot=np.ones(2) * 0.5, region_rect = npx.rect(np.zeros(2), np.ones(2)), border=None, **kwargs):
+	def __init__(self, texture=None, pivot=np.ones(2) * 0.5, region_rect = geo.rect(np.zeros(2), np.ones(2)), border=None, **kwargs):
 		self.texture = texture
 		self.pivot = pivot
 		self.region_rect = region_rect
