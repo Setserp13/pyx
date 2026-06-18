@@ -120,7 +120,7 @@ def transform_from_svg(obj):
 				result.scale = np.append(result.scale, result.scale[0])
 		return result
 
-def from_svg(obj):
+"""def from_svg(obj):
 	result = None
 	tag = etree.QName(obj).localname
 	#print(tag)
@@ -169,7 +169,7 @@ def from_svg(obj):
 	#print(desc)
 	result.desc = {} if desc is None else rex.strpdict(desc.text, sep=[';', '='])
 	return result
-
+"""
 
 
 
