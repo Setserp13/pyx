@@ -190,7 +190,7 @@ def from_svg(obj):
 			result.attrib['transform'].append(x.attrib['transform'])
 	
 	result.id = obj.get('id')
-	style = get_style(obj)
+	"""style = get_style(obj)
 	fill = obj.get('fill', None)
 	if not fill is None:
 		style['fill'] = fill
@@ -208,25 +208,26 @@ def from_svg(obj):
 			style[k] = float(style[k])
 		else:
 			style[k] = 1.0
-	result.style = style
+	result.style = style"""
 
-	"""node = result
-	node.set(**obj.attrib)
+	node = result
+	node.set(**{})
+	attrib = obj.attrib
 	style = get_style(obj)
 	#print(style)
 	for k in ('fill', 'stroke'):
 		if k in style:
 			node.attrib[k] = style[k]
 		v = Color([0., 0., 0., 1.])
-		if k in node.attrib:
-			v = Color.parse(node.attrib[k])
+		if k in attrib:
+			v = Color.parse(attrib[k])
 		a = f'{k}-opacity'
 		if a in style:
 			node.attrib[a] = style[a]
-		if a in node.attrib:
-			v[3] = float(node.attrib[a])
+		if a in attrib:
+			v[3] = float(attrib[a])
 		#print(v)
-		node.attrib[k] = v"""
+		node.attrib[k] = v
 
 	desc = lxmlx.find(obj, lambda x: etree.QName(x).localname == "desc", iter=lambda e: e)
 	#print(desc)
