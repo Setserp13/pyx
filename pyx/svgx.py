@@ -139,10 +139,10 @@ def from_svg(obj):
 
 	if result is None:
 		return result
-	result.transform = transform_from_svg(obj)
+	result.set(transform=transform_from_svg(obj))
 	if isinstance(result, geo.group):
 		for x in result:
-			result.transform.append(x.transform)
+			result.attrib['transform'].append(x.attrib['transform'])
 	
 	"""result.id = obj.get('id')
 	style = get_style(obj)
