@@ -292,6 +292,10 @@ class Transform(Node):
 	@property
 	def global_position(self): return self.to_global(self.position)
 
+	@global_position.setter
+	def global_position(self, value):
+		self.position = self.to_local(value)
+
 	@property
 	def basis(self):	# BASIS (n×n matrix of world axes) -> upper-left n×n
 		return self.TRS()[:self.dim, :self.dim]
