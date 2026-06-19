@@ -18,7 +18,7 @@ import numpy as np
 import pyx.numpyx as npx
 import pyx.numpyx_geo as geo
 import pyx.lxmlx as lxmlx
-from pyx.mat.transform import Node2D, Transform
+from pyx.mat.transform import Node2D, Transform, Matrix
 from pyx.gamepy.color import Color
 
 def replace_all(root, replacements, exact_match=False):
@@ -102,7 +102,52 @@ def bezier_from_svg(obj):
 	#miss Aa
 	return geo.polybezier(points, endpoints=endpoints, closed=closed)
 
+
+def parse_svg_transform(transform):
+	M = np.eye(3)
+	pattern = r"([a-zA-Z]+)\s*\(([^)]*)\)"
+
+	for name, args in re.findall(pattern, transform):
+		values = [ float(v) for v in re.split(r"[,\s]+", args.strip()) if v ]
+		if name == "translate":
+			T = Matrix.T(np.array([values[0], values[1] if len(values) > 1 else 0]))
+
+		elif name == "scale":
+			T = Matrix.S(np.array([values[0], values[1] if len(values) > 1 else values[0]]))
+
+		elif name == "rotate":
+			angle = math.radians(values[0])
+			T = Matrix.R2(angle)
+			if len(values) == 3:
+				c = np.array([values[1], values[2]])
+				T1 = Matrix.T(c)
+				T2 = Matrix.T(-c)
+				T = T1 @ T @ T2
+
+		elif name == "matrix":
+			a, b, c, d, e, f = values
+			T = np.array([[a, c, e], [b, d, f], [0, 0, 1]])
+
+		else:
+			raise ValueError(f"Unsupported transform: {name}")
+
+		M = M @ T
+
+	return M
+
+
 def transform_from_svg(obj):
+	transform = obj.get('transform', '')
+	M = parse_svg_transform(transform)
+	a, c, tx = M[0]
+	b, d, ty = M[1]
+	sx = math.hypot(a, b)
+	rotation = math.atan2(b, a)
+	sy = (a * d - b * c) / sx
+	return Node2D(position=(tx, ty), scale=(sx, sy), rotation=rotation)
+
+
+"""def transform_from_svg(obj):
 	transform = get_transform(obj)
 	if 'matrix' in transform:
 		a, b, c, d, e, f = transform['matrix']
@@ -118,7 +163,7 @@ def transform_from_svg(obj):
 			result.scale = np.array(transform['scale'])
 			if len(result.scale) < 2:
 				result.scale = np.append(result.scale, result.scale[0])
-		return result
+		return result"""
 
 def from_svg(obj):
 	result = None
