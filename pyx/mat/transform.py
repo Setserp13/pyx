@@ -256,7 +256,7 @@ class Transform(Node):
 		self.scale = scale
 
 	@property
-	def dim(self): return len(self.position)
+	def ndim(self): return len(self.position)
 	
 	@property
 	def T(self): return Matrix.T(self.position)
@@ -283,11 +283,11 @@ class Transform(Node):
 
 	def to_local(self, point):
 		p = np.append(point, 1)
-		return (self.inverse_TRS() @ p)[:self.dim]
+		return (self.inverse_TRS() @ p)[:self.ndim]
 
 	def to_global(self, point):
 		p = np.append(point, 1)
-		return (self.TRS() @ p)[:self.dim]
+		return (self.TRS() @ p)[:self.ndim]
 
 	@property
 	def global_position(self): return self.to_global(self.position)
@@ -298,7 +298,7 @@ class Transform(Node):
 
 	@property
 	def basis(self):	# BASIS (n×n matrix of world axes) -> upper-left n×n
-		return self.TRS()[:self.dim, :self.dim]
+		return self.TRS()[:self.ndim, :self.ndim]
 
 class Node2D(Transform):	#Node):
 	def __init__(self, position=np.zeros(2), rotation=0.0, scale=np.ones(2), **kwargs):
