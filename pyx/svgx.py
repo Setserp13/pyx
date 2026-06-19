@@ -144,7 +144,7 @@ def from_svg(obj):
 		for x in result:
 			result.attrib['transform'].append(x.attrib['transform'])
 	
-	"""result.id = obj.get('id')
+	result.id = obj.get('id')
 	style = get_style(obj)
 	fill = obj.get('fill', None)
 	if not fill is None:
@@ -163,9 +163,9 @@ def from_svg(obj):
 			style[k] = float(style[k])
 		else:
 			style[k] = 1.0
-	result.style = style"""
+	result.style = style
 
-	node = result
+	"""node = result
 	node.set(**obj.attrib)
 	style = get_style(obj)
 	#print(style)
@@ -181,7 +181,7 @@ def from_svg(obj):
 		if a in node.attrib:
 			v[3] = float(node.attrib[a])
 		#print(v)
-		node.attrib[k] = v
+		node.attrib[k] = v"""
 
 	desc = lxmlx.find(obj, lambda x: etree.QName(x).localname == "desc", iter=lambda e: e)
 	#print(desc)
