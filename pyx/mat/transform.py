@@ -251,9 +251,9 @@ class quaternion(np.ndarray):
 class Transform(Node):
 	def __init__(self, position, rotation, scale, **kwargs):
 		super().__init__(**kwargs)
-		self.position = position
+		self.position = np.array(position)
 		self.rotation = rotation
-		self.scale = scale
+		self.scale = np.array(scale)
 
 	@property
 	def ndim(self): return len(self.position)
