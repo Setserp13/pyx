@@ -79,22 +79,22 @@ class rect_like:
 	def __sub__(self, vector): return self.__add__(-vector)
 	
 	@property
-	def dim(self): return len(self.min)
+	def ndim(self): return len(self.min)
 
 	def __rmatmul__(self, M): return self.__matmul__(M)
 
 	def __matmul__(self, M):	#Applies a (n+1)x(n+1) affine transform
 		M = np.asarray(M, dtype=float)
-		if M.shape != (self.dim + 1, self.dim + 1):
+		if M.shape != (self.ndim + 1, self.ndim + 1):
 			raise ValueError("Expected a (n+1)x(n+1) affine matrix")
 
 		# position (affected by translation)
 		min_h = np.append(self.min, 1)
-		min = (M @ min_h)[:self.dim]
+		min = (M @ min_h)[:self.ndim]
 
 		# size (direction vector, no translation)
 		size_h = np.append(self.size, 0)
-		size = (M @ size_h)[:self.dim]
+		size = (M @ size_h)[:self.ndim]
 
 		return type(self).min_size(min, size)
 		
@@ -230,13 +230,13 @@ class rect(rect_like):
 		return rect.center_size(rect.face_center(axis, dir), size)
 
 	def ndface_centers(self, axes):	#The faces are parallel to the Euclidean space defined by the axes
-		p = [[0.5] if i in axes else [0.0, 1.0] for i in range(self.dim)]
+		p = [[0.5] if i in axes else [0.0, 1.0] for i in range(self.ndim)]
 		#print(p)
 		return [self.denormalize_point(np.array(x)) for x in product(*p)]
 
 	def ndfaces(self, axes):
 		centers = self.ndface_centers(axes)
-		return [rect.center_size(center, np.array([self.size[i] if i in axes else 0.0 for i in range(self.dim)])) for center in centers]
+		return [rect.center_size(center, np.array([self.size[i] if i in axes else 0.0 for i in range(self.ndim)])) for center in centers]
 
 
 
