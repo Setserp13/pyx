@@ -54,7 +54,7 @@ def parse_commands(s):
 	if c: r.append((c,*map(float,a)))
 	return r
 
-def bezier_from_svg(obj):
+def polybezier_from_svg(obj):
 	d = obj.get('d')
 	commands = parse_commands(d)
 	points = []
@@ -176,7 +176,7 @@ def from_svg(obj):
 			children = [from_svg(x) for x in obj]
 			result = geo.group([x for x in children if not x is None])
 		case 'line': result = line_from_svg(obj)
-		case 'polybezier': result = bezier_from_svg(obj)
+		case 'path': result = polybezier_from_svg(obj)
 		case 'polyline': result = polyline_from_svg(obj)
 		case 'polygon': result = polygon_from_svg(obj)
 		case 'rect': result = rect_from_svg(obj)
@@ -249,7 +249,7 @@ def from_svg2(obj):
 			children = [from_svg2(x) for x in obj]
 			node.extend(children)
 		case 'line': shape = line_from_svg(obj)
-		case 'polybezier': shape = bezier_from_svg(obj)
+		case 'path': shape = polybezier_from_svg(obj)
 		case 'polyline': shape = polyline_from_svg(obj)
 		case 'polygon': shape = polygon_from_svg(obj)
 		case 'rect': shape = rect_from_svg(obj)
