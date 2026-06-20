@@ -267,9 +267,47 @@ class Transform(Node):
 	@property
 	def S(self): return Matrix.S(self.scale)
 
-	def TRS(self):
-		#return functools.reduce(lambda acc, x: x @ acc, [x.local_TRS() for x in [self] + self.ancestors()])
-		return functools.reduce(lambda acc, x: acc @ x, [x.local_TRS() for x in reversed([self] + self.ancestors())])
+	@property
+	def global_TRS(self):
+		return self.TRS if self.parent is None else self.parent.global_TRS @ self.TRS
+		#return functools.reduce(lambda acc, x: acc @ x, [x.TRS for x in reversed([self] + self.ancestors())])
+
+	@property
+	def inverse_global_TRS(self): return np.linalg.inv(self.global_TRS)
+
+	@property
+	def TRS(self):	#local transformation matrix
+		#print(self.T, self.R, self.S)
+		return self.T @ self.R @ self.S
+
+	@property
+	def inverse_TRS(self): #local inverse transformation matrix
+		return np.linalg.inv(self.TRS)
+		#return np.linalg.inv(self.S) @ np.linalg.inv(self.R) @ np.linalg.inv(self.T)
+
+	def to_local(self, point):
+		p = np.append(point, 1)
+		return (self.inverse_global_TRS @ p)[:self.ndim]
+
+	def to_global(self, point):
+		p = np.append(point, 1)
+		return (self.global_TRS @ p)[:self.ndim]
+
+	@property
+	def global_position(self): return self.to_global(self.position)
+
+	@global_position.setter
+	def global_position(self, value):
+		self.position = self.to_local(value)
+
+	@property
+	def basis(self):	# BASIS (n×n matrix of world axes) -> upper-left n×n
+		return self.global_TRS[:self.ndim, :self.ndim]
+
+
+	"""def TRS(self):
+		return self.local_TRS() if self.parent is None else self.parent.TRS() @ self.local_TRS()
+		#return functools.reduce(lambda acc, x: acc @ x, [x.local_TRS() for x in reversed([self] + self.ancestors())])
 
 	def inverse_TRS(self): return np.linalg.inv(self.TRS())
 
@@ -298,7 +336,7 @@ class Transform(Node):
 
 	@property
 	def basis(self):	# BASIS (n×n matrix of world axes) -> upper-left n×n
-		return self.TRS()[:self.ndim, :self.ndim]
+		return self.TRS()[:self.ndim, :self.ndim]"""
 
 class Node2D(Transform):	#Node):
 	def __init__(self, position=np.zeros(2), rotation=0.0, scale=np.ones(2), **kwargs):
