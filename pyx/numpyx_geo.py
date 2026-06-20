@@ -239,7 +239,7 @@ class rect(rect_like):
 		return [rect.center_size(center, np.array([self.size[i] if i in axes else 0.0 for i in range(self.ndim)])) for center in centers]
 
 	@property
-	def vertices(self): return points(product(*zip(self.min, self.max))).set(**getattr(self, 'attrib', {}))
+	def vertices(self): return points(list(product(*zip(self.min, self.max)))).set(**getattr(self, 'attrib', {}))
 	
 	@property
 	def local_aabb(self): return self.vertices.local_aabb
