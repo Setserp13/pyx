@@ -246,7 +246,7 @@ def from_svg2(obj):
 		case 'circle': shape = circle_from_svg(obj)
 		case 'ellipse': shape = ellipse_from_svg(obj)
 		case 'g' | 'svg':
-			children = [from_svg(x) for x in obj]
+			children = [from_svg2(x) for x in obj]
 			node.extend(children)
 		case 'line': shape = line_from_svg(obj)
 		case 'polybezier': shape = bezier_from_svg(obj)
