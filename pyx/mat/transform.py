@@ -273,7 +273,7 @@ class Transform(Node):
 		#return functools.reduce(lambda acc, x: acc @ x, [x.TRS for x in reversed([self] + self.ancestors())])
 
 	@property
-	def inverse_global_TRS(self): return np.linalg.inv(self.global_TRS)
+	def inv_global_TRS(self): return np.linalg.inv(self.global_TRS)
 
 	@property
 	def TRS(self):	#local transformation matrix
@@ -281,13 +281,13 @@ class Transform(Node):
 		return self.T @ self.R @ self.S
 
 	@property
-	def inverse_TRS(self): #local inverse transformation matrix
+	def inv_TRS(self): #local inverse transformation matrix
 		return np.linalg.inv(self.TRS)
 		#return np.linalg.inv(self.S) @ np.linalg.inv(self.R) @ np.linalg.inv(self.T)
 
 	def to_local(self, point):
 		p = np.append(point, 1)
-		return (self.inverse_global_TRS @ p)[:self.ndim]
+		return (self.inv_global_TRS @ p)[:self.ndim]
 
 	def to_global(self, point):
 		p = np.append(point, 1)
