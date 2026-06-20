@@ -238,7 +238,14 @@ class rect(rect_like):
 		centers = self.ndface_centers(axes)
 		return [rect.center_size(center, np.array([self.size[i] if i in axes else 0.0 for i in range(self.ndim)])) for center in centers]
 
+	@property
+	def vertices(self): return points(product(*zip(self.min, self.max)))
+	
+	@property
+	def local_aabb(self): return self.vertices.local_aabb
 
+	@property
+	def global_aabb(self): return self.vertices.global_aabb
 
 
 
@@ -384,6 +391,16 @@ class points(np.ndarray):
 	@aabb.setter
 	def aabb(self, value):
 		self[:] = set_aabb(self, value)
+
+	@property
+	def local_aabb(self):
+		M = self.attrib.get("transform")
+		return self.aabb if M is None else (self @ M.TRS).aabb
+
+	@property
+	def global_aabb(self):
+		M = self.attrib.get("transform")
+		return self.aabb if M is None else (self @ M.global_TRS).aabb
 
 	def transform(self, M):
 		pts = npx.affine_transform(M, self)
@@ -1805,6 +1822,13 @@ class group(list):
 		cur = self.aabb
 		for x in self:
 			x.aabb = value.denormalize_rect(cur.normalize_rect(x.aabb))
+
+	@property
+	def local_aabb(self): return aabb([x.local_aabb for x in self])
+
+	@property
+	def global_aabb(self): return aabb([x.global_aabb for x in self])
+
 
 def distribute(arr, axis=0, align=.5, gap=0.0):
 	for i in range(1, len(arr)):
