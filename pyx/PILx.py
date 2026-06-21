@@ -68,6 +68,7 @@ def getsize(lines, font, font_size, leading=0):
 def get_size(text, font, font_size):
 	try:
 		fname = find_font(font).fname
+		print(f'try open resource: {fname}')
 		image_font = ImageFont.truetype(fname, font_size)
 		temp_image = Image.new("RGB", (1, 1))
 		draw = ImageDraw.Draw(temp_image)
