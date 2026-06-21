@@ -309,13 +309,13 @@ def get_colors(obj):
 	style = get_style(obj)
 	dflt_values = {'fill': 'black', 'stroke': 'none'}
 	for k in ('fill', 'stroke', 'stop-color', 'flood-color', 'solid-color', 'lighting-color', 'color'):
-		value = obj.attrib.get(k, style.get(k, dflt_values.get(k)))
+		value = style.get(k, obj.attrib.get(k, dflt_values.get(k)))	# style overrides presentation attributes
 		if value is None:
 			continue
 		try:
 			value = Color.parse(value)
 			a = f"{k.replace('-color', '')}-opacity"
-			opacity = obj.attrib.get(a, style.get(a))
+			opacity = style.get(a, obj.attrib.get(a))
 			if opacity is not None:
 				value[3] = float(opacity)
 		except: pass
