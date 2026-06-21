@@ -182,7 +182,8 @@ def from_svg(obj, asnode=False):
 		result = shape
 
 	result.id = obj.get('id')
-	result.set(**{})
+	result.set(**get_colors(obj))
+	"""result.set(**{})
 	attrib = obj.attrib
 	style = get_style(obj)
 	#print(style)
@@ -198,7 +199,7 @@ def from_svg(obj, asnode=False):
 		if a in attrib:
 			v[3] = float(attrib[a])
 		#print(v)
-		result.attrib[k] = v
+		result.attrib[k] = v"""
 
 	desc = lxmlx.find(obj, lambda x: etree.QName(x).localname == "desc", iter=lambda e: e)
 	#print(desc)
@@ -273,6 +274,24 @@ def set_style(element, **kwargs):
 	for k in kwargs:
 		style[k] = kwargs[k]
 	element.set("style", rex.strfdict(style))
+
+def get_colors(obj):
+	result = {}
+	style = get_style(obj)
+	for k in ('fill', 'stroke', 'stop-color', 'flood-color', 'solid-color', 'lighting-color', 'color'):
+		value = obj.attrib.get(k, style.get(k))
+		if value is None:
+			continue
+		try:
+			value = Color.parse(value)
+			a = f"{k.replace('-color', '')}-opacity"
+			opacity = obj.attrib.get(a, style.get(a))
+			if opacity is not None:
+				value[3] = float(opacity)
+		except: pass
+		result[k] = value
+	return result
+
 
 
 def get_transform(obj):
