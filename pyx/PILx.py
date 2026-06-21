@@ -238,4 +238,4 @@ class text(tspan):
 			result.append(line)
 		return result
 
-for x in [image, tspan, text]: make_Entity(x)
+for x in [image, tspan, text]: make_Element(x)
