@@ -170,7 +170,7 @@ def from_svg(obj, asnode=False):
 		case 'polyline': shape = polyline_from_svg(obj)
 		case 'polygon': shape = polygon_from_svg(obj)
 		case 'rect': shape = rect_from_svg(obj)
-		case 'text': pass
+		case 'text': shape = text_from_svg(obj)
 
 	if asnode:
 		node.shape = shape
@@ -224,7 +224,34 @@ def parse_points2(s):
 def polygon_from_svg(obj):  return geo.polyline(parse_points2(obj.get('points')), closed=True)
 def polyline_from_svg(obj): return geo.polyline(parse_points2(obj.get('points')), closed=False)
 
+def tspan_from_svg(elem):
+	inner_text = elem.text or ''
+	position = np.array(get(elem, float, 'x', 'y'))
+	font = elem.get('font-family', 'arial.ttf')
+	font_size = float(elem.get('font-size', 12))
+	return PILx.tspan(inner_text, position, font, font_size)
 
+def text_from_svg(elem):
+	inner_text = elem.text or ''
+	position = np.array(get(elem, float, 'x', 'y'))
+	font = elem.get('font-family', 'arial.ttf')
+	font_size = float(elem.get('font-size', 12))
+
+	lines = []
+
+	for child in elem:
+		if child.tag.endswith('tspan'):
+			line = tspan_from_svg(child)
+
+			if line.font is None:
+				line.font = font
+
+			if child.get('font-size') is None:
+				line.font_size = font_size
+
+			lines.append(line)
+
+	return PILx.text(inner_text, position, font, font_size)
 
 
 def find_layers(root):
