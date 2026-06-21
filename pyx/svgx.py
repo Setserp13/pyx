@@ -238,8 +238,9 @@ def tspan_from_svg(elem):
 		font_size = style['font-size']
 	if isinstance(font_size, str):
 		font_size = remove_unit(font_size)
-
-	return PILx.tspan(inner_text, position, font, font_size, pivot=np.zeros(2))
+	pivot = np.ones(2) * .5
+	
+	return PILx.tspan(inner_text, position, font, font_size, pivot=pivot)
 
 def text_from_svg(elem):
 	inner_text = elem.text or ''
@@ -253,6 +254,7 @@ def text_from_svg(elem):
 		font_size = style['font-size']
 	if isinstance(font_size, str):
 		font_size = remove_unit(font_size)
+	pivot = np.ones(2) * .5
 	
 	lines = []
 
@@ -268,7 +270,7 @@ def text_from_svg(elem):
 
 			lines.append(line)
 	inner_text = '\n'.join([x.inner_text for x in lines])
-	return PILx.text(inner_text, position, font, font_size, pivot=np.zeros(2))
+	return PILx.text(inner_text, position, font, font_size, pivot=pivot)
 
 
 def find_layers(root):
