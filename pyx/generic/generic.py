@@ -42,8 +42,7 @@ class Invoker:
 
 class Object:
 	def __init__(self, **kwargs):
-		for key, value in kwargs.items():
-			setattr(self, key, value)
+		setattrs(self, **kwargs)
 
 class Validator(list):
 	def invoke(self, *args):
