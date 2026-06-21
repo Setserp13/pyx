@@ -147,107 +147,24 @@ def transform_from_svg(obj):
 	return Node2D(position=(tx, ty), scale=(sx, sy), rotation=rotation)
 
 
-"""def transform_from_svg(obj):
-	transform = get_transform(obj)
-	if 'matrix' in transform:
-		a, b, c, d, e, f = transform['matrix']
-		M = np.array([[a, c, e], [b, d, f], [0,0,1]])
-		return Node2D.from_matrix(M)
-	else:
-		result = Node2D()
-		if 'translate' in transform:
-			result.position = np.array(transform['translate'])
-		if 'rotate' in transform:
-			result.rotation = math.radians(float(transform['rotate'][0]))
-		if 'scale' in transform:
-			result.scale = np.array(transform['scale'])
-			if len(result.scale) < 2:
-				result.scale = np.append(result.scale, result.scale[0])
-		return result"""
-
-def from_svg(obj):
-	result = None
-	tag = etree.QName(obj).localname
-	#print(tag)
-	match tag:
-		case 'circle': result = circle_from_svg(obj)
-		case 'ellipse': result = ellipse_from_svg(obj)
-		case 'g' | 'svg':
-			children = [from_svg(x) for x in obj]
-			result = geo.group([x for x in children if not x is None])
-		case 'line': result = line_from_svg(obj)
-		case 'path': result = polybezier_from_svg(obj)
-		case 'polyline': result = polyline_from_svg(obj)
-		case 'polygon': result = polygon_from_svg(obj)
-		case 'rect': result = rect_from_svg(obj)
-		case 'text': pass
-
-	if result is None:
-		return result
-	result.set(transform=transform_from_svg(obj))
-	if isinstance(result, geo.group):
-		for x in result:
-			result.attrib['transform'].append(x.attrib['transform'])
-	
-	result.id = obj.get('id')
-	"""style = get_style(obj)
-	fill = obj.get('fill', None)
-	if not fill is None:
-		style['fill'] = fill
-	stroke = obj.get('stroke', None)
-	if not stroke is None:
-		style['stroke'] = stroke
-	if not 'fill' in style:
-		style['fill'] = 'black'
-	if not 'stroke' in style:
-		style['stroke'] = 'none'
-	for k in ['fill', 'stroke']:
-		style[k] = None if style[k] == 'none' else Color(style[k])
-	for k in ['fill-opacity', 'stroke-opacity', 'stroke-width']:
-		if k in style:
-			style[k] = float(style[k])
-		else:
-			style[k] = 1.0
-	result.style = style"""
-
-	node = result
-	node.set(**{})
-	attrib = obj.attrib
-	style = get_style(obj)
-	#print(style)
-	for k in ('fill', 'stroke'):
-		if k in style:
-			node.attrib[k] = style[k]
-		v = Color([0., 0., 0., 1.])
-		if k in attrib:
-			v = Color.parse(attrib[k])
-		a = f'{k}-opacity'
-		if a in style:
-			node.attrib[a] = style[a]
-		if a in attrib:
-			v[3] = float(attrib[a])
-		#print(v)
-		node.attrib[k] = v
-
-	desc = lxmlx.find(obj, lambda x: etree.QName(x).localname == "desc", iter=lambda e: e)
-	#print(desc)
-	result.desc = {} if desc is None else rex.strpdict(desc.text, sep=[';', '='])
-	return result
-
-def from_svg2(obj):
-	
+def from_svg(obj, asnode=False):
 	shape = None
-	tag = etree.QName(obj).localname
-
 	node = transform_from_svg(obj)
-
+	tag = etree.QName(obj).localname
 	#print(tag)
 	match tag:
 		case 'circle': shape = circle_from_svg(obj)
 		case 'ellipse': shape = ellipse_from_svg(obj)
 		case 'g' | 'svg':
-			children = [from_svg2(x) for x in obj]
-			node.extend(children)
+			children = [from_svg(x, asnode) for x in obj]
+			children = [x for x in children if not x is None]
+			if asnode:
+				node.extend(children)
+			else:
+				shape = geo.group(children)
+				for x in shape:
+					shape.attrib['transform'].append(x.attrib['transform'])
+			
 		case 'line': shape = line_from_svg(obj)
 		case 'path': shape = polybezier_from_svg(obj)
 		case 'polyline': shape = polyline_from_svg(obj)
@@ -255,31 +172,39 @@ def from_svg2(obj):
 		case 'rect': shape = rect_from_svg(obj)
 		case 'text': pass
 
-	node.shape = shape
-	node.set(**obj.attrib)
+	if asnode:
+		node.shape = shape
+		result = node
+	else:
+		shape.set(transform=node)
+		result = shape
+
+	if result is None:
+			return None
+
+	result.id = obj.get('id')
+	result.set(**{})
+	attrib = obj.attrib
 	style = get_style(obj)
 	#print(style)
 	for k in ('fill', 'stroke'):
 		if k in style:
-			node.attrib[k] = style[k]
+			result.attrib[k] = style[k]
 		v = Color([0., 0., 0., 1.])
-		if k in node.attrib:
-			v = Color.parse(node.attrib[k])
+		if k in attrib:
+			v = Color.parse(attrib[k])
 		a = f'{k}-opacity'
 		if a in style:
-			node.attrib[a] = style[a]
-		if a in node.attrib:
-			v[3] = float(node.attrib[a])
+			result.attrib[a] = style[a]
+		if a in attrib:
+			v[3] = float(attrib[a])
 		#print(v)
-		node.attrib[k] = v
+		result.attrib[k] = v
 
 	desc = lxmlx.find(obj, lambda x: etree.QName(x).localname == "desc", iter=lambda e: e)
 	#print(desc)
-	node.desc = {} if desc is None else rex.strpdict(desc.text, sep=[';', '='])
-	return node
-
-
-
+	result.desc = {} if desc is None else rex.strpdict(desc.text, sep=[';', '='])
+	return result
 
 
 def page_rect(obj):
