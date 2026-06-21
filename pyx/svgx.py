@@ -163,7 +163,7 @@ def from_svg(obj, asnode=False):
 			else:
 				shape = geo.group(children)
 				for x in shape:
-					shape.attrib['transform'].append(x.attrib['transform'])
+					node.append(x.attrib['transform'])
 			
 		case 'line': shape = line_from_svg(obj)
 		case 'path': shape = polybezier_from_svg(obj)
