@@ -3,6 +3,23 @@ import re
 import numpy as np
 from pyx.collectionsx import List
 import pyx.mat.mat as mat
+import ast
+
+def parse_type(value):
+	if not isinstance(value, str):
+		return value
+
+	try:
+		return ast.literal_eval(value)
+	except (ValueError, SyntaxError):
+		try:
+			return {
+				'false': False,
+				'true': True,
+				'none': None,
+			}[value.lower()]
+		except KeyError:
+			return value
 
 #data can be bytes, string and so on...
 def ljust(data, width, fill): return data + fill * max(0, width - len(data))	#pads up to an exact width
