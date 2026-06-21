@@ -230,25 +230,30 @@ def tspan_from_svg(elem):
 	inner_text = elem.text or ''
 	position = np.array(get(elem, float, 'x', 'y'))
 	font = elem.get('font-family', 'arial.ttf')
-	font_size = remove_unit(elem.get('font-size', 12))
+	font_size = elem.get('font-size', 12)
 	style = get_style(elem)
 	if 'font-family' in style:
 		font = style['font-family']
 	if 'font-size' in style:
-		font_size = remove_unit(style['font-size'])
+		font_size = style['font-size']
+	if isinstance(font_size, str):
+		font_size = remove_unit(font_size)
+
 	return PILx.tspan(inner_text, position, font, font_size)
 
 def text_from_svg(elem):
 	inner_text = elem.text or ''
 	position = np.array(get(elem, float, 'x', 'y'))
 	font = elem.get('font-family', 'arial.ttf')
-	font_size = remove_unit(elem.get('font-size', 12))
+	font_size = elem.get('font-size', 12)
 	style = get_style(elem)
 	if 'font-family' in style:
 		font = style['font-family']
 	if 'font-size' in style:
-		font_size = remove_unit(style['font-size'])
-
+		font_size = style['font-size']
+	if isinstance(font_size, str):
+		font_size = remove_unit(font_size)
+	
 	lines = []
 
 	for child in elem:
