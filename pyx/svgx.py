@@ -176,11 +176,10 @@ def from_svg(obj, asnode=False):
 		node.shape = shape
 		result = node
 	else:
+		if shape is None:
+			return None
 		shape.set(transform=node)
 		result = shape
-
-	if result is None:
-			return None
 
 	result.id = obj.get('id')
 	result.set(**{})
