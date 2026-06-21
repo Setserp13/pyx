@@ -205,4 +205,47 @@ class image(geo.rect_like):
 	def size(self, value): self.override_size = value
 
 
+class tspan:
+	def __init__(self, inner_text, position, font='arial.ttf', font_size=12, pivot=np.ones(2) * 0.5):
+		self.inner_text = str(inner_text)
+		self.position = position
+		self.font = font
+		self.font_size = font_size
+		self.pivot = pivot
 
+	@property
+	def size(self):
+		return get_size(self.inner_text, self.font, self.font_size)
+
+	@property
+	def aabb(self):
+		#print(self.size)
+		return geo.rect(np.zeros(2), self.size).set_position(self.pivot, self.position)
+
+	@aabb.setter
+	def aabb(self, value):
+		self.position = value.denormalize_point(self.pivot)
+
+class text(tspan):
+	def __init__(self, inner_text, position, font='arial.ttf', font_size=12, pivot=np.ones(2) * 0.5, line_spacing=4, align=.5):
+		super().__init__(inner_text, position, font, font_size, pivot)
+		self.line_spacing = line_spacing
+		self.align = .5
+
+	@property
+	def size(self):
+		res = PILx.getsize(self.inner_text.split('\n'), self.font, self.font_size, self.line_spacing)
+		#print(res)
+		return res
+
+	@property
+	def lines(self):
+		result = []
+		y = 0
+		for i, x in enumerate(self.inner_text.split('\n')):
+			#pos = self.position + npx.ei(1, 2) * y
+			pos = np.array([self.aabb.denormalize_point_component(self.align, 0), self.aabb.min[1] + y])
+			line = tspan(x, pos, self.font, self.font_size, np.array([self.align, 0.]))	#self.pivot)
+			y += line.size[1] + self.line_spacing
+			result.append(line)
+		return result
