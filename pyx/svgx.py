@@ -183,23 +183,6 @@ def from_svg(obj, asnode=False):
 
 	result.id = obj.get('id')
 	result.set(**get_colors(obj))
-	"""result.set(**{})
-	attrib = obj.attrib
-	style = get_style(obj)
-	#print(style)
-	for k in ('fill', 'stroke'):
-		if k in style:
-			result.attrib[k] = style[k]
-		v = Color([0., 0., 0., 1.])
-		if k in attrib:
-			v = Color.parse(attrib[k])
-		a = f'{k}-opacity'
-		if a in style:
-			result.attrib[a] = style[a]
-		if a in attrib:
-			v[3] = float(attrib[a])
-		#print(v)
-		result.attrib[k] = v"""
 
 	desc = lxmlx.find(obj, lambda x: etree.QName(x).localname == "desc", iter=lambda e: e)
 	#print(desc)
@@ -278,7 +261,7 @@ def set_style(element, **kwargs):
 def get_colors(obj):
 	result = {}
 	style = get_style(obj)
-	dflt_values = {'fill': 'none', 'stroke': 'none'}
+	dflt_values = {'fill': 'black', 'stroke': 'none'}
 	for k in ('fill', 'stroke', 'stop-color', 'flood-color', 'solid-color', 'lighting-color', 'color'):
 		value = obj.attrib.get(k, style.get(k, dflt_values.get(k)))
 		if value is None:
