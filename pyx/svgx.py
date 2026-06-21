@@ -75,6 +75,7 @@ def polybezier_from_svg(obj):
 			v = [np.array([pos[0], x]) for x in args]
 		elif cmd in 'Zz':
 			closed = True
+			continue
 			#v.append(np.array(points[0]))
 
 		v = geo.polyline(v)
