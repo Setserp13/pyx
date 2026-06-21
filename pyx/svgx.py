@@ -450,8 +450,8 @@ geo.polyline.to_svg = lambda self: polygon_to_svg(self, **get_attrib(self)) if s
 geo.rect.to_svg = lambda self: rect_to_svg(self, **get_attrib(self))
 geo.group.to_svg = lambda self: group_to_svg(self, **get_attrib(self))
 geo.arc.to_svg = lambda self: arc_to_svg(self, **get_attrib(self))
-geo.tspan.to_svg = lambda self: tspan_to_svg(self, **get_attrib(self))
-geo.text.to_svg = lambda self: text_to_svg(self, **get_attrib(self))
+PILx.tspan.to_svg = lambda self: tspan_to_svg(self, **get_attrib(self))
+PILx.text.to_svg = lambda self: text_to_svg(self, **get_attrib(self))
 PILx.image.to_svg = lambda self: image_to_svg(self, **get_attrib(self))
 
 
