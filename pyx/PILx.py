@@ -3,6 +3,7 @@ from PIL import Image, ImageFont, ImageDraw, ImageSequence	 #pip install Pillow
 import pyx.mat.mat as mat
 import numpy as np
 import pyx.numpyx as npx
+import pyx.numpyx_geo as geo
 from pyx.collectionsx import merge_where
 
 def extract_frames(anim):	#anim is a path or an Image
@@ -188,3 +189,20 @@ def to_grayscale(img):
 		0.114 * img[...,2]
 	)
 	return y[..., None]   # volta para H×W
+
+
+class image(geo.rect_like):
+	def __init__(self, filepath, min=np.zeros(2), size=None):
+		self.filepath = filepath
+		self.array = read_image(filepath)
+		self.min = min
+		self.override_size = size
+
+	@property
+	def size(self): return np.array(self.array.shape[:2]) if self.override_size is None else self.override_size
+
+	@size.setter
+	def size(self, value): self.override_size = value
+
+
+
