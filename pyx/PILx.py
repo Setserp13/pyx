@@ -5,6 +5,7 @@ import numpy as np
 import pyx.numpyx as npx
 import pyx.numpyx_geo as geo
 from pyx.collectionsx import merge_where
+import pyx.generic.generic as generic
 
 def extract_frames(anim):	#anim is a path or an Image
 	return [ x.copy().convert("RGBA") for x in ImageSequence.Iterator(Image.open(anim) if isinstance(anim, str) else anim) ]
@@ -236,3 +237,5 @@ class text(tspan):
 			y += line.size[1] + self.line_spacing
 			result.append(line)
 		return result
+
+for x in [image, tspan, text]: make_Entity(x)
