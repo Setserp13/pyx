@@ -5,6 +5,26 @@ def set(obj, **kwargs):
 		setattr(obj, k, kwargs[k])
 	return obj
 
+
+def setattrs(obj, **kwargs):
+	for k in kwargs:
+		setattr(obj, k, kwargs[k])
+	return obj
+
+class Element:
+	def __init__(self, **kwargs):
+		self.attrib = kwargs
+
+	def set(self, **kwargs): setattrs(obj, **kwargs)
+	
+	def get(self, *args): return [self.attrib[k] for k in args]
+
+def make_Element(cls):
+	cls.set = lambda self, **attrib: setattrs(self, attrib={**getattr(self, "attrib", {}), **attrib})
+	cls.get = lambda self, *keys: [self.attrib[k] for k in keys] if hasattr(self, 'attrib') else None
+
+
+
 class Event(list):
 	def invoke(self, *args, **kwargs):
 		for x in self:
