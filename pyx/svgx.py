@@ -278,8 +278,9 @@ def set_style(element, **kwargs):
 def get_colors(obj):
 	result = {}
 	style = get_style(obj)
+	dflt_values = {'fill': 'none', 'stroke': 'none'}
 	for k in ('fill', 'stroke', 'stop-color', 'flood-color', 'solid-color', 'lighting-color', 'color'):
-		value = obj.attrib.get(k, style.get(k))
+		value = obj.attrib.get(k, style.get(k, dflt_values.get(k)))
 		if value is None:
 			continue
 		try:
