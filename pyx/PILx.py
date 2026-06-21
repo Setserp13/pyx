@@ -7,6 +7,11 @@ import pyx.numpyx_geo as geo
 from pyx.collectionsx import merge_where
 import pyx.generic.generic as generic
 
+from pyx.array_utility import find
+from matplotlib.font_manager import fontManager
+
+def find_font(name): return find(fontManager.ttflist, lambda x: x.name == name)
+
 def extract_frames(anim):	#anim is a path or an Image
 	return [ x.copy().convert("RGBA") for x in ImageSequence.Iterator(Image.open(anim) if isinstance(anim, str) else anim) ]
 
@@ -62,7 +67,8 @@ def getsize(lines, font, font_size, leading=0):
 
 def get_size(text, font, font_size):
 	try:
-		image_font = ImageFont.truetype(font, font_size)
+		fname = find_font(font).fname
+		image_font = ImageFont.truetype(fname, font_size)
 		temp_image = Image.new("RGB", (1, 1))
 		draw = ImageDraw.Draw(temp_image)
 		bbox = draw.textbbox((0, 0), text, font=image_font)
