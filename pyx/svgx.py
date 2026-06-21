@@ -250,7 +250,7 @@ def text_from_svg(elem):
 				line.font_size = font_size
 
 			lines.append(line)
-	inner_text = '\n'.join([x.text for x in lines])
+	inner_text = '\n'.join([x.inner_text for x in lines])
 	return PILx.text(inner_text, position, font, font_size)
 
 
