@@ -12,7 +12,7 @@ import svgpathtools
 from svgpathtools import parse_path
 import svgutils.transform as sg
 import re
-from pyx.collectionsx import List, to_str
+from pyx.collectionsx import List, to_str, Dict
 from pyx.lxmlx import *	#localname
 import numpy as np
 import pyx.numpyx as npx
@@ -229,6 +229,11 @@ def tspan_from_svg(elem):
 	position = np.array(get(elem, float, 'x', 'y'))
 	font = elem.get('font-family', 'arial.ttf')
 	font_size = float(elem.get('font-size', 12))
+	style = get_style(elem)
+	if 'font-family' in style:
+		font = style['font-family']
+	if 'font-size' in style:
+		font_size = float(style['font-size'])
 	return PILx.tspan(inner_text, position, font, font_size)
 
 def text_from_svg(elem):
@@ -236,6 +241,11 @@ def text_from_svg(elem):
 	position = np.array(get(elem, float, 'x', 'y'))
 	font = elem.get('font-family', 'arial.ttf')
 	font_size = float(elem.get('font-size', 12))
+	style = get_style(elem)
+	if 'font-family' in style:
+		font = style['font-family']
+	if 'font-size' in style:
+		font_size = float(style['font-size'])
 
 	lines = []
 
@@ -277,7 +287,7 @@ def get_style_property(element, property):
 	except:
 		return None
 
-def get_style_properties(element, *properties): return List.items(get_style(element), properties)
+def get_style_properties(element, *properties): return Dict.items(get_style(element), properties)	#List.items(get_style(element), properties)
 
 def set_style(element, **kwargs):
 	style = get_style(element)
