@@ -271,8 +271,8 @@ class rect2(rect):
 	def area(rect): return rect.size[0] * rect.size[1]
 
 	def line_at(rect, t, axis=0):	#result is a line parallel to axis
-		u = ei(1 - axis, 2) * t
-		v = ei(axis, 2)
+		u = npx.ei(1 - axis, 2) * t
+		v = npx.ei(axis, 2)
 		return line([rect.denormalize_point(u + v * i) for i in range(2)])
 
 	def lines(rect, n, axis=0):
