@@ -61,12 +61,16 @@ def getsize(lines, font, font_size, leading=0):
 	return width, height
 
 def get_size(text, font, font_size):
-	image_font = ImageFont.truetype(font, font_size)
-	temp_image = Image.new("RGB", (1, 1))
-	draw = ImageDraw.Draw(temp_image)
-	bbox = draw.textbbox((0, 0), text, font=image_font)
-	return np.array([bbox[2] - bbox[0], bbox[3] - bbox[1]])
-
+	try:
+		image_font = ImageFont.truetype(font, font_size)
+		temp_image = Image.new("RGB", (1, 1))
+		draw = ImageDraw.Draw(temp_image)
+		bbox = draw.textbbox((0, 0), text, font=image_font)
+		return np.array([bbox[2] - bbox[0], bbox[3] - bbox[1]])
+	except:
+		print(f'cannot open resource: {font}')
+		return np.array([len(text), 1.]) * font_size
+		
 def wrap(line, width, font, font_size):
 	result = ['']
 	for word in line.split():
