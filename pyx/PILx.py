@@ -34,21 +34,8 @@ def sprites(img, regions): return [img.crop((*x.min, *x.max)) for x in regions]
 
 def slice_by_cell_count(img, cell_count): return slice_by_cell_size(img, np.array(img.size) // np.array(cell_count))
 
-def slice_by_cell_size(img, cell_size): return sprites(img, npx.rect2(0,0,*img.size).slice_by_cell_size(np.array(cell_size)))
+def slice_by_cell_size(img, cell_size): return sprites(img, geo.rect2(0,0,*img.size).slice_by_cell_size(np.array(cell_size)))
 
-"""def slice(img, cell_count, axis=0):
-	size = img.size
-	cell_size = list(size)
-	cell_size[axis] = size[axis] // cell_count
-	result = []
-	for i in range(cell_count):
-		min = [0, 0]
-		max = list(size)
-		min[axis] = i * cell_size[axis]
-		max[axis] = (i+1) * cell_size[axis]
-		cur = img.crop((min[0], min[1], max[0], max[1]))
-		result.append(cur)	
-	return result"""
 
 #grid(lst, 1, 0) concats vertically and grid(lst, 1, 1) concats horizontally
 def grid(lst, constraint_count, start_axis=0, equal_sized=False, mode='RGBA'):
@@ -234,7 +221,7 @@ class text(tspan):
 
 	@property
 	def size(self):
-		res = PILx.getsize(self.inner_text.split('\n'), self.font, self.font_size, self.line_spacing)
+		res = getsize(self.inner_text.split('\n'), self.font, self.font_size, self.line_spacing)
 		#print(res)
 		return res
 
