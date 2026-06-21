@@ -226,36 +226,28 @@ def polyline_from_svg(obj): return geo.polyline(parse_points2(obj.get('points'))
 
 def remove_unit(value): return float(re.match(r'[-+]?\d*\.?\d+', value).group())
 
-def tspan_from_svg(elem):
-	inner_text = elem.text or ''
-	position = np.array(get(elem, float, 'x', 'y'))
-	font = elem.get('font-family', 'arial.ttf')
-	font_size = elem.get('font-size', 12)
+def get_tspan_attrib(elem):
+	result = {}
+	result['inner_text'] = elem.text or ''
+	result['position'] = np.array(get(elem, float, 'x', 'y'))
+	result['pivot'] = np.ones(2) * .5
 	style = get_style(elem)
-	if 'font-family' in style:
-		font = style['font-family']
-	if 'font-size' in style:
-		font_size = style['font-size']
-	if isinstance(font_size, str):
-		font_size = remove_unit(font_size)
-	pivot = np.ones(2) * .5
-	
-	return PILx.tspan(inner_text, position, font, font_size, pivot=pivot)
+	for k in ('font-family', 'font-size'):
+		value = style.get(k, elem.get(k, None))
+		if value:
+			if k in ('font-size'):
+				if isinstance(value, str):
+					value = remove_unit(value)
+			result[k] = value
+	return result
+
+def tspan_from_svg(elem):
+	attrib = get_tspan_attrib(elem)
+	return PILx.tspan(**attrib)
 
 def text_from_svg(elem):
-	inner_text = elem.text or ''
-	position = np.array(get(elem, float, 'x', 'y'))
-	font = elem.get('font-family', 'arial.ttf')
-	font_size = elem.get('font-size', 12)
-	style = get_style(elem)
-	if 'font-family' in style:
-		font = style['font-family']
-	if 'font-size' in style:
-		font_size = style['font-size']
-	if isinstance(font_size, str):
-		font_size = remove_unit(font_size)
-	pivot = np.ones(2) * .5
-	
+	attrib = get_tspan_attrib(elem)
+	result = PILx.text(**attrib)
 	lines = []
 
 	for child in elem:
@@ -263,14 +255,14 @@ def text_from_svg(elem):
 			line = tspan_from_svg(child)
 
 			if line.font is None:
-				line.font = font
+				line.font = result.font
 
-			if child.get('font-size') is None:
-				line.font_size = font_size
+			if line.font_size is None:
+				line.font_size = result.font_size
 
 			lines.append(line)
-	inner_text = '\n'.join([x.inner_text for x in lines])
-	return PILx.text(inner_text, position, font, font_size, pivot=pivot)
+	result.inner_text = '\n'.join([x.inner_text for x in lines])
+	return result
 
 
 def find_layers(root):
