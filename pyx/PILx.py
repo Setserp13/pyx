@@ -65,8 +65,8 @@ def getsize(lines, font, font_size, leading=0):
 	height = sum(get_size(line, font, font_size)[1] for line in lines) + leading * (len(lines) - 1)
 	return width, height
 
-def get_size(text, font, font_size):
-	font = find_font(font)
+def get_size(text, font_name, font_size):
+	font = find_font(font_name)
 	try:
 		fname = font.fname
 		image_font = ImageFont.truetype(fname, font_size)
@@ -75,7 +75,7 @@ def get_size(text, font, font_size):
 		bbox = draw.textbbox((0, 0), text, font=image_font)
 		return np.array([bbox[2] - bbox[0], bbox[3] - bbox[1]])
 	except:
-		print(f'cannot open resource: {font}')
+		print(f'cannot open resource: {font_name} {font}')
 		return np.array([len(text), 1.]) * font_size
 		
 def wrap(line, width, font, font_size):
