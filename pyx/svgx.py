@@ -238,7 +238,7 @@ def get_tspan_attrib(elem):
 			if k in ('font-size'):
 				if isinstance(value, str):
 					value = remove_unit(value)
-			result[k] = value
+			result[{'font-family': 'font', 'font-size': 'font_size'}[k]] = value
 	return result
 
 def tspan_from_svg(elem):
