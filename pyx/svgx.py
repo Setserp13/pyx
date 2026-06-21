@@ -380,6 +380,8 @@ def polyline_to_svg(obj, **kwargs): return lxmlx.element("polyline", points=" ".
 def rect_to_svg(obj, **kwargs): return lxmlx.element("rect", x=obj.min[0], y=obj.min[1], width=obj.size[0], height=obj.size[1], **kwargs)
 def line_to_svg(obj, **kwargs): return lxmlx.element("line", x1=obj[0][0], y1=obj[0][1], x2=obj[1][0], y2=obj[1][1], **kwargs)
 def arc_to_svg(obj, **kwargs): return lxmlx.element("path", d=obj.d(), **kwargs)
+def image_to_svg(obj, **kwargs):
+	return lxmlx.element("{http://www.w3.org/2000/svg}image", x=obj.min[0], y=obj.min[1], width=obj.size[0], height=obj.size[1], **{'{http://www.w3.org/1999/xlink}href': obj.filepath}, **kwargs)
 
 
 
@@ -388,11 +390,6 @@ def group_to_svg(obj, **kwargs): return lxmlx.element("g", children=[x.to_svg() 
 def path(d, **kwargs): return etree.Element("path", d=d, **to_str(kwargs))
 
 def href(image): return image.get('{http://www.w3.org/1999/xlink}href', None)
-
-#def rect_attrib(rct): return { 'x': str(rct.min[0]), 'y': str(rct.min[1]), 'width': str(rct.size[0]), 'height': str(rct.size[1]) }
-
-def image(x, y, width, height, href):
-	return etree.Element("{http://www.w3.org/2000/svg}image", x=str(x), y=str(y), width=str(width), height=str(height), **{'{http://www.w3.org/1999/xlink}href': href})
 
 def capsule(center, size, **kwargs):
 	r = min(*size) * 0.5
@@ -455,7 +452,7 @@ geo.group.to_svg = lambda self: group_to_svg(self, **get_attrib(self))
 geo.arc.to_svg = lambda self: arc_to_svg(self, **get_attrib(self))
 geo.tspan.to_svg = lambda self: tspan_to_svg(self, **get_attrib(self))
 geo.text.to_svg = lambda self: text_to_svg(self, **get_attrib(self))
-
+PILx.image.to_svg = lambda self: image_to_svg(self, **get_attrib(self))
 
 
 def draw(obj):
