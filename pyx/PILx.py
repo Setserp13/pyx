@@ -66,6 +66,7 @@ def getsize(lines, font, font_size, leading=0):
 	return width, height
 
 def get_size(text, font_name, font_size):
+	font_name = font_name.strip("'\"")
 	font = find_font(font_name)
 	try:
 		fname = font.fname
