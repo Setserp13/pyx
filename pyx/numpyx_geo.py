@@ -2188,9 +2188,9 @@ import pyx.generic.generic as generic
 
 
 shapes = [points, polybezier, circle, ellipse, line, polyline, rect, group, arc, Transform]
-for x in shapes:
-	x.set = lambda self, **attrib: generic.set(self, attrib={**getattr(self, "attrib", {}), **attrib})
-	x.get = lambda self, *keys: [self.attrib[k] for k in keys] if hasattr(self, 'attrib') else None
+for x in shapes: generic.make_Entity(x)
+"""	x.set = lambda self, **attrib: generic.set(self, attrib={**getattr(self, "attrib", {}), **attrib})
+	x.get = lambda self, *keys: [self.attrib[k] for k in keys] if hasattr(self, 'attrib') else None"""
 
 
 
