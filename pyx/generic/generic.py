@@ -16,7 +16,7 @@ class Element:
 	def __init__(self, **kwargs):
 		self.attrib = kwargs
 
-	def set(self, **kwargs): setattrs(obj, **kwargs)
+	def set(self, **kwargs): setattrs(self, **kwargs)
 	
 	def get(self, *args): return [self.attrib[k] for k in args]
 
