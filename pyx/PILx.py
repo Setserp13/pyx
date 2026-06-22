@@ -196,13 +196,13 @@ class image(geo.rect_like):
 		self.filepath = filepath
 		self.array = read_image(filepath)
 		self.min = min
-		self.override_size = size
+		self.overwrite_size = size
 
 	@property
-	def size(self): return np.array(self.array.shape[:2]) if self.override_size is None else self.override_size
+	def size(self): return np.array(self.array.shape[:2]) if self.overwrite_size is None else self.overwrite_size
 
 	@size.setter
-	def size(self, value): self.override_size = value
+	def size(self, value): self.overwrite_size = value
 
 
 class tspan:
