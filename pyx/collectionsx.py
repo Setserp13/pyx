@@ -3,6 +3,11 @@ import random
 import numpy as np
 from pyx.array_utility import find_index
 
+class distinct_list(list):
+	def append(self, item):
+		if item not in self:
+			super().append(item)
+
 def equivalence(arr, equals):	#classes de equivalência
 	result = []
 	used = [False]*len(arr)
