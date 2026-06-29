@@ -1,5 +1,5 @@
 import copy
-from pyx.timeline import Time, Interval, Layer	#TimeRange, Track
+from pyx.timeline import Time, Interval, Layer, seconds, microseconds	#TimeRange, Track
 from datetime import datetime
 import textwrap
 import pyx.mat.mat as mat
