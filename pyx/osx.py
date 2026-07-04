@@ -1,6 +1,20 @@
 import os
 import string
 import json
+from pathlib import Path
+
+def build_tree(path: Path):	#hierarchical file system to dict
+	node = {
+		"name": path.name
+	}
+
+	if path.is_dir():
+		node["children"] = [
+			build_tree(child)
+			for child in sorted(path.iterdir(), key=lambda p: (p.is_file(), p.name.lower()))
+		]
+
+	return node
 
 def ext(path): return os.path.splitext(path)[1]
 def root(path): return os.path.splitext(path)[0]
