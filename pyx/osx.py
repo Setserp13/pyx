@@ -202,8 +202,6 @@ def ls(dir, abs=True): return [os.path.join(dir, x) for x in os.listdir(dir)] if
 
 def lsall(dirs, abs=True): return [ls(x, abs) for x in dirs]
 
-
-
 def save_all(files, output_dir, naming='file {i}', save_func=write):
 	output_dir = to_distinct(output_dir)
 	os.makedirs(output_dir, exist_ok=True)
@@ -211,8 +209,7 @@ def save_all(files, output_dir, naming='file {i}', save_func=write):
 	for i, x in enumerate(files):
 		filename = naming.format(i=str(i).zfill(digit_count))
 		path = os.path.join(output_dir, filename)
-
-
+		save_func(path, x)
 
 import rarfile
 import zipfile
@@ -232,8 +229,5 @@ def extractall(path, output_folder):
 
 	print(f"Unsupported archive: {path}")
 	return False
-		save_func(path, x)
-
-
 
 
