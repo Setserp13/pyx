@@ -211,6 +211,27 @@ def save_all(files, output_dir, naming='file {i}', save_func=write):
 	for i, x in enumerate(files):
 		filename = naming.format(i=str(i).zfill(digit_count))
 		path = os.path.join(output_dir, filename)
+
+
+
+import rarfile
+import zipfile
+
+#Archive file
+def extractall(path, output_folder):
+	os.makedirs(output_folder, exist_ok=True)
+
+	for ArchiveFile in (rarfile.RarFile, zipfile.ZipFile):
+		print(ArchiveFile)
+		try:
+			with ArchiveFile(path) as archive:
+				archive.extractall(output_folder)
+				return
+		except Exception as e:
+			print(type(e).__name__, e)
+
+	print(f"Unsupported archive: {path}")
+	return False
 		save_func(path, x)
 
 
