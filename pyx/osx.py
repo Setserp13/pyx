@@ -16,8 +16,8 @@ def build_tree(path: Path):	#hierarchical file system to dict
 
 	return node
 
-def ext(path): return os.path.splitext(path)[1]
-def root(path): return os.path.splitext(path)[0]
+def ext(path): return None if os.path.isdir(path) else os.path.splitext(path)[1]
+def root(path): return path if os.path.isdir(path) else os.path.splitext(path)[0]
 def filename(path): return os.path.splitext(os.path.basename(path))[0]
 def wd(__file__): return os.path.dirname(os.path.abspath(__file__))
 
