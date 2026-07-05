@@ -17,7 +17,7 @@ def svg_to_png(root, output_png, rect=None, dpi=96, scale=1):
 	svg_buffer = BytesIO()		# Create an in-memory file-like object
 	tree.write(svg_buffer, encoding='utf-8', xml_declaration=True)
 	svg_buffer.seek(0)	# Use the in-memory SVG content directly, no need for a temporary file
-	cairosvg.svg2png(file_obj=svg_buffer, write_to=output_png, output_width=rect.size[0], output_height=rect.size[1], dpi=dpi, scale=scale)
+	cairosvg.svg2png(file_obj=svg_buffer, write_to=output_png, output_width=rect.size[0] * scale, output_height=rect.size[1] * scale, dpi=dpi, scale=scale)
 
 def element_to_png(element, output_png, dpi=96, scale=1):
 	bbox = svgx.from_svg(element).aabb
