@@ -2201,3 +2201,19 @@ def findall_in_distance(point, others, dist, tol=1e-6, metric=lambda x, y: np.li
 	return find_indices(others, lambda x: metric(point, x) <= dist + tol, mask=mask)
 
 
+
+
+
+
+def on_circle(n, r=1.0, center=np.zeros(2), start=0.0):	#regular polygon
+	return polyline([npx.polar_to_cartesian(r, start + 2.0 * math.pi * (i / n)) + center for i in range(n)])
+
+def on_arc(n, r=1.0, center=np.zeros(2), start=0.0, size=2.0 * math.pi):
+	return polyline([npx.polar_to_cartesian(r, start + size * (i / (n - 1))) + center for i in range(n)])
+
+def on_sphere(radius=1.0, stacks=16, slices=32, center=np.zeros(3)):
+	v = []
+	for theta in subdivide(0.0, math.pi, stacks):
+		for phi in subdivide(0.0, math.pi * 2.0, slices):
+			v.append(npx.spherical_to_cartesian(radius, theta, phi) + center)
+	return v
