@@ -6,7 +6,6 @@ import numpy as np
 import itertools
 from pyx.collectionsx import List as ls
 import random
-from pyx.numpyx_geo import polyline, line
 from itertools import permutations, product
 
 def cartesian_product(arrays, swizzle=None):
@@ -124,22 +123,6 @@ def linear_layout(n, offset=np.zeros(3), dir=np.array([1, 0, 0]), cell_size=1, a
 
 #@dispatch(np.ndarray, np.ndarray)
 #def random_range(start, stop): return np.array(list(map(lambda x, y: random_range(x, y), start, stop)))
-
-def on_circle(n, r=1.0, center=np.zeros(2), start=0.0):	#regular polygon
-	return polyline([polar_to_cartesian(r, start + 2.0 * math.pi * (i / n)) + center for i in range(n)])
-
-def on_arc(n, r=1.0, center=np.zeros(2), start=0.0, size=2.0 * math.pi):
-	return polyline([polar_to_cartesian(r, start + size * (i / (n - 1))) + center for i in range(n)])
-
-def on_sphere(radius=1.0, stacks=16, slices=32, center=np.zeros(3)):
-	v = []
-	for theta in subdivide(0.0, math.pi, stacks):
-		for phi in subdivide(0.0, math.pi * 2.0, slices):
-			v.append(spherical_to_cartesian(radius, theta, phi) + center)
-	return v
-
-
-
 
 
 def affine_transform(M, arr):
