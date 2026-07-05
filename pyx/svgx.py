@@ -159,6 +159,8 @@ def from_svg(obj, asnode=False):
 		case 'g' | 'svg':
 			children = [from_svg(x, asnode) for x in obj]
 			children = [x for x in children if not x is None]
+			if len(children) == 0:
+				return None
 			if asnode:
 				node.extend(children)
 			else:
