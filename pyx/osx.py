@@ -215,19 +215,22 @@ import rarfile
 import zipfile
 
 #Archive file
-def extractall(path, output_folder):
-	os.makedirs(output_folder, exist_ok=True)
-
-	for ArchiveFile in (rarfile.RarFile, zipfile.ZipFile):
-		print(ArchiveFile)
+def ArchiveFile(path):
+	for ctor in (rarfile.RarFile, zipfile.ZipFile):
+		#print(ctor)
 		try:
-			with ArchiveFile(path) as archive:
-				archive.extractall(output_folder)
-				return
+			with ctor(path) as f:
+				return f
 		except Exception as e:
 			print(type(e).__name__, e)
+	print(f"Unsupported file format: {path}")
+	return None
 
-	print(f"Unsupported archive: {path}")
-	return False
+"""def extractall(path, output_folder):
+	os.makedirs(output_folder, exist_ok=True)
+
+	f = ArchiveFile(path)
+	if f:
+			f.extractall(output_folder)"""
 
 
