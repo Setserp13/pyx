@@ -29,7 +29,7 @@ def xmls2df(roots) -> pd.DataFrame:	#Convert multiple XML documents into a singl
 	return pd.concat(dfs, ignore_index=True, sort=True)
 
 
-def isnull(value): return str(value) in ['None', 'NaN', 'NaT', 'none', 'nan', 'nat', ''] or pd.isnull(value)
+def isnull(value): return str(value).lower() in ['', 'nan', 'nat', 'none'] or pd.isnull(value)
 
 def to_workbook(path, **worksheets):
 	with pd.ExcelWriter(path) as writer:
@@ -43,24 +43,15 @@ def fetchall(df, **where): #where is a dict of (column, value)
 def fetchone(df, **where):
 	result = fetchall(df, **where)
 	return None if result.empty else result.iloc[0]
-		
-"""def select(df, columns, values):
-	mask = df[columns].eq([values[column] for column in columns]).all(axis=1)
-	return df[mask]"""
 
 def segment(df, columns):
-	#return [select(df, columns, row) for index, row in df[columns].drop_duplicates().iterrows()]
 	return [fetchall(df, **dict(zip(columns, row))) for index, row in df[columns].drop_duplicates().iterrows()]
 
 def foreach(df, columns, action): #action(df slice, column values)
 	for index, row in df[columns].drop_duplicates().iterrows():
-		#print(row)
-		#action(select(df, columns, row), row)
 		action(fetchall(df, **dict(zip(columns, row))), row)
 
 def rename(df, columns): return df.rename(columns={x: columns[i] for i, x in enumerate(df.columns)})
-
-#def segmentby(df, by):
 
 @dispatch(pd.Series)
 def strall(obj):
@@ -102,7 +93,6 @@ def resum(df, new_sum, col): #SET SUM
 	sum = df[col].sum()
 	df[col] = df[col].map(lambda x: math.floor((x / sum) * new_sum))
 	df[col].iloc[0] += new_sum - df[col].sum()
-	#print(f'SUM IS {df[col].sum()}, {sum}')
 	return df
 
 def resume(df, by, agg):
