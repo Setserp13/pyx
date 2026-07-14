@@ -96,7 +96,17 @@ class SQLiteDB:
 	# Table Utilities
 	# ----------------------------------------------------
 
-	def create_table(self, sql: str): self.execute(sql)
+	def create_table(self, table: str, **columns):
+		cols = ", ".join(
+			f"{name} {definition}"
+			for name, definition in columns.items()
+		)
+		sql = f"""
+		CREATE TABLE IF NOT EXISTS {table} (
+			{cols}
+		)
+		"""
+		self.execute(sql)
 
 	def drop_table(self, table: str): self.execute(f"DROP TABLE IF EXISTS {table}")
 
