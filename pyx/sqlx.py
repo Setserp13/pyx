@@ -69,6 +69,31 @@ class SQLiteDB:
 		params = tuple(values.values()) + tuple(where_params)
 		self.execute(sql, params)
 
+	def upsert(self, table: str, values: dict, conflict):
+		if isinstance(conflict, str):
+			conflict = [conflict]
+
+		columns = ", ".join(values.keys())
+		placeholders = ", ".join("?" for _ in values)
+
+		update_clause = ", ".join(
+			f"{k}=excluded.{k}"
+			for k in values.keys()
+			if k not in conflict
+		)
+
+		conflict_clause = ", ".join(conflict)
+
+		sql = f"""
+		INSERT INTO {table} ({columns})
+		VALUES ({placeholders})
+		ON CONFLICT({conflict_clause}) DO UPDATE SET
+			{update_clause}
+		"""
+
+		self.execute(sql, tuple(values.values()))
+		return self.cursor.lastrowid
+	
 	def delete(self, table: str, where: str, params=()):
 		sql = f"DELETE FROM {table} WHERE {where}"
 		self.execute(sql, params)
