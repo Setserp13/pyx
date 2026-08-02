@@ -117,6 +117,71 @@ class SQLiteDB:
 
 		return self.fetchall(sql, params)
 
+	def search(
+		self,
+		table: str,
+		search_fields: list[str],
+		search: str = "",
+		where: dict = None,
+		order_by: str = None,
+		page: int = 1,
+		limit: int = 50,
+	):
+		sql = f"SELECT * FROM {table}"
+		params = []
+	
+		conditions = []
+	
+		if search:
+			parts = []
+	
+			for field in search_fields:
+				parts.append(f"{field} LIKE ?")
+				params.append(f"%{search}%")
+	
+			conditions.append("(" + " OR ".join(parts) + ")")
+	
+		if where:
+			for field, value in where.items():
+				conditions.append(f"{field} = ?")
+				params.append(value)
+	
+		if conditions:
+			sql += " WHERE " + " AND ".join(conditions)
+	
+		if order_by:
+			sql += f" ORDER BY {order_by}"
+	
+		sql += " LIMIT ? OFFSET ?"
+	
+		params.extend([
+			limit,
+			(page - 1) * limit
+		])
+	
+		items = self.fetchall(sql, params)
+	
+		# count
+		count_sql = f"SELECT COUNT(*) AS total FROM {table}"
+		count_params = []
+	
+		if conditions:
+			count_sql += " WHERE " + " AND ".join(conditions)
+	
+			# rebuild params without limit/offset
+			count_params = params[:-2]
+	
+		total = self.fetchone(
+			count_sql,
+			count_params
+		)["total"]
+	
+		return {
+			"items": items,
+			"total": total,
+			"page": page,
+			"pages": (total + limit - 1) // limit
+		}
 	# ----------------------------------------------------
 	# Table Utilities
 	# ----------------------------------------------------
