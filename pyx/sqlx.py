@@ -182,6 +182,28 @@ class SQLiteDB:
 			"page": page,
 			"pages": (total + limit - 1) // limit
 		}
+
+	def next_available_id(db, table):
+
+		row = db.fetchone(f"""
+			SELECT MIN(id + 1) AS id
+			FROM {table}
+			WHERE id + 1 NOT IN (
+				SELECT id FROM {table}
+			)
+
+			UNION ALL
+
+			SELECT 1
+			WHERE NOT EXISTS (
+				SELECT 1 FROM {table} WHERE id = 1
+			)
+
+			LIMIT 1
+		""")
+
+		return row["id"]
+	
 	# ----------------------------------------------------
 	# Table Utilities
 	# ----------------------------------------------------
