@@ -491,7 +491,7 @@ class circle():
 		A = T[:2, :2]
 		extents = self.radius * np.sqrt(np.sum(A * A, axis=1))
 
-    return rect.center_size(c, extents * 2)
+		return rect.center_size(c, extents * 2)
 
 	def __rmatmul__(self, M): return self.__matmul__(M)
 
