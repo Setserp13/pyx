@@ -34,7 +34,7 @@ class shape:
         return pivot + (result - pivot) * factor
 
 
-class rect_like:
+class rect_like:	#interval
 	def __init__(self, min, size):
 		self.min = np.array(min)
 		self.size = np.array(size)
