@@ -477,6 +477,24 @@ class circle():
 		self.center = value.center
 		self.radius = min(*value.extents)
 
+	@property
+	def local_aabb(self): return self.aabb
+
+	@property
+	def global_aabb(self):
+		M = self.attrib.get("transform")
+		if M is not None:
+			self.transform = M
+		
+		c = self.transform * self.center
+
+		m = self.transform.basis	# Linear part of transform
+
+		rx = self.radius * np.linalg.norm(m[:, 0])
+		ry = self.radius * np.linalg.norm(m[:, 1])
+
+		return rect.center_size(c, np.array([rx, ry]) * 2)
+
 	def __rmatmul__(self, M): return self.__matmul__(M)
 
 	def __matmul__(self, M):
