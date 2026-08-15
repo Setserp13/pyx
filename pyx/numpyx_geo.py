@@ -486,15 +486,15 @@ class circle():
 		if M is not None:
 			self.transform = M
 		
-		c = self.center @ self.transform.TRS
-		#c = self.transform @ self.center #ALLOW THIS WAY LATER
-		
-		m = self.transform.basis	# Linear part of transform
+		T = self.transform.TRS
 
-		rx = self.radius * np.linalg.norm(m[:, 0])
-		ry = self.radius * np.linalg.norm(m[:, 1])
+		c = np.array([*self.center, 1]) @ T
+		c = c[:2]
 
-		return rect.center_size(c, np.array([rx, ry]) * 2)
+		A = T[:2, :2]
+		extents = self.radius * np.sqrt(np.sum(A * A, axis=1))
+
+		return rect.center_size(c, extents * 2)
 
 	def __rmatmul__(self, M): return self.__matmul__(M)
 
