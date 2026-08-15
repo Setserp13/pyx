@@ -67,28 +67,6 @@ def getsize(lines, font, font_size, leading=0):
 
 
 
-import subprocess
-
-def find_font(font_family):
-	for name in font_family.split(","):
-		name = name.strip().strip("'\"")
-
-		if not name:
-			continue
-
-		result = subprocess.run(
-			["fc-match", "-f", "%{file}", name],
-			capture_output=True,
-			text=True
-		)
-
-		path = result.stdout.strip()
-
-		if path:
-			return path
-
-	return None
-
 
 def get_size(text, font_name, font_size):
 	font_name = font_name.strip("'\"")
