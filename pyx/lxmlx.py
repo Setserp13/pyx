@@ -36,6 +36,8 @@ def fetchall(self, **where): return findall(self, lambda x: all(k in x.attrib an
 
 def fetchone(self, **where): return find(self, lambda x: all(k in x.attrib and x.attrib[k] == where[k] for k in where))
 
+def find_by_id(self, id): return find(self, lambda x: x.get("id") == id)
+
 def find_ancestor(self, match, dflt_value=None):
 	parent = self.getparent()
 	while parent is not None:
