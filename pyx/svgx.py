@@ -233,7 +233,7 @@ def get_tspan_attrib(elem):
 	result = {}
 	result['inner_text'] = elem.text or ''
 	result['position'] = np.array(get(elem, float, 'x', 'y'))
-	result['pivot'] = np.ones(2) * .5
+	result['pivot'] = np.zeros(2)	#np.ones(2) * .5
 	style = get_style(elem)
 	for k in ('font-family', 'font-size'):
 		value = style.get(k, elem.get(k, None))
