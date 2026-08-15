@@ -1794,13 +1794,8 @@ class group(list):
 	@property
 	def local_aabb(self): return aabb([x.local_aabb for x in self])
 
-	#@property
-	#def global_aabb(self): return aabb([x.global_aabb for x in self])
 	@property
-	def global_aabb(self):
-		M = self.attrib.get("transform")
-		box = self.local_aabb
-		return box if M is None else (box @ M.global_TRS).aabb
+	def global_aabb(self): return aabb([x.global_aabb for x in self])
 
 def distribute(arr, axis=0, align=.5, gap=0.0):
 	for i in range(1, len(arr)):
