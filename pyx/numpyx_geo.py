@@ -486,8 +486,9 @@ class circle():
 		if M is not None:
 			self.transform = M
 		
-		c = self.transform * self.center
-
+		c = self.center @ self.transform.TRS
+		#c = self.transform @ self.center #ALLOW THIS WAY LATER
+		
 		m = self.transform.basis	# Linear part of transform
 
 		rx = self.radius * np.linalg.norm(m[:, 0])
