@@ -486,7 +486,7 @@ class circle():
 		if M is not None:
 			self.transform = M
 		
-		T = self.transform.TRS
+		T = self.transform.global_TRS	#TRS
 
 		c = np.array([*self.center, 1]) @ T
 		c = c[:2]
