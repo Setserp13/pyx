@@ -65,7 +65,49 @@ def getsize(lines, font, font_size, leading=0):
 	height = sum(get_size(line, font, font_size)[1] for line in lines) + leading * (len(lines) - 1)
 	return width, height
 
-def get_size(text, font_name, font_size):
+
+
+import subprocess
+
+def find_font(font_family):
+	for name in font_family.split(","):
+		name = name.strip().strip("'\"")
+
+		if not name:
+			continue
+
+		result = subprocess.run(
+			["fc-match", "-f", "%{file}", name],
+			capture_output=True,
+			text=True
+		)
+
+		path = result.stdout.strip()
+
+		if path:
+			return path
+
+	return None
+
+def get_size(text, font_family, font_size):
+	path = find_font(font_family)
+
+	if not path:
+		#raise RuntimeError(f"Font not found: {font_family}")
+		print(f"Font not found: {font_family}")
+		return np.array([len(text), 1.]) * font_size
+		
+	font = ImageFont.truetype(path, font_size)
+
+	bbox = font.getbbox(text)
+
+	return np.array([
+		bbox[2] - bbox[0],
+		bbox[3] - bbox[1]
+	], dtype=float)
+
+
+"""def get_size(text, font_name, font_size):
 	font_name = font_name.strip("'\"")
 	font = find_font(font_name)
 	try:
@@ -77,7 +119,7 @@ def get_size(text, font_name, font_size):
 		return np.array([bbox[2] - bbox[0], bbox[3] - bbox[1]])
 	except:
 		print(f'cannot open resource: {font_name} {font}')
-		return np.array([len(text), 1.]) * font_size
+		return np.array([len(text), 1.]) * font_size"""
 		
 def wrap(line, width, font, font_size):
 	result = ['']
