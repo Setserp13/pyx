@@ -483,10 +483,7 @@ class circle():
 	@property
 	def global_aabb(self):
 		M = self.attrib.get("transform")
-		if M is not None:
-			self.transform = M
-		
-		T = self.transform.global_TRS	#TRS
+		T = M.global_TRS
 
 		c = np.array([*self.center, 1]) @ T
 		c = c[:2]
@@ -494,7 +491,7 @@ class circle():
 		A = T[:2, :2]
 		extents = self.radius * np.sqrt(np.sum(A * A, axis=1))
 
-		return rect.center_size(c, extents * 2)
+    return rect.center_size(c, extents * 2)
 
 	def __rmatmul__(self, M): return self.__matmul__(M)
 
