@@ -1819,6 +1819,16 @@ class group(list):
 	@property
 	def global_aabb(self): return aabb([x.global_aabb for x in self])
 
+	def remove_if(self, cond):
+		for i in range(len(self) - 1, -1, -1):
+			x = self[i]
+
+			if cond(x):
+				self.pop(i)
+			elif isinstance(x, group):
+				x.remove_if(cond)
+
+
 def distribute(arr, axis=0, align=.5, gap=0.0):
 	for i in range(1, len(arr)):
 		pos = arr[i - 1].aabb.denormalize_point(np.array([1, float(align)])[[axis, 1 - axis]]) + npx.ei(axis, 2) * float(gap)
