@@ -19,11 +19,14 @@ class shape:
         raise NotImplementedError
 
     def __sub__(self, value):
-        raise NotImplementedError
+		return self.__add__(-value)
 
     def __mul__(self, value):
         raise NotImplementedError
 
+	def __truediv__(self, value):
+		return self.__mul__(1. / value)
+	
     __rmul__ = __mul__
 
     def scale(self, factor, pivot=None):
@@ -32,6 +35,16 @@ class shape:
 
         result = copy.deepcopy(self)
         return pivot + (result - pivot) * factor
+
+	def copy(self): return copy.copy(self)
+
+	def deepcopy(self): return copy.copy(self)
+
+	def __contains__(self, point):
+		return self.contains(point)
+
+	def contains(self, point):
+		raise NotImplementedError
 
 
 class rect_like:	#interval
@@ -75,7 +88,7 @@ class rect_like:	#interval
 
 	def __add__(self, vector): return type(self).min_size(self.min + vector, self.size)
 
-	def __sub__(self, vector): return self.__add__(-vector)
+	#def __sub__(self, vector): return self.__add__(-vector)
 	
 	@property
 	def ndim(self): return len(self.min)
@@ -97,7 +110,7 @@ class rect_like:	#interval
 
 		return type(self).min_size(min, size)
 		
-	def copy(self): return type(self).min_size(self.min.copy(), self.size.copy())
+	#def copy(self): return type(self).min_size(self.min.copy(), self.size.copy())
 
 	def __repr__(self): return f'{type(self).__name__}(min={self.min}, size={self.size})'
 
@@ -411,10 +424,10 @@ class points(np.ndarray):
 	def __rmatmul__(self, M):
 		return self.transform(M)
 
-	def copy(self):
+	"""def copy(self):
 		obj = type(self)(np.array(self))
 		obj.__dict__.update(self.__dict__)
-		return obj
+		return obj"""
 
 	def __repr__(self):
 		name = type(self).__name__
@@ -534,14 +547,14 @@ class circle():
 
 	
 		
-	def copy(self): return circle(self.center.copy(), self.radius)
+	#def copy(self): return circle(self.center.copy(), self.radius)
 
 	def __add__(self, vector):
 		obj = copy.deepcopy(self)
 		obj.center += vector
 		return obj
 
-	def __sub__(self, vector): return self.__add__(-vector)
+	#def __sub__(self, vector): return self.__add__(-vector)
 
 
 class ellipse(rect_like):
