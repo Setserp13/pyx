@@ -1828,6 +1828,15 @@ class group(list):
 			elif isinstance(x, group):
 				x.remove_if(cond)
 
+	def remove_empty_groups(self):
+		for i in range(len(self) - 1, -1, -1):
+			x = self[i]
+	
+			if isinstance(x, group):
+				x.remove_empty_groups()
+	
+				if not x:
+					self.pop(i)
 
 def distribute(arr, axis=0, align=.5, gap=0.0):
 	for i in range(1, len(arr)):
