@@ -15,11 +15,11 @@ EPSILON = 1e-9
 TAU = math.pi * 2.
 
 class shape:
-	#def __add__(self, value): raise NotImplementedError
+	def __add__(self, value): raise NotImplementedError
 
 	def __sub__(self, value): return self.__add__(-value)
 
-	#def __mul__(self, value): raise NotImplementedError
+	def __mul__(self, value): raise NotImplementedError
 
 	def __truediv__(self, value): return self.__mul__(1. / value)
 	
@@ -406,7 +406,7 @@ def set_aabb(p, value):	#p is a list of points
 
 
 
-class points(shape, np.ndarray):
+class points(np.ndarray, shape):
 
 	def __new__(cls, input_array, **attrs):
 		obj = np.asarray(input_array).view(cls)
