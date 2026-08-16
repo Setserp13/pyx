@@ -30,21 +30,6 @@ def wrap_text(text, width=42, len_func=len, join=True, sp=SP, lf=LF):
 	return lf.join(lines) if join else lines
 
 
-"""def wrap_text(text, width=42, len_func=len, join=True):
-	lines = []
-	current = ""
-	for word in text.split():
-		if len_func(current) + len_func(word) + 1 <= width:
-			if current:
-				current += " " + word
-			else:
-				current = word
-		else:
-			lines.append(current)
-			current = word
-	if current:
-		lines.append(current)
-	return "\n".join(lines) if join else lines"""
 
 def batch_lines(text: str, n: int, join=True):
 	lines = text.split("\n") if isinstance(text, str) else text
