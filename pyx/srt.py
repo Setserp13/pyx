@@ -6,7 +6,30 @@ import pyx.mat.mat as mat
 import pyx.osx as osx
 import pyx.rex as rex
 
-def wrap_text(text, width=42, len_func=len, join=True):
+LF = '\n'
+SP = ' '
+
+def wrap_text(text, width=42, len_func=len, join=True, sp=SP, lf=LF):
+	lines = []
+
+	for paragraph in text.split(lf):
+		words = paragraph.split()
+		current = ""
+
+		for word in words:
+			if not current:
+				current = word
+			elif len_func(current + sp + word) <= width:
+				current += sp + word
+			else:
+				lines.append(current)
+				current = word
+
+		if current:
+			lines.append(current)
+
+	return lf.join(lines) if join else lines
+"""def wrap_text(text, width=42, len_func=len, join=True):
 	lines = []
 	current = ""
 	for word in text.split():
@@ -20,7 +43,7 @@ def wrap_text(text, width=42, len_func=len, join=True):
 			current = word
 	if current:
 		lines.append(current)
-	return "\n".join(lines) if join else lines
+	return "\n".join(lines) if join else lines"""
 
 def batch_lines(text: str, n: int, join=True):
 	lines = text.split("\n") if isinstance(text, str) else text
