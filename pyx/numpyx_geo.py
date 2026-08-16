@@ -23,14 +23,14 @@ class shape:
 
 	def __truediv__(self, value): return self.__mul__(1. / value)
 	
-    __rmul__ = __mul__
+	__rmul__ = __mul__
 
-    def scale(self, factor, pivot=None):
-        if pivot is None:
-            pivot = np.zeros(self.ndim)
+	def scale(self, factor, pivot=None):
+		if pivot is None:
+			pivot = np.zeros(self.ndim)
 
-        result = copy.deepcopy(self)
-        return pivot + (result - pivot) * factor
+		result = copy.deepcopy(self)
+		return pivot + (result - pivot) * factor
 
 	def copy(self): return copy.copy(self)
 
