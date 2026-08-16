@@ -100,30 +100,9 @@ class rect_like(shape):	#interval
 		self.size = value.size
 
 	def __add__(self, vector): return type(self).min_size(self.min + vector, self.size)
-
-	#def __sub__(self, vector): return self.__add__(-vector)
 	
 	@property
 	def ndim(self): return len(self.min)
-
-	"""def __rmatmul__(self, M): return self.__matmul__(M)
-
-	def __matmul__(self, M):	#Applies a (n+1)x(n+1) affine transform
-		M = np.asarray(M, dtype=float)
-		if M.shape != (self.ndim + 1, self.ndim + 1):
-			raise ValueError("Expected a (n+1)x(n+1) affine matrix")
-
-		# position (affected by translation)
-		min_h = np.append(self.min, 1)
-		min = (M @ min_h)[:self.ndim]
-
-		# size (direction vector, no translation)
-		size_h = np.append(self.size, 0)
-		size = (M @ size_h)[:self.ndim]
-
-		return type(self).min_size(min, size)"""
-
-	#def copy(self): return type(self).min_size(self.min.copy(), self.size.copy())
 
 	def __repr__(self): return f'{type(self).__name__}(min={self.min}, size={self.size})'
 
@@ -265,12 +244,6 @@ class rect(rect_like):
 
 	@property
 	def vertices(self): return points(list(product(*zip(self.min, self.max)))).set(**getattr(self, 'attrib', {}))
-	
-	"""@property
-	def local_aabb(self): return self.vertices.local_aabb
-
-	@property
-	def global_aabb(self): return self.vertices.global_aabb"""
 
 	@property
 	def corners(self):
@@ -313,7 +286,6 @@ class rect2(rect):
 	def bottom(rect): return rect2.side(rect, axis=1, dir=0)
 	def top(rect): return rect2.side(rect, axis=1, dir=1)
 
-	#def corners(rect): return polyline([rect2.bottom_left(rect), rect2.top_left(rect), rect2.top_right(rect), rect2.bottom_right(rect)], closed=True)
 	def area(rect): return rect.size[0] * rect.size[1]
 
 	def line_at(rect, t, axis=0):	#result is a line parallel to axis
@@ -437,30 +409,12 @@ class points(np.ndarray, shape):
 	def aabb(self, value):
 		self[:] = set_aabb(self, value)
 
-	"""@property
-	def local_aabb(self):
-		M = self.attrib.get("transform")
-		return self.aabb if M is None else (self @ M.TRS).aabb
-
-	@property
-	def global_aabb(self):
-		M = self.attrib.get("transform")
-		return self.aabb if M is None else (self @ M.global_TRS).aabb"""
-
 	def transform(self, M):
 		pts = npx.affine_transform(M, self)
 		return type(self)(pts, **self.__dict__)
 
 	def __matmul__(self, M):
 		return self.transform(M)
-
-	"""def __rmatmul__(self, M):
-		return self.transform(M)
-
-	def copy(self):
-		obj = type(self)(np.array(self))
-		obj.__dict__.update(self.__dict__)
-		return obj"""
 
 	def __repr__(self):
 		name = type(self).__name__
@@ -523,47 +477,6 @@ class circle(shape):
 		self.center = value.center
 		self.radius = min(*value.extents)
 
-	"""@property
-	def local_aabb(self): return self.aabb
-
-	@property
-	def global_aabb(self):
-		M = self.attrib.get("transform")
-		T = M.global_TRS
-
-		c = np.array([*self.center, 1]) @ T
-		c = c[:2]
-
-		A = T[:2, :2]
-		extents = self.radius * np.sqrt(np.sum(A * A, axis=1))
-
-		return rect.center_size(c, extents * 2)
-
-	def __rmatmul__(self, M): return self.__matmul__(M)
-
-	def __matmul__(self, M):
-		M = np.asarray(M, dtype=float)
-
-		if M.shape != (3, 3):
-			raise ValueError("Expected a 3x3 affine matrix")
-
-		# Transform center (with translation)
-		center_h = np.append(self.center, 1)
-		center = (M @ center_h)[:2]
-
-		# Extract linear part
-		A = M[:2, :2]
-
-		# Scale radius (assumes uniform scaling)
-		scale_x = np.linalg.norm(A[:, 0])
-		scale_y = np.linalg.norm(A[:, 1])
-
-		if not np.isclose(scale_x, scale_y):
-			raise ValueError("Non-uniform scaling turns a Circle into an Ellipse")
-
-		radius *= scale_x
-		return circle(center, radius)"""
-
 	def __matmul__(self, M):
 		M = np.asarray(M, dtype=float)
 
@@ -578,16 +491,10 @@ class circle(shape):
 
 		return ellipse(center, 2 * self.radius * np.array([sx, sy]))
 
-	
-		
-	#def copy(self): return circle(self.center.copy(), self.radius)
-
 	def __add__(self, vector):
 		obj = copy.deepcopy(self)
 		obj.center += vector
 		return obj
-
-	#def __sub__(self, vector): return self.__add__(-vector)
 
 
 class ellipse(rect_like):
