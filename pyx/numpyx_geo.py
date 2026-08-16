@@ -22,9 +22,13 @@ class shape:
 	def __mul__(self, value): raise NotImplementedError
 
 	def __truediv__(self, value): return self.__mul__(1. / value)
+
+	def __matmul__(self, value): raise NotImplementedError
 	
 	__rmul__ = __mul__
-
+	
+	__rmatmul__ = __matmul__
+	
 	def scale(self, factor, pivot=None):
 		if pivot is None:
 			pivot = np.zeros(self.ndim)
@@ -102,7 +106,7 @@ class rect_like(shape):	#interval
 	@property
 	def ndim(self): return len(self.min)
 
-	def __rmatmul__(self, M): return self.__matmul__(M)
+	"""def __rmatmul__(self, M): return self.__matmul__(M)
 
 	def __matmul__(self, M):	#Applies a (n+1)x(n+1) affine transform
 		M = np.asarray(M, dtype=float)
@@ -117,7 +121,7 @@ class rect_like(shape):	#interval
 		size_h = np.append(self.size, 0)
 		size = (M @ size_h)[:self.ndim]
 
-		return type(self).min_size(min, size)
+		return type(self).min_size(min, size)"""
 
 	#def copy(self): return type(self).min_size(self.min.copy(), self.size.copy())
 
@@ -450,10 +454,10 @@ class points(np.ndarray, shape):
 	def __matmul__(self, M):
 		return self.transform(M)
 
-	def __rmatmul__(self, M):
+	"""def __rmatmul__(self, M):
 		return self.transform(M)
 
-	"""def copy(self):
+	def copy(self):
 		obj = type(self)(np.array(self))
 		obj.__dict__.update(self.__dict__)
 		return obj"""
@@ -519,7 +523,7 @@ class circle(shape):
 		self.center = value.center
 		self.radius = min(*value.extents)
 
-	@property
+	"""@property
 	def local_aabb(self): return self.aabb
 
 	@property
@@ -537,7 +541,7 @@ class circle(shape):
 
 	def __rmatmul__(self, M): return self.__matmul__(M)
 
-	"""def __matmul__(self, M):
+	def __matmul__(self, M):
 		M = np.asarray(M, dtype=float)
 
 		if M.shape != (3, 3):
@@ -772,6 +776,24 @@ class ellipse(rect_like):
 		theta_end = theta_end % (2*np.pi)
 	
 		return theta0 % (2*np.pi), theta_end
+
+	def __matmul__(self, M):	#this loses rotation/shear of the ellipse.
+		M = np.asarray(M, dtype=float)
+
+		center = (M @ np.append(self.center, 1))[:2]
+		A = M[:2, :2]
+
+		axes = np.diag(self.size / 2)
+		axes = A @ axes
+
+		size = 2 * np.linalg.norm(axes, axis=0)
+
+		if np.isclose(size[0], size[1]):
+			return circle(center, size[0] / 2)
+
+		return ellipse(center, size)
+
+
 
 
 class arc(circle):
