@@ -42,6 +42,19 @@ class shape:
 	def contains(self, point):
 		raise NotImplementedError
 
+	@property
+	def aabb(self): raise NotImplementedError
+
+	@property
+	def local_aabb(self):
+		M = self.attrib.get("transform")
+		return self.aabb if M is None else (self @ M.TRS).aabb
+
+	@property
+	def global_aabb(self):
+		M = self.attrib.get("transform")
+		return self.aabb if M is None else (self @ M.global_TRS).aabb
+
 
 class rect_like:	#interval
 	def __init__(self, min, size):
@@ -105,7 +118,7 @@ class rect_like:	#interval
 		size = (M @ size_h)[:self.ndim]
 
 		return type(self).min_size(min, size)
-		
+
 	#def copy(self): return type(self).min_size(self.min.copy(), self.size.copy())
 
 	def __repr__(self): return f'{type(self).__name__}(min={self.min}, size={self.size})'
@@ -249,13 +262,30 @@ class rect(rect_like):
 	@property
 	def vertices(self): return points(list(product(*zip(self.min, self.max)))).set(**getattr(self, 'attrib', {}))
 	
-	@property
+	"""@property
 	def local_aabb(self): return self.vertices.local_aabb
 
 	@property
-	def global_aabb(self): return self.vertices.global_aabb
+	def global_aabb(self): return self.vertices.global_aabb"""
 
+	@property
+	def corners(self):
+		#generate the corners in a Gray-code order: each consecutive corner differs in exactly one coordinate, so the path never moves diagonally
+		#For 2D this gives: 00 → 01 → 11 → 10
+		#For 3D: 000 → 001 → 011 → 010 → 110 → 111 → 101 → 100
+		n = self.ndim
 
+		for i in range(1 << n):
+			g = i ^ (i >> 1)
+
+			yield np.polyline([
+				self.min[j] if not (g >> j & 1) else self.max[j]
+				for j in range(n)
+			], closed=True)	#REPLACE BY polygon later
+
+	def __matmul__(self, M):
+		M = np.asarray(M, dtype=float)
+		return self.corners @ M
 
 class rect2(rect):
 	def __init__(self, x, y, width, height):
@@ -400,7 +430,7 @@ class points(np.ndarray):
 	def aabb(self, value):
 		self[:] = set_aabb(self, value)
 
-	@property
+	"""@property
 	def local_aabb(self):
 		M = self.attrib.get("transform")
 		return self.aabb if M is None else (self @ M.TRS).aabb
@@ -408,7 +438,7 @@ class points(np.ndarray):
 	@property
 	def global_aabb(self):
 		M = self.attrib.get("transform")
-		return self.aabb if M is None else (self @ M.global_TRS).aabb
+		return self.aabb if M is None else (self @ M.global_TRS).aabb"""
 
 	def transform(self, M):
 		pts = npx.affine_transform(M, self)
