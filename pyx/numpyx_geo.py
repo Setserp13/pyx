@@ -270,18 +270,20 @@ class rect(rect_like):
 
 	@property
 	def corners(self):
-		#generate the corners in a Gray-code order: each consecutive corner differs in exactly one coordinate, so the path never moves diagonally
-		#For 2D this gives: 00 → 01 → 11 → 10
-		#For 3D: 000 → 001 → 011 → 010 → 110 → 111 → 101 → 100
+		# Generate corners in Gray-code order:
+		# consecutive corners differ in exactly one coordinate.
 		n = self.ndim
-
-		for i in range(1 << n):
-			g = i ^ (i >> 1)
-
-			yield np.polyline([
-				self.min[j] if not (g >> j & 1) else self.max[j]
+	
+		points = [
+			[
+				self.min[j] if not ((i ^ (i >> 1)) >> j & 1)
+				else self.max[j]
 				for j in range(n)
-			], closed=True)	#REPLACE BY polygon later
+			]
+			for i in range(1 << n)
+		]
+	
+		return polyline(points, closed=True)
 
 	def __matmul__(self, M):
 		M = np.asarray(M, dtype=float)
