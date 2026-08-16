@@ -56,7 +56,7 @@ class shape:
 		return self.aabb if M is None else (self @ M.global_TRS).aabb
 
 
-class rect_like:	#interval
+class rect_like(shape):	#interval
 	def __init__(self, min, size):
 		self.min = np.array(min)
 		self.size = np.array(size)
@@ -403,7 +403,7 @@ def set_aabb(p, value):	#p is a list of points
 
 
 
-class points(np.ndarray):
+class points(np.ndarray, shape):
 
 	def __new__(cls, input_array, **attrs):
 		obj = np.asarray(input_array).view(cls)
@@ -481,7 +481,7 @@ def radar_polygon(radii, center=np.zeros(2)):
 	angles = np.arange(0.0, math.pi * 2.0, math.pi * 2.0 / len(radii))
 	return [npx.polar_to_cartesian(r, theta) + center for r, theta in zip(radii, angles)]
 
-class circle():
+class circle(shape):
 	def __init__(self, center, radius):
 		self.center = np.array(center)
 		self.radius = radius
