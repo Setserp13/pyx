@@ -38,7 +38,7 @@ class shape:
 
 	def copy(self): return copy.copy(self)
 
-	def deepcopy(self): return copy.copy(self)
+	def deepcopy(self): return copy.deepcopy(self)
 
 	def __contains__(self, point):
 		return self.contains(point)
