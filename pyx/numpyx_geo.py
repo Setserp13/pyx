@@ -495,7 +495,7 @@ class circle():
 
 	def __rmatmul__(self, M): return self.__matmul__(M)
 
-	def __matmul__(self, M):
+	"""def __matmul__(self, M):
 		M = np.asarray(M, dtype=float)
 
 		if M.shape != (3, 3):
@@ -516,7 +516,23 @@ class circle():
 			raise ValueError("Non-uniform scaling turns a Circle into an Ellipse")
 
 		radius *= scale_x
-		return circle(center, radius)
+		return circle(center, radius)"""
+
+	def __matmul__(self, M):
+		M = np.asarray(M, dtype=float)
+
+		center = (M @ np.append(self.center, 1))[:2]
+		A = M[:2, :2]
+
+		sx = np.linalg.norm(A[:, 0])
+		sy = np.linalg.norm(A[:, 1])
+
+		if np.isclose(sx, sy):
+			return circle(center, self.radius * sx)
+
+		return ellipse(center, 2 * self.radius * np.array([sx, sy]))
+
+	
 		
 	def copy(self): return circle(self.center.copy(), self.radius)
 
