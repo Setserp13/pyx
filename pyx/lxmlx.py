@@ -38,6 +38,8 @@ def fetchone(self, **where): return find(self, lambda x: all(k in x.attrib and x
 
 def find_by_id(self, id): return find(self, lambda x: x.get("id") == id)
 
+def findall_by_tag(self, tag): return findall(self, lambda x: etree.QName(x.tag).localname == tag)
+	
 def find_ancestor(self, match, dflt_value=None):
 	parent = self.getparent()
 	while parent is not None:
