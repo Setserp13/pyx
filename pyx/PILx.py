@@ -103,20 +103,18 @@ def get_size(text, font_name, font_size):
 	except:
 		print(f'cannot open resource: {font_name} {font}')
 		return np.array([len(text), 1.]) * font_size
-		
-def wrap(line, width, font, font_size):
-	result = ['']
-	for word in line.split():
-		if result[-1] == '':
-			result[-1] += word
-		else:
-			space = ' '
-			size = get_size(result[-1] + space + word, font, font_size)
-			if size[0] > width:
-				result.append(word)
-			else:
-				result[-1] += space + word
-	return result#'\n'.join(result)
+
+from pyx.srt import wrap_text
+
+def wrap_stylized_text(text, width, font, font_size, join=False):	#width can be any positive real number
+	return wrap_text(
+		text,
+		width,
+		len_func=lambda s: get_size(s, font, font_size)[0],
+		join=join,
+	)
+
+
 
 def truncate(lines, height, font, font_size, leading=0):
 	for i in range(len(lines)):
