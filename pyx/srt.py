@@ -25,10 +25,11 @@ def wrap_text(text, width=42, len_func=len, join=True, sp=SP, lf=LF):
 				lines.append(current)
 				current = word
 
-		if current:
-			lines.append(current)
+		lines.append(current)
 
 	return lf.join(lines) if join else lines
+
+
 """def wrap_text(text, width=42, len_func=len, join=True):
 	lines = []
 	current = ""
