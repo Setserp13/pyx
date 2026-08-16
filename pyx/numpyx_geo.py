@@ -287,8 +287,8 @@ class rect(rect_like):
 
 	def __matmul__(self, M):
 		M = np.asarray(M, dtype=float)
-		#return self.corners @ M
-		return self.corners.transform(M)
+		return self.corners @ M
+		#return self.corners.transform(M)
 
 class rect2(rect):
 	def __init__(self, x, y, width, height):
