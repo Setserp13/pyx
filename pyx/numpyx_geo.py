@@ -462,7 +462,7 @@ class circle():
 	def perimeter(self): return self.diameter * math.pi
 
 	@property
-	def area(self): return 2 * math.pi * self.radius ** 2
+	def area(self): return math.pi * self.radius ** 2
 
 	def tangent(self, theta):
 		p = self.get_point(theta)
