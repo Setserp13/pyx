@@ -635,9 +635,9 @@ class ellipse(rect_like):
 		if not (0 <= e < 1):
 			raise ValueError("Eccentricity must be in [0, 1)")
 
-		b = a * (1 - e*2) * 0.5
-		return cls(center=center, size=np.array([2 * a, 2 * b])[[orientation, 1 - orientation]])
-
+		b = a * np.sqrt(1 - e**2)
+		size = np.array([2*a, 2*b])
+		return cls(center=center, size=size[[orientation, 1 - orientation]])
 
 	# =========================
 	# True anomaly from point
