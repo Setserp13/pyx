@@ -10,6 +10,28 @@ import pyx.generic.generic as generic
 from pyx.array_utility import find
 from matplotlib.font_manager import fontManager
 
+IMAGE_FORMATS = [
+	"avif",
+	"bmp",
+	"gif",
+	"heic",
+	"heif",
+	"ico",
+	"jpeg",
+	"jpg",
+	"png",
+	"svg",
+	"tif",
+	"tiff",
+	"webp",
+]
+
+
+
+
+
+
+
 def find_font(name): return find(fontManager.ttflist, lambda x: x.name == name)
 
 def extract_frames(anim):	#anim is a path or an Image
