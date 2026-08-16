@@ -287,7 +287,8 @@ class rect(rect_like):
 
 	def __matmul__(self, M):
 		M = np.asarray(M, dtype=float)
-		return self.corners @ M
+		#return self.corners @ M
+		return self.corners.transform(M)
 
 class rect2(rect):
 	def __init__(self, x, y, width, height):
@@ -405,7 +406,7 @@ def set_aabb(p, value):	#p is a list of points
 
 
 
-class points(np.ndarray, shape):
+class points(shape, np.ndarray):
 
 	def __new__(cls, input_array, **attrs):
 		obj = np.asarray(input_array).view(cls)
@@ -444,7 +445,7 @@ class points(np.ndarray, shape):
 
 	def transform(self, M):
 		pts = npx.affine_transform(M, self)
-		return type(self)(pts)
+		return type(self)(pts, **self.__dict__)
 
 	def __matmul__(self, M):
 		return self.transform(M)
