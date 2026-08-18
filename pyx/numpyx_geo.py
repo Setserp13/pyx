@@ -409,10 +409,15 @@ class points(np.ndarray, shape):
 	def aabb(self, value):
 		self[:] = set_aabb(self, value)
 
-	def transform(self, M):
+	"""def transform(self, M):
 		pts = npx.affine_transform(M, self)
-		return type(self)(pts, **self.__dict__)
-
+		return type(self)(pts, **self.__dict__)"""
+	
+	def transform(self, M):
+		res = self.deepcopy()
+		res[:] = npx.affine_transform(M, self)
+		return res
+	
 	def __matmul__(self, M):
 		return self.transform(M)
 
