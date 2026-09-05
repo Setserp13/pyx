@@ -40,7 +40,7 @@ def find_by_id(self, id): return find(self, lambda x: x.get("id") == id)
 
 def findall_by_tag(self, tag): return findall(self, lambda x: etree.QName(x.tag).localname == tag)
 
-def findall_by_class(self, class_name): return find(self, lambda x: class_name in x.get("class", "").split())
+def findall_by_class(self, class_name): return findall(self, lambda x: class_name in x.get("class", "").split())
 
 def find_ancestor(self, match, dflt_value=None):
 	parent = self.getparent()
