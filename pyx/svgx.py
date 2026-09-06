@@ -29,7 +29,7 @@ def replace_all(root, replacements, exact_match=False):
 		try:
 			tag = etree.QName(el).localname
 		except: continue
-		if tag in ("text", "tspan"):
+		if tag in ("text", "tspan", "textPath"):
 			if el.text:
 				for k, v in replacements.items():
 					if exact_match:
