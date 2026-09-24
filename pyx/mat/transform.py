@@ -108,7 +108,10 @@ class quaternion(np.ndarray):
 
 	def rotate(self, v):
 		# v é um vetor 3D (lista/tupla/np.array)
-		vx, vy, vz = v
+		q = np.array(self[:3])
+		t = 2 * np.cross(q, v)
+		return np.array(v) + self[3] * t + np.cross(q, t)
+		"""vx, vy, vz = v
 
 		qx, qy, qz, qw = self
 
@@ -122,9 +125,9 @@ class quaternion(np.ndarray):
 		vpy = vy + qw * ty + (qz * tx - qx * tz)
 		vpz = vz + qw * tz + (qx * ty - qy * tx)
 
-		return np.array([vpx, vpy, vpz], float)
+		return np.array([vpx, vpy, vpz], float)"""
 
-	def to_euler(q):
+	"""def to_euler(q):
 		x, y, z, w = q
 	
 		# Rotation around X
@@ -166,8 +169,34 @@ class quaternion(np.ndarray):
 		z = cx*cy*sz - sx*sy*cz
 		w = cx*cy*cz + sx*sy*sz
 	
-		return quaternion([x, y, z, w])
+		return quaternion([x, y, z, w])"""
 
+	@staticmethod
+	def to_euler(q):
+		x, y, z, w = q
+	
+		return np.array([
+			np.arctan2(2*(w*x + y*z), 1 - 2*(x*x + y*y)),
+			np.arcsin(np.clip(2*(w*y - z*x), -1, 1)),
+			np.arctan2(2*(w*z + x*y), 1 - 2*(y*y + z*z))
+		])
+
+	@staticmethod
+	def from_euler(euler):
+		ex, ey, ez = euler
+	
+		s = np.sin(np.array(euler) / 2)
+		c = np.cos(np.array(euler) / 2)
+		sx, sy, sz = s
+		cx, cy, cz = c
+	
+		return quaternion([
+			sx*cy*cz - cx*sy*sz,
+			cx*sy*cz + sx*cy*sz,
+			cx*cy*sz - sx*sy*cz,
+			cx*cy*cz + sx*sy*sz
+		])
+	
 	def multiply(q1, q2):
 		x1, y1, z1, w1 = q1
 		x2, y2, z2, w2 = q2
