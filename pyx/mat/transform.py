@@ -74,6 +74,15 @@ class Matrix:
 
 	@staticmethod
 	def R3(q):
+		x, y, z, w = q / np.linalg.norm(q)
+	
+		return to_homogeneous(np.array([
+			[1 - 2*(y*y + z*z), 2*(x*y - w*z), 2*(x*z + w*y)],
+			[2*(x*y + w*z), 1 - 2*(x*x + z*z), 2*(y*z - w*x)],
+			[2*(x*z - w*y), 2*(y*z + w*x), 1 - 2*(x*x + y*y)]
+		]))
+	"""@staticmethod
+	def R3(q):
 		q = q / np.linalg.norm(q)
 		x, y, z, w = q
 
@@ -86,12 +95,8 @@ class Matrix:
 			[2*(xy + wz),       1 - 2*(xx + zz), 2*(yz - wx)],
 			[2*(xz - wy),       2*(yz + wx),     1 - 2*(xx + yy)]
 		])
-
-		# ⬇ Convert to 4×4 homogeneous matrix
-		"""R4 = np.eye(4)
-		R4[:3, :3] = R
-		return R4"""
-		return to_homogeneous(R)
+		
+		return to_homogeneous(R)"""
 
 class quaternion(np.ndarray):
 	def __new__(cls, input_array):
@@ -169,7 +174,18 @@ class quaternion(np.ndarray):
 		z = cx*cy*sz - sx*sy*cz
 		w = cx*cy*cz + sx*sy*sz
 	
-		return quaternion([x, y, z, w])"""
+		return quaternion([x, y, z, w])
+		
+	def multiply(q1, q2):
+		x1, y1, z1, w1 = q1
+		x2, y2, z2, w2 = q2
+	
+		w = w1*w2 - x1*x2 - y1*y2 - z1*z2
+		x = w1*x2 + x1*w2 + y1*z2 - z1*y2
+		y = w1*y2 + y1*w2 + z1*x2 - x1*z2
+		z = w1*z2 + z1*w2 + x1*y2 - y1*x2
+	
+		return np.array([x, y, z, w])"""
 
 	@staticmethod
 	def to_euler(q):
@@ -197,17 +213,16 @@ class quaternion(np.ndarray):
 			cx*cy*cz + sx*sy*sz
 		])
 	
+	@staticmethod
 	def multiply(q1, q2):
-		x1, y1, z1, w1 = q1
-		x2, y2, z2, w2 = q2
+		v1, w1 = q1[:3], q1[3]
+		v2, w2 = q2[:3], q2[3]
 	
-		w = w1*w2 - x1*x2 - y1*y2 - z1*z2
-		x = w1*x2 + x1*w2 + y1*z2 - z1*y2
-		y = w1*y2 + y1*w2 + z1*x2 - x1*z2
-		z = w1*z2 + z1*w2 + x1*y2 - y1*x2
+		return np.r_[
+			w1*v2 + w2*v1 + np.cross(v1, v2),
+			w1*w2 - np.dot(v1, v2)
+		]
 	
-		return np.array([x, y, z, w])
-
 	@staticmethod
 	def from_matrix(M):
 		# Accept 4×4 or 3×3
