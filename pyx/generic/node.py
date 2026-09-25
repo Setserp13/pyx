@@ -15,11 +15,12 @@ class Node:
 			if value != None:
 				value.children.append(self)
 			self.parent = value
-	
+
+	@property
 	def siblingIndex(self):
 		if self.parent != None:
 			return index_of(self.parent.children, self)
-		return -1
+		return 0
 
 	def selfAndSiblings(self):
 		if self.parent != None:
