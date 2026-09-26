@@ -2239,7 +2239,7 @@ def on_arc(n, r=1.0, center=np.zeros(2), start=0.0, size=2.0 * math.pi):
 
 def on_sphere(radius=1.0, stacks=16, slices=32, center=np.zeros(3)):
 	v = []
-	for theta in subdivide(0.0, math.pi, stacks):
-		for phi in subdivide(0.0, math.pi * 2.0, slices):
+	for theta in npx.subdivide(0.0, math.pi, stacks):
+		for phi in npx.subdivide(0.0, math.pi * 2.0, slices):
 			v.append(npx.spherical_to_cartesian(radius, theta, phi) + center)
 	return v
