@@ -81,22 +81,7 @@ class Matrix:
 			[2*(x*y + w*z), 1 - 2*(x*x + z*z), 2*(y*z - w*x)],
 			[2*(x*z - w*y), 2*(y*z + w*x), 1 - 2*(x*x + y*y)]
 		]))
-	"""@staticmethod
-	def R3(q):
-		q = q / np.linalg.norm(q)
-		x, y, z, w = q
 
-		xx, yy, zz = x*x, y*y, z*z
-		xy, xz, yz = x*y, x*z, y*z
-		wx, wy, wz = w*x, w*y, w*z
-
-		R = np.array([
-			[1 - 2*(yy + zz),   2*(xy - wz),     2*(xz + wy)],
-			[2*(xy + wz),       1 - 2*(xx + zz), 2*(yz - wx)],
-			[2*(xz - wy),       2*(yz + wx),     1 - 2*(xx + yy)]
-		])
-		
-		return to_homogeneous(R)"""
 
 class quaternion(np.ndarray):
 	def __new__(cls, input_array):
@@ -116,76 +101,6 @@ class quaternion(np.ndarray):
 		q = np.array(self[:3])
 		t = 2 * np.cross(q, v)
 		return np.array(v) + self[3] * t + np.cross(q, t)
-		"""vx, vy, vz = v
-
-		qx, qy, qz, qw = self
-
-		# t = 2 * cross(q.xyz, v)
-		tx = 2 * (qy * vz - qz * vy)
-		ty = 2 * (qz * vx - qx * vz)
-		tz = 2 * (qx * vy - qy * vx)
-
-		# v' = v + qw * t + cross(q.xyz, t)
-		vpx = vx + qw * tx + (qy * tz - qz * ty)
-		vpy = vy + qw * ty + (qz * tx - qx * tz)
-		vpz = vz + qw * tz + (qx * ty - qy * tx)
-
-		return np.array([vpx, vpy, vpz], float)"""
-
-	"""def to_euler(q):
-		x, y, z, w = q
-	
-		# Rotation around X
-		sin_x = 2 * (w*x + y*z)
-		cos_x = 1 - 2 * (x*x + y*y)
-		ex = np.arctan2(sin_x, cos_x)
-	
-		# Rotation around Y
-		sin_y = 2 * (w*y - z*x)
-		sin_y = np.clip(sin_y, -1, 1)
-		ey = np.arcsin(sin_y)
-	
-		# Rotation around Z
-		sin_z = 2 * (w*z + x*y)
-		cos_z = 1 - 2 * (y*y + z*z)
-		ez = np.arctan2(sin_z, cos_z)
-	
-		return np.array([ex, ey, ez])
-
-	@staticmethod
-	def from_euler(euler):
-		ex, ey, ez = euler
-	
-		# Half angles
-		hx = ex * 0.5
-		hy = ey * 0.5
-		hz = ez * 0.5
-	
-		sx = np.sin(hx)
-		cx = np.cos(hx)
-		sy = np.sin(hy)
-		cy = np.cos(hy)
-		sz = np.sin(hz)
-		cz = np.cos(hz)
-	
-		# Combine into quaternion (x, y, z, w)
-		x = sx*cy*cz - cx*sy*sz
-		y = cx*sy*cz + sx*cy*sz
-		z = cx*cy*sz - sx*sy*cz
-		w = cx*cy*cz + sx*sy*sz
-	
-		return quaternion([x, y, z, w])
-		
-	def multiply(q1, q2):
-		x1, y1, z1, w1 = q1
-		x2, y2, z2, w2 = q2
-	
-		w = w1*w2 - x1*x2 - y1*y2 - z1*z2
-		x = w1*x2 + x1*w2 + y1*z2 - z1*y2
-		y = w1*y2 + y1*w2 + z1*x2 - x1*z2
-		z = w1*z2 + z1*w2 + x1*y2 - y1*x2
-	
-		return np.array([x, y, z, w])"""
 
 	@staticmethod
 	def to_euler(q):
@@ -348,39 +263,6 @@ class Transform(Node):
 	def basis(self):	# BASIS (n×n matrix of world axes) -> upper-left n×n
 		return self.global_TRS[:self.ndim, :self.ndim]
 
-
-	"""def TRS(self):
-		return self.local_TRS() if self.parent is None else self.parent.TRS() @ self.local_TRS()
-		#return functools.reduce(lambda acc, x: acc @ x, [x.local_TRS() for x in reversed([self] + self.ancestors())])
-
-	def inverse_TRS(self): return np.linalg.inv(self.TRS())
-
-	def local_TRS(self):	#local transformation matrix
-		#print(self.T, self.R, self.S)
-		return self.T @ self.R @ self.S
-
-	def local_inverse_TRS(self): #local inverse transformation matrix
-		return np.linalg.inv(self.local_TRS())
-		#return np.linalg.inv(self.S) @ np.linalg.inv(self.R) @ np.linalg.inv(self.T)
-
-	def to_local(self, point):
-		p = np.append(point, 1)
-		return (self.inverse_TRS() @ p)[:self.ndim]
-
-	def to_global(self, point):
-		p = np.append(point, 1)
-		return (self.TRS() @ p)[:self.ndim]
-
-	@property
-	def global_position(self): return self.to_global(self.position)
-
-	@global_position.setter
-	def global_position(self, value):
-		self.position = self.to_local(value)
-
-	@property
-	def basis(self):	# BASIS (n×n matrix of world axes) -> upper-left n×n
-		return self.TRS()[:self.ndim, :self.ndim]"""
 
 class Node2D(Transform):	#Node):
 	def __init__(self, position=np.zeros(2), rotation=0.0, scale=np.ones(2), **kwargs):
