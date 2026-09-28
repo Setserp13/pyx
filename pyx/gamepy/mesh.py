@@ -11,176 +11,284 @@ import copy
 import pyx.mat.mat as mat
 import pyx.rex as rex
 
-def fan_triangulate(indices):
-	return [[indices[0], indices[i], indices[i+1]] for i in range(1, len(indices) - 1)]
+import struct
 
-class glb:
-	ARRAY_BUFFER = 34962	#dados de vértices (positions, normals, tangents, UVs, colors, joints, weights etc.)
-	ELEMENT_ARRAY_BUFFER = 34963	#índices (faces, triângulos)	
 
-	def __init__(self):
-		self.buffer_views = []
+def triangles(indices):
+	result = []
+	for x in indices:
+		result += fan_triangulate(x)
+	return result
 
-	def add_buffer_view(self, bytes, target, componentType, type):
-		self.buffer_views.append({"bytes": bytes, "target": target, "componentType": componentType, "type": type})
+"""Buffer
+	└── BufferView
+		├── Accessor
+		├── Accessor
+		└── Accessor"""
 
-	@property
-	def buffer(self):
-		result = bytearray()
-		for x in self.buffer_views:
-			result += x["bytes"]
-		return result
+class Buffer(Node):
+	def __init__(self, uri=None):
+		super().__init__()
+		self.uri = uri
 
-	@property
-	def bufferViews(self):
-		result = []
-		byteOffset = 0
-		for x in self.buffer_views:
-			byteLength = len(x["bytes"])
-			view = {
-					"buffer": 0,	#Indica qual buffer esse trecho pertence. No GLB, normalmente sempre é 0
-					"byteOffset": byteOffset,
-					"byteLength": byteLength
-				}
-			if not x["target"] is None:
-				view["target"] = x["target"]
-			result.append(view)
-			byteOffset += byteLength
-		return result
+	def append(self, bytes, target=None):
+		view = BufferView(bytes, len(self.bytes), target)
+		super().append(view)
+		return view
 
 	@property
-	def accessors(self):
-		result = []
-		for i, x in enumerate(self.buffer_views):
-			result.append(
-				{
-					"bufferView": i,
-					"byteOffset": 0,
-					"componentType": x["componentType"],
-					"count": len(x["bytes"]) // ({"SCALAR": 1, "VEC2": 2, "VEC3": 3, "VEC4": 4, "MAT4": 16}[x["type"]] * 4),
-					"type": x["type"]
-				}
+	def bytes(self): return b"".join(x.bytes for x in self.children)
+
+	def gltf(self):
+		return {
+			"byteLength": len(self.bytes),
+			**(
+				{"uri": self.uri}
+				if self.uri is not None
+				else {}
 			)
-		return result
+		}
 
-	def pack(gltf, bin, filename):
-		gltf = rex.lpad(json.dumps(gltf, separators=(",", ":")).encode("utf-8"), 4, b" ")	# Convert JSON to binary (must be padded to 4-byte)
-		bin = rex.lpad(bin, 4, b"\x00")	# Pad BIN chunk to 4 bytes
+class BufferView(Node):
+	ARRAY_BUFFER = 34962	#vertex data (positions, normals, tangents, UVs, colors, joints, weights etc.)
+	ELEMENT_ARRAY_BUFFER = 34963	#index data (faces, triangles)	
 
-		# GLB header
-		magic = 0x46546C67			# 'glTF'
+	def __init__(self, bytes, byte_offset=0, target=None):
+		super().__init__()
+		self.bytes = bytes
+		self.byte_offset = byte_offset
+		self.target = target
+
+	def append(self, component_type, type, byte_offset=0, normalized=False):
+		accessor = Accessor(component_type, type, byte_offset, normalized)
+		super().append(accessor)
+		return accessor
+
+	def gltf(self):
+		return {
+			"buffer": self.parent.siblingIndex,
+			"byteOffset": self.byte_offset,
+			"byteLength": len(self.bytes),
+			**(
+				{"target": self.target}
+				if self.target is not None
+				else {}
+			)
+		}
+
+class Accessor(Node):
+	COMPONENT_SIZE = {
+		5120: 1,	# BYTE
+		5121: 1,	# UNSIGNED_BYTE
+		5122: 2,	# SHORT
+		5123: 2,	# UNSIGNED_SHORT
+		5125: 4,	# UNSIGNED_INT
+		5126: 4		# FLOAT
+	}
+
+	TYPE_SIZE = {
+		"SCALAR": 1,
+		"VEC2": 2,
+		"VEC3": 3,
+		"VEC4": 4,
+		"MAT2": 4,
+		"MAT3": 9,
+		"MAT4": 16
+	}
+
+	def __init__(self, component_type, type, byte_offset=0, normalized=False):
+		super().__init__()
+		self.component_type = component_type
+		self.type = type
+		self.byte_offset = byte_offset
+		self.normalized = normalized
+
+	@property
+	def size(self): return self.COMPONENT_SIZE[self.component_type] * self.TYPE_SIZE[self.type]
+
+	@property
+	def count(self): return (len(self.parent.bytes) - self.byte_offset) // self.size
+
+	def gltf(self):
+		return {
+			"bufferView": self.parent.siblingIndex,
+			"byteOffset": self.byte_offset,
+			"componentType": self.component_type,
+			"count": self.count,
+			"type": self.type,
+			**(
+				{"normalized": True}
+				if self.normalized
+				else {}
+			)
+		}
+
+
+
+class GLB:
+	def __init__(self):
+		self.buffers = Node(children=[Buffer()])
+
+		self.resources = {
+			'scenes': [{"nodes":[0]}],
+			'nodes': [],
+			'meshes': [],
+			'skins': [],
+			'materials': [],
+			'textures': [],
+			'images': [],
+			'samplers': []
+		}
+
+		self.scene = None
+
+	@property
+	def buffer(self): return self.buffers.children[0]
+
+	def gltf(self):
+		json_chunk = {
+			"asset": {"version": "2.0"},
+			"scene": 0,
+
+			**self.resources,
+
+			"buffers": [],
+			"bufferViews": [],
+			"accessors": []
+		}
+
+		for x in self.buffers.descendants():
+			json_chunk[{ 'Buffer': 'buffers', 'BufferView': 'bufferViews', 'Accessor': 'accessors' }[x.__class__.__name__]].append(x.gltf())
+
+		return json_chunk
+
+	def add_buffer(self, uri=None):
+		buffer = Buffer(uri)
+		self.buffers.append(buffer)
+
+	def pack(self, filename):
+		json_chunk = json.dumps(self.gltf(), separators=(",", ":")).encode("utf-8")
+
+		json_chunk += b" " * (-len(json_chunk) % 4)
+
+		bin = self.buffers.children[0].bytes
+		bin += b"\x00" * (-len(bin) % 4)
+
+		magic = 0x46546C67
 		version = 2
 
-		total_length = 12 + (8 + len(gltf)) + (8 + len(bin))
+		total_length = (12 + 8 + len(json_chunk) + 8 + len(bin))
 
 		with open(filename, "wb") as f:
-			f.write(struct.pack("<III", magic, version, total_length))	# Header
-			f.write(struct.pack("<I4s", len(gltf), b"JSON"))	# JSON chunk
-			f.write(gltf)
-			f.write(struct.pack("<I4s", len(bin), b"BIN\0"))	# BIN chunk
+			f.write(struct.pack("<III", magic, version, total_length))
+			f.write(struct.pack("<I4s", len(json_chunk), b"JSON"))
+			f.write(json_chunk)
+			f.write(struct.pack("<I4s", len(bin), b"BIN\0"))
 			f.write(bin)
+
 		print("Saved", filename)
+
+	def add_node(self, node):
+		result = { 'name': f'Node ({node.index})', 'children': [x.index for x in node.children], 'translation': node.position.tolist(), 'rotation': node.rotation.tolist(), 'scale': node.scale.tolist() }
+		if hasattr(node, 'attrib'):
+			for k in ['mesh', 'skin']:
+				if k in node.attrib:
+					result[k] = node.attrib[k].index	
+		self.resources['nodes'].append(result)
+
+	def add_mesh(self, mesh):
+		result = GLBElement(self.buffer, mode=4)
+		result.add('attributes/POSITION', mesh.vertices, 5126, 'VEC3').add('indices', triangles(mesh.indices), 5125, 'SCALAR', 34963)
+
+		if len(mesh.uvs) > 0:
+			result.add('attributes/TEXCOORD_0', mesh.uvs, 5126, 'VEC2')
+
+		if getattr(mesh, 'joints', None):
+			result.add('attributes/JOINTS_0', mesh.joints, 5125, 'VEC4')
+
+		if getattr(mesh, 'weights', None):
+			result.add('attributes/WEIGHTS_0', mesh.weights, 5126, 'VEC4')
+
+		self.resources['meshes'].append({ 'primitives': [ result ] })
+
+	def add_skin(self, skin):
+		result = GLBElement(self.buffer, joints=[x.index for x in skin.joints])
+		self.resources['skins'].append(result.add('inverseBindMatrices', [x.inv_global_TRS.T for x in skin.joints], 5126, 'MAT4'))
+
+
+
+def get(data, path):
+	for key in path.split("/"):
+		data = data[key]
+
+	return data
+
+
+
+def set(data, path, value):
+	keys = path.split("/")
+
+	for key in keys[:-1]:
+		data = data.setdefault(key, {})	#data = data[key]
+
+	data[keys[-1]] = value
+
+GLTF_DTYPES = {
+	5121: "<u1",
+	5123: "<u2",
+	5125: "<u4",
+	5126: "<f4"
+}
+
+class GLBElement(dict):
+	def __init__(self, buffer, **kwargs):
+		super().__init__(**kwargs)
+		self.buffer = buffer
+
+	def add(self, path, data, component_type, type, target=34962):
+		data = np.asarray(data, dtype=GLTF_DTYPES[component_type])
+		self.buffer.append(data.tobytes(), target).append(component_type, type)
+		set(self, path, len(self.buffer.children) - 1)
+		return self
+
+
+
+def to_glb(root):
+
+	result = { 'node': [], 'mesh': [], 'skin': [] }
+	
+	for x in root.descendants():
+		if not x in result['node']:
+			x.index = len(result['node'])
+			result['node'].append(x)
+			if hasattr(x, 'attrib'):
+				for k in ['mesh', 'skin']:
+					if k in x.attrib:
+						y = x.attrib[k]
+						if not y in result[k]:
+							y.index = len(result[k])
+							result[k].append(y)
+
+	glb = GLB()
+
+	for k in result:
+		for x in result[k]:
+			getattr(glb, f'add_{k}')(x)
+
+	return glb
+
 
 
 class Skin():
 	def __init__(self, joints=None):
-		self.joints = [] if joints is None else joints	# list of Node3D-like transforms
+		self.joints = [] if joints is None else joints	# list[ list[Node2D or Node3D] ]
 
 
 
+def fan_triangulate(indices):
+	return [[indices[0], indices[i], indices[i+1]] for i in range(1, len(indices) - 1)]
 
-class SkinnedMesh(Mesh, Node3D):
-	def __init__(self, vertices, faces, uvs=None, skin=None, joints=None, weights=None, **kwargs):
-		Mesh.__init__(self, vertices, faces, uvs)
-		Node3D.__init__(self, **kwargs)
-		self.skin = skin
-		self.joints = [] if joints is None else joints		# list[ list[int] ]
-		self.weights = [] if weights is None else weights	# list[ list[float] ]
 
-	#each mesh has a skeleton attached to it
-	#in glb, you references joints in mesh by their relative indices to the skin they belong
-	def to_glb(roots, filename):	#self, filename):
-		if not filename.lower().endswith(".glb"):
-			filename += ".glb"
-
-		
-		new_roots = []
-		for x in roots:
-			parent = Node3D()
-			new_roots.append(parent)
-			parent.append(x)
-			for y in x.skin.joints:
-				if y.parent is None:
-					parent.append(y)
-		roots = new_roots
-
-		#nodes3d = flatten([[x, *x.skin.joints] for x in roots])
-		nodes3d = flatten([[x, *x.descendants()] for x in roots])
-		for i, x in enumerate(nodes3d):
-			x.index = i
-			x.name = f'Node ({i})'
-		
-		# BUILD BINARY BUFFER FOR GEOMETRY
-		obj = glb()
-
-		meshes = []
-		skins = []
-		nodes = []
-		for x in nodes3d:
-			node = {'name': x.name, 'children': [y.index for y in x.children], 'translation': x.position.tolist()}
-			nodes.append(node)
-			if not isinstance(x, SkinnedMesh):
-				continue
-			mesh = x
-			primitive = {
-				"attributes": {},
-				"indices": 1,
-				"mode": 4
-				}
-			node['mesh'] = len(meshes)
-			primitive['attributes']['POSITION'] = len(obj.buffer_views)	#accessor, but this case it works 'cause len(bufferViews) == len(accessors)
-			obj.add_buffer_view(np.asarray(mesh.vertices, dtype="<f4").tobytes(), 34962, 5126, "VEC3")
-			primitive['indices'] = len(obj.buffer_views)
-			obj.add_buffer_view(np.asarray(mesh.faces, dtype="<u4").tobytes(), 34963, 5125, "SCALAR")	#faces must be triangles
-			if len(mesh.uvs) > 0:
-				primitive['attributes']['TEXCOORD_0'] = len(obj.buffer_views)
-				obj.add_buffer_view(np.asarray(mesh.uvs, dtype="<f4").tobytes(), 34962, 5126, "VEC2")
-			if hasattr(mesh, 'skin') and len(mesh.skin.joints) > 0:
-				node['skin'] = len(skins)
-				skins.append({"joints": [y.index for y in mesh.skin.joints], "inverseBindMatrices": len(obj.buffer_views)})
-				#print([(x.inverse_TRS().T) for x in mesh.skin.joints])
-				obj.add_buffer_view(np.asarray([x.inverse_TRS().T for x in mesh.skin.joints], dtype="<f4").tobytes(), None, 5126, "MAT4")	#34962, 5126, "MAT4")
-				if len(mesh.joints) > 0:
-					primitive['attributes']['JOINTS_0'] = len(obj.buffer_views)
-					obj.add_buffer_view(np.asarray(mesh.joints, dtype="<u4").tobytes(), 34962, 5125, "VEC4")
-				if len(mesh.weights) > 0:
-					primitive['attributes']['WEIGHTS_0'] = len(obj.buffer_views)
-					obj.add_buffer_view(np.asarray(mesh.weights, dtype="<f4").tobytes(), 34962, 5126, "VEC4")
-			meshes.append({
-				"primitives": [
-					primitive
-					]
-				})
-
-		#print(meshes)		
-
-		gltf = {
-			"asset": { "version": "2.0" },
-			"buffers": [
-				{ "byteLength": len(obj.buffer) }
-			],
-			"bufferViews": obj.bufferViews,
-			"accessors": obj.accessors,
-			"meshes": meshes,
-			"skins": skins,
-			"nodes": nodes,
-			"scenes": [ { "nodes": [0] } ],
-			"scene": 0
-		}
-
-		glb.pack(gltf, obj.buffer, filename)
-
-#---
 #MESHING
 
 def uv_sphere(radius=1.0, stacks=16, slices=32, center=np.zeros(3)):
