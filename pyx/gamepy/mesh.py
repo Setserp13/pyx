@@ -10,6 +10,7 @@ from pyx.collectionsx import flatten#, Map
 import copy
 import pyx.mat.mat as mat
 import pyx.rex as rex
+from pyx.generic.node import Node
 
 def fan_triangulate(indices):
 	return [[indices[0], indices[i], indices[i+1]] for i in range(1, len(indices) - 1)]
