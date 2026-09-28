@@ -234,6 +234,17 @@ class Transform(Node):
 	@property
 	def inv_global_TRS(self): return np.linalg.inv(self.global_TRS)
 
+	def TRS_to(self, parent):
+		result = self.TRS
+	
+		while self != parent:
+			self = self.parent
+			result = self.TRS @ result
+	
+		return result
+
+	def inv_TRS_to(self, parent): return np.linalg.inv(self.TRS_to(parent))
+
 	@property
 	def TRS(self):	#local transformation matrix
 		#print(self.T, self.R, self.S)
