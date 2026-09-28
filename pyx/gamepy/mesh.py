@@ -11,8 +11,6 @@ import copy
 import pyx.mat.mat as mat
 import pyx.rex as rex
 
-import struct
-
 def fan_triangulate(indices):
 	return [[indices[0], indices[i], indices[i+1]] for i in range(1, len(indices) - 1)]
 
