@@ -13,6 +13,8 @@ import pyx.rex as rex
 
 import struct
 
+def fan_triangulate(indices):
+	return [[indices[0], indices[i], indices[i+1]] for i in range(1, len(indices) - 1)]
 
 def triangles(indices):
 	result = []
@@ -283,10 +285,6 @@ class Skin():
 	def __init__(self, joints=None):
 		self.joints = [] if joints is None else joints	# list[ list[Node2D or Node3D] ]
 
-
-
-def fan_triangulate(indices):
-	return [[indices[0], indices[i], indices[i+1]] for i in range(1, len(indices) - 1)]
 
 
 #MESHING
