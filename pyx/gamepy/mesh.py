@@ -214,7 +214,6 @@ class GLB:
 
 	def add_skin(self, skin):
 		result = GLBElement(self.buffer, joints=[x.index for x in skin.joints])
-		#self.resources['skins'].append(result.add('inverseBindMatrices', [x.inv_global_TRS.T for x in skin.joints], 5126, 'MAT4'))
 		self.resources['skins'].append(result.add('inverseBindMatrices', [x.inv_TRS_to(skin.joints[0]).T for x in skin.joints], 5126, 'MAT4'))
 
 
