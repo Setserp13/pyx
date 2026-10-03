@@ -108,70 +108,7 @@ class bag(list):	#each item in bag is a tuple like (item, count)
 
 from itertools import product
 
-"""def For(start, stop, step=None, func=None):
-	if func is None:
-		raise ValueError("You must provide a function")
 
-	if step is None:
-		step = np.ones_like(start)
-	else:
-		step = np.array(step)
-
-	def recursive_loop(pos):
-		if len(pos) == len(start):
-			func(np.array(pos))
-			return
-		i = len(pos)
-		val = start[i]
-		while val < stop[i]:
-			recursive_loop(pos + [val])
-			val += step[i]
-
-	recursive_loop([])
-
-
-
-def Map(start, stop=None, step=None, func=None):
-    # Converte para listas de inteiros
-    start = list(map(int, start))
-    
-    if stop is None:
-        stop = start
-        start = [0] * len(stop)
-    else:
-        stop = list(map(int, stop))
-    
-    if step is None:
-        step = [1] * len(start)
-    else:
-        step = list(map(int, step))
-    
-    # Calcula o shape
-    shape = []
-    for s, e, st in zip(start, stop, step):
-        dim = (e - s + st - 1) // st
-        shape.append(dim)
-
-    # Inicializa a matriz com listas aninhadas
-    def create_nested_list(shape, level=0):
-        if level == len(shape) - 1:
-            return [None] * shape[level]
-        return [create_nested_list(shape, level + 1) for _ in range(shape[level])]
-
-    result = create_nested_list(shape)
-
-    # Função para acessar e modificar valor por índice múltiplo
-    def set_value(container, idx, value):
-        for i in idx[:-1]:
-            container = container[i]
-        container[idx[-1]] = value
-
-    # Preenche o resultado com os valores
-    for offset in product(*[range(s) for s in shape]):
-        index = [start[i] + step[i] * offset[i] for i in range(len(start))]
-        set_value(result, offset, func(*index))	#index))
-
-    return result"""
 
 """def flatten(lst):
 	result = []
@@ -295,28 +232,6 @@ List (a.k.a. Sequence) → Order matters, Duplicates matter.
 Bag (a.k.a. Multiset) → Order does not matter, Duplicates matter.
 Set → Order does not matter, Duplicates do not matter.
 """
-"""def ndfor(arr, func, index=None):	#it does work with jagged (ragged) arrays
-	if index is None:
-		index = []
-
-	if not isinstance(arr, (list)):	#, tuple)):
-		return func(arr, *index)
-
-	for i, item in enumerate(arr):
-		ndfor(item, func, index + [i])
-
-def ndmap(arr, func, index=None):	#it does work with jagged (ragged) arrays
-	if index is None:
-		index = []
-
-	if not isinstance(arr, (list)):	#, tuple)):
-		return func(arr, *index)
-
-	return [
-		ndmap(item, func, index + [i])
-		for i, item in enumerate(arr)
-	]"""
-
 
 def ifor(arr, func, index=None):	#indexed for.	iwalk
 	if index is None:
