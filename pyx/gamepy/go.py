@@ -19,7 +19,7 @@ class Texture2D():
 
 
 class Sprite2D(Node2D):
-	def __init__(self, texture=None, pivot=np.ones(2) * 0.5, region_rect = geo.rect(np.zeros(2), np.ones(2)), border=None, **kwargs):
+	def __init__(self, texture=None, pivot=np.ones(2) * 0.5, region_rect = geo.rect(np.zeros(2), np.ones(2)), border=None, offset=np.ones(2), tiling=np.ones(2), **kwargs):
 		self.texture = texture
 		self.pivot = pivot
 		self.region_rect = region_rect
@@ -28,6 +28,8 @@ class Sprite2D(Node2D):
 		self.self_modulate = Color(1.0, 1.0, 1.0, 1.0)
 		self.draw_mode = None	#[None, 'tiled', '9-slice']
 		#pivot, region_rect and border are normalized
+		self.offset = offset
+		self.tiling = tiling
 		super().__init__(**kwargs)
 
 	@property
