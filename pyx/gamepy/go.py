@@ -43,9 +43,6 @@ class Sprite2D(Node2D):
 	def border_pixels(self): return np.concatenate((self.border[:2] * self.texture.size, self.border[2:] * self.texture.size))
 
 	@property
-	def border_size(self): return np.concatenate((self.border[:2] * self.size, self.border[2:] * self.size))
-
-	@property
 	def region_rect_pixels(self): return geo.rect(np.zeros(2), self.texture.size).denormalize_rect(self.region_rect)
 
 class MeshInstance3D(Node3D):
