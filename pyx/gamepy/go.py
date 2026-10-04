@@ -8,18 +8,8 @@ import pyx.osx as osx
 from PIL import Image
 import uuid
 
-class Texture2D():
-	def __init__(self, path):
-		self.path = path
-		self.array = PILx.read_image(path)
-		self.id = uuid.uuid4()
-	
-	@property
-	def size(self): return np.array(self.array.shape[:2])
-
-
 class Sprite2D(Node2D):
-	def __init__(self, texture=None, pivot=np.ones(2) * 0.5, region_rect = geo.rect(np.zeros(2), np.ones(2)), border=None, offset=np.zeros(2), tiling=np.ones(2), **kwargs):
+	def __init__(self, texture=None, pivot=np.ones(2) * 0.5, region_rect = geo.rect(np.zeros(2), np.ones(2)), border=None, offset=np.zeros(2), tiling=np.ones(2), type='Sprite2D', **kwargs):
 		self.texture = texture
 		self.pivot = pivot
 		self.region_rect = region_rect
@@ -30,6 +20,7 @@ class Sprite2D(Node2D):
 		#pivot, region_rect and border are normalized
 		self.offset = offset
 		self.tiling = tiling
+		self.type = type
 		super().__init__(**kwargs)
 
 	@property
