@@ -25,9 +25,13 @@ class Sprite2D(Node2D):
 		super().__init__(**kwargs)
 
 	@property
-	def size(self): return (self.texture.size / self.ppu) * self.region_rect.size * self.scale
+	def base_size(self): return self.texture.size / self.ppu * self.region_rect.size
+	
+	@property
+	def size(self): return self.base_size * self.scale
+	
 	@size.setter
-	def size(self, value): self.scale = value / ((self.texture.size / self.ppu) * self.region_rect.size)
+	def size(self, value): self.scale = value / self.base_size
 
 	@property
 	def self_aabb(self): return geo.rect(np.zeros(2), self.size).set_position(self.pivot, self.position)
