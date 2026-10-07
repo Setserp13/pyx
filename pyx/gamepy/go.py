@@ -9,7 +9,7 @@ from PIL import Image
 import uuid
 
 class Sprite2D(Node2D):
-	def __init__(self, texture=None, pivot=np.ones(2) * 0.5, region_rect = geo.rect(np.zeros(2), np.ones(2)), border=None, offset=np.zeros(2), tiling=np.ones(2), type='Sprite2D', ppu=1., **kwargs):
+	def __init__(self, texture=None, pivot=np.ones(2) * 0.5, region_rect = geo.rect(np.zeros(2), np.ones(2)), border=None, offset=np.zeros(2), tiling=np.ones(2), type='Sprite2D', ppu=1., custom_size=None, **kwargs):
 		self.texture = texture
 		self.pivot = pivot
 		self.region_rect = region_rect
@@ -22,11 +22,16 @@ class Sprite2D(Node2D):
 		self.tiling = tiling
 		self.type = type
 		self.ppu = ppu
+		self.custom_size = custom_size
 		super().__init__(**kwargs)
 
 	@property
-	def base_size(self): return self.texture.size / self.ppu * self.region_rect.size
-	
+	def base_size(self):
+		if self.custom_size is not None:
+			return np.array(self.custom_size)
+
+		return self.texture.size / self.ppu * self.region_rect.size
+
 	@property
 	def size(self): return self.base_size * self.scale
 	
