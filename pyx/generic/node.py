@@ -74,7 +74,7 @@ class Node:
 		result = []
 		if self.parent != None:
 			result.append(self.parent)
-			result = result + self.parent.ancestors()
+			result.extend(self.parent.ancestors())
 		return result
 	
 	def forAncestors(self, func):
@@ -87,7 +87,7 @@ class Node:
 		result = []
 		for child in self.children:
 			result.append(child)
-			result = result + child.descendants()
+			result.extend(child.descendants())
 		return result
 	
 	def size(self):
