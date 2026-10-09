@@ -33,10 +33,12 @@ class Sprite2D(Node2D):
 		return self.texture.size / self.ppu * self.region_rect.size
 
 	@property
-	def size(self): return self.base_size * self.scale
+	def size(self): return self.base_size * self.global_scale	#self.scale
 	
 	@size.setter
-	def size(self, value): self.scale = value / self.base_size
+	def size(self, value):
+		self.global_scale = value / self.base_size
+		#self.scale = value / self.base_size
 
 	@property
 	def self_aabb(self): return geo.rect(np.zeros(2), self.size).set_position(self.pivot, self.global_position)
