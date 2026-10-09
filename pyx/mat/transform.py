@@ -234,15 +234,28 @@ class Transform(Node):
 	@property
 	def inv_global_TRS(self): return np.linalg.inv(self.global_TRS)
 
-	def TRS_to(self, parent):
+	"""def TRS_to(self, parent):
 		result = self.TRS
 	
 		while self != parent:
 			self = self.parent
 			result = self.TRS @ result
 	
+		return result"""
+	def TRS_to(self, parent):
+		result = self.TRS
+		node = self.parent
+	
+		while node is not None and node != parent:
+			result = node.TRS @ result
+			node = node.parent
+	
+		if node != parent:
+			raise ValueError("The specified node is not an ancestor")
+	
 		return result
 
+	
 	def inv_TRS_to(self, parent): return np.linalg.inv(self.TRS_to(parent))
 
 	@property
@@ -263,12 +276,23 @@ class Transform(Node):
 		p = np.append(point, 1)
 		return (self.global_TRS @ p)[:self.ndim]
 
-	@property
+	"""@property
 	def global_position(self): return self.to_global(self.position)
 
 	@global_position.setter
 	def global_position(self, value):
-		self.position = self.to_local(value)
+		self.position = self.to_local(value)"""
+
+	@property
+	def global_position(self): return self.global_TRS[:self.ndim, -1]
+
+	@global_position.setter
+	def global_position(self, value):
+		if self.parent is None:
+			self.position = np.array(value)
+		else:
+			self.position = self.parent.to_local(value)
+	
 
 	@property
 	def basis(self):	# BASIS (n×n matrix of world axes) -> upper-left n×n
