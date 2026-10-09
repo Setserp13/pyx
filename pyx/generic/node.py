@@ -7,8 +7,17 @@ class Node:
 		self.parent = None #Declare self.parent
 		self.setParent(parent) #Node
 		self.children = [] if children is None else children
+
+	def set_parent(self, parent):
+		if self.parent is not None:
+			self.parent.children.remove(self)
 	
-	def setParent(self, value):
+		self.parent = parent
+	
+		if parent is not None:
+			parent.children.append(self)
+	
+	def setParent(self, value): <-	#REMOVE THIS LATER
 		if self.parent != value:
 			if self.parent != None:
 				self.parent.children.remove(self)
