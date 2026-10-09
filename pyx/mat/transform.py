@@ -72,6 +72,16 @@ class Matrix:
 			[0, 0, 1]
 		])
 
+	def rotation_matrix(theta):
+		c = np.cos(theta)
+		s = np.sin(theta)
+		return np.array([
+			[c, -s],
+			[s,  c]
+		])
+
+
+	
 	@staticmethod
 	def R3(q):
 		x, y, z, w = q / np.linalg.norm(q)
@@ -81,6 +91,25 @@ class Matrix:
 			[2*(x*y + w*z), 1 - 2*(x*x + z*z), 2*(y*z - w*x)],
 			[2*(x*z - w*y), 2*(y*z + w*x), 1 - 2*(x*x + y*y)]
 		]))
+
+	@staticmethod
+	def decompose(matrix):	#decompose T R S
+		dim = matrix.shape[0] - 1
+		position = matrix[:dim, dim].copy()
+	
+		basis = matrix[:dim, :dim]
+		u, singular_values, vt = np.linalg.svd(basis)
+	
+		rotation = u @ vt
+		scale = np.diag(rotation.T @ basis).copy()
+	
+		# Keep the rotation matrix orientation-preserving.
+		if np.linalg.det(rotation) < 0:
+			u[:, -1] *= -1
+			rotation = u @ vt
+			scale = np.diag(rotation.T @ basis).copy()
+	
+		return position, rotation, scale	#(dim,), (dim, dim), (dim,)
 
 
 class quaternion(np.ndarray):
@@ -305,10 +334,32 @@ class Transform(Node):
 		else:
 			self.scale = value / self.parent.global_scale
 
-	
 	@property
 	def basis(self):	# BASIS (n×n matrix of world axes) -> upper-left n×n
 		return self.global_TRS[:self.ndim, :self.ndim]
+
+	@property
+	def rotation_matrix(self):
+		raise NotImplementedError
+	
+	@rotation_matrix.setter
+	def rotation_matrix(self, value):
+		raise NotImplementedError
+	
+	def set_parent(self, parent, world_stays=True):
+		global_trs = self.global_TRS.copy() if world_stays else None
+
+		super().set_parent(parent)
+	
+		if world_stays:
+			local_trs = (
+				np.linalg.inv(parent.global_TRS) @ global_trs
+				if parent is not None
+				else global_trs
+			)
+	
+			self.position, self.rotation_matrix, self.scale = Matrix.decompose(local_trs)
+
 
 
 class Node2D(Transform):	#Node):
@@ -324,6 +375,14 @@ class Node2D(Transform):	#Node):
 		rotation = math.atan2(t['R'][1, 0], t['R'][0, 0])
 		#print(rotation)
 		return cls(position=t['T'], rotation=rotation, scale=t['S'])
+
+	@property
+	def rotation_matrix(self): return self.R
+	
+	@rotation_matrix.setter
+	def rotation_matrix(self, value):
+		self.rotation = np.arctan2(value[1, 0], value[0, 0])
+
 
 
 
