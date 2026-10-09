@@ -17,7 +17,7 @@ class Node:
 		if parent is not None:
 			parent.children.append(self)
 	
-	def setParent(self, value): <-	#REMOVE THIS LATER
+	def setParent(self, value):	# <- REMOVE THIS LATER
 		if self.parent != value:
 			if self.parent != None:
 				self.parent.children.remove(self)
