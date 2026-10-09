@@ -39,7 +39,8 @@ class Sprite2D(Node2D):
 	def size(self, value): self.scale = value / self.base_size
 
 	@property
-	def self_aabb(self): return geo.rect(np.zeros(2), self.size).set_position(self.pivot, self.position)
+	def self_aabb(self): return geo.rect(np.zeros(2), self.size).set_position(self.pivot, self.global_position)
+	#def self_aabb(self): return geo.rect(np.zeros(2), self.size).set_position(self.pivot, self.position)
 
 	@property
 	def aabb(self): return geo.aabb([x.self_aabb for x in [self, *self.descendants()] if hasattr(x, 'self_aabb')])
