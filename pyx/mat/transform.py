@@ -293,7 +293,19 @@ class Transform(Node):
 		else:
 			self.position = self.parent.to_local(value)
 	
+	@property
+	def global_scale(self):
+		return np.linalg.norm(self.basis, axis=0)
+	
+	@global_scale.setter
+	def global_scale(self, value):
+		value = np.array(value)
+		if self.parent is None:
+			self.scale = value
+		else:
+			self.scale = value / self.parent.global_scale
 
+	
 	@property
 	def basis(self):	# BASIS (n×n matrix of world axes) -> upper-left n×n
 		return self.global_TRS[:self.ndim, :self.ndim]
