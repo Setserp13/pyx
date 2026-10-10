@@ -69,24 +69,6 @@ class Color(np.ndarray):
 	@property
 	def hex(self): return '#' + ''.join(f'{v:02x}' for v in self.rgba32)
 
-	"""
-	@property
-	def rgb(self): return np.array(self[:3])
-
-	@property
-	def rgba(self): return np.array(self[:4])
-	
-	@property
-	def rgb255(self): return (self.rgb * 255).astype(int)
-
-	@property
-	def rgba255(self): return (self.rgba * 255).astype(int)
-
-	@property
-	def hex(self):
-		r, g, b, a = self.rgba255
-		return f"#{r:02x}{g:02x}{b:02x}{a:02x}""""
-
 	# -------- Helpers -------- #
 
 	def with_alpha(self, a):
