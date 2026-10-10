@@ -114,7 +114,7 @@ class Color(np.ndarray):
 		return np.clip(np.array([*rgb, self[3]]), 0.0, 1.0)
 
 
-def gray(value, a=1.0): return Color([value, value, value, a])
+def gray(value, a=1.0): return Color(value, value, value, a)
 
 def shade(color, amt):
 	#print(color)
