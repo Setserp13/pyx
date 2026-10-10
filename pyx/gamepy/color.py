@@ -3,44 +3,50 @@ from PIL import ImageColor
 import re
 
 class Color(np.ndarray):
-	
+
 	def __new__(cls, *arr):
-		arr = np.asarray(arr)
+		arr = np.asarray(arr, dtype=float).flatten()
 		if arr.size == 3:
 			arr = np.append(arr, 1.)
 		return arr.view(cls)
-	
+
 	@classmethod
 	def parse(cls, value):
 		if isinstance(value, (list, tuple, np.ndarray)):
-			value = np.array(value, dtype=float)
-			if len(value) not in (3, 4):
+			value = np.asarray(value, dtype=float)
+			if value.size not in (3, 4):
 				raise ValueError("Color must have 3 or 4 values")
-			if len(value) == 3:
+			if value.size == 3:
 				value = np.append(value, 1.)
 			value[:3] /= 255. if value[:3].max() > 1 else 1.
 			value[3] /= 255. if value[3] > 1 else 1.
 			return cls(*value)
-		if isinstance(value, str) and value.startswith("rgba"):
-			nums = np.array(re.findall(r'[\d.]+', value), dtype=float)
-			return cls(*(np.append(nums[:3] / 255., nums[3:4] if len(nums) > 3 else 1.)))
-		if isinstance(value, str) and value.startswith("#") and len(value) == 9:	#FROM HEX
-			return cls.from_hex(value)
-		return cls.from_name(value)	#FROM NAME
-	
+
+		if isinstance(value, str):
+			if value.lower() in ('none', 'transparent'):
+				return cls(*np.zeros(4))
+			if value.startswith('#'):
+				return cls.from_hex(value)
+			if value.startswith(('rgb(', 'rgba(')):
+				nums = np.array(re.findall(r'[\d.]+', value), dtype=float)
+				nums[:3] /= 255.
+				return cls(*(np.append(nums[:3], nums[3:4] if len(nums) > 3 else 1.)))
+			return cls.from_name(value)
+
+		raise TypeError(f"Unsupported color type: {type(value).__name__}")
+
 	@classmethod
 	def from_name(cls, value):
-		if value.lower() in ('none', 'transparent'):
-			return cls(*np.zeros(4))
 		return cls(*np.array(ImageColor.getrgb(value)) / 255., 1.)
 
 	@classmethod
 	def from_hex(cls, value):
-		if len(value) == 7:
+		value = value.lstrip('#')
+		if len(value) == 6:
 			value += 'ff'
-		return cls(*(int(value[i:i+2], 16) / 255. for i in range(1, 9, 2)))
-	
-	# -------- Properties -------- #
+		if len(value) != 8:
+			raise ValueError("Hex color must be #RRGGBB or #RRGGBBAA")
+		return cls(*(int(value[i:i+2], 16) / 255. for i in range(0, 8, 2)))
 
 	@property
 	def r(self): return float(self[0])
@@ -52,16 +58,16 @@ class Color(np.ndarray):
 	def b(self): return float(self[2])
 
 	@property
-	def a(self): return float(self[3])	#if len(self) > 3 else 1.0
-
-	@property
-	def rgba(self): return self[:4]
+	def a(self): return float(self[3])
 
 	@property
 	def rgb(self): return self[:3]
 
 	@property
-	def rgba32(self): return (self.rgba * 255).astype(int)
+	def rgba(self): return self[:4]
+
+	@property
+	def rgba32(self): return np.clip(self.rgba * 255, 0, 255).astype(int)
 
 	@property
 	def rgb32(self): return self.rgba32[:3]
