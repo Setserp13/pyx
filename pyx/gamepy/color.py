@@ -3,31 +3,6 @@ from PIL import ImageColor
 import re
 
 class Color(np.ndarray):
-	"""
-	Color stored as float32 RGBA in range 0-1.
-	Subclass of numpy.ndarray.
-	"""
-
-	"""def __new__(cls, *args):
-		# Parse input
-		if len(args) == 1: # hex string or color name
-			r, g, b, *a = cls._parse_color(args[0])
-			a = a[0] if a else 1.0
-		elif len(args) in (3, 4):
-			r, g, b = args[:3]
-			a = args[3] if len(args) == 4 else 1.0
-		else:
-			raise ValueError("Color expects hex, name, or R,G,B[,A]")
-		
-		# Convert to array
-		arr = np.array([r, g, b, a], dtype=np.float32)
-
-		if arr.max() > 1:
-			arr /= 255.0
-		
-		# Create subclassed ndarray
-		obj = np.asarray(arr).view(cls)
-		return obj"""
 	
 	def __new__(cls, *arr):
 		arr = np.asarray(arr)
@@ -35,46 +10,6 @@ class Color(np.ndarray):
 			arr = np.append(arr, 1.)
 		return arr.view(cls)
 	
-	@classmethod
-	def _parse_color(cls, value):
-		if isinstance(value, str):
-			if value.lower() in ['none']:
-				return 0., 0., 0., 0.
-		# --- Case 1: list/tuple ---
-		if isinstance(value, (list, tuple, np.ndarray)):
-			if len(value) not in (3, 4):
-				raise ValueError("Color list/tuple must have 3 or 4 values")
-			r, g, b = value[:3]
-			a = value[3] if len(value) == 4 else 1.0
-			# Normalize if needed
-			if max(r, g, b) > 1:
-				r /= 255.0
-				g /= 255.0
-				b /= 255.0
-			if a > 1:
-				a /= 255.0
-			return float(r), float(g), float(b), float(a)
-		# --- Case 2: rgba() string ---
-		if isinstance(value, str) and value.startswith("rgba"):
-			nums = re.findall(r"[\d.]+", value)
-			r, g, b = map(float, nums[:3])
-			a = float(nums[3]) if len(nums) > 3 else 1.0
-			return r/255.0, g/255.0, b/255.0, a
-		# --- Case 3: hex with alpha (#RRGGBBAA) ---
-		if isinstance(value, str) and value.startswith("#") and len(value) == 9:
-			r = int(value[1:3], 16)
-			g = int(value[3:5], 16)
-			b = int(value[5:7], 16)
-			a = int(value[7:9], 16)
-			return r/255.0, g/255.0, b/255.0, a/255.0
-		# --- Default: let PIL parse ---
-		r, g, b = ImageColor.getrgb(value)
-		return r/255.0, g/255.0, b/255.0, 1.0
-
-	"""@classmethod
-	def parse(cls, value):
-		return cls(*cls._parse_color(value))"""
-
 	@classmethod
 	def parse(cls, value):
 		if isinstance(value, (list, tuple, np.ndarray)):
