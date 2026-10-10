@@ -8,9 +8,9 @@ class Color(np.ndarray):
 	Subclass of numpy.ndarray.
 	"""
 
-	def __new__(cls, *args):
+	"""def __new__(cls, *args):
 		# Parse input
-		"""if len(args) == 1: # hex string or color name
+		if len(args) == 1: # hex string or color name
 			r, g, b, *a = cls._parse_color(args[0])
 			a = a[0] if a else 1.0
 		elif len(args) in (3, 4):
@@ -28,7 +28,8 @@ class Color(np.ndarray):
 		# Create subclassed ndarray
 		obj = np.asarray(arr).view(cls)
 		return obj"""
-
+	
+	def __new__(cls, *arr):
 		arr = np.asarray(arr)
 		if arr.size == 3:
 			arr = np.append(arr, 1.)
