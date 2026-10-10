@@ -10,7 +10,7 @@ class Color(np.ndarray):
 
 	def __new__(cls, *args):
 		# Parse input
-		if len(args) == 1: # hex string or color name
+		"""if len(args) == 1: # hex string or color name
 			r, g, b, *a = cls._parse_color(args[0])
 			a = a[0] if a else 1.0
 		elif len(args) in (3, 4):
@@ -27,10 +27,13 @@ class Color(np.ndarray):
 		
 		# Create subclassed ndarray
 		obj = np.asarray(arr).view(cls)
-		return obj
+		return obj"""
 
-
-
+		arr = np.asarray(arr)
+		if arr.size == 3:
+			arr = np.append(arr, 1.)
+		return arr.view(cls)
+	
 	@classmethod
 	def _parse_color(cls, value):
 		if isinstance(value, str):
@@ -67,9 +70,40 @@ class Color(np.ndarray):
 		r, g, b = ImageColor.getrgb(value)
 		return r/255.0, g/255.0, b/255.0, 1.0
 
+	"""@classmethod
+	def parse(cls, value):
+		return cls(*cls._parse_color(value))"""
+
 	@classmethod
 	def parse(cls, value):
-		return cls(*cls._parse_color(value))
+		if isinstance(value, (list, tuple, np.ndarray)):
+			value = np.array(value, dtype=float)
+			if len(value) not in (3, 4):
+				raise ValueError("Color must have 3 or 4 values")
+			if len(value) == 3:
+				value = np.append(value, 1.)
+			value[:3] /= 255. if value[:3].max() > 1 else 1.
+			value[3] /= 255. if value[3] > 1 else 1.
+			return cls(*value)
+		if isinstance(value, str) and value.startswith("rgba"):
+			nums = np.array(re.findall(r'[\d.]+', value), dtype=float)
+			return cls(*(np.append(nums[:3] / 255., nums[3:4] if len(nums) > 3 else 1.)))
+		if isinstance(value, str) and value.startswith("#") and len(value) == 9:	#FROM HEX
+			return cls.from_hex(value)
+		return cls.from_name(value)	#FROM NAME
+	
+	@classmethod
+	def from_name(cls, value):
+		if value.lower() in ('none', 'transparent'):
+			return cls(*np.zeros(4))
+		return cls(*np.array(ImageColor.getrgb(value)) / 255., 1.)
+
+	@classmethod
+	def from_hex(cls, value):
+		if len(value) == 7:
+			value += 'ff'
+		return cls(*(int(value[i:i+2], 16) / 255. for i in range(1, 9, 2)))
+	
 	# -------- Properties -------- #
 
 	@property
