@@ -55,11 +55,27 @@ class Color(np.ndarray):
 	def a(self): return float(self[3])	#if len(self) > 3 else 1.0
 
 	@property
+	def rgba(self): return self[:4]
+
+	@property
+	def rgb(self): return self[:3]
+
+	@property
+	def rgba32(self): return (self.rgba * 255).astype(int)
+
+	@property
+	def rgb32(self): return self.rgba32[:3]
+
+	@property
+	def hex(self): return '#' + ''.join(f'{v:02x}' for v in self.rgba32)
+
+	"""
+	@property
 	def rgb(self): return np.array(self[:3])
 
 	@property
 	def rgba(self): return np.array(self[:4])
-
+	
 	@property
 	def rgb255(self): return (self.rgb * 255).astype(int)
 
@@ -69,7 +85,7 @@ class Color(np.ndarray):
 	@property
 	def hex(self):
 		r, g, b, a = self.rgba255
-		return f"#{r:02x}{g:02x}{b:02x}{a:02x}"
+		return f"#{r:02x}{g:02x}{b:02x}{a:02x}""""
 
 	# -------- Helpers -------- #
 
