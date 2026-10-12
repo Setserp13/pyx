@@ -1206,7 +1206,7 @@ class polyline(points):
 
 	def incident_edges(p, vertex):
 		return [
-			line(List.arange(p, 2, start=i, closed=True))
+			line(List.arange(p, 2, start=i, cycle=True))
 			for i in [vertex - 1, vertex]
 			if p.closed or (0 <= i < len(p) - 1)
 		]
