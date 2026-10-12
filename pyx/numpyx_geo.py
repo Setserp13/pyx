@@ -1424,7 +1424,7 @@ class polyline(points):
 				result.append(v[i] + x * width * (1.0 - align))
 				result.insert(0, v[i] - x * width * align)
 		elif join == 'miter':
-			angles = [x.size() for x in v.vertex_angles]
+			angles = [x.size for x in v.vertex_angles]
 			if not v.closed:
 				angles = [math.pi] + angles + [math.pi]
 			for i, x in enumerate(v.vertex_normals):
