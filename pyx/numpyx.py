@@ -115,6 +115,11 @@ def subdivide(a, b, n):
 		return [a]
 	return [lerp(a, b, i / (n - 1)) for i in range(n)]
 
+def subdivide_by_size(a, b, size):
+	n = max(1, ceil(distance(a, b) / size) + 1)
+	return subdivide(a, b, n)
+
+
 def linear_layout(n, offset=np.zeros(3), dir=np.array([1, 0, 0]), cell_size=1, align=0.5):
 	dir = normalize(dir)
 	size = cell_size * (n - 1)
