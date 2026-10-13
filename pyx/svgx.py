@@ -585,7 +585,12 @@ def text_to_svg(obj, **kwargs): #In SVG, the y attribute of a <text> element ref
 
 
 def transform_to_svg(obj):	#order matters
-	return f'translate({obj.position[0]} {obj.position[1]}) scale({obj.scale[0]} {obj.scale[1]}) rotate({math.degrees(obj.rotation)})'
+	#return f'translate({obj.position[0]} {obj.position[1]}) scale({obj.scale[0]} {obj.scale[1]}) rotate({math.degrees(obj.rotation)})'
+	return (
+		f'translate({obj.position[0]} {obj.position[1]}) '
+		f'rotate({math.degrees(obj.rotation)}) '
+		f'scale({obj.scale[0]} {obj.scale[1]})'
+	)
 
 Node2D.to_svg = lambda self: transform_to_svg(self)
 
