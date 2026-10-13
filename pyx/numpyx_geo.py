@@ -815,6 +815,8 @@ class line(points):	#start = self[0], end = self[1]
 	
 	def subdivide(self, n): return polyline(npx.subdivide(self[0], self[1], n+1), closed=False).edges
 
+	def subdivide_by_size(self, size): return polyline(npx.subdivide(self[0], self[1], size), closed=False).edges
+
 	def set_position(self, pivot, value):	#pivot is normalized and value is not normalized
 		pivot = npx.lerp(*self, pivot)
 		delta = value - pivot
