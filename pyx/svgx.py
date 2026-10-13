@@ -220,7 +220,7 @@ def polybezier_from_svg(obj):
 		prev_cmd = cmd
 
 	finish()
-	return paths
+	return geo.group(paths)
 
 def parse_svg_transform(transform):
 	M = np.eye(3)
