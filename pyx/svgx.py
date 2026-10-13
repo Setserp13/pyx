@@ -54,7 +54,7 @@ def parse_commands(s):
 	if c: r.append((c,*map(float,a)))
 	return r
 
-def polybezier_from_svg(obj):
+"""def polybezier_from_svg(obj):
 	d = obj.get('d')
 	commands = parse_commands(d)
 	points = []
@@ -101,8 +101,126 @@ def polybezier_from_svg(obj):
 		pos = v[-1]
 	#print(points)
 	#miss Aa
-	return geo.polybezier(points, endpoints=endpoints, closed=closed)
+	return geo.polybezier(points, endpoints=endpoints, closed=closed)"""
+def polybezier_from_svg(obj):
+	d = obj.get('d')
+	commands = parse_commands(d)
 
+	paths = []
+	points = []
+	endpoints = []
+	pos = np.zeros(2)
+	start = pos.copy()
+	prev_cmd = ''
+	prev_control = None
+
+	def finish(closed=False):
+		if points:
+			paths.append(geo.polybezier(
+				points.copy(),
+				endpoints=endpoints.copy(),
+				closed=closed
+			))
+		points.clear()
+		endpoints.clear()
+
+	for cmd, *args in commands:
+		upper = cmd.upper()
+		relative = cmd.islower()
+
+		if upper == 'Z':
+			pos = start.copy()
+			finish(closed=True)
+			prev_control = None
+			prev_cmd = cmd
+			continue
+
+		if upper == 'M':
+			# Start a new, independent subpath.
+			finish()
+			coords = [np.array(x, dtype=float)
+				for x in List.batch(args, 2)]
+
+			if not coords:
+				continue
+
+			if relative:
+				coords = [pos + p for p in coords]
+
+			pos = coords[0]
+			start = pos.copy()
+			points.append(pos.copy())
+			endpoints.append(0)
+
+			# Additional pairs in M are implicit L commands.
+			for p in coords[1:]:
+				points.append(p.copy())
+				endpoints.append(len(points) - 1)
+				pos = p.copy()
+
+			prev_control = None
+			prev_cmd = cmd
+			continue
+
+		if upper in 'LQCTSA':
+			# A is not implemented here.
+			if upper == 'A':
+				raise NotImplementedError('SVG arc commands (A/a)')
+
+			v = [np.array(x, dtype=float)
+				for x in List.batch(args, 2)]
+
+			if relative:
+				v = [pos + p for p in v]
+
+		elif upper == 'H':
+			v = [np.array([x, pos[1]], dtype=float) for x in args]
+			if relative:
+				v = [np.array([pos[0] + x, pos[1]]) for x in args]
+
+		elif upper == 'V':
+			v = [np.array([pos[0], y], dtype=float) for y in args]
+			if relative:
+				v = [np.array([pos[0], pos[1] + y]) for y in args]
+
+		else:
+			raise ValueError(f'Unsupported SVG command: {cmd}')
+
+		if upper in 'TS':
+			if prev_cmd.upper() in ('Q', 'T') and prev_control is not None:
+				control = 2 * pos - prev_control
+			else:
+				control = pos.copy()
+
+			v.insert(0, control)
+
+		k = {
+			'L': 1, 'H': 1, 'V': 1,
+			'Q': 2, 'T': 2,
+			'C': 3, 'S': 3,
+		}[upper]
+
+		for i in range(0, len(v), k):
+			segment = v[i:i + k]
+			if len(segment) != k:
+				raise ValueError(f'Invalid argument count for {cmd}')
+
+			points.extend(p.copy() for p in segment)
+			endpoints.append(len(points) - 1)
+
+			if upper in ('Q', 'T'):
+				prev_control = segment[-2].copy()
+			elif upper in ('C', 'S'):
+				prev_control = segment[-2].copy()
+			else:
+				prev_control = None
+
+			pos = segment[-1].copy()
+
+		prev_cmd = cmd
+
+	finish()
+	return paths
 
 def parse_svg_transform(transform):
 	M = np.eye(3)
