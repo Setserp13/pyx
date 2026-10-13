@@ -588,7 +588,7 @@ def transform_to_svg(obj):	#order matters
 	#return f'translate({obj.position[0]} {obj.position[1]}) scale({obj.scale[0]} {obj.scale[1]}) rotate({math.degrees(obj.rotation)})'
 	return (
 		f'translate({obj.position[0]} {obj.position[1]}) '
-		f'rotate({math.degrees(obj.rotation)} {obj.position[0]} {obj.position[1]}) '
+		f'rotate({math.degrees(obj.rotation)}) '
 		f'scale({obj.scale[0]} {obj.scale[1]})'
 	)
 
