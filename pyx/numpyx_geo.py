@@ -1591,7 +1591,7 @@ class bezier(points):
 
 	def sample(p, steps): return polyline([p.get_point(t) for t in np.linspace(0.0, 1.0, steps)], closed=False)
 
-	def length(p, resolution=100): return p.sample(resolution).perimeter(closed=False)
+	def length(p, resolution=100): return p.sample(resolution).perimeter
 
 	def sample_by_size(p, size, resolution=100):
 		length = p.length(resolution)
