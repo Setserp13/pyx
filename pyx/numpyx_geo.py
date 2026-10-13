@@ -1183,7 +1183,7 @@ class polyline(points):
 	def lengths(p): return np.array([x.length for x in p.edges])
 
 	@property
-	def perimeter(p): return sum(p.lengths())
+	def perimeter(p): return sum(p.lengths)
 	
 	@property
 	def dual(p): return polyline([x.midpoint for x in p.edges], closed=p.closed)	#midpoint polygon
