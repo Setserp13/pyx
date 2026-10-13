@@ -108,25 +108,15 @@ class bag(list):	#each item in bag is a tuple like (item, count)
 
 from itertools import product
 
-
-
-"""def flatten(lst):
-	result = []
-	for item in lst:
-		if isinstance(item, list):
-			result.extend(flatten(item))
-		else:
-			result.append(item)
-	return result"""
-
 from collections.abc import Iterable
-def flatten(ls, times=1):
-	if times < 1:
+
+def flatten(ls, times=None):	#1):
+	if times is not None and times < 1:
 		return ls
 	result = []
 	for item in ls:
 		if isinstance(item, Iterable):
-			result.extend(flatten(item, times-1))
+			result.extend(flatten(item, times - 1 if times is not None else None))
 		else:
 			result.append(item)
 	return result
