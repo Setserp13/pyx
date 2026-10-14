@@ -26,6 +26,11 @@ class Sprite2D(Node2D):
 		super().__init__(**kwargs)
 
 	@property
+	def material(self): return self.attrib.get('material', None)
+	#@material.setter
+	#def material(self, value): self.set(material=value)
+	
+	@property
 	def base_size(self):
 		if self.custom_size is not None:
 			return np.array(self.custom_size)
