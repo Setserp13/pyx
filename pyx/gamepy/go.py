@@ -31,8 +31,8 @@ class Sprite2D(Node2D):
 		self.custom_size = custom_size
 		super().__init__(**kwargs)
 		self.attrib = {}
-		for name in ('material', 'texture'):
-			setattr(self.__class__, name, make_property(name))
+		material = make_property('material')
+		texture = make_property('texture')
 	
 	"""@property
 	def material(self): return self.attrib.get('material', None)
