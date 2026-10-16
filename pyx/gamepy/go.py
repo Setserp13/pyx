@@ -32,7 +32,7 @@ class Sprite2D(Node2D):
 		super().__init__(**kwargs)
 
 		for name in ('material', 'texture'):
-			setattr(type(self), name, make_property(name))
+			setattr(self.__class__, name, make_property(name))
 	
 	"""@property
 	def material(self): return self.attrib.get('material', None)
