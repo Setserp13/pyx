@@ -35,12 +35,15 @@ class Sprite2D(Node2D):
 		super().__init__(**kwargs)
 		self.attrib = {}
 
-	material = make_property('material')
-	texture = make_property('texture')
-	"""@property
+	#material = make_property('material')
+	#texture = make_property('texture')
+	@property
 	def material(self): return self.attrib.get('material', None)
+
+	@property
+	def texture(self): return self.attrib.get('texture', None)
 	#@material.setter
-	#def material(self, value): self.set(material=value)"""
+	#def material(self, value): self.set(material=value)
 	
 	@property
 	def base_size(self):
