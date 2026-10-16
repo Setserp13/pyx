@@ -19,7 +19,7 @@ def make_property(name):
 
 class Sprite2D(Node2D):
 	def __init__(self, texture=None, pivot=np.ones(2) * 0.5, region_rect = geo.rect(np.zeros(2), np.ones(2)), border=None, offset=np.zeros(2), tiling=np.ones(2), type='Sprite2D', ppu=1., custom_size=None, **kwargs):
-		self.texture = texture
+		#self.texture = texture
 		self.pivot = pivot
 		self.region_rect = region_rect
 		self.border = border	#used by 9-slice	#l, t, r, b
