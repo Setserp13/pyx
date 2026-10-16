@@ -8,6 +8,12 @@ import pyx.osx as osx
 from PIL import Image
 import uuid
 
+def make_property(self, name):
+	return property(
+		lambda self: self.attrib.get(name, None),
+		lambda self, value: self.attrib.__setitem__(name, value)
+	)
+
 class Sprite2D(Node2D):
 	def __init__(self, texture=None, pivot=np.ones(2) * 0.5, region_rect = geo.rect(np.zeros(2), np.ones(2)), border=None, offset=np.zeros(2), tiling=np.ones(2), type='Sprite2D', ppu=1., custom_size=None, **kwargs):
 		self.texture = texture
@@ -25,10 +31,13 @@ class Sprite2D(Node2D):
 		self.custom_size = custom_size
 		super().__init__(**kwargs)
 
-	@property
+		for k in ('material', 'texture'):
+			make_property(self, k)
+	
+	"""@property
 	def material(self): return self.attrib.get('material', None)
 	#@material.setter
-	#def material(self, value): self.set(material=value)
+	#def material(self, value): self.set(material=value)"""
 	
 	@property
 	def base_size(self):
