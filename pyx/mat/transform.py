@@ -135,7 +135,6 @@ class quaternion(np.ndarray):
 		t = 2 * np.cross(q, v)
 		return np.array(v) + self[3] * t + np.cross(q, t)
 
-	@staticmethod
 	def to_euler(q):
 		x, y, z, w = q
 	
