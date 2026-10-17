@@ -125,6 +125,10 @@ class quaternion(np.ndarray):
 		x, y, z, w = q
 		return quaternion([-x, -y, -z, w])
 
+	@property
+	def inverse(q):	#For a unit quaternion, your conjugate is also its inverse.
+		return q.conjugate / np.dot(q, q)
+	
 	def rotate(self, v):
 		# v é um vetor 3D (lista/tupla/np.array)
 		q = np.array(self[:3])
