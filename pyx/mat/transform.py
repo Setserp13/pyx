@@ -339,6 +339,10 @@ class Transform(Node):
 		return self.global_TRS[:self.ndim, :self.ndim]
 
 	@property
+	def local_basis(self):
+		return self.TRS[:self.ndim, :self.ndim]
+	
+	@property
 	def rotation_matrix(self):
 		raise NotImplementedError
 	
