@@ -376,24 +376,24 @@ class Transform(Node):
 	def set_parent(self, parent, world_stays=True):
 		self._preserve_world_transform(
 			[self],
-			lambda: super(type(self), self).set_parent(parent),
+			lambda: Node.set_parent(parent),
 			world_stays
 		)
 	
 	
-	def append(self, child, world_stays=False):
+	def append(self, child, world_stays=True):
 		self._preserve_world_transform(
 			[child],
-			lambda: super(type(self), self).append(child),
+			lambda: Node.append(self, child),
 			world_stays
 		)
 	
 	
-	def extend(self, children, world_stays=False):
+	def extend(self, children, world_stays=True):
 		children = list(children)
 		self._preserve_world_transform(
 			children,
-			lambda: super(type(self), self).extend(children),
+			lambda: Node.extend(self, children),
 			world_stays
 		)
 
