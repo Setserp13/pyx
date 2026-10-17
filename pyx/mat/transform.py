@@ -360,42 +360,29 @@ class Transform(Node):
 	
 			self.position, self.rotation_matrix, self.scale = Matrix.decompose(local_trs)"""
 
-	def _preserve_world_transform(self, objects, operation, world_stays=True):
+	def _reparent(self, objects, operation):
 		objects = list(objects)
-		global_trs = [x.global_TRS.copy() for x in objects] if world_stays else None
+		global_trs = [x.global_TRS.copy() for x in objects]
 	
 		operation()
 	
-		if world_stays:
-			for x, trs in zip(objects, global_trs):
-				parent = x.parent
-				local_trs = np.linalg.inv(parent.global_TRS) @ trs if parent else trs
-				x.position, x.rotation_matrix, x.scale = Matrix.decompose(local_trs)
+		for x, trs in zip(objects, global_trs):
+			parent = x.parent
+			local_trs = np.linalg.inv(parent.global_TRS) @ trs if parent else trs
+			x.position, x.rotation_matrix, x.scale = Matrix.decompose(local_trs)
 	
 	
-	def set_parent(self, parent, world_stays=True):
-		self._preserve_world_transform(
-			[self],
-			lambda: Node.set_parent(self, parent),
-			world_stays
-		)
+	def set_parent_global(self, parent):
+		self._reparent([self], lambda: super(Node, self).set_parent(parent))
 	
 	
-	def append(self, child, world_stays=True):
-		self._preserve_world_transform(
-			[child],
-			lambda: Node.append(self, child),
-			world_stays
-		)
+	def append_global(self, child):
+		self._reparent([child], lambda: super(Node, self).append(child))
 	
 	
-	def extend(self, children, world_stays=True):
+	def extend_global(self, children):
 		children = list(children)
-		self._preserve_world_transform(
-			children,
-			lambda: Node.extend(self, children),
-			world_stays
-		)
+		self._reparent(children, lambda: super(Node, self).extend(children))
 
 class Node2D(Transform):	#Node):
 	def __init__(self, position=np.zeros(2), rotation=0.0, scale=np.ones(2), **kwargs):
