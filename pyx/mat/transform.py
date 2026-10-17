@@ -360,7 +360,7 @@ class Transform(Node):
 	
 			self.position, self.rotation_matrix, self.scale = Matrix.decompose(local_trs)"""
 
-	def _reparent(self, objects, operation):
+	def _reparent(self, objects, operation):	#WORLD POSITION STAYS
 		objects = list(objects)
 		global_trs = [x.global_TRS.copy() for x in objects]
 	
@@ -373,16 +373,16 @@ class Transform(Node):
 	
 	
 	def set_parent_global(self, parent):
-		self._reparent([self], lambda: super(Node, self).set_parent(parent))
+		self._reparent([self], lambda: Node.set_parent(self, parent))
 	
 	
 	def append_global(self, child):
-		self._reparent([child], lambda: super(Node, self).append(child))
+		self._reparent([child], lambda: Node.append(self, child))
 	
 	
 	def extend_global(self, children):
 		children = list(children)
-		self._reparent(children, lambda: super(Node, self).extend(children))
+		self._reparent(children, lambda: Node.extend(self, children))
 
 class Node2D(Transform):	#Node):
 	def __init__(self, position=np.zeros(2), rotation=0.0, scale=np.ones(2), **kwargs):
