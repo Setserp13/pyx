@@ -346,7 +346,7 @@ class Transform(Node):
 	def rotation_matrix(self, value):
 		raise NotImplementedError
 	
-	def set_parent(self, parent, world_stays=True):
+	"""def set_parent(self, parent, world_stays=True):
 		global_trs = self.global_TRS.copy() if world_stays else None
 
 		super().set_parent(parent)
@@ -358,9 +358,44 @@ class Transform(Node):
 				else global_trs
 			)
 	
-			self.position, self.rotation_matrix, self.scale = Matrix.decompose(local_trs)
+			self.position, self.rotation_matrix, self.scale = Matrix.decompose(local_trs)"""
 
-
+	def _preserve_world_transform(self, objects, operation, world_stays=True):
+		objects = list(objects)
+		global_trs = [x.global_TRS.copy() for x in objects] if world_stays else None
+	
+		operation()
+	
+		if world_stays:
+			for x, trs in zip(objects, global_trs):
+				parent = x.parent
+				local_trs = np.linalg.inv(parent.global_TRS) @ trs if parent else trs
+				x.position, x.rotation_matrix, x.scale = Matrix.decompose(local_trs)
+	
+	
+	def set_parent(self, parent, world_stays=True):
+		self._preserve_world_transform(
+			[self],
+			lambda: super(type(self), self).set_parent(parent),
+			world_stays
+		)
+	
+	
+	def append(self, child, world_stays=False):
+		self._preserve_world_transform(
+			[child],
+			lambda: super(type(self), self).append(child),
+			world_stays
+		)
+	
+	
+	def extend(self, children, world_stays=False):
+		children = list(children)
+		self._preserve_world_transform(
+			children,
+			lambda: super(type(self), self).extend(children),
+			world_stays
+		)
 
 class Node2D(Transform):	#Node):
 	def __init__(self, position=np.zeros(2), rotation=0.0, scale=np.ones(2), **kwargs):
