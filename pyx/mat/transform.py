@@ -376,7 +376,7 @@ class Transform(Node):
 	def set_parent(self, parent, world_stays=True):
 		self._preserve_world_transform(
 			[self],
-			lambda: Node.set_parent(parent),
+			lambda: Node.set_parent(self, parent),
 			world_stays
 		)
 	
