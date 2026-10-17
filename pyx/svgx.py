@@ -54,54 +54,7 @@ def parse_commands(s):
 	if c: r.append((c,*map(float,a)))
 	return r
 
-"""def polybezier_from_svg(obj):
-	d = obj.get('d')
-	commands = parse_commands(d)
-	points = []
-	endpoints = []
-	closed = False
-	pos = np.zeros(2)
-	for t in commands:
-		cmd, *args = t
-		#print(args)
-		v = []
-		if cmd.upper() in 'MLQCTS':
-			v = [np.array(x) for x in List.batch(args, 2)]
-			if cmd.upper() in 'TS':
-				v.insert(0, pos + (pos - points[-2]))
-		elif cmd in 'Hh':
-			v = [np.array([x, pos[1]]) for x in args]
-		elif cmd in 'Vv':
-			v = [np.array([pos[0], x]) for x in args]
-		elif cmd in 'Zz':
-			closed = True
-			continue
-			#v.append(np.array(points[0]))
 
-		v = geo.polyline(v)
-		k = 2 if cmd.upper() in 'QT' else 3 if cmd.upper() in 'CS' else 1
-		if cmd.islower():	#relative to the last point of the previous command
-			axis = 0 if cmd.upper() == 'H' else 1 if cmd.upper() == 'V' else None
-			#print(cmd, k, v)
-			for i in range(0, len(v), k):
-				if axis is None:
-					v[i:i + k] = v[i:i + k] + pos
-				else:
-					v[i:i + k, axis] = v[i:i + k, axis] + pos[axis]
-				pos = v[i + k - 1]
-			#print(v)
-		
-		if cmd.upper() in 'MLHV':
-			endpoints.extend([i + len(points) for i in range(len(v))])
-		elif cmd.upper() in 'QCTS':
-			start = len(points)
-			for i in range(0, len(v), k):
-				endpoints.append(start + i + k - 1)
-		points.extend(v)
-		pos = v[-1]
-	#print(points)
-	#miss Aa
-	return geo.polybezier(points, endpoints=endpoints, closed=closed)"""
 def polybezier_from_svg(obj):
 	d = obj.get('d')
 	commands = parse_commands(d)
