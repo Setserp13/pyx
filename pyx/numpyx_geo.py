@@ -1647,7 +1647,7 @@ def enlongated(*primitives, r=1, height=1, gyro=False, start_angle=None):
 	vertices = []
 	for i, x in enumerate(primitives):
 		if x > 1:
-			vertices += [np.array([y[0], sum(height[:i], start=0), y[1]]) for y in npx.on_circle(x, r=r, start=(math.pi/x) * start_angle[i])]
+			vertices += [np.array([y[0], sum(height[:i], start=0), y[1]]) for y in on_circle(x, r=r, start=(math.pi/x) * start_angle[i])]
 		else:
 			vertices.append(np.array([0, sum(height[:i], start=0), 0]))
 	#return vertices, enlongated_faces(*primitives, gyro=gyro)
@@ -1689,11 +1689,11 @@ def gyroelongated_pyramid(count, r=1, height=1): return enlongated(count, count,
 def gyroelongated_bipyramid(count, r=1, height=1): return enlongated(1, count, count, 1, r=r, height=height, gyro=True, start_angle=[0,0,1,0])
 
 def ring(count, r=1, R=2, height=1):
-	vertices = [np.array([pt[0], h, pt[1]]) for radius, h in product([r, R], [0, height]) for pt in npx.on_circle(count, r=radius)]
+	vertices = [np.array([pt[0], h, pt[1]]) for radius, h in product([r, R], [0, height]) for pt in on_circle(count, r=radius)]
 	indices = []
 	for a, b in [(0, 1), (0, 2), (1, 3), (2, 3)]:
 		indices += prism_laterals(count, start_index1=count * a, start_index2=count * b)
-	return vertices, indices
+	return Mesh(vertices, indices)
 
 def randomize2(vertices, r=.1): return [npx.random_in_circle(r) + x for x in vertices]
 
