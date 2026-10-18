@@ -1015,7 +1015,7 @@ class Mesh():
 		vertices = np.asarray(vertices)
 		start_index = len(self.vertices)
 		self.vertices = np.concatenate((self.vertices, vertices))
-		self.vertices.extend(vertices)
+		#self.vertices.extend(vertices)
 		self.indices.append(np.arange(start_index, start_index + len(vertices)))
 	
 	def add_faces(self, faces):
