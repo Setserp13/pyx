@@ -1650,7 +1650,8 @@ def enlongated(*primitives, r=1, height=1, gyro=False, start_angle=None):
 			vertices += [np.array([y[0], sum(height[:i], start=0), y[1]]) for y in npx.on_circle(x, r=r, start=(math.pi/x) * start_angle[i])]
 		else:
 			vertices.append(np.array([0, sum(height[:i], start=0), 0]))
-	return vertices, enlongated_faces(*primitives, gyro=gyro)
+	#return vertices, enlongated_faces(*primitives, gyro=gyro)
+	return Mesh(vertices, enlongated_faces(*primitives, gyro=gyro))
 
 def enlongated_faces(*primitives, gyro=False): #primitives contains only n or 1
 	result = []
