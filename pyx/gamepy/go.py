@@ -18,32 +18,21 @@ def make_property(name):
 	return property(getter, setter)
 
 class Sprite2D(Node2D):
-	def __init__(self, texture=None, pivot=np.ones(2) * 0.5, region_rect = geo.rect(np.zeros(2), np.ones(2)), border=None, offset=np.zeros(2), tiling=np.ones(2), type='Sprite2D', ppu=1., custom_size=np.ones(2), **kwargs):
-		#self.texture = texture
-		self.pivot = pivot
-		self.region_rect = region_rect
-		self.border = border	#used by 9-slice	#l, t, r, b
-		self.modulate = Color(1.0, 1.0, 1.0, 1.0)
-		self.self_modulate = Color(1.0, 1.0, 1.0, 1.0)
-		self.draw_mode = None	#[None, 'tiled', '9-slice']
-		#pivot, region_rect and border are normalized
-		"""self.offset = offset
-		self.tiling = tiling"""
-		self.type = type
-		self.ppu = ppu
-		self.custom_size = custom_size
+	def __init__(self, offset=np.zeros(2), tiling=np.ones(2), **kwargs):
 		super().__init__(**kwargs)
-		self.attrib = {}
+		self.set(custom_size=np.ones(2), pivot=np.ones(2) * .5, ppu=1., region_rect=geo.rect(np.zeros(2), np.ones(2)), texture=None, type='Sprite2D')
 
-	#material = make_property('material')
-	#texture = make_property('texture')
+	@property
+	def custom_size(self): return self.attrib.get('custom_size', None)
+
 	@property
 	def material(self): return self.attrib.get('material', None)
 
 	@property
+	def ppu(self): return self.attrib.get('ppu', None)
+	
+	@property
 	def texture(self): return self.attrib.get('texture', None)
-	#@material.setter
-	#def material(self, value): self.set(material=value)
 	
 	@property
 	def base_size(self):
