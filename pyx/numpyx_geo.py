@@ -1376,7 +1376,7 @@ class polyline(points):
 		while len(indices) > 3:
 			found_ear = False
 			for i in range(len(indices)):
-				ti = List.arange(indices, 3, start=i, closed=True)
+				ti = List.arange(indices, 3, start=i, cycle=True)
 
 				t = v[ti]
 				if not t.isacw:
