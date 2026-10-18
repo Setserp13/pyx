@@ -217,10 +217,24 @@ def to_grayscale(img):
 class image(geo.rect_like):
 	def __init__(self, filepath, min=np.zeros(2), size=None):
 		self.filepath = filepath
-		self.array = read_image(filepath)
 		self.min = min
 		self.overwrite_size = size
 
+	"""@classmethod
+	def read(cls, path):
+		return cls(path)"""
+
+	@property
+	def filepath(self): return self._filepath
+
+	@filepath.setter
+	def filepath(self, value):
+		self._filepath = value
+		try:
+			self.array = read_image(self.filepath)
+		except:
+			self.array = None		
+	
 	@property
 	def size(self): return np.array(self.array.shape[:2]) if self.overwrite_size is None else self.overwrite_size
 
