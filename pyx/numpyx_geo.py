@@ -950,7 +950,7 @@ class radar_chart:
 
 class Mesh():
 	def __init__(self, vertices=None, indices=None, uvs=None):
-		self.vertices = np.array(vertices if vertices is not None else [])
+		self.vertices = np.empty((0, 3)) if vertices is None else np.array(vertices)
 		self.indices = indices.copy() if indices is not None else []
 		self.uvs = uvs.copy() if uvs is not None else []
 		self.normals_interpolation = 'face_varying'	#constant (one value for entire primitive), face_varying (one value per face corner), vertex (one value per vertex), uniform (one value per face)
