@@ -1220,45 +1220,6 @@ class polyline(points):
 			if p.closed or (0 <= i < len(p))
 		]
 	
-	"""def incident_edges(p, vertex):	
-		edges = [line(List.arange(p, 2, start=vertex - 1)), line(List.arange(p, 2, start=vertex))]
-		if not p.closed:
-			if vertex == 0:
-				return edges[1:]
-			elif vertex == len(p) - 1:
-				return edges[:-1]
-		return edges
-	
-	def neighbors(v, i):	#return ith-vertex-adjacent vertices
-		n = len(v)
-		if v.closed:
-			return [v[(i - 1) % n], v[(i + 1) % n]]
-		if i == 0:
-			return [v[1]] if n > 1 else []
-		elif i == n - 1:
-			return [v[n - 2]] if n > 1 else []
-		else:
-			return [v[i - 1], v[i + 1]]
-
-	def tangents(v):
-		n = len(v)
-		result = []
-		for i in range(n):
-			if v.closed:
-				t = v[(i + 1) % n] - v[(i - 1) % n]	# Índices com wrap-around
-				#print(t)
-			else:
-				if i == 0:
-					t = v[1] - v[0]
-				elif i == n - 1:
-					t = v[-1] - v[-2]
-				else:
-					t = (v[i+1] - v[i-1]) * 0.5
-			result.append(npx.normalize(t))
-		return result"""
-
-
-
 	@property
 	def normals(p): return np.array([x.normal for x in p.edges])
 
@@ -1279,27 +1240,6 @@ class polyline(points):
 	def internal_angle_sum(n): return math.pi * (n - 2)
 
 	def circumcenter(p): return line_line_intersection(*p.perpendicular_bisectors[:2])
-
-	"""@property
-	def area(v):
-		area = 0.0
-		n = len(v)
-		for i in range(n):
-			x1, y1 = v[i]
-			x2, y2 = v[(i + 1) % n]
-			area += (x1 * y2 - x2 * y1)
-		return area * 0.5	#abs(area) * 0.5, let it return negative numbers too, to triangulate works fine
-
-	@property
-	def centroid(p): return np.mean(p, axis = 0)
-
-	def is_clockwise(polygon):
-		sum = 0
-		for i in range(len(polygon)):
-			x1, y1 = polygon[i]
-			x2, y2 = polygon[(i + 1) % len(polygon)]
-			sum += (x2 - x1) * (y2 + y1)
-		return sum > 0"""
 
 	@property
 	def shoelace(v): return sum([np.cross(*x) for x in v.edges])	#Shoelace formula
@@ -1361,8 +1301,51 @@ class polyline(points):
 				if x < x_intersect:
 					inside = not inside
 		return inside
-	
+
 	def triangulate(v):
+		n = len(v)
+		if n < 3:
+			return []
+	
+		indices = list(range(n))
+		if v.iscw:
+			indices.reverse()
+	
+		triangles = []
+	
+		while len(indices) > 3:
+			found_ear = False
+	
+			for i in range(len(indices)):
+				ti = [indices[(i + j) % len(indices)] for j in range(3)]
+				t = v[ti]
+	
+				if not t.isacw:
+					continue
+	
+				is_ear = True
+				for j in indices:
+					if j in ti:
+						continue
+					if polyline.contains_point(t, v[j]):
+						is_ear = False
+						break
+	
+				if is_ear:
+					triangles.append(ti.copy())
+					del indices[(i + 1) % len(indices)]
+					found_ear = True
+					break
+	
+			if not found_ear:
+				break
+	
+		if len(indices) == 3:
+			triangles.append(indices.copy())
+	
+		return triangles
+	
+	"""def triangulate(v):
 		n = len(v)
 		if n < 3:
 			return []
@@ -1402,7 +1385,7 @@ class polyline(points):
 		if len(indices) == 3:
 			triangles.append(indices)
 	
-		return triangles
+		return triangles"""
 
 	def to_stroke(v, width, align=0.5, join='miter', cap='butt'):	#join in ['bevel', 'butt', 'miter'], cap in ['butt', 'square']
 		if v.closed:
@@ -1440,34 +1423,6 @@ class polyline(points):
 		else: return polyline(result)
 
 	def rotate_around(p, angle, center=np.zeros(2)): return polyline([npx.rotate_around(x, angle, center) for x in p], closed=p.closed)
-
-	"""def from_vectors(v, axis=None, start=np.zeros(2)):	#concatenation of n vectors (or edges) end-to-end starting from start
-		result = polyline(v)
-		if axis is None:
-			result[0] += start
-		else:
-			result[0][axis] += start[axis]
-		for i in range(1, len(result)):
-			if axis is None:
-				result[i] += result[i - 1]
-			else:
-				result[i][axis] += result[i - 1][axis]
-		#print(v, result)
-		return result
-	
-	def to_vectors(v, axis=None, start=np.zeros(2)):
-		result = polyline(v)
-		if axis is None:
-			result[0] -= start
-		else:
-			result[0][axis] -= start[axis]
-		for i in range(1, len(result)):
-			if axis is None:
-				result[i] -= result[i - 1]
-			else:
-				result[i][axis] -= result[i - 1][axis]
-		#print(v, result)
-		return result"""
 
 	def from_vectors(v, axis=None, start=np.zeros(2)):	#concatenation of n vectors (or edges) end-to-end starting from start
 		result = np.array(v, copy=True)
