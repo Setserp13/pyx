@@ -232,8 +232,9 @@ class image(geo.rect_like):
 		self._filepath = value
 		try:
 			self.array = read_image(self.filepath)
-		except:
-			self.array = None		
+		except FileNotFoundError as e:
+			print(f"FileNotFoundError: {e}")
+			self.array = None	
 	
 	@property
 	def size(self): return np.array(self.array.shape[:2]) if self.overwrite_size is None else self.overwrite_size
