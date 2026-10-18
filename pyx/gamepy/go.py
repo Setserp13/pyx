@@ -29,6 +29,9 @@ class Sprite2D(Node2D):
 	def material(self): return self.attrib.get('material', None)
 
 	@property
+	def pivot(self): return self.attrib.get('pivot', None)
+
+	@property
 	def ppu(self): return self.attrib.get('ppu', None)
 	
 	@property
