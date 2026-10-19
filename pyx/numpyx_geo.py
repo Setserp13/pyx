@@ -451,10 +451,44 @@ def radar_polygon(radii, center=np.zeros(2)):
 	angles = np.arange(0.0, math.pi * 2.0, math.pi * 2.0 / len(radii))
 	return [npx.polar_to_cartesian(r, theta) + center for r, theta in zip(radii, angles)]
 
-class circle(shape):
+
+class ball(shape):
 	def __init__(self, center, radius):
-		self.center = np.array(center)
+		self.center = np.asarray(center, dtype=float)
 		self.radius = radius
+
+	@property
+	def ndim(self):	#dim(self): return self.center.size
+
+	@property
+	def diameter(self): return self.radius * 2
+
+	@property
+	def surface_area(self):
+		n = self.ndim
+		return 2 * np.pi ** (n / 2) * self.radius ** (n - 1) / math.gamma(n / 2)
+
+	@property
+	def volume(self):
+		n = self.ndim
+		return np.pi ** (n / 2) * self.radius ** n / math.gamma(n / 2 + 1)
+
+	@property
+	def aabb(self):
+		return rect.center_size(self.center, np.ones(self.ndim) * self.diameter)
+
+	@aabb.setter
+	def aabb(self, value):
+		self.center = value.center
+		self.radius = min(*value.extents)
+
+	def __add__(self, vector):
+		obj = copy.deepcopy(self)
+		obj.center += vector
+		return obj
+
+
+class circle(ball):	#disk
 
 	def angle_of(self, point):
 		delta = point - self.center
@@ -465,13 +499,10 @@ class circle(shape):
 	def get_point01(self, t): return self.get_point(t * 2 * np.pi)
 
 	@property
-	def diameter(self): return self.radius * 2
+	def perimeter(self): return self.surface_area	#self.diameter * math.pi
 
 	@property
-	def perimeter(self): return self.diameter * math.pi
-
-	@property
-	def area(self): return math.pi * self.radius ** 2
+	def area(self): return self.volume	#math.pi * self.radius ** 2
 
 	def tangent(self, theta):
 		p = self.get_point(theta)
@@ -479,13 +510,6 @@ class circle(shape):
 		t = np.array([-r[1], r[0]])  # 90° rotation
 		return line([p, p + t])
 	
-	@property
-	def aabb(self): return rect.center_size(self.center, np.ones(2) * self.diameter)
-	@aabb.setter
-	def aabb(self, value):
-		self.center = value.center
-		self.radius = min(*value.extents)
-
 	def __matmul__(self, M):
 		M = np.asarray(M, dtype=float)
 
@@ -500,10 +524,6 @@ class circle(shape):
 
 		return ellipse(center, 2 * self.radius * np.array([sx, sy]))
 
-	def __add__(self, vector):
-		obj = copy.deepcopy(self)
-		obj.center += vector
-		return obj
 
 
 class ellipse(rect_like):
@@ -718,10 +738,6 @@ class arc(circle):
 		self.start = start
 		self.end = end
 
-	@property	#remove later, replaced by signed_sweep
-	def theta(self):
-		return ((self.end - self.start + math.pi) % (2*math.pi)) - math.pi
-
 	@property	#angular difference
 	def delta(self): return self.end - self.start
 	
@@ -740,8 +756,8 @@ class arc(circle):
 		p0 = self.get_point01(0.)
 		p1 = self.get_point01(1.)
 	
-		large_arc_flag = 1 if abs(self.theta) > math.pi else 0
-		sweep_flag = 1 if self.theta > 0 else 0
+		large_arc_flag = 1 if abs(self.signed_sweep) > math.pi else 0
+		sweep_flag = 1 if self.signed_sweep > 0 else 0
 	
 		return (
 			f"M {p0[0]} {p0[1]} "
@@ -750,7 +766,7 @@ class arc(circle):
 
 	def contains_angle(self, a):
 		s = self.start
-		t = self.theta
+		t = self.signed_sweep
 	
 		if t >= 0:
 			return 0 <= (a - s) % (2*math.pi) <= t
