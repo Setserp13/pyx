@@ -458,7 +458,7 @@ class ball(shape):
 		self.radius = radius
 
 	@property
-	def ndim(self):	#dim(self): return self.center.size
+	def ndim(self): return self.center.size	#dim(self):
 
 	@property
 	def diameter(self): return self.radius * 2
