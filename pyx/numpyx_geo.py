@@ -1151,18 +1151,16 @@ class angle(points):	#list):
 	def vectors(self): return np.array([x.vector for x in self.rays])
 
 	@property
+	def directions(self): return np.array([x.direction for x in self.rays])
+
+	@property
 	def size(self): return npx.angle(*self.vectors)
 
 	@property
-	def bisector(self): return npx.normalize(np.sum([x.direction for x in self.rays], axis=0))
+	def bisector(self): return npx.normalize(np.sum(self.directions, axis=0))
 
 	def to_arc(self, radius):
-		v0 = npx.normalize(self.vectors[0])
-		v1 = npx.normalize(self.vectors[1])
-	
-		start = math.atan2(v0[1], v0[0])
-		end   = math.atan2(v1[1], v1[0])
-	
+		start, end = [math.atan2(x[1], x[0]) for x in self.directions]
 		return arc(self[1], radius, start, end)
 
 class polyline(points):
