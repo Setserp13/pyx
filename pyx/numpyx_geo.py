@@ -718,10 +718,20 @@ class arc(circle):
 		self.start = start
 		self.end = end
 
-	@property
+	@property	#remove later, replaced by signed_sweep
 	def theta(self):
 		return ((self.end - self.start + math.pi) % (2*math.pi)) - math.pi
 
+	@property	#angular difference
+	def delta(self): return self.end - self.start
+	
+	@property	#nonnegative angular sweep, counterclockwise, in [0,2π)
+	def sweep(self): return self.delta % math.tau
+	
+	@property	#shortest signed angular difference in [−π,π)
+	def signed_sweep(self): return (self.delta + math.pi) % math.tau - math.pi
+
+	
 	def get_point01(self, t):
 		t = npx.clamp01(t)
 		return self.get_point(self.start + self.theta * t)
