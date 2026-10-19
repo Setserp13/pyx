@@ -1173,6 +1173,14 @@ class angle(points):	#list):
 		start, end = [math.atan2(x[1], x[0]) for x in self.directions]
 		return arc(self[1], radius, start, end)
 
+	def round(self, r):	#r > 0
+		half = self.size
+		d = r / math.tan(half)
+		p = [self[1] + x * d for x in self.directions]
+		center = self[1] + self.bisector * (r / math.sin(half))
+		start, end = [math.atan2(x[1] - center[1], x[0] - center[0]) for x in p]
+		return arc(center, r, start, end)
+
 class polyline(points):
 
 	def __new__(cls, input_array, closed=True):
