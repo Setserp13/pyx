@@ -1174,7 +1174,7 @@ class angle(points):	#list):
 		return arc(self[1], radius, start, end)
 
 	def round(self, r):	#r > 0
-		half = self.size
+		half = self.size / 2.
 		d = r / math.tan(half)
 		p = [self[1] + x * d for x in self.directions]
 		center = self[1] + self.bisector * (r / math.sin(half))
