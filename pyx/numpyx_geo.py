@@ -974,8 +974,22 @@ class radar_chart:
 	def data_polygon(self, values): return [self.data_point(i, x) for i, x in enumerate(values)]
 
 
-class Mesh():
-	def __init__(self, vertices=None, indices=None, uvs=None):
+class Mesh(points):	#):
+
+	def __new__(cls, vertices, indices=None, uvs=None):
+		obj = super().__new__(
+			cls,
+			np.empty((0, 3)) if vertices is None else np.array(vertices),
+			indices = indices.copy() if indices is not None else [],
+			uvs = uvs.copy() if uvs is not None else [],
+			normals_interpolation = 'face_varying',	#constant (one value for entire primitive), face_varying (one value per face corner), vertex (one value per vertex), uniform (one value per face)
+			uvs_interpolation = 'face_varying',
+			colors = None,
+			colors_interpolation = 'face_varying',
+			double_sided = False
+		)
+		return obj
+	"""def __init__(self, vertices=None, indices=None, uvs=None):
 		self.vertices = np.empty((0, 3)) if vertices is None else np.array(vertices)
 		self.indices = indices.copy() if indices is not None else []
 		self.uvs = uvs.copy() if uvs is not None else []
@@ -983,7 +997,10 @@ class Mesh():
 		self.uvs_interpolation = 'face_varying'
 		self.colors = None
 		self.colors_interpolation = 'face_varying'
-		self.double_sided = False
+		self.double_sided = False"""
+
+	@property
+	def vertices(self): return self[:]
 	
 	def face(self, i): return polyline(List.items(self.vertices, self.indices[i]), closed=True)
 
@@ -1063,12 +1080,12 @@ class Mesh():
 	def scale(self, vector):
 		self.vertices = [x * vector for x in self.vertices]
 
-	@property
+	"""@property
 	def aabb(self): return aabb(self.vertices)	#bounds
 
 	@aabb.setter
 	def aabb(self, value):
-		self.vertices = set_aabb(self.vertices, value)
+		self.vertices = set_aabb(self.vertices, value)"""
 	
 	@property
 	def pivot(self): return self.aabb.normalize_point(np.zeros(3))
