@@ -1054,12 +1054,24 @@ class Mesh(points):	#):
 				indices.append(f)
 		return Mesh(vertices, indices, uvs)
 
-	def add_face(self, vertices):
+	"""def add_face(self, vertices):
 		vertices = np.asarray(vertices)
 		start_index = len(self.vertices)
 		self.vertices = np.concatenate((self.vertices, vertices))
 		#self.vertices.extend(vertices)
-		self.indices.append(np.arange(start_index, start_index + len(vertices)))
+		self.indices.append(np.arange(start_index, start_index + len(vertices)))"""
+
+	def add_face(self, vertices):
+		vertices = np.asarray(vertices, dtype=float).reshape(-1, 3)
+		start_index = len(self)
+
+		old_size = self.shape[0]
+		new_size = old_size + len(vertices)
+
+		self.resize((new_size, 3), refcheck=False)
+		self[old_size:] = vertices
+
+		self.indices.append(np.arange(start_index, new_size))
 	
 	def add_faces(self, faces):
 		for x in faces:
