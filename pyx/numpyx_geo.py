@@ -976,7 +976,7 @@ class radar_chart:
 
 class Mesh(points):	#):
 
-	def __new__(cls, vertices, indices=None, uvs=None):
+	def __new__(cls, vertices=None, indices=None, uvs=None):
 		obj = super().__new__(
 			cls,
 			np.empty((0, 3)) if vertices is None else np.array(vertices),
