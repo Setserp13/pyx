@@ -446,6 +446,16 @@ class points(np.ndarray, shape):
 	def vertex_centroid(p, value):
 		p[:] += value - p.vertex_centroid
 
+	def append(self, point):
+		new_array = np.append(self, point, axis=0)
+		return new_array.view(type(self))
+
+	def insert(self, index, point):
+		new_array = np.insert(self, index, point, axis=0)
+		return new_array.view(type(self))
+
+
+
 def elbow_connector1(start, end, x=0): return polyline([start, np.array([start[x], end[1 - x]]), end])
 
 def elbow_connector2(start, end, x=0, t=0.5):
