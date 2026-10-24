@@ -87,10 +87,10 @@ class rect_like(shape):	#interval
 		return obj
 
 	@classmethod
-	def min_max(cls, min, max): return cls.min_size(min, max - min)
+	def min_max(cls, min, max): return cls.min_size(min, np.array(max) - np.array(min))
 
 	@classmethod
-	def center_size(cls, center, size): return cls.min_size(center - size * 0.5, size)
+	def center_size(cls, center, size): return cls.min_size(np.array(center) - np.array(size) * 0.5, size)
 
 	@property
 	def aabb(self): return rect(self.min, self.size)
