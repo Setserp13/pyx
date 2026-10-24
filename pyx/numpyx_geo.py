@@ -389,12 +389,21 @@ def set_aabb(p, value):	#p is a list of points
 class points(np.ndarray, shape):
 
 	def __new__(cls, input_array, **attrs):
+		input_array = np.array(input_array, copy=True)
+		obj = np.ndarray.__new__(cls, input_array.shape, dtype=input_array.dtype)
+		obj[...] = input_array
+
+		for k, v in attrs.items():
+			setattr(obj, k, v)
+
+		return obj
+	"""def __new__(cls, input_array, **attrs):
 		obj = np.asarray(input_array).view(cls)
 
 		for k,v in attrs.items():
 			setattr(obj, k, v)
 
-		return obj
+		return obj"""
 
 	def __array_finalize__(self, obj):
 
