@@ -977,16 +977,22 @@ class radar_chart:
 class Mesh(points):	#):
 
 	def __new__(cls, vertices=None, indices=None, uvs=None):
+		vertices = np.array(
+			np.empty((0, 3)) if vertices is None else vertices,
+			dtype=float,
+			copy=True
+		).reshape(-1, 3)
+
 		obj = super().__new__(
 			cls,
-			np.empty((0, 3)) if vertices is None else np.array(vertices),
-			indices = indices.copy() if indices is not None else [],
-			uvs = uvs.copy() if uvs is not None else [],
-			normals_interpolation = 'face_varying',	#constant (one value for entire primitive), face_varying (one value per face corner), vertex (one value per vertex), uniform (one value per face)
-			uvs_interpolation = 'face_varying',
-			colors = None,
-			colors_interpolation = 'face_varying',
-			double_sided = False
+			vertices,
+			indices=indices.copy() if indices is not None else [],
+			uvs=uvs.copy() if uvs is not None else [],
+			normals_interpolation='face_varying',
+			uvs_interpolation='face_varying',
+			colors=None,
+			colors_interpolation='face_varying',
+			double_sided=False
 		)
 		return obj
 	"""def __init__(self, vertices=None, indices=None, uvs=None):
