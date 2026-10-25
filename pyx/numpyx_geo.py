@@ -454,6 +454,10 @@ class points(np.ndarray, shape):
 		new_array = np.insert(self, index, point, axis=0)
 		return new_array.view(type(self))
 
+	def swizzle(self, axes):
+		self[:] = [x[axes] for x in self]
+		return self
+
 
 
 def elbow_connector1(start, end, x=0): return polyline([start, np.array([start[x], end[1 - x]]), end])
@@ -1026,6 +1030,10 @@ class Mesh(points):	#):
 
 	@property
 	def vertices(self): return self[:]
+
+	@vertices.setter
+	def vertices(self, value):
+		self[:] = value
 	
 	def face(self, i): return polyline(List.items(self.vertices, self.indices[i]), closed=True)
 
