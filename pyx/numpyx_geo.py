@@ -1206,7 +1206,7 @@ class Mesh(points):	#):
 			for vi in f
 		])
 
-	def to_node3d(self): return Node3D(children=[x.to_node() for x in self.faces])
+	def to_node3d(self): return Node3D(children=[x.to_node3d() for x in self.faces])
 
 
 
