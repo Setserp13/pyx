@@ -6,7 +6,7 @@ class Node:
 			setattr(self, k, kwargs[k])
 		self.parent = None #Declare self.parent
 		self.setParent(parent) #Node
-		self.children = []	#init
+		self.children = []	#init children
 		self.extend([] if children is None else children)
 
 	def set_parent(self, parent):
