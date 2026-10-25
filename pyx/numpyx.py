@@ -267,9 +267,13 @@ def angle2(a, b):
 	angle = np.arctan2(cross_product, dot_product)  # Gives the angle in radians
 	# Normalize the angle to [0, 2*pi]
 	#print(angle)
-	if angle < 0:
+	return angle % (2 * np.pi)
+	"""if angle < 0:
 		angle += 2 * np.pi
-	return angle
+	return angle"""
+	
+
+
 
 def rotate(v, angle_rad):
 	rotation = np.exp(1j * angle_rad) # Create a complex number representing the rotation
