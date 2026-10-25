@@ -1145,7 +1145,7 @@ class Mesh(points):	#):
 	def make_vertices_unique(self):
 		result = Mesh()
 		for x in self.faces:
-			result.add_face(*x)
+			result.add_face(x)
 		return result
 
 	def face_normal(self, i):
