@@ -1551,7 +1551,7 @@ class polyline(points):
 	
 		node = Node3D(position=centroid)
 		node.euler = quaternion.from_matrix(basis).to_euler()	# Convert rotation matrix to Euler angles
-		node.shape = polyline(vertices_2d[::-1], closed=True)	#reversed
+		node.shape = polyline(vertices_2d, closed=True)	#vertices_2d[::-1], closed=True)	#reversed
 	
 		return node
 
