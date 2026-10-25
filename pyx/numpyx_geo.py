@@ -9,7 +9,7 @@ import itertools
 from itertools import product
 from multipledispatch import dispatch
 import copy
-from pyx.mat.transform import Transform
+from pyx.mat.transform import Node3D, quaternion, Transform
 
 EPSILON = 1e-9
 TAU = math.pi * 2.
@@ -1018,15 +1018,6 @@ class Mesh(points):	#):
 			double_sided=False
 		)
 		return obj
-	"""def __init__(self, vertices=None, indices=None, uvs=None):
-		self.vertices = np.empty((0, 3)) if vertices is None else np.array(vertices)
-		self.indices = indices.copy() if indices is not None else []
-		self.uvs = uvs.copy() if uvs is not None else []
-		self.normals_interpolation = 'face_varying'	#constant (one value for entire primitive), face_varying (one value per face corner), vertex (one value per vertex), uniform (one value per face)
-		self.uvs_interpolation = 'face_varying'
-		self.colors = None
-		self.colors_interpolation = 'face_varying'
-		self.double_sided = False"""
 
 	@property
 	def vertices(self): return self[:]
@@ -1087,13 +1078,6 @@ class Mesh(points):	#):
 				indices.append(f)
 		return Mesh(vertices, indices, uvs)
 
-	"""def add_face(self, vertices):
-		vertices = np.asarray(vertices)
-		start_index = len(self.vertices)
-		self.vertices = np.concatenate((self.vertices, vertices))
-		#self.vertices.extend(vertices)
-		self.indices.append(np.arange(start_index, start_index + len(vertices)))"""
-
 	def add_face(self, vertices):
 		vertices = np.asarray(vertices, dtype=float).reshape(-1, 3)
 		start_index = len(self)
@@ -1125,13 +1109,6 @@ class Mesh(points):	#):
 	def scale(self, vector):
 		self.vertices = [x * vector for x in self.vertices]
 
-	"""@property
-	def aabb(self): return aabb(self.vertices)	#bounds
-
-	@aabb.setter
-	def aabb(self, value):
-		self.vertices = set_aabb(self.vertices, value)"""
-	
 	@property
 	def pivot(self): return self.aabb.normalize_point(np.zeros(3))
 
@@ -1228,6 +1205,9 @@ class Mesh(points):	#):
 			for f in self.indices
 			for vi in f
 		])
+
+	def to_node3d(self): return Node3D(children=[x.to_node() for x in self.faces])
+
 
 
 class angle(points):	#list):
@@ -1441,48 +1421,6 @@ class polyline(points):
 	
 		return triangles
 	
-	"""def triangulate(v):
-		n = len(v)
-		if n < 3:
-			return []
-	
-		indices = list(range(n))
-		if v.iscw:
-			indices.reverse()
-	
-		triangles = []
-	
-		while len(indices) > 3:
-			found_ear = False
-			for i in range(len(indices)):
-				ti = List.arange(indices, 3, start=i, cycle=True)
-
-				t = v[ti]
-				if not t.isacw:
-					continue
-	
-				ear_found = True
-				for j in indices:
-					if j in ti:
-						continue
-					if polyline.contains_point(t, v[j]):
-						ear_found = False
-						break
-	
-				if ear_found:
-					triangles.append(t.copy())
-					del indices[ti[1]]
-					found_ear = True
-					break
-	
-			if not found_ear:
-				break  # Polígono pode estar com interseções ou ser degenerado
-	
-		if len(indices) == 3:
-			triangles.append(indices)
-	
-		return triangles"""
-
 	def to_stroke(v, width, align=0.5, join='miter', cap='butt'):	#join in ['bevel', 'butt', 'miter'], cap in ['butt', 'square']
 		if v.closed:
 			if np.allclose(v[0], v[-1]):
@@ -1585,6 +1523,38 @@ class polyline(points):
 		result = [x for i, x in enumerate(self) if not point_on_segment(self.neighbors(i), x)]
 		#print(len(result))
 		return result
+
+	def to_node3d(polygon):
+		vertices = np.asarray(polygon, dtype=float)
+	
+		# Centroid
+		centroid = vertices.mean(axis=0)
+	
+		# Find the polygon normal using Newell's method
+		normal = np.zeros(3)
+		for a, b in zip(vertices, np.roll(vertices, -1, axis=0)):
+			normal += np.cross(a - centroid, b - centroid)
+	
+		normal /= np.linalg.norm(normal)
+	
+		# Build an orthonormal basis in the polygon's plane
+		u = vertices[1] - vertices[0]
+		u -= normal * np.dot(u, normal)
+		u /= np.linalg.norm(u)
+		v = np.cross(normal, u)
+	
+		# Project vertices into 2D coordinates centered at (0, 0)
+		relative = vertices - centroid
+		vertices_2d = np.column_stack((relative @ u, relative @ v))
+	
+		basis = np.column_stack((u, v, normal))	# Rotation matrix: local X, Y, Z axes in world space
+	
+		node = Node3D(position=centroid)
+		node.euler = quaternion.from_matrix(basis).to_euler()	# Convert rotation matrix to Euler angles
+		node.shape = polyline(vertices_2d[::-1], closed=True)	#reversed
+	
+		return node
+
 
 
 class polygon:
