@@ -1016,6 +1016,7 @@ class Mesh(points):	#):
 			colors=None,
 			colors_interpolation='face_varying',
 			double_sided=False
+			normals=None
 		)
 		return obj
 
@@ -1044,7 +1045,7 @@ class Mesh(points):	#):
 		result.add_edges(flatten(self.edges_indices))
 		return result
 
-	def to_obj(self, path):
+	"""def to_obj(self, path):
 		lines = [f"v {x} {y} {z}" for x, y, z in self.vertices]
 		if self.uvs is not None and len(self.uvs) > 0:
 			lines += [f"vt {u} {v}" for u, v in self.uvs]
@@ -1076,8 +1077,106 @@ class Mesh(points):	#):
 					#     uv_index = int(tokens[1]) - 1
 					#     self.face_uv_indices.append(uv_index)
 				indices.append(f)
-		return Mesh(vertices, indices, uvs)
+		return Mesh(vertices, indices, uvs)"""
 
+	def to_obj(self, path):
+		lines = [f"v {x} {y} {z}" for x, y, z in self.vertices]
+	
+		if self.uvs is not None and len(self.uvs) > 0:
+			lines += [f"vt {u} {v}" for u, v in self.uvs]
+	
+		if self.normals is not None and len(self.normals) > 0:
+			lines += [f"vn {x} {y} {z}" for x, y, z in self.normals]
+	
+		for fi, face in enumerate(self.indices):
+			parts = []
+	
+			for j, vi in enumerate(face):
+				uv_i = None
+				normal_i = None
+	
+				if self.uvs is not None and len(self.uvs) > 0:
+					uv_indices = getattr(self, 'face_uv_indices', None)
+					uv_i = uv_indices[fi][j] if uv_indices else vi
+	
+				if normals is not None and len(normals) > 0:
+					normal_indices = getattr(self, 'face_normal_indices', None)
+					normal_i = normal_indices[fi][j] if normal_indices else vi
+	
+				if uv_i is not None and normal_i is not None:
+					parts.append(f"{vi+1}/{uv_i+1}/{normal_i+1}")
+				elif uv_i is not None:
+					parts.append(f"{vi+1}/{uv_i+1}")
+				elif normal_i is not None:
+					parts.append(f"{vi+1}//{normal_i+1}")
+				else:
+					parts.append(str(vi+1))
+	
+			lines.append("f " + " ".join(parts))
+	
+		osx.write(path, '\n'.join(lines) + '\n')
+
+	@staticmethod
+	def from_obj(path):
+		vertices = []
+		uvs = []
+		normals = []
+		indices = []
+		face_uv_indices = []
+		face_normal_indices = []
+	
+		for line in osx.read(path).splitlines():
+			line = line.strip()
+	
+			if not line or line.startswith('#'):
+				continue
+	
+			if line.startswith('v '):
+				_, x, y, z = line.split()[:4]
+				vertices.append([float(x), float(y), float(z)])
+	
+			elif line.startswith('vt '):
+				values = line.split()[1:]
+				uvs.append([float(x) for x in values])
+	
+			elif line.startswith('vn '):
+				_, x, y, z = line.split()[:4]
+				normals.append([float(x), float(y), float(z)])
+	
+			elif line.startswith('f '):
+				f = []
+				uv_f = []
+				normal_f = []
+	
+				for p in line.split()[1:]:
+					tokens = p.split('/')
+	
+					vi = int(tokens[0])
+					f.append(vi - 1 if vi > 0 else len(vertices) + vi)
+	
+					if len(tokens) > 1 and tokens[1]:
+						ti = int(tokens[1])
+						uv_f.append(ti - 1 if ti > 0 else len(uvs) + ti)
+					else:
+						uv_f.append(None)
+	
+					if len(tokens) > 2 and tokens[2]:
+						ni = int(tokens[2])
+						normal_f.append(ni - 1 if ni > 0 else len(normals) + ni)
+					else:
+						normal_f.append(None)
+	
+				indices.append(f)
+				face_uv_indices.append(uv_f)
+				face_normal_indices.append(normal_f)
+	
+		mesh = Mesh(vertices, indices, uvs)
+		mesh.normals = normals
+		mesh.face_uv_indices = face_uv_indices
+		mesh.face_normal_indices = face_normal_indices
+		return mesh
+
+	
 	def add_face(self, vertices):
 		vertices = np.asarray(vertices, dtype=float).reshape(-1, 3)
 		start_index = len(self)
