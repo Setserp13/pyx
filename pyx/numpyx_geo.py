@@ -338,11 +338,11 @@ class grid:
 	def cells(self, stop, start=None, swizzle=None):
 		start = np.zeros(len(stop)) if start is None else start
 		swizzle = list(range(len(stop))) if swizzle is None else swizzle
-		start = List.items(start, swizzle)
-		stop = List.items(stop, swizzle)
+		start = cl.List.items(start, swizzle)
+		stop = cl.List.items(stop, swizzle)
 		ranges = [list(range(int(start[i]), int(stop[i]))) for i in range(len(start))]
 		indices = itertools.product(*ranges)
-		indices = [List.items(x, swizzle) for x in indices]
+		indices = [cl.List.items(x, swizzle) for x in indices]
 		return [self.cell(np.array(x)) for x in indices]
 
 
@@ -1028,7 +1028,7 @@ class Mesh(points):	#):
 	def vertices(self, value):
 		self[:] = value
 	
-	def face(self, i): return polyline(List.items(self.vertices, self.indices[i]), closed=True)
+	def face(self, i): return polyline(cl.List.items(self.vertices, self.indices[i]), closed=True)
 
 	@property
 	def faces(self): return group([self.face(i) for i in range(len(self.indices))])
@@ -1036,7 +1036,7 @@ class Mesh(points):	#):
 	@property
 	def edges(self): return flatten([x.edges for x in self.faces])
 
-	def edge_indices_of(self, face_index): return np.array([x for x in List.aranges(self.indices[face_index], 2, cycle=True)])
+	def edge_indices_of(self, face_index): return np.array([x for x in cl.List.aranges(self.indices[face_index], 2, cycle=True)])
 
 	@property
 	def edge_indices(self): return np.array([self.edge_indices_of(i) for i in range(len(self.indices))])
@@ -1346,11 +1346,11 @@ class polyline(points):
 		return obj
 
 	@property
-	def edges(p): return [line(x) for x in List.aranges(p, 2, cycle=p.closed)]
+	def edges(p): return [line(x) for x in cl.List.aranges(p, 2, cycle=p.closed)]
 	
 	def edge(p, index): return line([p[index], p[(index + 1) % len(p)]])
 	
-	def vertex_angle(p, index): return angle(List.arange(p, 3, start=index - 1))
+	def vertex_angle(p, index): return angle(cl.List.arange(p, 3, start=index - 1))
 
 	@property
 	def vertex_angles(p): return [p.vertex_angle(i) for i in range(0 if p.closed else 1, len(p) - (0 if p.closed else 1))]
@@ -1384,7 +1384,7 @@ class polyline(points):
 
 	def incident_edges(p, vertex):
 		return [
-			line(List.arange(p, 2, start=i, cycle=True))
+			line(cl.List.arange(p, 2, start=i, cycle=True))
 			for i in [vertex - 1, vertex]
 			if p.closed or (0 <= i < len(p) - 1)
 		]
