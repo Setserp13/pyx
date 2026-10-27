@@ -1099,7 +1099,7 @@ class Mesh(points):	#):
 					uv_indices = getattr(self, 'face_uv_indices', None)
 					uv_i = uv_indices[fi][j] if uv_indices else vi
 	
-				if normals is not None and len(normals) > 0:
+				if self.normals is not None and len(self.normals) > 0:
 					normal_indices = getattr(self, 'face_normal_indices', None)
 					normal_i = normal_indices[fi][j] if normal_indices else vi
 	
