@@ -1015,7 +1015,7 @@ class Mesh(points):	#):
 			uvs_interpolation='face_varying',
 			colors=None,
 			colors_interpolation='face_varying',
-			double_sided=False
+			double_sided=False,
 			normals=None
 		)
 		return obj
