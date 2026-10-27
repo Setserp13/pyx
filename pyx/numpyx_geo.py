@@ -2,6 +2,7 @@ import numpy as np
 import pyx.numpyx as npx
 import pyx.mat.mat as mat
 from pyx.array_utility import find_indices
+import pyx.collectionsx as cl
 from pyx.collectionsx import flatten, List, lshift, graph
 import math
 import pyx.osx as osx
