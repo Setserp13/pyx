@@ -55,7 +55,9 @@ class Dict:
 class List:
 	@staticmethod
 	def items(arr, indices):
-		return [arr[x] for x in indices if x in arr] #also works with dict
+		if isinstance(arr, dict):
+			return [arr[x] for x in indices if x in arr]
+		return [arr[x] for x in indices if isinstance(x, int) and -len(arr) <= x < len(arr)] #also works with dict
 	def get(arr, index, dflt_value=None): return arr[index] if index in range(len(arr)) else dflt_value
 
 	#Return a k-cycle
