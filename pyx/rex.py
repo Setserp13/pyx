@@ -62,10 +62,12 @@ def findnumbers(string): return [float(x) if '.' in x else int(x) for x in re.fi
 
 def strpdict(obj, sep=[';', ':']):
 	result = {}
-	List.items = [] if obj == '' else obj.split(sep[0])
-	for item in List.items:
+	items = [] if obj == '' else obj.split(sep[0])
+
+	for item in items:
 		key, value = item.split(sep[1])
 		result[key.strip()] = value.strip()
+
 	return result
 
 def strfdict(obj, sep=[';', ':']): return sep[0].join([f'{k}{sep[1]}{obj[k]}' for k in obj])
