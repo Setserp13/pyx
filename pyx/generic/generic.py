@@ -35,7 +35,10 @@ def make_Element(cls):
 		[self.attrib[k] for k in args if k in self.attrib] +
 		[self.attrib.get(k, v) for k, v in kwargs.items()]
 	] if hasattr(self, 'attrib') else None
-
+	cls.get_dict = lambda self, *args, **kwargs: {
+		**{k: self.attrib[k] for k in args if k in self.attrib},
+		**{k: self.attrib.get(k, v) for k, v in kwargs.items()}
+	} if hasattr(self, 'attrib') else None
 
 class Event(list):
 	def invoke(self, *args, **kwargs):
