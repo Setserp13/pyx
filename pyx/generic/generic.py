@@ -21,12 +21,20 @@ class Element:
 			self.attrib[k] = kwargs[k]
 		return self
 	
-	def get(self, *args): return [self.attrib[k] for k in args]
+	#def get(self, *args): return [self.attrib[k] for k in args]
+	def get(self, *args, **kwargs):
+		return [
+			[self.attrib[k] for k in args if k in self.attrib] +
+			[self.attrib.get(k, default) for k, default in kwargs.items()]
+		]
 
 def make_Element(cls):
 	cls.set = lambda self, **attrib: setattrs(self, attrib={**getattr(self, "attrib", {}), **attrib})
-	cls.get = lambda self, *keys: [self.attrib[k] for k in keys] if hasattr(self, 'attrib') else None
-
+	#cls.get = lambda self, *keys: [self.attrib[k] for k in keys] if hasattr(self, 'attrib') else None
+	cls.get = lambda self, *args, **kwargs: [
+		[self.attrib[k] for k in args if k in self.attrib] +
+		[self.attrib.get(k, v) for k, v in kwargs.items()]
+	] if hasattr(self, 'attrib') else None
 
 
 class Event(list):
