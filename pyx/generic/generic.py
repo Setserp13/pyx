@@ -30,15 +30,19 @@ class Element:
 
 def make_Element(cls):
 	cls.set = lambda self, **attrib: setattrs(self, attrib={**getattr(self, "attrib", {}), **attrib})
+	
+	cls.get_dict = lambda self, *args, **kwargs: {
+		**{k: self.attrib[k] for k in args if hasattr(self, 'attrib') and k in self.attrib},
+		**{k: self.attrib.get(k, v) if hasattr(self, 'attrib') else v for k, v in kwargs.items()}
+	}
+	
 	#cls.get = lambda self, *keys: [self.attrib[k] for k in keys] if hasattr(self, 'attrib') else None
-	cls.get = lambda self, *args, **kwargs: [
+	"""cls.get = lambda self, *args, **kwargs: [
 		[self.attrib[k] for k in args if k in self.attrib] +
 		[self.attrib.get(k, v) for k, v in kwargs.items()]
-	] if hasattr(self, 'attrib') else None
-	cls.get_dict = lambda self, *args, **kwargs: {
-		**{k: self.attrib[k] for k in args if k in self.attrib},
-		**{k: self.attrib.get(k, v) for k, v in kwargs.items()}
-	} if hasattr(self, 'attrib') else None
+	] if hasattr(self, 'attrib') else None"""
+	cls.get = lambda self, *args, **kwargs: self.get_dict(*args, **kwargs).values()
+
 
 class Event(list):
 	def invoke(self, *args, **kwargs):
