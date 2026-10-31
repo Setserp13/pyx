@@ -2342,7 +2342,8 @@ def similar(A: np.ndarray, B: np.ndarray, tol=1e-6) -> bool:
 import pyx.generic.generic as generic
 
 
-shapes = [points, polybezier, circle, ellipse, line, polyline, rect, group, arc, Transform]
+shapes = [points, polybezier, circle, ellipse, line, polyline, rect, group, arc, Transform, Mesh]
+#shapes = [shape]	#TEST IT LATER
 for x in shapes: generic.make_Element(x)
 """	x.set = lambda self, **attrib: generic.set(self, attrib={**getattr(self, "attrib", {}), **attrib})
 	x.get = lambda self, *keys: [self.attrib[k] for k in keys] if hasattr(self, 'attrib') else None"""
