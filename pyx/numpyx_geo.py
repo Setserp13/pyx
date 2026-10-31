@@ -1001,11 +1001,12 @@ class radar_chart:
 class Mesh(points):	#):
 
 	def __new__(cls, vertices=None, indices=None, uvs=None):
+		n = 3 if vertices is None else np.asarray(vertices).shape[1]
 		vertices = np.array(
-			np.empty((0, 3)) if vertices is None else vertices,
+			np.empty((0, n)) if vertices is None else vertices,
 			dtype=float,
 			copy=True
-		).reshape(-1, 3)
+		).reshape(-1, n)
 
 		obj = super().__new__(
 			cls,
@@ -1179,7 +1180,7 @@ class Mesh(points):	#):
 
 	
 	def add_face(self, vertices):
-		vertices = np.asarray(vertices, dtype=float).reshape(-1, 3)
+		vertices = np.asarray(vertices, dtype=float).reshape(-1, self.shape[1])
 		start_index = len(self)
 
 		old_size = self.shape[0]
