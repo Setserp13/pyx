@@ -1,3 +1,4 @@
+from numbers import Number
 import numpy as np
 import pyx.numpyx as npx
 import pyx.mat.mat as mat
@@ -1661,6 +1662,26 @@ class polyline(points):
 		node.shape = polyline(vertices_2d, closed=True)	#vertices_2d[::-1], closed=True)	#reversed
 	
 		return node
+
+	def round(self, radii=.5):
+		angles = self.vertex_angles
+	
+		if isinstance(radii, Number):
+			radii = [radii] * len(angles)
+	
+		result = []
+	
+		for r, angle in zip(radii, angles):
+			if r <= 0:
+				result.append(np.asarray(angle[1]))
+			else:
+				result.extend(angle.round(r))
+	
+		if not self.closed:
+			result = [self[0], *result, self[-1]]
+	
+		return result
+
 
 
 
