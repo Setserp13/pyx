@@ -18,8 +18,10 @@ import numpy as np
 import pyx.numpyx as npx
 import pyx.numpyx_geo as geo
 import pyx.lxmlx as lxmlx
-from pyx.mat.transform import Node2D, Transform, Matrix
+from pyx.mat.transform import Node2D, Transform
+import pyx.mat.transform as xf
 from pyx.gamepy.color import Color
+import pyx.generic.generic as generic
 
 def replace_all(root, replacements, exact_match=False):
 	"""
@@ -40,6 +42,305 @@ def replace_all(root, replacements, exact_match=False):
 			#if el.text and el.text in replacements:
 			#	el.text = replacements[el.text]
 	return root
+
+
+
+
+from pyx.mat.transform import R2
+
+def svg_arc_to_center(start, end, rx, ry, rotation, large_arc_flag, sweep_flag):
+	start, end = np.asarray([start, end], dtype=float)
+	rx, ry = abs(rx), abs(ry)
+
+	if rx == 0 or ry == 0 or np.allclose(start, end):
+		return None
+
+	phi = math.radians(rotation)
+	R = R2(phi)
+
+	x1p, y1p = R @ ((start - end) / 2)
+
+	scale = max(1., np.sqrt(x1p**2 / rx**2 + y1p**2 / ry**2))
+	rx, ry = rx * scale, ry * scale
+
+	rx2, ry2 = rx**2, ry**2
+	k = np.sqrt(max(0., (rx2 * ry2 - rx2 * y1p**2 - ry2 * x1p**2) /
+		(rx2 * y1p**2 + ry2 * x1p**2)))
+
+	if large_arc_flag == sweep_flag:
+		k = -k
+
+	cxp, cyp = k * rx * y1p / ry, -k * ry * x1p / rx
+	center = R.T @ [cxp, cyp] + (start + end) / 2
+
+	u = np.array([(x1p - cxp) / rx, (y1p - cyp) / ry])
+	v = np.array([(-x1p - cxp) / rx, (-y1p - cyp) / ry])
+
+	start_angle = np.arctan2(u[1], u[0])
+	delta = np.arctan2(np.cross(u, v), np.dot(u, v))
+
+	if sweep_flag:
+		delta %= math.tau
+	else:
+		delta = -(-delta % math.tau)
+
+	return center, start_angle, start_angle + delta
+
+
+
+
+
+
+
+from pyx.numpyx_geo import shape, line, arc, bezier
+class path_command:
+	def __init__(self, type, *parameters):
+		self.type = type
+		self.parameters = list(parameters)
+
+	@property
+	def relative(self):
+		return self.type.islower()
+
+	@relative.setter
+	def relative(self, value):
+		self.type = self.type.lower() if value else self.type.upper()
+
+	@property
+	def d(self):
+		if self.type.upper() == 'Z':
+			return self.type
+
+		return f"{self.type} {' '.join(map(str, self.parameters))}"
+
+	def __repr__(self): return self.d
+
+	def __len__(self): return len(self.parameters)
+
+	def __iter__(self): return iter(self.parameters)
+
+	def __getitem__(self, index): return self.parameters[index]
+
+	def __setitem__(self, index, value): self.parameters[index] = value
+
+
+def split_before(arr, match):
+	result, current = [], []
+
+	for x in arr:
+		if match(x) and current:
+			result.append(current)
+			current = []
+
+		current.append(x)
+
+	if current:
+		result.append(current)
+
+	return result
+	
+
+
+class path(list, shape):
+	def __init__(self, *commands):
+		list.__init__(self, commands)
+
+	@property
+	def d(self): return ' '.join(command.d for command in self)
+
+	def move_to(self, v): self.append(path_command('M', *v))
+	def move_by(self, v): self.append(path_command('m', *v))
+	def line_to(self, v): self.append(path_command('L', *v))
+	def line_by(self, v): self.append(path_command('l', *v))
+	def bezier_to(self, *v):
+		v = np.asarray(v)
+		self.append(path_command('LQC'[len(v) - 1], *v.flatten()))
+	def close(self): self.append(path_command('Z'))
+
+	@classmethod
+	def parse(cls, s):
+		p = re.compile(r'[A-Za-z]|[-+]?(?:\d*\.)?\d+(?:[eE][-+]?\d+)?')
+
+		return cls(*[
+			path_command(group[0], *map(float, group[1:]))
+			for group in split_before(p.findall(s), str.isalpha)
+		])
+
+	@property
+	def subpaths(self):
+		return [
+			path(*group)
+			for group in split_before(self, lambda cmd: cmd.type in 'Mm')
+		]
+
+
+	@property
+	def normalized(self):
+		result = path()
+
+		sizes = {
+			'M': 2, 'L': 2,
+			'H': 1, 'V': 1,
+			'C': 6, 'S': 4,
+			'Q': 4, 'T': 2,
+			'A': 7, 'Z': 0
+		}
+
+		for cmd in self:
+			t = cmd.type
+			upper = t.upper()
+			p = cmd.parameters
+			size = sizes[upper]
+
+			if size == 0:
+				result.append(path_command(t))
+				continue
+
+			if len(p) < size or len(p) % size:
+				raise ValueError(f"Invalid parameters for SVG command {t}")
+
+			for i in range(0, len(p), size):
+				command_type = t
+
+				if upper == 'M' and i > 0:
+					command_type = 'l' if t.islower() else 'L'
+
+				result.append(path_command(
+					command_type,
+					*p[i:i + size]
+				))
+
+		return result
+
+
+	@property
+	def segments(self):
+		segments = []
+
+		current = np.zeros(2, dtype=float)
+		start = current.copy()
+
+		previous_type = None
+		previous_control = None
+		print(self.normalized)
+		for cmd in self.normalized:
+			print(cmd)
+			t = cmd.type.upper()
+			p = np.asarray(cmd.parameters, dtype=float)
+			relative = cmd.relative
+
+			def points(v):
+				v = np.asarray(v, dtype=float).reshape(-1, 2)
+				return current + v if relative else v
+
+			if t == 'M':
+				current, = points(p)
+				start = current.copy()
+
+			elif t == 'L':
+				end, = points(p)
+				segments.append(line([current.copy(), end.copy()]))
+				current = end
+
+			elif t in 'HV':
+				axis = 'HV'.index(t)
+				end = current.copy()
+				end[axis] = current[axis] + p[0] if relative else p[0]
+				segments.append(line([current.copy(), end.copy()]))
+				current = end
+
+			elif t in 'QCTS':
+				v = points(p)
+				
+				if t in 'TS':
+					p1 = (
+						2 * current - previous_control
+						if previous_type in {'Q': 'QT', 'S': 'CS'}[t]
+						else current.copy()
+					)
+
+					v = np.insert(v, 0, p1, axis=0)
+
+				segments.append(bezier([current.copy(), *v]))
+
+				current = v[-1]
+				previous_control = v[-2]
+
+			elif t == 'A':
+				rx, ry, rotation, large, sweep, x, y = p
+				end, = points([x, y])
+
+				if not np.isclose(rx, ry) or not np.isclose(rotation, 0):
+					raise NotImplementedError(
+						"Only circular arcs without rotation are supported"
+					)
+
+				result = svg_arc_to_center(
+					current,
+					end,
+					rx,
+					ry,
+					rotation,
+					int(large),
+					int(sweep)
+				)
+
+				if result is not None:
+					center, start_angle, end_angle = result
+
+					segments.append(arc(
+						center,
+						rx,
+						start_angle,
+						end_angle
+					))
+				else:
+					segments.append(line([
+						current.copy(), end.copy()
+					]))
+
+				current = end
+
+			elif t == 'Z':
+				if not np.allclose(current, start):
+					segments.append(line([
+						current.copy(), start.copy()
+					]))
+
+				current = start.copy()
+
+			else:
+				raise ValueError(f"Unsupported SVG command: {cmd.type}")
+
+			if t not in ('C', 'S', 'Q', 'T'):
+				previous_control = None
+
+			previous_type = t
+
+		return geo.group(segments)
+
+	@property
+	def aabb(self):
+		segments = self.segments
+		return segments.aabb
+	@aabb.setter
+	def aabb(self, value):
+		pass
+
+def path_to_svg(obj, **kwargs):
+	#print('aaa', obj.d)
+	return lxmlx.element("path", d=obj.d, **kwargs)
+path.to_svg = lambda self: path_to_svg(self)	#, **get_attrib(self))
+
+def path_from_svg(obj): return path.parse(obj.get('d'))
+
+generic.make_Element(path)
+
+
+
+
+
+
 
 #PATH
 def parse_commands(s):
@@ -186,18 +487,18 @@ def parse_svg_transform(transform):
 	for name, args in re.findall(pattern, transform):
 		values = [ float(v) for v in re.split(r"[,\s]+", args.strip()) if v ]
 		if name == "translate":
-			T = Matrix.T(np.array([values[0], values[1] if len(values) > 1 else 0]))
+			T = xf.T(np.array([values[0], values[1] if len(values) > 1 else 0]))
 
 		elif name == "scale":
-			T = Matrix.S(np.array([values[0], values[1] if len(values) > 1 else values[0]]))
+			T = xf.S(np.array([values[0], values[1] if len(values) > 1 else values[0]]))
 
 		elif name == "rotate":
 			angle = math.radians(values[0])
-			T = Matrix.R2(angle)
+			T = xf.R2(angle)
 			if len(values) == 3:
 				c = np.array([values[1], values[2]])
-				T1 = Matrix.T(c)
-				T2 = Matrix.T(-c)
+				T1 = xf.T(c)
+				T2 = xf.T(-c)
 				T = T1 @ T @ T2
 
 		elif name == "matrix":
@@ -244,7 +545,7 @@ def from_svg(obj, asnode=False):
 					node.append(x.attrib['transform'])
 			
 		case 'line': shape = line_from_svg(obj)
-		case 'path': shape = polybezier_from_svg(obj)
+		case 'path': shape = path_from_svg(obj)	#polybezier_from_svg(obj)
 		case 'polyline': shape = polyline_from_svg(obj)
 		case 'polygon': shape = polygon_from_svg(obj)
 		case 'rect': shape = rect_from_svg(obj)
