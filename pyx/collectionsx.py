@@ -28,6 +28,21 @@ def equivalence(arr, equals):	#classes de equivalência
 
 	return result
 
+def split_before(arr, match):
+	result, current = [], []
+
+	for x in arr:
+		if match(x) and current:
+			result.append(current)
+			current = []
+
+		current.append(x)
+
+	if current:
+		result.append(current)
+
+	return result
+
 def get_item(array, indices, dflt=None):	#works for any-dimensional jagged array
 	cur = array
 	for idx in indices:
