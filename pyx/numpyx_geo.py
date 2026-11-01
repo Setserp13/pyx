@@ -1445,7 +1445,19 @@ class polyline(points):
 		return np.array([npx.normalize(np.sum([x.normal for x in p.incident_edges(i)], axis=0)) for i in range(len(p))])
 
 	@property
-	def tangents(p): return np.array([np.array([-x[1], x[0]]) for x in p.vertex_normals])
+	def tangents(p):
+		p = np.asarray(p, dtype=float)
+
+		if len(p) < 2:
+			raise ValueError("At least two points are required")
+
+		if p.closed:
+			d = np.roll(p, -1, axis=0) - np.roll(p, 1, axis=0)
+		else:
+			d = np.gradient(p, axis=0)
+
+		return d / np.linalg.norm(d, axis=1, keepdims=True)
+	#def tangents(p): return np.array([np.array([-x[1], x[0]]) for x in p.vertex_normals])
 
 	@property
 	def perpendicular_bisectors(p): return np.array([x.perpendicular_bisector for x in p.edges])
