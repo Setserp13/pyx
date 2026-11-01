@@ -1446,8 +1446,7 @@ class polyline(points):
 
 	@property
 	def tangents(p):
-		p = np.asarray(p, dtype=float)
-
+		
 		if len(p) < 2:
 			raise ValueError("At least two points are required")
 
