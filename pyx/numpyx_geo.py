@@ -2279,7 +2279,7 @@ def circle_circle_shortest_segment(a, b):
 	"""Shortest segment between two circles."""
 	p1 = project_point_on_circle(b.center, a)
 	p2 = project_point_on_circle(a.center, b)
-	return geo.line([p1, p2])
+	return line([p1, p2])
 
 def segments_shape_intersection(segments, other, func):
 	"""
