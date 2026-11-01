@@ -33,7 +33,7 @@ def homogenize(M):
 
 
 def R2(angle):
-	c, s = np.cos(phi), np.sin(phi)
+	c, s = np.cos(angle), np.sin(angle)
 	return np.array([[c, s], [-s, c]])
 
 def basic_rotation_matrix(dim, plane, angle):	#Return a basic n-dimensional rotation matrix by an angle θ in the [i, j] plane
