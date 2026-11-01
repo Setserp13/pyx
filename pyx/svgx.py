@@ -398,8 +398,8 @@ def polybezier_from_svg(obj):
 			if not coords:
 				continue
 
-			"""if relative:
-				coords = [pos + p for p in coords]"""
+			#if relative:
+			#	coords = [pos + p for p in coords]
 			if relative:
 				coords[0] += pos
 				for i in range(1, len(coords)):
