@@ -237,11 +237,6 @@ class path(list, shape):
 				current, = points(p)
 				start = current.copy()
 
-				"""elif t == 'L':
-				end, = points(p)
-				segments.append(line([current.copy(), end.copy()]))
-				current = end"""
-
 			elif t in 'HV':
 				axis = 'HV'.index(t)
 				end = current.copy()
@@ -342,143 +337,7 @@ generic.make_Element(path)
 
 
 
-#PATH
-"""def parse_commands(s):
-	p = re.compile(r'([A-Za-z])|([-+]?\d*\.?\d+(?:[eE][-+]?\d+)?)')
-	r, c, a = [], None, []
-	for cmd, num in p.findall(s):
-		if cmd:
-			if c: r.append((c,*map(float,a))); a=[]
-			c = cmd
-		elif num:
-			a.append(num)
-	if c: r.append((c,*map(float,a)))
-	return r
 
-
-def polybezier_from_svg(obj):
-	d = obj.get('d')
-	commands = parse_commands(d)
-
-	paths = []
-	points = []
-	endpoints = []
-	pos = np.zeros(2)
-	start = pos.copy()
-	prev_cmd = ''
-	prev_control = None
-
-	def finish(closed=False):
-		if points:
-			paths.append(geo.polybezier(
-				points.copy(),
-				endpoints=endpoints.copy(),
-				closed=closed
-			))
-		points.clear()
-		endpoints.clear()
-
-	for cmd, *args in commands:
-		upper = cmd.upper()
-		relative = cmd.islower()
-
-		if upper == 'Z':
-			pos = start.copy()
-			finish(closed=True)
-			prev_control = None
-			prev_cmd = cmd
-			continue
-
-		if upper == 'M':
-			# Start a new, independent subpath.
-			finish()
-			coords = [np.array(x, dtype=float)
-				for x in List.batch(args, 2)]
-
-			if not coords:
-				continue
-
-			#if relative:
-			#	coords = [pos + p for p in coords]
-			if relative:
-				coords[0] += pos
-				for i in range(1, len(coords)):
-					coords[i] += coords[i - 1]
-
-			pos = coords[0]
-			start = pos.copy()
-			points.append(pos.copy())
-			endpoints.append(0)
-
-			# Additional pairs in M are implicit L commands.
-			for p in coords[1:]:
-				points.append(p.copy())
-				endpoints.append(len(points) - 1)
-				pos = p.copy()
-
-			prev_control = None
-			prev_cmd = cmd
-			continue
-
-		if upper in 'LQCTSA':
-			# A is not implemented here.
-			if upper == 'A':
-				raise NotImplementedError('SVG arc commands (A/a)')
-
-			v = [np.array(x, dtype=float)
-				for x in List.batch(args, 2)]
-
-			if relative:
-				v = [pos + p for p in v]
-
-		elif upper == 'H':
-			v = [np.array([x, pos[1]], dtype=float) for x in args]
-			if relative:
-				v = [np.array([pos[0] + x, pos[1]]) for x in args]
-
-		elif upper == 'V':
-			v = [np.array([pos[0], y], dtype=float) for y in args]
-			if relative:
-				v = [np.array([pos[0], pos[1] + y]) for y in args]
-
-		else:
-			raise ValueError(f'Unsupported SVG command: {cmd}')
-
-		if upper in 'TS':
-			if prev_cmd.upper() in ('Q', 'T') and prev_control is not None:
-				control = 2 * pos - prev_control
-			else:
-				control = pos.copy()
-
-			v.insert(0, control)
-
-		k = {
-			'L': 1, 'H': 1, 'V': 1,
-			'Q': 2, 'T': 2,
-			'C': 3, 'S': 3,
-		}[upper]
-
-		for i in range(0, len(v), k):
-			segment = v[i:i + k]
-			if len(segment) != k:
-				raise ValueError(f'Invalid argument count for {cmd}')
-
-			points.extend(p.copy() for p in segment)
-			endpoints.append(len(points) - 1)
-
-			if upper in ('Q', 'T'):
-				prev_control = segment[-2].copy()
-			elif upper in ('C', 'S'):
-				prev_control = segment[-2].copy()
-			else:
-				prev_control = None
-
-			pos = segment[-1].copy()
-
-		prev_cmd = cmd
-
-	finish()
-	return geo.group(paths)"""
 
 def parse_svg_transform(transform):
 	M = np.eye(3)
@@ -545,7 +404,7 @@ def from_svg(obj, asnode=False):
 					node.append(x.attrib['transform'])
 			
 		case 'line': shape = line_from_svg(obj)
-		case 'path': shape = path_from_svg(obj)	#polybezier_from_svg(obj)
+		case 'path': shape = path_from_svg(obj)
 		case 'polyline': shape = polyline_from_svg(obj)
 		case 'polygon': shape = polygon_from_svg(obj)
 		case 'rect': shape = rect_from_svg(obj)
@@ -800,11 +659,7 @@ def arc_to_svg(obj, **kwargs): return lxmlx.element("path", d=obj.d, **kwargs)
 def image_to_svg(obj, **kwargs):
 	return lxmlx.element("{http://www.w3.org/2000/svg}image", x=obj.min[0], y=obj.min[1], width=obj.size[0], height=obj.size[1], **{'{http://www.w3.org/1999/xlink}href': obj.filepath}, **kwargs)
 
-
-
 def group_to_svg(obj, **kwargs): return lxmlx.element("g", children=[x.to_svg() for x in obj], **kwargs)
-
-#def path(d, **kwargs): return etree.Element("path", d=d, **to_str(kwargs))
 
 def href(image): return image.get('{http://www.w3.org/1999/xlink}href', None)
 
@@ -814,19 +669,6 @@ def capsule(center, size, **kwargs):
 
 NSMAP = {None: "http://www.w3.org/2000/svg"}
 def svg(width, height): return etree.Element("svg", width=str(width), height=str(height), nsmap=NSMAP)
-
-"""def polygon_arcs(vertices, closed=True, mask=None, radius=0.5, **kwargs):
-	edges = geo.polyline.edges(vertices, closed=closed)
-	if mask is None:
-		mask = [True] * len(edges)
-	d = f"M {vertices[0][0]} {vertices[0][1]}"
-	for i, edge in enumerate(edges):
-		r = edge.length * radius
-		x, y = edge[1]
-		d += f" A {r} {r} 0 0 1 {x} {y}" if mask[i] else f" L {x} {y}"
-	return path(d=d, **kwargs)"""
-
-
 
 def tspan_to_svg(obj, **kwargs): #In SVG, the y attribute of a <text> element refers to the baseline of the text
 	return  lxmlx.element('tspan', text=obj.inner_text, x=obj.aabb.min[0], y=obj.aabb.max[1], **{"font-family": osx.filename(obj.font), "font-size": obj.font_size}, **kwargs)
@@ -897,7 +739,11 @@ def save_svg(obj, path='drawing.svg', overwrite=True):
 
 geo.group.save_svg = lambda self, path='drawing.svg', overwrite=True: save_svg(self, path, overwrite)
 
-
+def load_svg(filepath, asnode=False):
+	root = etree.parse(filepath).getroot()
+	root = from_svg(root, asnode)
+	#set_pivots(root)
+	return root
 
 
 
