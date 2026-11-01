@@ -481,6 +481,10 @@ class points(np.ndarray, shape):
 		new_array = np.insert(self, index, point, axis=0)
 		return new_array.view(type(self))
 
+	def extend(self, points):
+		new_array = np.append(self, points, axis=0)
+		return new_array.view(type(self))
+	
 	def swizzle(self, axes):
 		self[:] = [x[axes] for x in self]
 		return self
