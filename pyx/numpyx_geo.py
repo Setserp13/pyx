@@ -777,19 +777,22 @@ class arc(circle):
 		return self.get_point(self.start + self.sweep * t)
 
 	@property
-	def d(self):
-		p0 = self.get_point01(0.)
+	def d_command(self):
 		p1 = self.get_point01(1.)
 
 		large_arc_flag = int(self.sweep > math.pi)
-		sweep_flag = 1  # Counterclockwise in mathematical coordinates
+		sweep_flag = 1
 
 		return (
-			f"M {p0[0]} {p0[1]} "
 			f"A {self.radius} {self.radius} 0 "
 			f"{large_arc_flag} {sweep_flag} "
 			f"{p1[0]} {p1[1]}"
 		)
+
+	@property
+	def d(self):
+		p0 = self.get_point01(0.)
+		return f"M {p0[0]} {p0[1]} {self.d_command}"
 
 	def contains_angle(self, a):
 		s = self.start
