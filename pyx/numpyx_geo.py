@@ -774,7 +774,7 @@ class arc(circle):
 	
 	def get_point01(self, t):
 		t = npx.clamp01(t)
-		return self.get_point(self.start + self.theta * t)
+		return self.get_point(self.start + self.sweep * t)
 
 	@property
 	def d(self):
