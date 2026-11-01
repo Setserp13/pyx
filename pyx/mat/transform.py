@@ -13,24 +13,33 @@ Se a matriz não for ortogonal (por exemplo contém escala, cisalhamento ou erro
 Para rotações representadas por quaternions, a inversa (rotação oposta) é o conjugado do quaternion normalizado; ao converter para matriz, a transposta continua sendo a inversa.
 """
 
-def to_homogeneous(matrix):
+"""def to_homogeneous(matrix):
 	dim = len(matrix)
 	result = np.eye(dim+1)
 	result[:dim, :dim] = matrix
-	return result
+	return result"""
+
+def homogenize(M):
+	"""Embed a square matrix in homogeneous coordinates."""
+	M = np.asarray(M)
+
+	if M.ndim != 2 or M.shape[0] != M.shape[1]:
+		raise ValueError("M must be a square matrix")
+
+	H = np.eye(M.shape[0] + 1, dtype=M.dtype)
+	H[:-1, :-1] = M
+
+	return H
 
 
+def R2(angle):
+	c, s = np.cos(phi), np.sin(phi)
+	return np.array([[c, s], [-s, c]])
 
-def R2(theta):
-	c = math.cos(theta)
-	s = math.sin(theta)
-	return np.array([[c, -s],
-					 [s,  c]])
-
-def basic_rotation_matrix(theta, plane, dim):
+def basic_rotation_matrix(dim, plane, angle):	#Return a basic n-dimensional rotation matrix by an angle θ in the [i, j] plane
 	M = np.eye(dim)
 	i, j = plane
-	M[np.ix_([i, j], [i, j])] = R2(theta)
+	M[np.ix_([i, j], [i, j])] = R2(angle)
 	return M
 
 def R(angles):
@@ -42,19 +51,42 @@ def R(angles):
 	planes = combinations(axes, 2)
 
 	rotations = [
-		basic_rotation_matrix(angle, plane, n)
+		basic_rotation_matrix(n, plane, angle)
 		for angle, plane in zip(angles, planes)
 	]
 
 	return reduce(lambda A, B: A @ B, rotations)
 
+def S(scale):	#scale matrix
+	scale = np.asarray(scale, dtype=float)
+	return np.diag(scale)
 
+def T(offset):	#translation matrix
+	offset = np.asarray(offset, dtype=float)
+	n = len(offset)
 
+	M = np.eye(n + 1)
+	M[:n, n] = offset
 
+	return M
 
+def skew(v):
+	x, y, z = v
+	return np.array([
+		[0, -z, y],
+		[z, 0, -x],
+		[-y, x, 0]
+	])
+
+def R3(q):
+	x, y, z, w = np.asarray(q) / np.linalg.norm(q)
+	v = np.array([x, y, z])
+
+	return np.eye(3) + 2 * w * skew(v) + 2 * skew(v) @ skew(v)
 
 class Matrix:
-	def S(vector, homogeneous=True): #scaling
+
+	"""def S(vector, homogeneous=True): #scaling
 		if homogeneous:
 			vector = np.append(vector, 1)
 		return np.array([(npx.ei(i, len(vector)) * x).tolist() for i, x in enumerate(vector)])
@@ -90,7 +122,7 @@ class Matrix:
 			[1 - 2*(y*y + z*z), 2*(x*y - w*z), 2*(x*z + w*y)],
 			[2*(x*y + w*z), 1 - 2*(x*x + z*z), 2*(y*z - w*x)],
 			[2*(x*z - w*y), 2*(y*z + w*x), 1 - 2*(x*x + y*y)]
-		]))
+		]))"""
 
 	@staticmethod
 	def decompose(matrix):	#decompose T R S
@@ -250,13 +282,13 @@ class Transform(Node):
 	def ndim(self): return len(self.position)
 	
 	@property
-	def T(self): return Matrix.T(self.position)
+	def T(self): return T(self.position)	#Matrix.T(self.position)
 
 	@property
 	def R(self): pass
 
 	@property
-	def S(self): return Matrix.S(self.scale)
+	def S(self): return homogenize(S(self.scale))	#Matrix.S(self.scale)
 
 	@property
 	def global_TRS(self):
@@ -396,7 +428,7 @@ class Node2D(Transform):	#Node):
 		super().__init__(position, rotation, scale, **kwargs)
 
 	@property
-	def R(self): return Matrix.R2(self.rotation)
+	def R(self): return homogenize(R2(self.rotation))	#Matrix.R2(self.rotation)
 
 	@classmethod
 	def from_matrix(cls, M):
@@ -425,7 +457,7 @@ class Node3D(Transform):	#Node):):
 	def euler(self, value): self.rotation = quaternion.from_euler(value)
 
 	@property
-	def R(self): return Matrix.R3(self.rotation)
+	def R(self): return homogenize(R3(self.rotation))	#Matrix.R3(self.rotation)
 
 
 
