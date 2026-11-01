@@ -222,9 +222,9 @@ class path(list, shape):
 
 		previous_type = None
 		previous_control = None
-		print(self.normalized)
+		#print(self.normalized)
 		for cmd in self.normalized:
-			print(cmd)
+			#print(cmd)
 			t = cmd.type.upper()
 			p = np.asarray(cmd.parameters, dtype=float)
 			relative = cmd.relative
