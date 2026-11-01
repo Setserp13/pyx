@@ -238,13 +238,13 @@ class Transform(Node):
 	def ndim(self): return len(self.position)
 	
 	@property
-	def T(self): return T(self.position)	#Matrix.T(self.position)
+	def T(self): return T(self.position)
 
 	@property
 	def R(self): pass
 
 	@property
-	def S(self): return homogenize(S(self.scale))	#Matrix.S(self.scale)
+	def S(self): return homogenize(S(self.scale))
 
 	@property
 	def global_TRS(self):
@@ -384,7 +384,7 @@ class Node2D(Transform):	#Node):
 		super().__init__(position, rotation, scale, **kwargs)
 
 	@property
-	def R(self): return homogenize(R2(self.rotation))	#Matrix.R2(self.rotation)
+	def R(self): return homogenize(R2(self.rotation))
 
 	@classmethod
 	def from_matrix(cls, M):
@@ -413,7 +413,7 @@ class Node3D(Transform):	#Node):):
 	def euler(self, value): self.rotation = quaternion.from_euler(value)
 
 	@property
-	def R(self): return homogenize(R3(self.rotation))	#Matrix.R3(self.rotation)
+	def R(self): return homogenize(R3(self.rotation))
 
 
 
