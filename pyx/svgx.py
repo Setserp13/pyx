@@ -237,19 +237,19 @@ class path(list, shape):
 				current, = points(p)
 				start = current.copy()
 
-			elif t == 'L':
+			"""elif t == 'L':
 				end, = points(p)
 				segments.append(line([current.copy(), end.copy()]))
-				current = end
+				current = end"""
 
 			elif t in 'HV':
 				axis = 'HV'.index(t)
 				end = current.copy()
 				end[axis] = current[axis] + p[0] if relative else p[0]
-				segments.append(line([current.copy(), end.copy()]))
+				segments.append(bezier([current.copy(), end.copy()]))
 				current = end
 
-			elif t in 'QCTS':
+			elif t in 'LQCTS':
 				v = points(p)
 				
 				if t in 'TS':
@@ -295,7 +295,7 @@ class path(list, shape):
 						end_angle
 					))
 				else:
-					segments.append(line([
+					segments.append(bezier([
 						current.copy(), end.copy()
 					]))
 
@@ -303,7 +303,7 @@ class path(list, shape):
 
 			elif t == 'Z':
 				if not np.allclose(current, start):
-					segments.append(line([
+					segments.append(bezier([
 						current.copy(), start.copy()
 					]))
 
@@ -343,7 +343,7 @@ generic.make_Element(path)
 
 
 #PATH
-def parse_commands(s):
+"""def parse_commands(s):
 	p = re.compile(r'([A-Za-z])|([-+]?\d*\.?\d+(?:[eE][-+]?\d+)?)')
 	r, c, a = [], None, []
 	for cmd, num in p.findall(s):
@@ -478,7 +478,7 @@ def polybezier_from_svg(obj):
 		prev_cmd = cmd
 
 	finish()
-	return geo.group(paths)
+	return geo.group(paths)"""
 
 def parse_svg_transform(transform):
 	M = np.eye(3)
