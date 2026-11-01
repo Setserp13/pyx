@@ -13,12 +13,6 @@ Se a matriz não for ortogonal (por exemplo contém escala, cisalhamento ou erro
 Para rotações representadas por quaternions, a inversa (rotação oposta) é o conjugado do quaternion normalizado; ao converter para matriz, a transposta continua sendo a inversa.
 """
 
-"""def to_homogeneous(matrix):
-	dim = len(matrix)
-	result = np.eye(dim+1)
-	result[:dim, :dim] = matrix
-	return result"""
-
 def homogenize(M):
 	"""Embed a square matrix in homogeneous coordinates."""
 	M = np.asarray(M)
@@ -85,44 +79,6 @@ def R3(q):
 	return np.eye(3) + 2 * w * skew(v) + 2 * skew(v) @ skew(v)
 
 class Matrix:
-
-	"""def S(vector, homogeneous=True): #scaling
-		if homogeneous:
-			vector = np.append(vector, 1)
-		return np.array([(npx.ei(i, len(vector)) * x).tolist() for i, x in enumerate(vector)])
-
-	def T(vector): #translation
-		n = len(vector)
-		result = np.eye(n + 1)
-		result[:n, -1] = vector
-		return result
-
-	def R2(theta): #rotation 2D
-		return np.array([
-			[np.cos(theta), -np.sin(theta), 0],
-			[np.sin(theta),  np.cos(theta), 0],
-			[0, 0, 1]
-		])
-
-	def rotation_matrix(theta):
-		c = np.cos(theta)
-		s = np.sin(theta)
-		return np.array([
-			[c, -s],
-			[s,  c]
-		])
-
-
-	
-	@staticmethod
-	def R3(q):
-		x, y, z, w = q / np.linalg.norm(q)
-	
-		return to_homogeneous(np.array([
-			[1 - 2*(y*y + z*z), 2*(x*y - w*z), 2*(x*z + w*y)],
-			[2*(x*y + w*z), 1 - 2*(x*x + z*z), 2*(y*z - w*x)],
-			[2*(x*z - w*y), 2*(y*z + w*x), 1 - 2*(x*x + y*y)]
-		]))"""
 
 	@staticmethod
 	def decompose(matrix):	#decompose T R S
