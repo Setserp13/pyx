@@ -804,7 +804,7 @@ def image_to_svg(obj, **kwargs):
 
 def group_to_svg(obj, **kwargs): return lxmlx.element("g", children=[x.to_svg() for x in obj], **kwargs)
 
-def path(d, **kwargs): return etree.Element("path", d=d, **to_str(kwargs))
+#def path(d, **kwargs): return etree.Element("path", d=d, **to_str(kwargs))
 
 def href(image): return image.get('{http://www.w3.org/1999/xlink}href', None)
 
@@ -815,7 +815,7 @@ def capsule(center, size, **kwargs):
 NSMAP = {None: "http://www.w3.org/2000/svg"}
 def svg(width, height): return etree.Element("svg", width=str(width), height=str(height), nsmap=NSMAP)
 
-def polygon_arcs(vertices, closed=True, mask=None, radius=0.5, **kwargs):
+"""def polygon_arcs(vertices, closed=True, mask=None, radius=0.5, **kwargs):
 	edges = geo.polyline.edges(vertices, closed=closed)
 	if mask is None:
 		mask = [True] * len(edges)
@@ -824,7 +824,7 @@ def polygon_arcs(vertices, closed=True, mask=None, radius=0.5, **kwargs):
 		r = edge.length * radius
 		x, y = edge[1]
 		d += f" A {r} {r} 0 0 1 {x} {y}" if mask[i] else f" L {x} {y}"
-	return path(d=d, **kwargs)
+	return path(d=d, **kwargs)"""
 
 
 
