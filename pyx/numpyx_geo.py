@@ -62,6 +62,31 @@ class shape:
 		return self.aabb if M is None else (self @ M.global_TRS).aabb
 
 
+class curve:
+	# Parametric curve
+
+	def get_point01(self, t):
+		raise NotImplementedError
+
+	def sample(self, steps=100):
+		return polyline(
+			[self.get_point01(t) for t in np.linspace(0., 1., steps)],
+			closed=False
+		)
+
+	def approx_length(self, resolution=100):
+		return self.sample(resolution).perimeter
+
+	def sample_by_size(self, size, resolution=100):
+		if size <= 0:
+			raise ValueError("size must be positive")
+
+		length = self.approx_length(resolution)
+		steps = max(2, math.ceil(length / size))
+
+		return self.sample(steps)
+
+
 class rect_like(shape):	#interval
 	def __init__(self, min, size):
 		self.min = np.array(min)
@@ -757,7 +782,7 @@ class ellipse(rect_like):
 
 
 
-class arc(circle):
+class arc(circle, curve):
 	def __init__(self, center, radius, start, end): #start is start angle and end is end angle
 		super().__init__(center, radius)
 		self.start = start
@@ -833,7 +858,7 @@ class arc(circle):
 		self.radius *= s
 
 
-class line(points):	#start = self[0], end = self[1]
+class line(points, curve):	#start = self[0], end = self[1]
 	
 	@property
 	def vector(self): return self[1] - self[0]
@@ -1709,14 +1734,16 @@ class triangle(polyline):
 
 
 
-class bezier(points):
+class bezier(points, curve):
 	
-	def get_point(p, t):
+	#def get_point(p, t):
+	def get_point01(p, t):
 		# Recursive Bézier evaluation (De Casteljau's algorithm)
 		if len(p) == 1:
 			return p[0]
 		else:
-			return (1 - t) * bezier.get_point(p[:-1], t) + t * bezier.get_point(p[1:], t)
+			return (1 - t) * bezier.get_point01(p[:-1], t) + t * bezier.get_point01(p[1:], t)
+			#return (1 - t) * bezier.get_point(p[:-1], t) + t * bezier.get_point(p[1:], t)
 
 		"""#Evaluate a Bézier curve at parameter t using Bernstein basis.
 		n = len(points) - 1
@@ -1735,7 +1762,7 @@ class bezier(points):
 		derivative_points = [n * (p[i + 1] - p[i]) for i in range(n)]
 		return get_point(t, *derivative_points)
 
-	def sample(p, steps): return polyline([p.get_point(t) for t in np.linspace(0.0, 1.0, steps)], closed=False)
+	"""def sample(p, steps): return polyline([p.get_point(t) for t in np.linspace(0.0, 1.0, steps)], closed=False)
 
 	def length(p, resolution=100): return p.sample(resolution).perimeter
 
@@ -1743,7 +1770,7 @@ class bezier(points):
 		length = p.length(resolution)
 		steps = max(2, int(math.ceil(length / size)))	#minimum 2 samples
 		#print(length, size, steps)
-		return p.sample(steps)
+		return p.sample(steps)"""
 
 class polybezier(points):	#composite Bézier curve or Bézier spline
 
