@@ -908,9 +908,13 @@ class line(points, curve):	#start = self[0], end = self[1]
 		"""Check if two N-dimensional lines coincide."""
 		return all(point_on_line(a, x, tol) for x in b)
 
-	def lerp(self, t): return npx.lerp(*self, t)
-
+	def lerp(self, t): return npx.lerp(*self, t) #- Remove it later
+	def get_point01(self, t): return npx.lerp(*self, t)
+	
 	def lerp_line(self, ts): return line([self.lerp(t) for t in ts])
+
+
+
 
 class segment(line):
 	pass
