@@ -1672,10 +1672,7 @@ class polyline(points):
 		result = []
 	
 		for r, angle in zip(radii, angles):
-			if r <= 0:
-				result.append(np.asarray(angle[1]))
-			else:
-				result.extend(angle.round(r))
+			result.append(angle.round(r) if r > 0 else np.asarray(angle[1]))
 	
 		if not self.closed:
 			result = [self[0], *result, self[-1]]
