@@ -264,7 +264,7 @@ class path(list, shape):
 				segments.append(bezier([current.copy(), *v]))
 
 				current = v[-1]
-				previous_control = v[-2]
+				previous_control = None if t == 'L' else v[-2]
 
 			elif t == 'A':
 				rx, ry, rotation, large, sweep, x, y = p
