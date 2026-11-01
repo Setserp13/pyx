@@ -12,7 +12,7 @@ import svgpathtools
 from svgpathtools import parse_path
 import svgutils.transform as sg
 import re
-from pyx.collectionsx import List, to_str, Dict
+from pyx.collectionsx import List, to_str, Dict, split_before
 from pyx.lxmlx import *	#localname
 import numpy as np
 import pyx.numpyx as npx
@@ -122,23 +122,6 @@ class path_command:
 	def __getitem__(self, index): return self.parameters[index]
 
 	def __setitem__(self, index, value): self.parameters[index] = value
-
-
-def split_before(arr, match):
-	result, current = [], []
-
-	for x in arr:
-		if match(x) and current:
-			result.append(current)
-			current = []
-
-		current.append(x)
-
-	if current:
-		result.append(current)
-
-	return result
-	
 
 
 class path(list, shape):
