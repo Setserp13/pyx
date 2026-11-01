@@ -237,7 +237,7 @@ class path(list, shape):
 				current, = points(p)
 				start = current.copy()
 
-			"""elif t == 'L':
+				"""elif t == 'L':
 				end, = points(p)
 				segments.append(line([current.copy(), end.copy()]))
 				current = end"""
