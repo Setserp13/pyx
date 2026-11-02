@@ -91,7 +91,7 @@ class shape:
 	
 	@global_aabb.setter
 	def global_aabb(self, value):
-		M = self.attrib.get("transform")
+		M = self.xform	#attrib.get("transform")
 		self._set_aabb(value, M.global_TRS if M is not None else None)
 
 
