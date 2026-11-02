@@ -116,6 +116,12 @@ class curve:
 
 		return self.sample(steps)
 
+	def get_points01(self, ts):
+		return points([self.get_point01(t) for t in ts])
+	
+	def random_polyline(self, n, closed=False):
+		return polyline(self.get_points01(sorted(np.random.random(n))), closed=closed)
+
 
 class rect_like(shape):	#interval
 	def __init__(self, min, size):
@@ -572,7 +578,7 @@ class ball(shape):
 		return obj
 
 
-class circle(ball):	#disk
+class circle(ball, curve):	#disk
 
 	def angle_of(self, point):
 		delta = point - self.center
