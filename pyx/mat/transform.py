@@ -579,8 +579,8 @@ class Node2D(Transform):	#Node):
 	@rotation.setter
 	def rotation(self, value):
 		self._rotation = R2(value)
-	#@property
-	#def R(self): return homogenize(R2(self.rotation))
+	"""@property
+	def R(self): return homogenize(R2(self.rotation))
 
 	@classmethod
 	def from_matrix(cls, M):
@@ -594,15 +594,18 @@ class Node2D(Transform):	#Node):
 	
 	@rotation_matrix.setter
 	def rotation_matrix(self, value):
-		self.rotation = np.arctan2(value[1, 0], value[0, 0])
+		self.rotation = np.arctan2(value[1, 0], value[0, 0])"""
 
 
 
 
 class Node3D(Transform):	#Node):):
-	def __init__(self, position=np.zeros(3), rotation=quaternion([0, 0, 0, 1]), scale=np.ones(3), **kwargs):
-		super().__init__(position, rotation, scale, **kwargs)
-
+	"""def __init__(self, position=np.zeros(3), rotation=quaternion([0, 0, 0, 1]), scale=np.ones(3), **kwargs):
+		super().__init__(position, rotation, scale, **kwargs)"""
+	def __init__(self, position=np.zeros(3), euler=np.zeros(3), scale=np.ones(3), **kwargs):
+		super().__init__(position, np.eye(3), scale, **kwargs)
+		self.euler = euler
+		
 	"""@property
 	def euler(self): return self.rotation.to_euler()
 	@euler.setter
