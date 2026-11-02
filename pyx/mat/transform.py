@@ -538,8 +538,19 @@ class Transform(Node):
 		if isinstance(other, Transform):
 			other = other.matrix
 	
-		result = Transform()
-		result.matrix = self.matrix @ np.asarray(other, dtype=float)
+		other = np.asarray(other, dtype=float)
+		n = self.ndim + 1
+	
+		if other.shape != (n, n):
+			if other.ndim != 2 or other.shape[0] != other.shape[1] or other.shape[0] > n:
+				raise ValueError("Incompatible matrix dimensions")
+	
+			matrix = np.eye(n)
+			matrix[:other.shape[0], :other.shape[1]] = other
+			other = matrix
+	
+		result = type(self)()
+		result.matrix = self.matrix @ other
 		return result
 	
 	
