@@ -90,7 +90,7 @@ class shape:
 		return self.aabb if M is None else (self @ M.global_TRS).aabb"""
 
 	#CHANGE BELOW TO WORK WITH ANY DIM LATER
-	def _set_aabb(self, value, xform=None):
+	"""def _set_aabb(self, value, xform=None):
 		current = self.aabb if xform is None else (self @ xform).aabb
 	
 		scale = value.size / current.size
@@ -100,8 +100,23 @@ class shape:
 	
 		matrix = adjustment.TRS if xform is None else adjustment.TRS @ xform
 	
-		self.set(transform=Node2D.from_matrix(matrix))
-		
+		self.set(transform=Node2D.from_matrix(matrix))"""
+
+	def _set_aabb(self, value, xform=None):
+		current = self.aabb if xform is None else (self @ xform).aabb
+	
+		scale = value.size / current.size
+		offset = value.min - current.min * scale
+	
+		adjustment = Transform.identity(self.ndim)
+		adjustment.scale = scale
+		adjustment.position = offset
+	
+		if xform is not None:
+			adjustment.matrix = adjustment.matrix @ xform
+	
+		self.set(xform=adjustment)
+	
 	@local_aabb.setter
 	def local_aabb(self, value):
 		self._set_aabb(value)
