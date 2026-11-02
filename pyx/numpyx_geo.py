@@ -70,16 +70,15 @@ class shape:
 		return self.aabb if M is None else (self @ M.global_TRS).aabb
 
 	#CHANGE BELOW TO WORK WITH ANY DIM LATER
-	def _set_aabb(self, value, transform=None):
-		current = self.aabb if transform is None else (self @ transform).aabb
+	def _set_aabb(self, value, xform=None):
+		current = self.aabb if xform is None else (self @ xform).aabb
 	
 		scale = value.size / current.size
 		offset = value.min - current.min * scale
 	
 		M = Node2D(scale=scale, position=offset)
-	
-		self.set(transform = M if transform is None else M @ transform)
-	
+		self.set(transform=M if xform is None else Node2D.from_matrix(M.TRS @ xform.TRS))
+		
 	@local_aabb.setter
 	def local_aabb(self, value):
 		self._set_aabb(value)
