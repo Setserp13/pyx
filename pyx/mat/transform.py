@@ -490,7 +490,7 @@ class Transform(Node):
 		basis = Basis(value[:n, :n])
 	
 		self.scale = basis.scale
-		self.rotation = basis.rotation
+		self._rotation = basis.rotation
 
 	@global_matrix.setter
 	def global_matrix(self, value):
