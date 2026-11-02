@@ -17,6 +17,9 @@ EPSILON = 1e-9
 TAU = math.pi * 2.
 
 class shape:
+	@property
+	def ndim(self): raise NotImplementedError
+	
 	def __add__(self, value): raise NotImplementedError
 
 	def __sub__(self, value): return self.__add__(-value)
@@ -27,13 +30,17 @@ class shape:
 
 	def __matmul__(self, value):	# raise NotImplementedError
 		obj = copy.deepcopy(self)
+		obj.xform = value @ obj.xform
+		return obj
+	"""def __matmul__(self, value):	# raise NotImplementedError
+		obj = copy.deepcopy(self)
 		M = obj.attrib.get("transform")
 
 		obj.attrib["transform"] = Node2D.from_matrix(	#CHANGE LATER TO WORK WITH ANY DIMENSION
 			value if M is None else value @ M.TRS
 		)
 
-		return obj
+		return obj"""
 	
 	__rmul__ = __mul__
 	
@@ -60,9 +67,18 @@ class shape:
 	def aabb(self): raise NotImplementedError
 
 	@property
-	def xform(self): return getattr(self, 'attrib', {}).get('transform', None)	#Transform.identity(self.ndim)
+	def xform(self): return getattr(self, 'attrib', {}).get('transform'	Transform.identity(self.ndim))	#, None)
+
+	@xform.setter
+	def xform(self, value): self.set(transform=value)
 	
 	@property
+	def local_aabb(self): return (self @ self.xform.TRS).aabb
+
+	@property
+	def global_aabb(self): return (self @ self.xform.global_TRS).aabb
+	
+	"""@property
 	def local_aabb(self):
 		M = self.xform	#attrib.get("transform")
 		return self.aabb if M is None else (self @ M.TRS).aabb
@@ -70,7 +86,7 @@ class shape:
 	@property
 	def global_aabb(self):
 		M = self.xform	#attrib.get("transform")
-		return self.aabb if M is None else (self @ M.global_TRS).aabb
+		return self.aabb if M is None else (self @ M.global_TRS).aabb"""
 
 	#CHANGE BELOW TO WORK WITH ANY DIM LATER
 	def _set_aabb(self, value, xform=None):
@@ -2002,6 +2018,9 @@ def angle_vector_plane(v, p1, p2):	#p1 and p2 are vectors that define the plane
 
 
 class group(list, shape):
+	@property
+	def ndim(self): return self[0].ndim
+
 	@property
 	def aabb(self):
 		return aabb([x.aabb for x in self])
