@@ -581,7 +581,7 @@ class Node2D(Transform):	#Node):
 
 	@property
 	def rotation(self):
-		return np.arctan2(self._rotation[1, 0], self._rotation[0, 0])
+		return float(np.arctan2(self._rotation[1, 0], self._rotation[0, 0]))
 	@rotation.setter
 	def rotation(self, value):
 		self._rotation = R2(value)
