@@ -24,6 +24,10 @@ def safe_divide(a, b):
 	np.divide(a, b, out=result, where=b != 0)
 
 	return result
+	
+	#b = np.where(b == 0, 1, b)
+	#return a / b
+
 
 
 class shape:
@@ -188,10 +192,7 @@ class rect_like(shape):	#interval
 
 class rect(rect_like):
 	
-	def normalize_point(self, value):
-		size = self.size
-		size = np.where(size == 0, 1, size)
-		return (value - self.min) / size
+	def normalize_point(self, value): return safe_divide(value - self.min, size)
 	def normalize_point_component(self, value, axis=0): return (value - self.min[axis]) / self.size[axis]
 
 	def denormalize_point(self, value): return value * self.size + self.min
@@ -199,10 +200,7 @@ class rect(rect_like):
 
 	def denormalize_points(self, value): return [self.denormalize_point(x) for x in value]
 	
-	def normalize_vector(self, value):
-		size = self.size
-		size = np.where(size == 0, 1, size)
-		return value / size
+	def normalize_vector(self, value): return safe_divide(value, size)
 
 	def denormalize_vector(self, value): return value * self.size
 
