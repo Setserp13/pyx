@@ -125,6 +125,9 @@ class path_command:
 
 
 class path(list, shape):
+	@property
+	def ndim(self): return 2
+	
 	def __init__(self, *commands):
 		list.__init__(self, commands)
 
