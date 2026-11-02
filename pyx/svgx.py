@@ -685,7 +685,7 @@ def transform_to_svg(obj):	#order matters
 		f'scale({obj.scale[0]} {obj.scale[1]})'
 	)
 
-Node2D.to_svg = lambda self: transform_to_svg(self)
+#Node2D.to_svg = lambda self: transform_to_svg(self)
 
 def get_attrib(obj):
 	attrib = getattr(obj, "attrib", {})
@@ -694,6 +694,11 @@ def get_attrib(obj):
 			if isinstance(attrib[k], Color):
 				attrib[k + '-opacity'] = attrib[k].a
 				attrib[k] = attrib[k].hex[:-2]
+
+	xform = attrib.get('transform')
+	if xform is not None and xform.ndim == 2:
+		attrib[k] = transform_to_svg(xform)
+
 	for k in attrib:
 		if hasattr(attrib[k], "to_svg"):
 			attrib[k] = attrib[k].to_svg()
