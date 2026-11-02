@@ -1262,7 +1262,7 @@ class Mesh(points):	#):
 		old_size = self.shape[0]
 		new_size = old_size + len(vertices)
 
-		self.resize((new_size, 3), refcheck=False)
+		self.resize((new_size, self.ndim), refcheck=False)
 		self[old_size:] = vertices
 
 		self.indices.append(np.arange(start_index, new_size))
@@ -1280,14 +1280,14 @@ class Mesh(points):	#):
 			for i in range(len(self.indices) - 5, len(self.indices)):
 				self.flip_normal(i)
 
-	def translate(self, vector):
+	"""def translate(self, vector):
 		self.vertices = [x + vector for x in self.vertices]
 
 	def scale(self, vector):
-		self.vertices = [x * vector for x in self.vertices]
+		self.vertices = [x * vector for x in self.vertices]"""
 
 	@property
-	def pivot(self): return self.aabb.normalize_point(np.zeros(3))
+	def pivot(self): return self.aabb.normalize_point(np.zeros(self.ndim))
 
 	@pivot.setter	#pivot is normalized
 	def pivot(self, value): self.translate(-self.aabb.denormalize_point(value))
