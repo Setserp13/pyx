@@ -568,6 +568,12 @@ class Transform(Node):
 		result.matrix = self._fit_matrix(other) @ self.matrix
 		return result
 
+	def astype(self, cls):
+		result = cls()
+		result.matrix = self.matrix
+		return result
+
+
 class Node2D(Transform):	#Node):
 	def __init__(self, position=np.zeros(2), rotation=0.0, scale=np.ones(2), **kwargs):
 		#super().__init__(position, rotation, scale, **kwargs)
