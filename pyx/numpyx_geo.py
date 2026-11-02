@@ -1996,7 +1996,7 @@ def angle_vector_plane(v, p1, p2):	#p1 and p2 are vectors that define the plane
 	return angle_to_plane	# return in radians
 
 
-class group(list):
+class group(list, shape):
 	@property
 	def aabb(self):
 		return aabb([x.aabb for x in self])
