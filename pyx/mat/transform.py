@@ -557,7 +557,11 @@ class Transform(Node):
 	def __imatmul__(self, other):
 		self.matrix = (self @ other).matrix
 		return self
-
+	
+	def __rmatmul__(self, other):
+		result = type(self)()
+		result.matrix = np.asarray(other, dtype=float) @ self.matrix
+		return result
 
 class Node2D(Transform):	#Node):
 	def __init__(self, position=np.zeros(2), rotation=0.0, scale=np.ones(2), **kwargs):
