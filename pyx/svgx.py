@@ -678,7 +678,7 @@ def text_to_svg(obj, **kwargs): #In SVG, the y attribute of a <text> element ref
 
 
 def transform_to_svg(obj):	#order matters
-	print(obj._rotation, obj.rotation)
+	#print(obj._rotation, obj.rotation)
 	#return f'translate({obj.position[0]} {obj.position[1]}) scale({obj.scale[0]} {obj.scale[1]}) rotate({math.degrees(obj.rotation)})'
 	return (
 		f'translate({obj.position[0]} {obj.position[1]}) '
@@ -698,7 +698,7 @@ def get_attrib(obj):
 
 	xform = attrib.get('transform')
 	if xform is not None and xform.ndim == 2:
-		attrib[k] = transform_to_svg(xform.astype(Node2D))
+		attrib['transform'] = transform_to_svg(xform.astype(Node2D))
 
 	for k in attrib:
 		if hasattr(attrib[k], "to_svg"):
