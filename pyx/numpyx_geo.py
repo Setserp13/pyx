@@ -16,6 +16,16 @@ from pyx.mat.transform import Node2D, Node3D, quaternion, Transform
 EPSILON = 1e-9
 TAU = math.pi * 2.
 
+def safe_divide(a, b):
+	a = np.asarray(a, dtype=float)
+	b = np.asarray(b, dtype=float)
+
+	result = np.ones(np.broadcast_shapes(a.shape, b.shape), dtype=float)
+	np.divide(a, b, out=result, where=b != 0)
+
+	return result
+
+
 class shape:
 	@property
 	def ndim(self): raise NotImplementedError
@@ -72,8 +82,8 @@ class shape:
 
 	def _set_aabb(self, value, xform=None):
 		current = self.aabb if xform is None else (self @ xform).aabb
-	
-		scale = value.size / current.size
+		
+		scale = safe_divide(value.size, current.size)
 		offset = value.min - current.min * scale
 	
 		adjustment = Transform.identity(self.ndim)
