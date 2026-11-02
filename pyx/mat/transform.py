@@ -72,11 +72,11 @@ def skew(v):
 		[-y, x, 0]
 	])
 
-def R3(q):
+"""def R3(q):
 	x, y, z, w = np.asarray(q) / np.linalg.norm(q)
 	v = np.array([x, y, z])
 
-	return np.eye(3) + 2 * w * skew(v) + 2 * skew(v) @ skew(v)
+	return np.eye(3) + 2 * w * skew(v) + 2 * skew(v) @ skew(v)"""
 
 class Matrix:
 
@@ -198,6 +198,12 @@ class quaternion(np.ndarray):
 	
 		return quaternion([x, y, z, w])
 
+	def to_matrix(q):
+		x, y, z, w = np.asarray(q) / np.linalg.norm(q)
+		v = np.array([x, y, z])
+	
+		return np.eye(3) + 2 * w * skew(v) + 2 * skew(v) @ skew(v)
+	
 	@staticmethod
 	def from_axis_angle(axis, angle):
 		axis = npx.normalize(axis)
@@ -227,6 +233,134 @@ class quaternion(np.ndarray):
 		return quaternion.from_axis_angle(axis, angle)	# Quaternion final
 
 
+
+class Basis(np.ndarray):
+	def __new__(cls, matrix):
+		matrix = np.asarray(matrix, dtype=float)
+
+		if matrix.ndim != 2 or matrix.shape[0] != matrix.shape[1]:
+			raise ValueError("Basis must be a square matrix")
+
+		return matrix.view(cls)
+
+	def __array_finalize__(self, obj):
+		pass
+
+	@property
+	def ndim(self): return self.shape[0]
+
+	@classmethod
+	def identity(cls, n): return cls(np.eye(n))
+
+	@property
+	def matrix(self): return np.asarray(self)
+
+	@property
+	def rotation(self):
+		return self._decompose()[0]
+
+	@property
+	def _upper(self):
+		return self._decompose()[1]
+
+	@property
+	def scale(self):
+		return np.diag(self._upper)
+
+	@property
+	def shear(self):
+		U = self._upper
+		return np.array([
+			U[i, j] / U[j, j]
+			for i in range(self.ndim)
+			for j in range(i + 1, self.ndim)
+		])
+
+	@scale.setter
+	def scale(self, value):
+		self[:] = self.compose(scale=value, shear=self.shear, rotation=self.rotation)
+	
+	@shear.setter
+	def shear(self, value):
+		self[:] = self.compose(scale=self.scale, shear=value, rotation=self.rotation)
+
+	@rotation.setter
+	def rotation(self, value):
+		self[:] = self.compose(scale=self.scale, shear=self.shear, rotation=value)
+	
+	def _decompose(self):
+		Q, R = np.linalg.qr(self.matrix)	#QR decomposition
+	
+		signs = np.where(np.diag(R) < 0, -1., 1.)
+	
+		Q = Q @ np.diag(signs)
+		R = np.diag(signs) @ R
+	
+		# Ensure Q is a proper rotation. Fix improper rotation (reflection)
+		if np.linalg.det(Q) < 0:
+			Q[:, -1] *= -1
+			R[-1, :] *= -1
+	
+		# Check for singular or nearly singular bases.
+		tol = np.finfo(R.dtype).eps * np.linalg.norm(R, ord=np.inf)
+	
+		if np.any(np.abs(np.diag(R)) <= tol):
+			raise ValueError("Cannot decompose a singular (non-invertible) basis")
+	
+		return Q, R	#rotation, (scale @ shear @ reflection)
+
+	@classmethod
+	def compose(cls, scale, shear=None, rotation=None):
+		scale = np.asarray(scale, dtype=float)
+	
+		if scale.ndim != 1:
+			raise ValueError("Scale must be a 1D array")
+	
+		n = len(scale)
+		expected = n * (n - 1) // 2
+	
+		if shear is None:
+			shear = np.zeros(expected)
+		else:
+			shear = np.asarray(shear, dtype=float)
+	
+		if shear.shape != (expected,):
+			raise ValueError(f"Shear must contain {expected} values")
+	
+		if rotation is None:
+			rotation = np.eye(n)
+		else:
+			rotation = np.asarray(rotation, dtype=float)
+	
+		if rotation.shape != (n, n):
+			raise ValueError("Rotation must be an n x n matrix")
+	
+		H = np.eye(n)
+		k = 0
+	
+		for i in range(n):
+			for j in range(i + 1, n):
+				H[i, j] = shear[k]
+				k += 1
+	
+		return cls(rotation @ H @ np.diag(scale))
+
+	def __repr__(self):
+		return (
+			f"Basis(\n"
+			f"\tmatrix=\n{self.matrix},\n"
+			f"\tscale={self.scale},\n"
+			f"\tshear={self.shear},\n"
+			f"\trotation=\n{self.rotation}\n"
+			f")"
+		)
+
+
+
+
+
+
+
 class Transform(Node):
 	def __init__(self, position, rotation, scale, **kwargs):
 		super().__init__(**kwargs)
@@ -240,9 +374,11 @@ class Transform(Node):
 	@property
 	def T(self): return T(self.position)
 
+	#@property
+	#def R(self): pass
 	@property
-	def R(self): pass
-
+	def R(self): return homogenize(self.rotation)
+	
 	@property
 	def S(self): return homogenize(S(self.scale))
 
@@ -254,14 +390,6 @@ class Transform(Node):
 	@property
 	def inv_global_TRS(self): return np.linalg.inv(self.global_TRS)
 
-	"""def TRS_to(self, parent):
-		result = self.TRS
-	
-		while self != parent:
-			self = self.parent
-			result = self.TRS @ result
-	
-		return result"""
 	def TRS_to(self, parent):
 		result = self.TRS
 		node = self.parent
@@ -296,13 +424,6 @@ class Transform(Node):
 		p = np.append(point, 1)
 		return (self.global_TRS @ p)[:self.ndim]
 
-	"""@property
-	def global_position(self): return self.to_global(self.position)
-
-	@global_position.setter
-	def global_position(self, value):
-		self.position = self.to_local(value)"""
-
 	@property
 	def global_position(self): return self.global_TRS[:self.ndim, -1]
 
@@ -325,13 +446,53 @@ class Transform(Node):
 		else:
 			self.scale = value / self.parent.global_scale
 
-	@property
+	"""@property
 	def basis(self):	# BASIS (n×n matrix of world axes) -> upper-left n×n
 		return self.global_TRS[:self.ndim, :self.ndim]
 
 	@property
 	def local_basis(self):
+		return self.TRS[:self.ndim, :self.ndim]"""
+
+	@property
+	def basis(self):
 		return self.TRS[:self.ndim, :self.ndim]
+
+	@property
+	def global_basis(self):	# BASIS (n×n matrix of world axes) -> upper-left n×n
+		return self.global_TRS[:self.ndim, :self.ndim]
+	
+	@property
+	def matrix(self): return self.TRS
+	
+	@property
+	def global_matrix(self): return self.global_TRS
+
+	@matrix.setter
+	def matrix(self, value):
+		value = np.asarray(value, dtype=float)
+	
+		n = self.ndim
+	
+		if value.shape != (n + 1, n + 1):
+			raise ValueError("Matrix must be an (n+1) x (n+1) matrix")
+	
+		self.position = value[:n, n]
+	
+		basis = Basis(value[:n, :n])
+	
+		self.scale = basis.scale
+		self.rotation = basis.rotation
+
+	@global_matrix.setter
+	def global_matrix(self, value):
+		parent = self.attrib.get("parent")
+	
+		if parent is not None:
+			value = np.linalg.inv(parent.global_TRS) @ value
+	
+		self.matrix = value
+
 	
 	@property
 	def rotation_matrix(self):
@@ -341,20 +502,6 @@ class Transform(Node):
 	def rotation_matrix(self, value):
 		raise NotImplementedError
 	
-	"""def set_parent(self, parent, world_stays=True):
-		global_trs = self.global_TRS.copy() if world_stays else None
-
-		super().set_parent(parent)
-	
-		if world_stays:
-			local_trs = (
-				np.linalg.inv(parent.global_TRS) @ global_trs
-				if parent is not None
-				else global_trs
-			)
-	
-			self.position, self.rotation_matrix, self.scale = Matrix.decompose(local_trs)"""
-
 	def _reparent(self, objects, operation):	#WORLD POSITION STAYS
 		objects = list(objects)
 		global_trs = [x.global_TRS.copy() for x in objects]
@@ -378,6 +525,20 @@ class Transform(Node):
 	def extend_global(self, children):
 		children = list(children)
 		self._reparent(children, lambda: Node.extend(self, children))
+
+	def __matmul__(self, other):
+		if isinstance(other, Transform):
+			other = other.matrix
+	
+		result = Transform()
+		result.matrix = self.matrix @ np.asarray(other, dtype=float)
+		return result
+	
+	
+	def __imatmul__(self, other):
+		self.matrix = (self @ other).matrix
+		return self
+
 
 class Node2D(Transform):	#Node):
 	def __init__(self, position=np.zeros(2), rotation=0.0, scale=np.ones(2), **kwargs):
@@ -407,15 +568,23 @@ class Node3D(Transform):	#Node):):
 	def __init__(self, position=np.zeros(3), rotation=quaternion([0, 0, 0, 1]), scale=np.ones(3), **kwargs):
 		super().__init__(position, rotation, scale, **kwargs)
 
-	@property
+	"""@property
 	def euler(self): return self.rotation.to_euler()
 	@euler.setter
 	def euler(self, value): self.rotation = quaternion.from_euler(value)
 
 	@property
-	def R(self): return homogenize(R3(self.rotation))
+	def R(self): return homogenize(R3(self.rotation))"""
 
-
+	@property
+	def quaternion(self): return quaternion.from_matrix(self.rotation)
+	@quaternion.setter
+	def quaternion(self, value): self.rotation = value.to_matrix()
+	
+	@property
+	def euler(self): return self.quaternion.to_euler()
+	@euler.setter
+	def euler(self, value): self.quaternion = quaternion.from_euler(value)
 
 
 
