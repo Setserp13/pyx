@@ -72,12 +72,6 @@ def skew(v):
 		[-y, x, 0]
 	])
 
-"""def R3(q):
-	x, y, z, w = np.asarray(q) / np.linalg.norm(q)
-	v = np.array([x, y, z])
-
-	return np.eye(3) + 2 * w * skew(v) + 2 * skew(v) @ skew(v)"""
-
 class Matrix:
 
 	@staticmethod
@@ -382,8 +376,6 @@ class Transform(Node):
 	@property
 	def T(self): return T(self.position)
 
-	#@property
-	#def R(self): pass
 	@property
 	def R(self): return homogenize(self._rotation)
 	
@@ -454,14 +446,6 @@ class Transform(Node):
 		else:
 			self.scale = value / self.parent.global_scale
 
-	"""@property
-	def basis(self):	# BASIS (n×n matrix of world axes) -> upper-left n×n
-		return self.global_TRS[:self.ndim, :self.ndim]
-
-	@property
-	def local_basis(self):
-		return self.TRS[:self.ndim, :self.ndim]"""
-
 	@property
 	def basis(self):
 		return self.TRS[:self.ndim, :self.ndim]
@@ -501,15 +485,6 @@ class Transform(Node):
 	
 		self.matrix = value
 
-	
-	@property
-	def rotation_matrix(self):
-		raise NotImplementedError
-	
-	@rotation_matrix.setter
-	def rotation_matrix(self, value):
-		raise NotImplementedError
-	
 	def _reparent(self, objects, operation):	#WORLD POSITION STAYS
 		objects = list(objects)
 		global_trs = [x.global_TRS.copy() for x in objects]
@@ -574,7 +549,7 @@ class Transform(Node):
 		return result
 
 
-class Node2D(Transform):	#Node):
+class Node2D(Transform):
 	def __init__(self, position=np.zeros(2), rotation=0.0, scale=np.ones(2), **kwargs):
 		#super().__init__(position, rotation, scale, **kwargs)
 		super().__init__(position, R2(rotation), scale, **kwargs)
@@ -585,40 +560,12 @@ class Node2D(Transform):	#Node):
 	@rotation.setter
 	def rotation(self, value):
 		self._rotation = R2(value)
-	"""@property
-	def R(self): return homogenize(R2(self.rotation))
-
-	@classmethod
-	def from_matrix(cls, M):
-		t = decompose_trs_shear(M)
-		rotation = math.atan2(t['R'][1, 0], t['R'][0, 0])
-		#print(rotation)
-		return cls(position=t['T'], rotation=rotation, scale=t['S'])
-
-	@property
-	def rotation_matrix(self): return self.R
-	
-	@rotation_matrix.setter
-	def rotation_matrix(self, value):
-		self.rotation = np.arctan2(value[1, 0], value[0, 0])"""
 
 
-
-
-class Node3D(Transform):	#Node):):
-	"""def __init__(self, position=np.zeros(3), rotation=quaternion([0, 0, 0, 1]), scale=np.ones(3), **kwargs):
-		super().__init__(position, rotation, scale, **kwargs)"""
+class Node3D(Transform):
 	def __init__(self, position=np.zeros(3), euler=np.zeros(3), scale=np.ones(3), **kwargs):
 		super().__init__(position, np.eye(3), scale, **kwargs)
 		self.euler = euler
-		
-	"""@property
-	def euler(self): return self.rotation.to_euler()
-	@euler.setter
-	def euler(self, value): self.rotation = quaternion.from_euler(value)
-
-	@property
-	def R(self): return homogenize(R3(self.rotation))"""
 
 	@property
 	def rotation(self): return quaternion.from_matrix(self._rotation)
