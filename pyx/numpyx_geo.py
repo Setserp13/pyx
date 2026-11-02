@@ -1424,7 +1424,7 @@ class angle(points):	#list):
 		start, end = [math.atan2(x[1] - center[1], x[0] - center[0]) for x in p]
 		return arc(center, r, start, end)
 
-class polyline(points):
+class polyline(points, curve):
 
 	def __new__(cls, input_array, closed=True):
 		obj = super().__new__(cls, input_array, closed=closed)
@@ -1449,13 +1449,13 @@ class polyline(points):
 	@property
 	def dual(p): return polyline([x.midpoint for x in p.edges], closed=p.closed)	#midpoint polygon
 	
-	def point_from_proportion(self, t):
+	def get_point01(self, t):	#point_from_proportion
 		p = self.perimeter
 		a = 0.0
 		for x in self.edges:
 			b = a + x.length / p
 			if a <= t and t <= b:
-				return npx.lerp(x[0], x[1], (t - a) / (b - a))
+				return x.get_point01((t - a) / (b - a))
 			a = b
 		return None
 
