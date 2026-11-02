@@ -112,12 +112,9 @@ class shape:
 		adjustment.scale = scale
 		adjustment.position = offset
 	
-		matrix = adjustment.matrix
+		if xform is not None:
+			adjustment.matrix = adjustment.matrix @ xform
 	
-		if self.xform is not None:
-			matrix = matrix @ self.xform.matrix
-	
-		adjustment.matrix = matrix
 		self.set(transform=adjustment)
 	
 	@local_aabb.setter
