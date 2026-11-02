@@ -30,7 +30,7 @@ class shape:
 
 	def __matmul__(self, value):	# raise NotImplementedError
 		obj = copy.deepcopy(self)
-		print(value, obj.xform)
+		#print(value, obj.xform)
 		obj.xform.matrix = value @ obj.xform.matrix
 		return obj
 	"""def __matmul__(self, value):	# raise NotImplementedError
@@ -112,9 +112,15 @@ class shape:
 		adjustment.scale = scale
 		adjustment.position = offset
 	
-		if xform is not None:
-			adjustment.matrix = adjustment.matrix @ xform
+		matrix = adjustment.matrix
 	
+		if xform is not None:
+			matrix = matrix @ xform
+	
+		if self.xform is not None:
+			matrix = matrix @ self.xform.matrix
+	
+		adjustment.matrix = matrix
 		self.set(xform=adjustment)
 	
 	@local_aabb.setter
