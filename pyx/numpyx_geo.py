@@ -77,7 +77,7 @@ class shape:
 		offset = value.min - current.min * scale
 	
 		M = Node2D(scale=scale, position=offset)
-		self.set(transform=M if xform is None else Node2D.from_matrix(M.TRS @ xform.TRS))
+		self.set(transform=Node2D.from_matrix(M if xform is None else M @ xform.TRS))
 		
 	@local_aabb.setter
 	def local_aabb(self, value):
