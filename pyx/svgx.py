@@ -678,7 +678,7 @@ def text_to_svg(obj, **kwargs): #In SVG, the y attribute of a <text> element ref
 
 
 def transform_to_svg(obj):	#order matters
-	print(obj.rotation)
+	print(obj._rotation, obj.rotation)
 	#return f'translate({obj.position[0]} {obj.position[1]}) scale({obj.scale[0]} {obj.scale[1]}) rotate({math.degrees(obj.rotation)})'
 	return (
 		f'translate({obj.position[0]} {obj.position[1]}) '
