@@ -192,7 +192,7 @@ class rect_like(shape):	#interval
 
 class rect(rect_like):
 	
-	def normalize_point(self, value): return safe_divide(value - self.min, size)
+	def normalize_point(self, value): return safe_divide(value - self.min, self.size)
 	def normalize_point_component(self, value, axis=0): return (value - self.min[axis]) / self.size[axis]
 
 	def denormalize_point(self, value): return value * self.size + self.min
@@ -200,7 +200,7 @@ class rect(rect_like):
 
 	def denormalize_points(self, value): return [self.denormalize_point(x) for x in value]
 	
-	def normalize_vector(self, value): return safe_divide(value, size)
+	def normalize_vector(self, value): return safe_divide(value, self.size)
 
 	def denormalize_vector(self, value): return value * self.size
 
