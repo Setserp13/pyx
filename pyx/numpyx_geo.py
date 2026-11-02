@@ -118,7 +118,7 @@ class shape:
 			matrix = matrix @ self.xform.matrix
 	
 		adjustment.matrix = matrix
-		self.set(xform=adjustment)
+		self.set(transform=adjustment)
 	
 	@local_aabb.setter
 	def local_aabb(self, value): self._set_aabb(value, self.xform.matrix)
