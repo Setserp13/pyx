@@ -121,10 +121,10 @@ class shape:
 		self.set(xform=adjustment)
 	
 	@local_aabb.setter
-	def local_aabb(self, value): self._set_aabb(value)
+	def local_aabb(self, value): self._set_aabb(value, self.xform.matrix)
 	
 	@global_aabb.setter
-	def global_aabb(self, value): self._set_aabb(value, self.xform.global_TRS)
+	def global_aabb(self, value): self._set_aabb(value, self.xform.global_matrix)
 
 
 class curve:
