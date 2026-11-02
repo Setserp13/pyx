@@ -60,13 +60,16 @@ class shape:
 	def aabb(self): raise NotImplementedError
 
 	@property
+	def xform(self): return getattr(self, 'attrib', {}).get('transform', None)	#Transform.identity(self.ndim)
+	
+	@property
 	def local_aabb(self):
-		M = self.attrib.get("transform")
+		M = self.xform	#attrib.get("transform")
 		return self.aabb if M is None else (self @ M.TRS).aabb
 
 	@property
 	def global_aabb(self):
-		M = self.attrib.get("transform")
+		M = self.xform	#attrib.get("transform")
 		return self.aabb if M is None else (self @ M.global_TRS).aabb
 
 	#CHANGE BELOW TO WORK WITH ANY DIM LATER
