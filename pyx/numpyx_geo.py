@@ -30,6 +30,7 @@ class shape:
 
 	def __matmul__(self, value):	# raise NotImplementedError
 		obj = copy.deepcopy(self)
+		print(value, obj.xform)
 		obj.xform = value @ obj.xform
 		return obj
 	"""def __matmul__(self, value):	# raise NotImplementedError
