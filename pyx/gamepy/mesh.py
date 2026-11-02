@@ -14,6 +14,12 @@ from pyx.generic.node import Node
 
 #MESH INDICES
 
+def fan_triangulate(indices):	#indices is a face
+	return [[indices[0], indices[i], indices[i+1]] for i in range(1, len(indices) - 1)]
+
+def triangles(indices):	#indices is a collection of faces
+	return [triangle for x in indices for triangle in fan_triangulate(x)]
+
 def quad_strip(count, start1=0, start2=None, closed=False):
 	if count < 2:
 		raise ValueError("count must be at least 2")
@@ -41,11 +47,9 @@ def triangle_fan(count, start=0, apex=None, closed=True):
 		for i in range(count if closed else count - 1)
 	]
 
-def fan_triangulate(indices):	#indices is a face
-	return [[indices[0], indices[i], indices[i+1]] for i in range(1, len(indices) - 1)]
+def triangle_strip(count, start1=0, start2=None, closed=False):
+	return triangles(quad_strip(count, start1, start2, closed))
 
-def triangles(indices):	#indices is a collection of faces
-	return [triangle for x in indices for triangle in fan_triangulate(x)]
 
 
 """Buffer
