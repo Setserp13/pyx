@@ -78,12 +78,9 @@ class shape:
 	
 		adjustment = Node2D(scale=scale, position=offset)
 	
-		if xform is None:
-			result = adjustment
-		else:
-			result = Node2D.from_matrix(adjustment.TRS @ xform.TRS)
+		matrix = adjustment.TRS if xform is None else adjustment.TRS @ xform
 	
-		self.set(transform=result)
+		self.set(transform=Node2D.from_matrix(matrix))
 		
 	@local_aabb.setter
 	def local_aabb(self, value):
