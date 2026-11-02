@@ -534,23 +534,27 @@ class Transform(Node):
 		children = list(children)
 		self._reparent(children, lambda: Node.extend(self, children))
 
-	def __matmul__(self, other):
-		if isinstance(other, Transform):
-			other = other.matrix
+	def _fit_matrix(self, value):
+		if isinstance(value, Transform):
+			value = value.matrix
 	
-		other = np.asarray(other, dtype=float)
+		value = np.asarray(value, dtype=float)
 		n = self.ndim + 1
 	
-		if other.shape != (n, n):
-			if other.ndim != 2 or other.shape[0] != other.shape[1] or other.shape[0] > n:
-				raise ValueError("Incompatible matrix dimensions")
+		if value.ndim != 2 or value.shape[0] != value.shape[1] or value.shape[0] > n:
+			raise ValueError("Incompatible matrix dimensions")
 	
+		if value.shape != (n, n):
 			matrix = np.eye(n)
-			matrix[:other.shape[0], :other.shape[1]] = other
-			other = matrix
+			matrix[:value.shape[0], :value.shape[1]] = value
+			return matrix
 	
+		return value
+	
+	
+	def __matmul__(self, other):
 		result = type(self)()
-		result.matrix = self.matrix @ other
+		result.matrix = self.matrix @ self._fit_matrix(other)
 		return result
 	
 	
@@ -558,9 +562,10 @@ class Transform(Node):
 		self.matrix = (self @ other).matrix
 		return self
 	
+	
 	def __rmatmul__(self, other):
 		result = type(self)()
-		result.matrix = np.asarray(other, dtype=float) @ self.matrix
+		result.matrix = self._fit_matrix(other) @ self.matrix
 		return result
 
 class Node2D(Transform):	#Node):
