@@ -25,7 +25,15 @@ class shape:
 
 	def __truediv__(self, value): return self.__mul__(1. / value)
 
-	def __matmul__(self, value): raise NotImplementedError
+	def __matmul__(self, value):	# raise NotImplementedError
+		obj = copy.deepcopy(self)
+		M = obj.attrib.get("transform")
+
+		obj.attrib["transform"] = Node2D.from_matrix(
+			value if M is None else value @ M.TRS
+		)
+
+		return obj
 	
 	__rmul__ = __mul__
 	
