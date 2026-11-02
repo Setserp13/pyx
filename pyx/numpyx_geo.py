@@ -114,9 +114,6 @@ class shape:
 	
 		matrix = adjustment.matrix
 	
-		if xform is not None:
-			matrix = matrix @ xform
-	
 		if self.xform is not None:
 			matrix = matrix @ self.xform.matrix
 	
@@ -124,13 +121,10 @@ class shape:
 		self.set(xform=adjustment)
 	
 	@local_aabb.setter
-	def local_aabb(self, value):
-		self._set_aabb(value)
+	def local_aabb(self, value): self._set_aabb(value)
 	
 	@global_aabb.setter
-	def global_aabb(self, value):
-		M = self.xform	#attrib.get("transform")
-		self._set_aabb(value, M.global_TRS if M is not None else None)
+	def global_aabb(self, value): self._set_aabb(value, self.xform.global_TRS)
 
 
 class curve:
