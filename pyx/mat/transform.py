@@ -370,6 +370,14 @@ class Transform(Node):
 
 	@property
 	def ndim(self): return len(self.position)
+
+	@classmethod
+	def identity(cls, ndim):
+		return cls(
+			position=np.zeros(ndim),
+			rotation=np.eye(ndim),
+			scale=np.ones(ndim)
+		)
 	
 	@property
 	def T(self): return T(self.position)
