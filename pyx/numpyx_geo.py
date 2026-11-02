@@ -11,7 +11,7 @@ import itertools
 from itertools import product
 from multipledispatch import dispatch
 import copy
-from pyx.mat.transform import Node3D, quaternion, Transform
+from pyx.mat.transform import Node2D, Node3D, quaternion, Transform
 
 EPSILON = 1e-9
 TAU = math.pi * 2.
@@ -29,7 +29,7 @@ class shape:
 		obj = copy.deepcopy(self)
 		M = obj.attrib.get("transform")
 
-		obj.attrib["transform"] = Node2D.from_matrix(
+		obj.attrib["transform"] = Node2D.from_matrix(	#CHANGE LATER TO WORK WITH ANY DIMENSION
 			value if M is None else value @ M.TRS
 		)
 
