@@ -2032,6 +2032,23 @@ class group(list, shape):
 				if not x:
 					self.pop(i)
 
+	@local_aabb.setter
+	def local_aabb(self, value):
+		cur = self.local_aabb
+		for x in self:
+			x.local_aabb = value.denormalize_rect(cur.normalize_rect(x.local_aabb))
+
+	@global_aabb.setter
+	def global_aabb(self, value):
+		cur = self.global_aabb
+		for x in self:
+			x.global_aabb = value.denormalize_rect(cur.normalize_rect(x.global_aabb))
+
+
+
+
+
+
 def distribute(arr, axis=0, align=.5, gap=0.0):
 	for i in range(1, len(arr)):
 		pos = arr[i - 1].aabb.denormalize_point(np.array([1, float(align)])[[axis, 1 - axis]]) + npx.ei(axis, 2) * float(gap)
