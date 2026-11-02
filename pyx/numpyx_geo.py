@@ -33,15 +33,6 @@ class shape:
 		#print(value, obj.xform)
 		obj.xform.matrix = value @ obj.xform.matrix
 		return obj
-	"""def __matmul__(self, value):	# raise NotImplementedError
-		obj = copy.deepcopy(self)
-		M = obj.attrib.get("transform")
-
-		obj.attrib["transform"] = Node2D.from_matrix(	#CHANGE LATER TO WORK WITH ANY DIMENSION
-			value if M is None else value @ M.TRS
-		)
-
-		return obj"""
 	
 	__rmul__ = __mul__
 	
@@ -74,33 +65,10 @@ class shape:
 	def xform(self, value): self.set(transform=value)
 	
 	@property
-	def local_aabb(self): return (self @ self.xform.TRS).aabb
+	def local_aabb(self): return (self @ self.xform.matrix).aabb
 
 	@property
-	def global_aabb(self): return (self @ self.xform.global_TRS).aabb
-	
-	"""@property
-	def local_aabb(self):
-		M = self.xform	#attrib.get("transform")
-		return self.aabb if M is None else (self @ M.TRS).aabb
-
-	@property
-	def global_aabb(self):
-		M = self.xform	#attrib.get("transform")
-		return self.aabb if M is None else (self @ M.global_TRS).aabb"""
-
-	#CHANGE BELOW TO WORK WITH ANY DIM LATER
-	"""def _set_aabb(self, value, xform=None):
-		current = self.aabb if xform is None else (self @ xform).aabb
-	
-		scale = value.size / current.size
-		offset = value.min - current.min * scale
-	
-		adjustment = Node2D(scale=scale, position=offset)
-	
-		matrix = adjustment.TRS if xform is None else adjustment.TRS @ xform
-	
-		self.set(transform=Node2D.from_matrix(matrix))"""
+	def global_aabb(self): return (self @ self.xform.global_matrix).aabb
 
 	def _set_aabb(self, value, xform=None):
 		current = self.aabb if xform is None else (self @ xform).aabb
