@@ -119,8 +119,8 @@ class curve:
 	def get_points01(self, ts):
 		return points([self.get_point01(t) for t in ts])
 	
-	def random_polyline(self, n, closed=False):
-		return polyline(self.get_points01(sorted(np.random.random(n))), closed=closed)
+	def random_points(self, n, closed=False):
+		return self.get_points01(sorted(np.random.random(n)))
 
 
 class rect_like(shape):	#interval
