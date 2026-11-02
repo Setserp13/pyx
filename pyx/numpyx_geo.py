@@ -69,6 +69,26 @@ class shape:
 		M = self.attrib.get("transform")
 		return self.aabb if M is None else (self @ M.global_TRS).aabb
 
+	#CHANGE BELOW TO WORK WITH ANY DIM LATER
+	def _set_aabb(self, value, transform=None):
+		current = self.aabb if transform is None else (self @ transform).aabb
+	
+		scale = value.size / current.size
+		offset = value.min - current.min * scale
+	
+		M = Node2D(scale=scale, position=offset)
+	
+		self.set(transform = M if transform is None else M @ transform)
+	
+	@local_aabb.setter
+	def local_aabb(self, value):
+		self._set_aabb(value)
+	
+	@global_aabb.setter
+	def global_aabb(self, value):
+		M = self.attrib.get("transform")
+		self._set_aabb(value, M.global_TRS if M is not None else None)
+
 
 class curve:
 	# Parametric curve
