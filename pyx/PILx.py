@@ -264,11 +264,11 @@ class tspan(geo.shape):
 	def aabb(self, value):
 		self.position = value.denormalize_point(self.pivot)
 
-	@property
+	"""@property
 	def local_aabb(self): return self.aabb.vertices.local_aabb
 
 	@property
-	def global_aabb(self): return self.aabb.vertices.global_aabb
+	def global_aabb(self): return self.aabb.vertices.global_aabb"""
 
 class text(tspan):
 	def __init__(self, inner_text, position, font='arial.ttf', font_size=12, pivot=np.ones(2) * 0.5, line_spacing=4, align=.5):
