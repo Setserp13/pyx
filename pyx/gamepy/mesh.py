@@ -12,14 +12,41 @@ import pyx.mat.mat as mat
 import pyx.rex as rex
 from pyx.generic.node import Node
 
-def fan_triangulate(indices):
+#MESH INDICES
+
+def quad_strip(count, start1=0, start2=None, closed=False):
+	if count < 2:
+		raise ValueError("count must be at least 2")
+
+	start2 = start1 + count if start2 is None else start2
+
+	return [
+		[
+			start1 + i,
+			start1 + (i + 1) % count,
+			start2 + (i + 1) % count,
+			start2 + i
+		]
+		for i in range(count if closed else count - 1)
+	]
+
+def triangle_fan(count, start=0, apex=None, closed=True):
+	if count < 2:
+		raise ValueError("count must be at least 2")
+
+	apex = start + count if apex is None else apex
+
+	return [
+		[start + i, start + (i + 1) % count, apex]
+		for i in range(count if closed else count - 1)
+	]
+
+def fan_triangulate(indices):	#indices is a face
 	return [[indices[0], indices[i], indices[i+1]] for i in range(1, len(indices) - 1)]
 
-def triangles(indices):
-	result = []
-	for x in indices:
-		result += fan_triangulate(x)
-	return result
+def triangles(indices):	#indices is a collection of faces
+	return [triangle for x in indices for triangle in fan_triangulate(x)]
+
 
 """Buffer
 	└── BufferView
