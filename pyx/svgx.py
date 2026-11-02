@@ -710,8 +710,10 @@ PILx.image.to_svg = lambda self: image_to_svg(self, **get_attrib(self))
 
 
 def draw(obj):
-	size = obj.aabb.size
-	obj.aabb = geo.rect(np.zeros(2), size)
+	#size = obj.aabb.size
+	#obj.aabb = geo.rect(np.zeros(2), size)
+	size = obj.global_aabb.size
+	obj.global_aabb = geo.rect(np.zeros(2), size)
 	result = svg(*size)
 	result.append(obj.to_svg())
 	return result
