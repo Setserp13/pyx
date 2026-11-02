@@ -365,7 +365,7 @@ class Transform(Node):
 	def __init__(self, position, rotation, scale, **kwargs):
 		super().__init__(**kwargs)
 		self.position = np.array(position)
-		self.rotation = rotation
+		self._rotation = rotation
 		self.scale = np.array(scale)
 
 	@property
@@ -385,7 +385,7 @@ class Transform(Node):
 	#@property
 	#def R(self): pass
 	@property
-	def R(self): return homogenize(self.rotation)
+	def R(self): return homogenize(self._rotation)
 	
 	@property
 	def S(self): return homogenize(S(self.scale))
@@ -573,6 +573,12 @@ class Node2D(Transform):	#Node):
 		#super().__init__(position, rotation, scale, **kwargs)
 		super().__init__(position, R2(rotation), scale, **kwargs)
 
+	@property
+	def rotation(self):
+		return np.arctan2(self._rotation[1, 0], self._rotation[0, 0])
+	@rotation.setter
+	def rotation(self, value):
+		self._rotation = R2(value)
 	#@property
 	#def R(self): return homogenize(R2(self.rotation))
 
@@ -606,14 +612,14 @@ class Node3D(Transform):	#Node):):
 	def R(self): return homogenize(R3(self.rotation))"""
 
 	@property
-	def quaternion(self): return quaternion.from_matrix(self.rotation)
-	@quaternion.setter
-	def quaternion(self, value): self.rotation = value.to_matrix()
+	def rotation(self): return quaternion.from_matrix(self._rotation)
+	@rotation.setter
+	def rotation(self, value): self._rotation = value.to_matrix()
 	
 	@property
 	def euler(self): return self.quaternion.to_euler()
 	@euler.setter
-	def euler(self, value): self.quaternion = quaternion.from_euler(value)
+	def euler(self, value): self.rotation = quaternion.from_euler(value)
 
 
 
