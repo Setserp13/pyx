@@ -243,7 +243,7 @@ class image(geo.rect_like):
 	def size(self, value): self.overwrite_size = value
 
 
-class tspan:
+class tspan(geo.shape):
 	def __init__(self, inner_text, position, font='arial.ttf', font_size=12, pivot=np.ones(2) * 0.5):
 		self.inner_text = str(inner_text)
 		self.position = position
