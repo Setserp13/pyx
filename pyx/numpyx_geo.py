@@ -67,7 +67,7 @@ class shape:
 	def aabb(self): raise NotImplementedError
 
 	@property
-	def xform(self): return getattr(self, 'attrib', {}).get('transform'	Transform.identity(self.ndim))	#, None)
+	def xform(self): return getattr(self, 'attrib', {}).get('transform', Transform.identity(self.ndim))	#, None)
 
 	@xform.setter
 	def xform(self, value): self.set(transform=value)
