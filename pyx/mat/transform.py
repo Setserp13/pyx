@@ -550,10 +550,11 @@ class Transform(Node):
 
 class Node2D(Transform):	#Node):
 	def __init__(self, position=np.zeros(2), rotation=0.0, scale=np.ones(2), **kwargs):
-		super().__init__(position, rotation, scale, **kwargs)
+		#super().__init__(position, rotation, scale, **kwargs)
+		super().__init__(position, R2(rotation), scale, **kwargs)
 
-	@property
-	def R(self): return homogenize(R2(self.rotation))
+	#@property
+	#def R(self): return homogenize(R2(self.rotation))
 
 	@classmethod
 	def from_matrix(cls, M):
