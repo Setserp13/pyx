@@ -301,9 +301,16 @@ class path(list, shape):
 	def aabb(self):
 		segments = self.segments
 		return segments.aabb
+
 	@aabb.setter
 	def aabb(self, value):
-		pass
+		current = self.aabb
+
+		scale = value.size / current.size
+		offset = value.min - current.min * scale
+
+		self.set(transform=Node2D(scale=scale, position=offset))
+
 
 generic.make_Element(path)
 
