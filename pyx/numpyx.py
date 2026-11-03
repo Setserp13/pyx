@@ -358,8 +358,15 @@ def spherical_to_cartesian(r, theta, phi):	#radius r, inclination θ, azimuth φ
 	z = r * np.cos(theta)
 	return np.array([x, y, z])
 
-def random_on_sphere(r): return spherical_to_cartesian(r, random.uniform(0, 2 * math.pi), random.uniform(0, 2 * math.pi))
-def random_in_sphere(r): return random_on_sphere(lerp(0., r, math.sqrt(random.random())))	#random.uniform(0, r))
+#def random_on_sphere(r): return spherical_to_cartesian(r, random.uniform(0, 2 * math.pi), random.uniform(0, 2 * math.pi))
+#def random_in_sphere(r): return random_on_sphere(lerp(0., r, math.sqrt(random.random())))	#random.uniform(0, r))
+def random_on_sphere(r):
+	theta = random.uniform(0, 2 * math.pi)
+	u = random.uniform(-1, 1)
+	phi = math.acos(u)
+	return spherical_to_cartesian(r, theta, phi)
+
+def random_in_sphere(r): return random_on_sphere(r * random.random() ** (1 / 3))
 
 def random_on_line(start, end): return lerp(start, end, random.uniform(0.0, 1.0))
 
