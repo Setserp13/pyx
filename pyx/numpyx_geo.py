@@ -2159,7 +2159,16 @@ class group(list, shape):
 		for x in self:
 			x.global_aabb = value.denormalize_rect(cur.normalize_rect(x.global_aabb))
 
-
+	def set_children(self, **kwargs):	# Set attributes on each child using a function, an indexed collection, or a shared value.
+		for i, x in enumerate(self):
+			for k, v in kwargs.items():
+				if callable(v):	# Use the function result for each child.
+					x.set(**{k: v(i)})
+				elif isinstance(v, (list, tuple)):	# Use the corresponding collection element.
+					x.set(**{k: v[i]})
+				else:	# Apply the same value to every child.
+					x.set(**{k: v})
+		return self
 
 
 
