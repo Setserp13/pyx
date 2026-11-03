@@ -1393,6 +1393,26 @@ class Mesh(points):	#):
 
 	def to_node3d(self): return Node3D(children=[x.to_node3d() for x in self.faces])
 
+	@property
+	def surface_area(self): return sum(face.area for face in self.faces)
+	
+	def random_point(self):
+		faces = self.faces
+		areas = np.array([face.area for face in faces])
+	
+		valid = np.isfinite(areas) & (areas > 0)
+	
+		if not valid.any():
+			raise ValueError("Mesh has zero or invalid area")
+	
+		faces = [face for face, valid in zip(faces, valid) if valid]
+		areas = areas[valid]
+	
+		index = np.random.choice(len(faces), p=areas / areas.sum())
+	
+		return faces[index].random_point()
+
+
 
 
 class angle(points):	#list):
