@@ -79,9 +79,7 @@ class shape:
 		scale = safe_divide(value.size, current.size)
 		offset = value.min - current.min * scale
 
-		adjustment = Transform.identity(self.ndim)
-		adjustment.scale = scale
-		adjustment.position = offset
+		adjustment = Transform.axis_aligned(offset, scale)
 		
 		self.set(transform=adjustment)
 	
@@ -103,9 +101,7 @@ class shape:
 		scale = safe_divide(value.size, current.size)
 		offset = value.min - current.min * scale
 	
-		adjustment = Transform.identity(self.ndim)
-		adjustment.scale = scale
-		adjustment.position = offset
+		adjustment = Transform.axis_aligned(offset, scale)
 	
 		if xform is not None:
 			adjustment.matrix = adjustment.matrix @ xform
