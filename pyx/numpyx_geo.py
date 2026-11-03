@@ -878,7 +878,8 @@ class arc(circle, curve):
 	@property
 	def d(self):
 		p0 = self.get_point01(0.)
-		return f"M {p0[0]} {p0[1]} {self.d_command}""""
+		return f"M {p0[0]} {p0[1]} {self.d_command}"
+	"""
 
 	def contains_angle(self, a):
 		s = self.start
