@@ -1405,7 +1405,7 @@ class Mesh(points):	#):
 	@property
 	def surface_area(self): return sum(face.area for face in self.faces)
 	
-	def random_point(self):
+	def random_point_on_surface(self):
 		faces = self.faces
 		areas = np.array([face.area for face in faces])
 	
