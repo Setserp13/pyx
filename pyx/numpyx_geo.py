@@ -1,4 +1,4 @@
-from numbers import Number
+from numbers import Integral, Number
 import numpy as np
 import pyx.numpyx as npx
 import pyx.mat.mat as mat
