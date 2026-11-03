@@ -862,7 +862,7 @@ class arc(circle, curve):
 		t = npx.clamp01(t)
 		return self.get_point(self.start + self.sweep * t)
 
-	@property
+	"""@property
 	def d_command(self):
 		p1 = self.get_point01(1.)
 
@@ -878,7 +878,7 @@ class arc(circle, curve):
 	@property
 	def d(self):
 		p0 = self.get_point01(0.)
-		return f"M {p0[0]} {p0[1]} {self.d_command}"
+		return f"M {p0[0]} {p0[1]} {self.d_command}""""
 
 	def contains_angle(self, a):
 		s = self.start
