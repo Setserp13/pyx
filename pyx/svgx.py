@@ -143,12 +143,25 @@ class path(list, shape):
 		self.append(path_command('LQC'[len(v) - 1], *v.flatten()))
 	def close(self): self.append(path_command('Z'))
 
-	@classmethod
+	"""@classmethod
 	def parse(cls, s):
 		p = re.compile(r'[A-Za-z]|[-+]?(?:\d*\.)?\d+(?:[eE][-+]?\d+)?')
 
 		return cls(*[
 			path_command(group[0], *map(float, group[1:]))
+			for group in split_before(p.findall(s), str.isalpha)
+		])"""
+
+	@classmethod
+	def parse(cls, s):
+		p = re.compile(r'[A-Za-z]|[-+]?(?:\d*\.)?\d+(?:[eE][-+]?\d+)?')
+	
+		def number(value):
+			x = float(value)
+			return int(x) if x.is_integer() and not any(c in value for c in '.eE') else x
+	
+		return cls(*[
+			path_command(group[0], *map(number, group[1:]))
 			for group in split_before(p.findall(s), str.isalpha)
 		])
 
