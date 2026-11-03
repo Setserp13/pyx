@@ -1523,7 +1523,14 @@ class polyline(points, curve):
 	def isacw(v): return v.shoelace > 0	#is anticlockwise
 
 	@property
-	def area(v): return 0.5 * v.shoelace	#If the polygon is negatively oriented, then the result is negative
+	def area2d(v): return 0.5 * v.shoelace	#If the polygon is negatively oriented, then the result is negative
+
+	@property
+	def area(vertices):	#it works in any dimension
+		vertices = np.asarray(vertices, dtype=float)
+		indices = vertices.triangulate()
+	
+		return sum(triangle(vertices[face]).area for face in indices)
 	
 	@property
 	def centroid(v):
@@ -1767,8 +1774,24 @@ class polyline(points, curve):
 	
 		return result
 
-
-
+	def random_point(vertices):
+		vertices = np.asarray(vertices, dtype=float)
+		indices = np.asarray(vertices.triangulate(), dtype=int)
+	
+		faces = vertices[indices]
+		areas = np.array([triangle(face).area for face in faces])
+	
+		valid = np.isfinite(areas) & (areas > 0)
+	
+		if not valid.any():
+			raise ValueError("Polygon has zero or invalid area")
+	
+		faces = faces[valid]
+		areas = areas[valid]
+	
+		index = np.random.choice(len(faces), p=areas / areas.sum())
+	
+		return triangle(faces[index]).random_point()
 
 class polygon:
 	def internal_angle(n): return polyline.internal_angle_sum(n) / n
@@ -1795,6 +1818,19 @@ class triangle(polyline):
 	@property
 	def orthocenter(v): return line_line_intersection(*v.altitudes[:2])
 
+	def random_point(v):	# it works in any dimension
+		a, b, c = v
+
+		u, v = np.random.random(2)
+		s = np.sqrt(u)
+
+		return (1 - s) * a + s * (1 - v) * b + s * v * c
+
+	@property
+	def area(vertices):	# it works in any dimension
+		edges = vertices[1:] - vertices[0]
+		gram = edges @ edges.T
+		return np.sqrt(max(0, np.linalg.det(gram))) / 2
 
 
 class bezier(points, curve):
