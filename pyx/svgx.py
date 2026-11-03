@@ -17,6 +17,7 @@ from pyx.lxmlx import *	#localname
 import numpy as np
 import pyx.numpyx as npx
 import pyx.numpyx_geo as geo
+from pyx.numpyx_geo import curve, arc, bezier, line, polyline
 import pyx.lxmlx as lxmlx
 from pyx.mat.transform import Node2D, Transform
 import pyx.mat.transform as xf
@@ -142,15 +143,6 @@ class path(list, shape):
 		v = np.asarray(v)
 		self.append(path_command('LQC'[len(v) - 1], *v.flatten()))
 	def close(self): self.append(path_command('Z'))
-
-	"""@classmethod
-	def parse(cls, s):
-		p = re.compile(r'[A-Za-z]|[-+]?(?:\d*\.)?\d+(?:[eE][-+]?\d+)?')
-
-		return cls(*[
-			path_command(group[0], *map(float, group[1:]))
-			for group in split_before(p.findall(s), str.isalpha)
-		])"""
 
 	@classmethod
 	def parse(cls, s):
@@ -326,7 +318,72 @@ path.to_svg = lambda self: path_to_svg(self, **get_attrib(self))
 
 def path_from_svg(obj): return path.parse(obj.get('d'))
 
+curve.d = property(
+	lambda self: (
+		f'M {self.get_point01(0)[0]} {self.get_point01(0)[1]} '
+		f'{self.d_command}'
+	)
+)
 
+line.d_command = property(
+	lambda self: f'L {self[1][0]} {self[1][1]}'
+)
+
+polyline.d_command = property(
+	lambda self: (
+		'L '.join(f'{x[0]} {x[1]}' for x in self[1:])
+		+ (' Z' if self.closed else '')
+	)
+)
+
+bezier.d_command = property(
+	lambda self: 'LQC'[len(self) - 1] + ' '.join(
+		f'{x[0]} {x[1]}' for x in self
+	)
+)
+
+arc.d_command = property(lambda self: (
+	f'A {self.radius} {self.radius} 0 '
+	f'{int(abs(self.sweep) > math.pi)} '
+	f'{int(self.sweep >= 0)} '
+	f'{self.get_point(self.end)[0]} '
+	f'{self.get_point(self.end)[1]}'
+))
+
+def join_curves(curves, closed=False):
+	if not curves:
+		return path()
+
+	def point(p):
+		return f'{p[0]} {p[1]}'
+
+	def get_point01(element, t):
+		return element.get_point01(t) if isinstance(element, curve) else element
+
+	start = get_point01(0)(curves[0])
+	previous = start
+
+	result = [f'M {point(start)}']
+
+	for element in curves:
+		current = get_point01(0)(element)
+
+		if not np.allclose(previous, current):
+			result.append(f'L {point(current)}')
+
+		if isinstance(element, curve):
+			result.append(element.d_command)
+		else:
+			result.append(f'L {point(element)}')
+
+		previous = get_point01(1)(element)
+
+	if closed:
+		if not np.allclose(previous, start):
+			result.append(f'L {point(start)}')
+		result.append('Z')
+
+	return path.parse(' '.join(result))
 
 
 
