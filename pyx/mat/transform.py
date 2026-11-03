@@ -374,10 +374,10 @@ class Transform(Node):
 		)
 
 	@classmethod
-	def axis_aligned(cls, scale, position):
-		xform = cls.identity(len(scale))
-		xform.scale = scale
+	def axis_aligned(cls, position, scale):
+		xform = cls.identity(len(position))
 		xform.position = position
+		xform.scale = scale
 		return xform
 	
 	@property
