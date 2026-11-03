@@ -360,13 +360,13 @@ def join_curves(curves, closed=False):
 	def get_point01(element, t):
 		return element.get_point01(t) if isinstance(element, curve) else element
 
-	start = get_point01(0)(curves[0])
+	start = get_point01(curves[0], 0)
 	previous = start
 
 	result = [f'M {point(start)}']
 
 	for element in curves:
-		current = get_point01(0)(element)
+		current = get_point01(element, 0)
 
 		if not np.allclose(previous, current):
 			result.append(f'L {point(current)}')
@@ -376,7 +376,7 @@ def join_curves(curves, closed=False):
 		else:
 			result.append(f'L {point(element)}')
 
-		previous = get_point01(1)(element)
+		previous = get_point01(element, 1)
 
 	if closed:
 		if not np.allclose(previous, start):
