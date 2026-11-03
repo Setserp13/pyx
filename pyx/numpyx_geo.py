@@ -145,6 +145,9 @@ class curve:
 	def random_points(self, n, closed=False):
 		return self.get_points01(sorted(np.random.random(n)))
 
+	def set_position(self, t, value):
+		return self + (np.asarray(value) - self.get_point01(t))
+
 
 class rect_like(shape):	#interval
 	def __init__(self, min, size):
@@ -914,6 +917,33 @@ class arc(circle, curve):
 		self.center = (self.center - cur.min) * s + value.min
 		self.radius *= s
 
+	def split(self, divisions):
+		if isinstance(divisions, Integral):
+			if divisions < 1:
+				raise ValueError("divisions must be at least 1")
+
+			weights = np.ones(divisions, dtype=float)
+		else:
+			weights = np.asarray(divisions, dtype=float)
+
+			if weights.ndim != 1 or len(weights) == 0:
+				raise ValueError("weights must be a non-empty 1D sequence")
+
+			if not np.all(np.isfinite(weights)) or np.any(weights <= 0):
+				raise ValueError("weights must be positive and finite")
+
+		cumulative = np.concatenate(([0], np.cumsum(weights)))
+		angles = self.start + (
+			(self.end - self.start)
+			* cumulative / cumulative[-1]
+		)
+
+		return [
+			arc(self.center, self.radius, a, b)
+			for a, b in zip(angles, angles[1:])
+		]
+
+
 
 class line(points, curve):	#start = self[0], end = self[1]
 	
@@ -956,10 +986,10 @@ class line(points, curve):	#start = self[0], end = self[1]
 
 	def subdivide_by_size(self, size): return polyline(npx.subdivide(self[0], self[1], size), closed=False).edges
 
-	def set_position(self, pivot, value):	#pivot is normalized and value is not normalized
-		pivot = npx.lerp(*self, pivot)
-		delta = value - pivot
-		return line(self + delta)
+	#def set_position(self, pivot, value):	#pivot is normalized and value is not normalized
+	#	pivot = npx.lerp(*self, pivot)
+	#	delta = value - pivot
+	#	return line(self + delta)
 
 	def coincide(a, b, tol=1e-12):
 		"""Check if two N-dimensional lines coincide."""
