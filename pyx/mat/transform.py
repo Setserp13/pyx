@@ -372,6 +372,13 @@ class Transform(Node):
 			rotation=np.eye(ndim),
 			scale=np.ones(ndim)
 		)
+
+	@classmethod
+	def axis_aligned(cls, scale, position):
+		xform = cls.identity(len(scale))
+		xform.scale = scale
+		xform.position = position
+		return xform
 	
 	@property
 	def T(self): return T(self.position)
