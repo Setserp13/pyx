@@ -72,6 +72,19 @@ class shape:
 	@property
 	def aabb(self): raise NotImplementedError
 
+	@aabb.setter
+	def aabb(self, value):
+		current = self.aabb
+
+		scale = safe_divide(value.size, current.size)
+		offset = value.min - current.min * scale
+
+		adjustment = Transform.identity(self.ndim)
+		adjustment.scale = scale
+		adjustment.position = offset
+		
+		self.set(transform=adjustment)
+	
 	@property
 	def xform(self): return getattr(self, 'attrib', {}).get('transform', Transform.identity(self.ndim))	#, None)
 
