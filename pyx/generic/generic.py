@@ -9,13 +9,17 @@ def setattrs(obj, **kwargs):
 class Element:
 	def __new__(cls, *args, **kwargs):
 		obj = super().__new__(cls)
+		return Element.init(obj, **kwargs)
+
+	@classmethod
+	def init(cls, obj, **kwargs):
 		obj.attrib = {}
 
 		for k, v in kwargs.items():
 			setattr(obj, k, v)
 
 		return obj
-			
+
 	def set(self, **kwargs):
 		for k in kwargs:
 			self.attrib[k] = kwargs[k]
