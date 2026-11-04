@@ -311,7 +311,7 @@ class path(list, shape):
 		return segments.aabb
 
 
-generic.make_Element(path)
+#generic.make_Element(path)
 
 def path_to_svg(obj, **kwargs): return lxmlx.element("path", d=obj.d, **kwargs)
 path.to_svg = lambda self: path_to_svg(self, **get_attrib(self))
