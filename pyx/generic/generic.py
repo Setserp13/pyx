@@ -8,10 +8,16 @@ def setattrs(obj, **kwargs):
 
 class Element:
 	@classmethod
-	def new(cls, **kwargs):
-		element = cls.__new__(cls)
-		element.attrib = kwargs
-		return element
+	def new(cls, obj=None, **attrs):
+		if obj is None:
+			obj = cls.__new__(cls)
+
+		obj.attrib = {}
+
+		for k, v in attrs.items():
+			setattr(obj, k, v)
+
+		return obj
 
 	def set(self, **kwargs):
 		for k in kwargs:
