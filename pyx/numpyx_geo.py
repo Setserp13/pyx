@@ -488,7 +488,7 @@ class points(np.ndarray, shape):
 		obj = np.ndarray.__new__(cls, input_array.shape, dtype=input_array.dtype)
 		obj[...] = input_array
 	
-		return Element.new(obj, **attrs)
+		return Element.init(obj, **attrs)
 	"""def __new__(cls, input_array, **attrs):
 		input_array = np.array(input_array, copy=True)
 		obj = np.ndarray.__new__(cls, input_array.shape, dtype=input_array.dtype)
