@@ -126,11 +126,12 @@ class path_command:
 
 
 class path(list, shape):
+	def __init__(self, *commands):
+		self.attrib = {}
+		list.__init__(self, *commands)
+	
 	@property
 	def ndim(self): return 2
-	
-	def __init__(self, *commands):
-		list.__init__(self, commands)
 
 	@property
 	def d(self): return ' '.join(command.d for command in self)
