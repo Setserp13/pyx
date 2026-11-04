@@ -7,13 +7,15 @@ def setattrs(obj, **kwargs):
 	return obj
 
 class Element:
-	def __new__(cls, **kwargs):
+	def __new__(cls, *args, **kwargs):
 		obj = super().__new__(cls)
 		obj.attrib = {}
-		for k, v in kwargs.items():
-			setattr(obj, k, v)	
-		return obj
 
+		for k, v in kwargs.items():
+			setattr(obj, k, v)
+
+		return obj
+			
 	def set(self, **kwargs):
 		for k in kwargs:
 			self.attrib[k] = kwargs[k]
