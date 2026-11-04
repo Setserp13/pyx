@@ -12,6 +12,7 @@ from itertools import product
 from multipledispatch import dispatch
 import copy
 from pyx.mat.transform import Node2D, Node3D, quaternion, Transform
+from pyx.generic.generic import Element
 
 EPSILON = 1e-9
 TAU = math.pi * 2.
@@ -30,7 +31,7 @@ def safe_divide(a, b):
 
 
 
-class shape:
+class shape(Element):
 	@property
 	def ndim(self): raise NotImplementedError
 	
@@ -486,15 +487,14 @@ class points(np.ndarray, shape):
 		input_array = np.array(input_array, copy=True)
 		obj = np.ndarray.__new__(cls, input_array.shape, dtype=input_array.dtype)
 		obj[...] = input_array
+	
+		return Element.new(obj, **attrs)
+	"""def __new__(cls, input_array, **attrs):
+		input_array = np.array(input_array, copy=True)
+		obj = np.ndarray.__new__(cls, input_array.shape, dtype=input_array.dtype)
+		obj[...] = input_array
 
 		for k, v in attrs.items():
-			setattr(obj, k, v)
-
-		return obj
-	"""def __new__(cls, input_array, **attrs):
-		obj = np.asarray(input_array).view(cls)
-
-		for k,v in attrs.items():
 			setattr(obj, k, v)
 
 		return obj"""
@@ -2562,14 +2562,12 @@ def similar(A: np.ndarray, B: np.ndarray, tol=1e-6) -> bool:
 
 
 #ADD SHAPE SVG DRAW METHODS
-import pyx.generic.generic as generic
-
-
-shapes = [points, polybezier, circle, ellipse, line, polyline, rect, group, arc, Transform, Mesh]
+#import pyx.generic.generic as generic
+#shapes = [points, polybezier, circle, ellipse, line, polyline, rect, group, arc, Transform, Mesh]
 #shapes = [shape]	#TEST IT LATER
-for x in shapes: generic.make_Element(x)
-"""	x.set = lambda self, **attrib: generic.set(self, attrib={**getattr(self, "attrib", {}), **attrib})
-	x.get = lambda self, *keys: [self.attrib[k] for k in keys] if hasattr(self, 'attrib') else None"""
+#for x in shapes: generic.make_Element(x)
+#	x.set = lambda self, **attrib: generic.set(self, attrib={**getattr(self, "attrib", {}), **attrib})
+#	x.get = lambda self, *keys: [self.attrib[k] for k in keys] if hasattr(self, 'attrib') else None
 
 
 
