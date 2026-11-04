@@ -163,8 +163,8 @@ def connect_curves(curves):	# Translate each curve so its starting point matches
 
 class rect_like(shape):	#interval
 	def __init__(self, min, size):
-		self.min = np.array(min)
-		self.size = np.array(size)
+		self.min = np.asarray(min)
+		self.size = np.asarray(size)
 
 	@property
 	def center(self): return self.min + self.extents
@@ -188,10 +188,10 @@ class rect_like(shape):	#interval
 		return obj
 
 	@classmethod
-	def min_max(cls, min, max): return cls.min_size(min, np.array(max) - np.array(min))
+	def min_max(cls, min, max): return cls.min_size(min, np.asarray(max) - np.asarray(min))
 
 	@classmethod
-	def center_size(cls, center, size): return cls.min_size(np.array(center) - np.array(size) * 0.5, size)
+	def center_size(cls, center, size): return cls.min_size(np.asarray(center) - np.asarray(size) * 0.5, np.asarray(size))
 
 	@property
 	def aabb(self): return rect(self.min, self.size)
