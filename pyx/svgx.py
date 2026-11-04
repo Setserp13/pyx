@@ -23,6 +23,7 @@ from pyx.mat.transform import Node2D, Transform
 import pyx.mat.transform as xf
 from pyx.gamepy.color import Color
 import pyx.generic.generic as generic
+import copy
 
 def replace_all(root, replacements, exact_match=False):
 	"""
@@ -751,7 +752,7 @@ def transform_to_svg(obj):	#order matters
 #Node2D.to_svg = lambda self: transform_to_svg(self)
 
 def get_attrib(obj):
-	attrib = getattr(obj, "attrib", {})
+	attrib = copy.deepcopy(getattr(obj, "attrib", {}))
 	for k in ['fill', 'stroke']:
 		if k in attrib:
 			if isinstance(attrib[k], Color):
