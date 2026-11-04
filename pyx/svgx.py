@@ -350,7 +350,7 @@ arc.d_command = property(lambda self: (
 	f'{self.get_point(self.end)[1]}'
 ))
 
-def join_curves(curves, closed=False):
+def join_curves(curves, closed=False):	# Join curves and points into a single continuous SVG path, inserting straight lines wherever consecutive elements are disconnected and optionally closing the path.
 	if not curves:
 		return path()
 
