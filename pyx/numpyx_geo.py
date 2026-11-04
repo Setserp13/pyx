@@ -148,6 +148,17 @@ class curve:
 	def set_position(self, t, value):
 		return self + (np.asarray(value) - self.get_point01(t))
 
+def connect_curves(curves):	# Translate each curve so its starting point matches the previous curve's endpoint, forming a continuous path.
+
+	current = curves[0].get_point01(1)
+
+	for i in range(1, len(curves)):
+		curves[i] = curves[i].set_position(0, current)
+		current = curves[i].get_point01(1)
+
+	return curves
+
+
 
 class rect_like(shape):	#interval
 	def __init__(self, min, size):
@@ -862,25 +873,6 @@ class arc(circle, curve):
 		t = npx.clamp01(t)
 		return self.get_point(self.start + self.sweep * t)
 
-	"""@property
-	def d_command(self):
-		p1 = self.get_point01(1.)
-
-		large_arc_flag = int(self.sweep > math.pi)
-		sweep_flag = 1
-
-		return (
-			f"A {self.radius} {self.radius} 0 "
-			f"{large_arc_flag} {sweep_flag} "
-			f"{p1[0]} {p1[1]}"
-		)
-
-	@property
-	def d(self):
-		p0 = self.get_point01(0.)
-		return f"M {p0[0]} {p0[1]} {self.d_command}"
-	"""
-
 	def contains_angle(self, a):
 		s = self.start
 		t = self.signed_sweep
@@ -987,19 +979,11 @@ class line(points, curve):	#start = self[0], end = self[1]
 
 	def subdivide_by_size(self, size): return polyline(npx.subdivide(self[0], self[1], size), closed=False).edges
 
-	#def set_position(self, pivot, value):	#pivot is normalized and value is not normalized
-	#	pivot = npx.lerp(*self, pivot)
-	#	delta = value - pivot
-	#	return line(self + delta)
-
 	def coincide(a, b, tol=1e-12):
 		"""Check if two N-dimensional lines coincide."""
 		return all(point_on_line(a, x, tol) for x in b)
 
-	def lerp(self, t): return npx.lerp(*self, t) #- Remove it later
 	def get_point01(self, t): return npx.lerp(*self, t)
-	
-	def lerp_line(self, ts): return line([self.lerp(t) for t in ts])
 
 
 
