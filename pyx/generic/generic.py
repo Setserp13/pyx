@@ -7,21 +7,11 @@ def setattrs(obj, **kwargs):
 	return obj
 
 class Element:
-	def __new__(cls, *args, **kwargs):
+	def __new__(cls, **kwargs):
 		obj = super().__new__(cls)
 		obj.attrib = {}
-		return obj
-
-	@classmethod
-	def new(cls, obj=None, **attrs):
-		if obj is None:
-			obj = cls.__new__(cls)
-
-		obj.attrib = {}
-
-		for k, v in attrs.items():
-			setattr(obj, k, v)
-
+		for k, v in kwargs.items():
+			setattr(obj, k, v)	
 		return obj
 
 	def set(self, **kwargs):
