@@ -1,9 +1,3 @@
-"""def get(obj, *keys): return [getattr(obj, k) for x in keys]
-
-def set(obj, **kwargs):
-	for k in kwargs:
-		setattr(obj, k, kwargs[k])
-	return obj"""
 
 def getattrs(obj, *keys): return [getattr(obj, k) for x in keys]
 
@@ -13,8 +7,11 @@ def setattrs(obj, **kwargs):
 	return obj
 
 class Element:
-	def __init__(self, **kwargs):
-		self.attrib = kwargs
+	@classmethod
+	def new(cls, **kwargs):
+		element = cls.__new__(cls)
+		element.attrib = kwargs
+		return element
 
 	def set(self, **kwargs):
 		for k in kwargs:
@@ -28,7 +25,7 @@ class Element:
 			[self.attrib.get(k, default) for k, default in kwargs.items()]
 		]
 
-def make_Element(cls):
+def Element_like(cls):	#def make_Element(cls):
 	cls.set = lambda self, **attrib: setattrs(self, attrib={**getattr(self, "attrib", {}), **attrib})
 	
 	cls.get_dict = lambda self, *args, **kwargs: {
