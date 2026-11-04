@@ -1,10 +1,27 @@
-shapes
-
-point
-line -> line, ray, line segment
-angle
-circle
-arc
-ellipse
-rect
-polyline -> polyline, polygon
+-curve
+-Element
+	-Node <- list
+		-Transform
+			-Node2D
+			-Node3D
+	shape
+		-ball
+			-circle <- curve
+				-arc
+		-group <- list
+		-path
+		-points <- ndarray
+			-bezier <- curve
+			-line <- curve
+        -ray
+        -segment
+			-Mesh
+			-polybezier <- curve
+			-polyline <- curve
+				-polygon
+					-triangle
+		-rect_like
+			-ellipse
+			-image <- ndarray
+			-rect
+-grid
