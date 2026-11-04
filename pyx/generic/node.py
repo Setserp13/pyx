@@ -1,6 +1,7 @@
 from pyx.array_utility import index_of
+from pyx.generic.generic import Element
 
-class Node:
+class Node(Element):
 	def __init__(self, parent=None, children=None, **kwargs):
 		for k in kwargs:
 			setattr(self, k, kwargs[k])
