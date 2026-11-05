@@ -8,6 +8,7 @@ import numpy as np
 from pyx.mat.easing import *
 import copy
 import pyx.numpyx as npx
+import pyx.generic.generic as generic
 
 class Animation:
 	def __init__(self, target, property, start=None, end=None, start_time=0,
@@ -27,7 +28,7 @@ class Animation:
 			return
 
 		if self.start is None:
-			self.start = getattr(self.target, self.property)	#self.target.get_value(self.property)
+			self.start = generic.get(self.target, self.property)	#self.target.get_value(self.property)
 		
 		t = np.clip((time - self.start_time) / self.duration, 0, 1)
 		t = self.ease(t)
@@ -37,7 +38,7 @@ class Animation:
 		else:
 			value = npx.lerp(self.start, self.end, t)
 
-		setattr(self.target, self.property, value)
+		generic.set(self.target, self.property, value)
 
 
 class Timeline:
