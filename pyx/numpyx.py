@@ -68,10 +68,14 @@ def lerp(a, b, t): return a * (1 - t) + b * t	#a + (b - a) * t
 @dispatch(int, int, float)
 def lerp(a, b, t): return int(a * (1 - t) + b * t)
 
-"""@dispatch(list, list, float)
-def lerp(a, b, t): return list(map(lambda x, y: lerp(x, y, t), a, b))
-@dispatch(tuple, tuple, float)
-def lerp(a, b, t): return tuple(map(lambda x, y: lerp(x, y, t), a, b))"""
+"""def lerp(a, b, t):
+	if isinstance(a, (tuple, list)):
+		return type(a)(
+			lerp(x, y, t)
+			for x, y in zip(a, b)
+		)
+
+	return a + (b - a) * t	#Number, ndarray"""
 
 @dispatch(Number, Number, Number)
 def inverse_lerp(a, b, c): return (c - a) / (b - a)
