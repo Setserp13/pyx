@@ -1,4 +1,32 @@
 
+def get(data, path, default=None):
+	try:
+		for key in path.split("/"):
+			if isinstance(data, dict):
+				data = data[key]
+			else:
+				data = getattr(data, key)
+		return data
+	except (KeyError, AttributeError):
+		return default
+
+
+def set(data, path, value):
+	keys = path.split("/")
+
+	for key in keys[:-1]:
+		if isinstance(data, dict):
+			data = data.setdefault(key, {})
+		else:
+			data = getattr(data, key)
+
+	key = keys[-1]
+
+	if isinstance(data, dict):
+		data[key] = value
+	else:
+		setattr(data, key, value)
+
 def getattrs(obj, *keys): return [getattr(obj, k) for x in keys]
 
 def setattrs(obj, **kwargs):
