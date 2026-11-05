@@ -11,6 +11,7 @@ import copy
 import pyx.mat.mat as mat
 import pyx.rex as rex
 from pyx.generic.node import Node
+from pyx.generic.generic import get, set
 
 #MESH INDICES
 
@@ -248,21 +249,7 @@ class GLB:
 		self.resources['skins'].append(result.add('inverseBindMatrices', [x.inv_TRS_to(skin.joints[0]).T for x in skin.joints], 5126, 'MAT4'))
 
 
-def get(data, path):
-	for key in path.split("/"):
-		data = data[key]
 
-	return data
-
-
-
-def set(data, path, value):
-	keys = path.split("/")
-
-	for key in keys[:-1]:
-		data = data.setdefault(key, {})	#data = data[key]
-
-	data[keys[-1]] = value
 
 GLTF_DTYPES = {
 	5121: "<u1",
