@@ -4,8 +4,11 @@ def get(data, path, default=None):
 		for key in path.split("/"):
 			if isinstance(data, dict):
 				data = data[key]
+			elif key.isdigit():
+				data = data[int(key)]
 			else:
 				data = getattr(data, key)
+	
 		return data
 	except (KeyError, AttributeError):
 		return default
@@ -17,6 +20,8 @@ def set(data, path, value):
 	for key in keys[:-1]:
 		if isinstance(data, dict):
 			data = data.setdefault(key, {})
+		elif key.isdigit():
+			data = data[int(key)]
 		else:
 			data = getattr(data, key)
 
@@ -24,6 +29,8 @@ def set(data, path, value):
 
 	if isinstance(data, dict):
 		data[key] = value
+	elif key.isdigit():
+		data[int(key)] = value
 	else:
 		setattr(data, key, value)
 
