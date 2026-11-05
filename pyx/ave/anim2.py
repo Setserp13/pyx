@@ -10,8 +10,8 @@ import copy
 import pyx.numpyx as npx
 
 class Animation:
-	def __init__(self, target, property, start, end, duration,
-			start_time=0, ease=None, value_function=None):
+	def __init__(self, target, property, start=None, end=None, start_time=0,
+			duration=1, ease=None, value_function=None):
 
 		self.target = target
 		self.property = property
@@ -26,6 +26,9 @@ class Animation:
 		if time < self.start_time:
 			return
 
+		if self.start is None:
+			self.start = getattr(self.target, self.property)	#self.target.get_value(self.property)
+		
 		t = np.clip((time - self.start_time) / self.duration, 0, 1)
 		t = self.ease(t)
 
