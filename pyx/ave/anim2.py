@@ -165,8 +165,8 @@ class canvas(geo.group):
 	def draw(self):
 		objects = copy.deepcopy(self)
 
-		for x in objects[1:]:
-			x.global_aabb = self.rect.denormalize_rect(x.global_aabb)	# Use global_aabb to preserve the effects of parent and local transforms.
+		#for x in objects[1:]:
+		#	x.global_aabb = self.rect.denormalize_rect(x.global_aabb)	# Use global_aabb to preserve the effects of parent and local transforms.
 	
 		return objects
 
