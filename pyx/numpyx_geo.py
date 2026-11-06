@@ -160,6 +160,26 @@ class curve:
 	def set_position(self, t, value):
 		return self + (np.asarray(value) - self.get_point01(t))
 
+	def subcurve(self, start=0.0, end=1.0):
+		start = float(start)
+		end = float(end)
+	
+		if not 0 <= start <= 1:
+			raise ValueError('start must be in [0, 1]')
+	
+		if not 0 <= end <= 1:
+			raise ValueError('end must be in [0, 1]')
+	
+		if start > end:
+			raise ValueError(f'start ({start}) must be <= end ({end})')
+	
+		return self._subcurve(start, end)
+	
+	def _subcurve(self, start, end):
+		raise NotImplementedError
+
+
+
 def connect_curves(curves):	# Translate each curve so its starting point matches the previous curve's endpoint, forming a continuous path.
 
 	current = curves[0].get_point01(1)
@@ -947,7 +967,11 @@ class arc(circle, curve):
 			for a, b in zip(angles, angles[1:])
 		]
 
-
+	def _subcurve(self, start, end):
+		delta = self.end - self.start
+		return arc(self.center, self.radius,
+			self.start + delta * start,
+			self.start + delta * end)
 
 class line(points, curve):	#start = self[0], end = self[1]
 	
@@ -996,7 +1020,8 @@ class line(points, curve):	#start = self[0], end = self[1]
 
 	def get_point01(self, t): return npx.lerp(*self, t)
 
-
+	def _subcurve(self, start, end):
+		return line([self.get_point01(start), self.get_point01(end)])
 
 
 class segment(line):
