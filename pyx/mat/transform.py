@@ -6,6 +6,7 @@ import itertools
 import math
 from itertools import combinations
 from functools import reduce
+import warnings
 
 """
 Use R.T (transposta) — é mais rápido e numericamente mais estável que np.linalg.inv.
