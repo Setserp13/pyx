@@ -1552,7 +1552,7 @@ class polyline(points, curve):
 
 		closed = np.allclose(points[0], points[-1])
 		
-		return polyline(points, closed=False)
+		return polyline(points, closed=closed)
 
 	def subdivide(p, n):
 		result = []
