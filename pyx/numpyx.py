@@ -1,7 +1,7 @@
 import math
 import cmath
 from multipledispatch import dispatch
-from numbers import Number
+from numbers import Integral, Number
 import numpy as np
 import itertools
 from pyx.collectionsx import List as ls
@@ -59,13 +59,13 @@ def clamp_magnitude(v, max_magnitude):
 
 	return v
 
-@dispatch(np.ndarray, np.ndarray, float)
+@dispatch(np.ndarray, np.ndarray, Number)	#float)
 def lerp(a, b, t): return a * (1 - t) + b * t	#works for both Number and ndarray
 
-@dispatch(Number, Number, float)
+@dispatch(Number, Number, Number)	#float)
 def lerp(a, b, t): return a * (1 - t) + b * t	#a + (b - a) * t
 
-@dispatch(int, int, float)
+@dispatch(Integral, Integral, Number)	#float)	#@dispatch(int, int, float)
 def lerp(a, b, t): return int(a * (1 - t) + b * t)
 
 """def lerp(a, b, t):
