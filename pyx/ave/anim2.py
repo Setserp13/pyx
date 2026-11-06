@@ -163,9 +163,9 @@ class canvas(geo.group):
 		self.insert(0, self.rect)
 
 	def draw(self):
-		objects = copy.deepcopy(self[1:])
+		objects = copy.deepcopy(self)
 
-		for x in objects:
+		for x in objects[1:]:
 			x.aabb = self.rect.denormalize_rect(x.aabb)
 
 		return objects
