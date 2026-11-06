@@ -59,23 +59,23 @@ def clamp_magnitude(v, max_magnitude):
 
 	return v
 
-"""@dispatch(np.ndarray, np.ndarray, float)
+@dispatch(np.ndarray, np.ndarray, float)
 def lerp(a, b, t): return a * (1 - t) + b * t	#works for both Number and ndarray
 
 @dispatch(Number, Number, float)
 def lerp(a, b, t): return a * (1 - t) + b * t	#a + (b - a) * t
 
 @dispatch(int, int, float)
-def lerp(a, b, t): return int(a * (1 - t) + b * t)"""
+def lerp(a, b, t): return int(a * (1 - t) + b * t)
 
-def lerp(a, b, t):
+"""def lerp(a, b, t):
 	if isinstance(a, (tuple, list)):
 		return type(a)(
 			lerp(x, y, t)
 			for x, y in zip(a, b)
 		)
 
-	return a + (b - a) * t	#Number, ndarray
+	return a + (b - a) * t	#Number, ndarray"""
 
 @dispatch(Number, Number, Number)
 def inverse_lerp(a, b, c): return (c - a) / (b - a)
