@@ -166,8 +166,9 @@ class canvas(geo.group):
 		objects = copy.deepcopy(self)
 
 		for x in objects[1:]:
-			x.aabb = self.rect.denormalize_rect(x.aabb)
-
+			#x.aabb = self.rect.denormalize_rect(x.aabb)	<- this ignores xform
+			x.global_aabb = self.rect.denormalize_rect(x.global_aabb)
+	
 		return objects
 
 	def save_svg(self, path='drawing.svg', overwrite=True):
