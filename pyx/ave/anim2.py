@@ -231,3 +231,11 @@ def render_video(scene, output='animation.mp4', directory='frames'):
 	], check=True)
 
 	return output
+
+# H.264 with yuv420p does not support transparency, so alpha channels from PNG frames are discarded.
+# For transparent video, use a codec that supports alpha (e.g. ProRes 4444).
+# Otherwise, composite frames over a solid background before encoding.
+
+
+
+
