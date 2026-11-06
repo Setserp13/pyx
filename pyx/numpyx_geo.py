@@ -1550,7 +1550,7 @@ class polyline(points, curve):
 	
 		points.append(self.get_point01(end))
 
-		closed = np.allclose(points[0], points[-1])
+		closed = np.allclose(points[0], points[-1], atol=1e-6)
 		
 		return polyline(points, closed=closed)
 
