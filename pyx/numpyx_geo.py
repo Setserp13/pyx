@@ -1544,7 +1544,7 @@ class polyline(points, curve):
 		v /= v[-1]
 
 		indices = np.where((v >= start) & (v <= end))[0]
-		return polyline(self[indices], closed=self.closed)
+		return polyline(self[indices], closed=False)
 
 	def subdivide(p, n):
 		result = []
