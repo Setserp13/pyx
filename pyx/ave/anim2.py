@@ -166,8 +166,7 @@ class canvas(geo.group):
 		objects = copy.deepcopy(self)
 
 		for x in objects[1:]:
-			#x.aabb = self.rect.denormalize_rect(x.aabb)	<- this ignores xform
-			x.global_aabb = self.rect.denormalize_rect(x.global_aabb)
+			x.global_aabb = self.rect.denormalize_rect(x.global_aabb)	# Use global_aabb to preserve the effects of parent and local transforms.
 	
 		return objects
 
