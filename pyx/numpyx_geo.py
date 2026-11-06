@@ -85,7 +85,15 @@ class shape(Element):
 		self.set(transform=adjustment)
 	
 	@property
-	def xform(self): return getattr(self, 'attrib', {}).get('transform', Transform.identity(self.ndim))	#, None)
+	def xform(self):
+		transform = getattr(self, 'attrib', {}).get('transform')
+	
+		if transform is None:
+			transform = Transform.identity(self.ndim)
+			self.xform = transform
+	
+		return transform
+	#def xform(self): return getattr(self, 'attrib', {}).get('transform', Transform.identity(self.ndim))	#, None)
 
 	@xform.setter
 	def xform(self, value): self.set(transform=value)
