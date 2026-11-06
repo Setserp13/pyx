@@ -299,7 +299,13 @@ class Basis(np.ndarray):
 		tol = np.finfo(R.dtype).eps * np.linalg.norm(R, ord=np.inf)
 	
 		if np.any(np.abs(np.diag(R)) <= tol):
-			raise ValueError("Cannot decompose a singular (non-invertible) basis")
+			#raise ValueError("Cannot decompose a singular (non-invertible) basis")
+			warnings.warn(
+				"Cannot uniquely recover rotation from a singular basis. "
+				"Collapsed axes may have arbitrary rotation.",
+				RuntimeWarning,
+				stacklevel=2
+			)
 	
 		return Q, R	#rotation, (scale @ shear @ reflection)
 
