@@ -79,8 +79,8 @@ def cv2_paint(image, color, draw, obj=None, padding=2):
 			cv2.addWeighted(overlay, alpha, image, 1 - alpha, 0, dst=image)
 		return
 
-	# Local bounding box.
-	aabb = obj.local_aabb
+	# original local geometry bounding box.
+	aabb = obj.aabb
 	minimum = np.floor(aabb.min - padding).astype(int)
 	maximum = np.ceil(aabb.max + padding).astype(int)
 
