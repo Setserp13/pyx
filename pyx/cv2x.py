@@ -137,7 +137,7 @@ def draw_arc(self, image):
 
 def draw_polyline(self, image):
 	# Get the polyline vertices.
-	points = np.asarray(self.vertices)
+	points = np.asarray(self)
 
 	if len(points) < 2:
 		return
