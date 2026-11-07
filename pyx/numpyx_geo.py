@@ -2147,7 +2147,7 @@ class group(list, shape):
 	@property
 	def ndim(self): return self[0].ndim
 
-	@property
+	"""@property
 	def aabb(self):
 		return aabb([x.aabb for x in self])
 
@@ -2155,8 +2155,15 @@ class group(list, shape):
 	def aabb(self, value):
 		cur = self.aabb
 		for x in self:
-			x.aabb = value.denormalize_rect(cur.normalize_rect(x.aabb))
+			x.aabb = value.denormalize_rect(cur.normalize_rect(x.aabb))"""
 
+	@property
+	def aabb(self): return aabb([x.global_aabb for x in self])
+
+	@aabb.setter
+	def aabb(self, value):
+		shape.aabb.fset(self, value)
+	
 	@property
 	def local_aabb(self): return aabb([x.local_aabb for x in self])
 
