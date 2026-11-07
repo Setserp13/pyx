@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 from PIL import ImageColor
 import pyx.numpyx_geo as geo
+import pyx.PILx as PILx
 from pyx.gamepy.color import Color
 
 def height(self): return int(self.get(cv2.CAP_PROP_FRAME_HEIGHT))
@@ -188,8 +189,59 @@ def draw_bezier(self, image):
 	)
 
 
+def draw_image(self, image):
+	if self.array is None:
+		return
+
+	source = np.asarray(self.array).transpose(1, 0, 2)	#OpenCV expects arrays in (height, width, channels)
+
+	if source.ndim == 2:
+		source = cv2.cvtColor(source, cv2.COLOR_GRAY2BGRA)
+	elif source.shape[2] == 3:
+		source = cv2.cvtColor(source, cv2.COLOR_RGB2BGRA)
+	elif source.shape[2] == 4:
+		source = cv2.cvtColor(source, cv2.COLOR_RGBA2BGRA)
+
+	size = np.asarray(self.size, dtype=float)
+
+	if np.any(size <= 0):
+		return
+
+	resized = cv2.resize(
+		source,
+		tuple(np.round(size).astype(int)),
+		interpolation=cv2.INTER_LINEAR
+	)
+
+	x, y = np.round(self.min).astype(int)
+	h, w = resized.shape[:2]
+
+	# Clip to image boundaries
+	x1, y1 = max(0, x), max(0, y)
+	x2, y2 = min(image.shape[1], x + w), min(image.shape[0], y + h)
+
+	if x1 >= x2 or y1 >= y2:
+		return
+
+	roi = resized[y1-y:y2-y, x1-x:x2-x]
+
+	# Apply global opacity
+	opacity = self.attrib.get('opacity', 1.0)
+
+	alpha = roi[:, :, 3:4].astype(np.float32) / 255
+	alpha *= opacity
+
+	foreground = roi[:, :, :3].astype(np.float32)
+	background = image[y1:y2, x1:x2].astype(np.float32)
+
+	image[y1:y2, x1:x2] = (
+		foreground * alpha +
+		background * (1 - alpha)
+	).clip(0, 255).astype(np.uint8)
+
+
 # Dynamically attach the corresponding drawing method to each geometry class.
-for cls in [geo.arc, geo.bezier, geo.circle, geo.line, geo.polyline, geo.rect]:
+for cls in [geo.arc, geo.bezier, geo.circle, geo.line, geo.polyline, geo.rect, PILx.image]:
 	name = cls.__name__
 
 	# Capture the function name in the lambda default argument.
