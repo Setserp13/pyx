@@ -71,6 +71,7 @@ def cv2_paint(image, color, draw, obj=None, padding=2):
 
 	bgr, alpha = result
 
+	# Draw directly when there is no object transformation.
 	if obj is None:
 		if alpha >= 1:
 			draw(image, bgr, np.zeros(2))
@@ -80,30 +81,52 @@ def cv2_paint(image, color, draw, obj=None, padding=2):
 			cv2.addWeighted(overlay, alpha, image, 1 - alpha, 0, dst=image)
 		return
 
-	# Get the local bounding box.
+	# Get the object's local bounding box.
 	aabb = obj.local_aabb
+
+	# Get the global transformation matrix.
+	global_TRS = obj.xform.global_TRS
 
 	# Transform the bounding box corners.
 	corners = aabb.corners
-	corners = np.array([
-		obj.xform.apply(p) for p in corners
-	])
 
-	# Get the transformed bounding box.
+	corners = np.concatenate([
+		corners,
+		np.ones((len(corners), 1))
+	], axis=1)
+
+	corners = corners @ global_TRS.T
+	corners = corners[:, :2]
+
+	# Calculate the transformed bounding box.
 	minimum = np.floor(corners.min(axis=0) - padding).astype(int)
 	maximum = np.ceil(corners.max(axis=0) + padding).astype(int)
 
-	size = maximum - minimum
+	# Clip the region to the image boundaries.
+	x1 = max(0, minimum[0])
+	y1 = max(0, minimum[1])
+	x2 = min(image.shape[1], maximum[0])
+	y2 = min(image.shape[0], maximum[1])
 
-	if np.any(size <= 0):
+	if x1 >= x2 or y1 >= y2:
 		return
 
-	# Create local drawing layers.
-	overlay = np.zeros((size[1], size[0], *image.shape[2:]), dtype=image.dtype)
-	mask = np.zeros((size[1], size[0]), dtype=np.uint8)
+	# Create a local drawing layer.
+	size = maximum - minimum
 
-	# Draw the geometry.
+	overlay = np.zeros(
+		(size[1], size[0], *image.shape[2:]),
+		dtype=image.dtype
+	)
+
+	mask = np.zeros(
+		(size[1], size[0]),
+		dtype=np.uint8
+	)
+
+	# Draw the geometry in local coordinates.
 	offset = -minimum
+
 	draw(overlay, bgr, offset)
 	draw(mask, 255, offset)
 
@@ -111,10 +134,12 @@ def cv2_paint(image, color, draw, obj=None, padding=2):
 	translation = np.eye(3)
 	translation[:2, 2] = minimum
 
-	matrix = obj.xform.global_TRS[:2, :] @ translation
+	matrix = global_TRS[:2, :] @ translation
 
-	# Transform both layers.
-	dsize = (image.shape[1], image.shape[0])
+	# Warp only the visible region.
+	dsize = (x2 - x1, y2 - y1)
+
+	matrix[:2, 2] -= [x1, y1]
 
 	overlay = cv2.warpAffine(
 		overlay, matrix, dsize,
@@ -132,9 +157,11 @@ def cv2_paint(image, color, draw, obj=None, padding=2):
 	if image.ndim == 3:
 		weight = weight[..., None]
 
-	image[:] = (
+	region = image[y1:y2, x1:x2]
+
+	region[:] = (
 		overlay.astype(np.float32) * weight +
-		image.astype(np.float32) * (1 - weight)
+		region.astype(np.float32) * (1 - weight)
 	).clip(0, 255).astype(image.dtype)
 
 
