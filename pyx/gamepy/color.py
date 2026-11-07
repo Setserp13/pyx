@@ -12,6 +12,8 @@ class Color(np.ndarray):
 
 	@classmethod
 	def parse(cls, value):
+		if value is None:
+			return cls(0., 0., 0., 0.)
 		if isinstance(value, (list, tuple, np.ndarray)):
 			value = np.asarray(value, dtype=float)
 			if value.size not in (3, 4):
