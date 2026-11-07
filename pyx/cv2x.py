@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 from PIL import ImageColor
 import pyx.numpyx_geo as geo
+from pyx.gamepy.color import Color
 
 def height(self): return int(self.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
@@ -38,8 +39,11 @@ def cv2_point(point):
 
 
 def cv2_color(color):
+	c = Color.parse(color)
+	return tuple(c.rgb32[[2, 1, 0]]), c.a	# Convert RGB to BGR (OpenCV channel order) and return alpha
+	
 	# Ignore missing or transparent colors.
-	if color is None or color == 'none':
+	"""if color is None or color == 'none':
 		return None
 
 	# Convert named or hexadecimal colors into RGBA.
@@ -60,7 +64,7 @@ def cv2_color(color):
 			r, g, b, a = [int(x * 255) for x in (r, g, b, a)]
 
 	# OpenCV uses BGR instead of RGB.
-	return (int(b), int(g), int(r)), a / 255
+	return (int(b), int(g), int(r)), a / 255"""
 
 
 def cv2_paint(image, color, draw):
