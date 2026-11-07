@@ -214,33 +214,46 @@ def to_grayscale(img):
 	return y[..., None]   # volta para H×W
 
 
+
+import base64
+import mimetypes
+
 class image(geo.rect_like):
 	def __init__(self, filepath, min=np.zeros(2), size=None):
 		self.filepath = filepath
 		self.min = min
 		self.overwrite_size = size
 
-	"""@classmethod
-	def read(cls, path):
-		return cls(path)"""
-
 	@property
-	def filepath(self): return self._filepath
+	def filepath(self):
+		return self._filepath
 
 	@filepath.setter
 	def filepath(self, value):
 		self._filepath = value
+
 		try:
-			self.array = read_image(self.filepath)
+			self.array = read_image(value)
 		except FileNotFoundError as e:
-			print(f"FileNotFoundError: {e}")
-			self.array = None	
-	
+			print(f'FileNotFoundError: {e}')
+			self.array = None
+
 	@property
-	def size(self): return np.array(self.array.shape[:2]) if self.overwrite_size is None else self.overwrite_size
+	def size(self):
+		return np.array(self.array.shape[:2]) if self.overwrite_size is None else self.overwrite_size
 
 	@size.setter
-	def size(self, value): self.overwrite_size = value
+	def size(self, value):
+		self.overwrite_size = value
+
+	@property
+	def data_uri(self):
+		mime = mimetypes.guess_type(self.filepath)[0] or 'image/png'
+
+		with open(self.filepath, 'rb') as f:
+			data = base64.b64encode(f.read()).decode('ascii')
+
+		return f'data:{mime};base64,{data}'
 
 
 class tspan(geo.shape):
