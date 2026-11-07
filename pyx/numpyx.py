@@ -311,11 +311,13 @@ def aspect(size): return size[1] / size[0]	#Aspect ratio
 
 #def set_aspect(size, value): return np.array([size[0], int(size[0] * value)])
 
-def fit_scale(viewport, viewbox, scale_method='meet'):	#scale_method in ['meet', 'slice']
+def fit_scale(viewport, viewbox, scale_method='meet'):	# Calculate uniform scale to fit the viewbox inside the viewport ('meet') or cover it ('slice')
 	scale = viewport / viewbox
-	return {'meet': min, 'slice': max}[scale_method](scale)	
+	return {'meet': min, 'slice': max}[scale_method](scale)
 
-def fit(viewport, viewbox, scale_method='meet'): return viewbox * fit_scale(viewport, viewbox, scale_method)
+def fit(viewport, viewbox, scale_method='meet'):	# Return the viewbox dimensions scaled to fit or cover the viewport while preserving aspect ratio
+	return viewbox * fit_scale(viewport, viewbox, scale_method)
+
 
 def fit_rect(viewport_rect, viewbox, mode='slice', align=0.5):
 	result = rect(viewport_rect.min, fit(viewport_rect.size, viewbox, mode))
