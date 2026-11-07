@@ -42,7 +42,7 @@ def cv2_color(color):
 	c = Color.parse(color)
 	return tuple(int(x) for x in c.rgb32[[2, 1, 0]]), c.a	# Convert RGB to BGR (OpenCV channel order) and return alpha
 
-def cv2_paint(image, color, draw):
+"""def cv2_paint(image, color, draw):
 	# Convert the color into OpenCV format and extract its opacity.
 	result = cv2_color(color)
 
@@ -60,7 +60,74 @@ def cv2_paint(image, color, draw):
 		draw(overlay, bgr)
 
 		# Blend the overlay with the original image.
-		cv2.addWeighted(overlay, alpha, image, 1 - alpha, 0, dst=image)
+		cv2.addWeighted(overlay, alpha, image, 1 - alpha, 0, dst=image)"""
+
+def cv2_paint(image, color, draw, obj=None, padding=2):
+	# Convert the color into OpenCV format and extract its opacity.
+	result = cv2_color(color)
+
+	if result is None:
+		return
+
+	bgr, alpha = result
+
+	if obj is None:
+		if alpha >= 1:
+			draw(image, bgr, np.zeros(2))
+		else:
+			overlay = image.copy()
+			draw(overlay, bgr, np.zeros(2))
+			cv2.addWeighted(overlay, alpha, image, 1 - alpha, 0, dst=image)
+		return
+
+	# Get the local bounding box.
+	aabb = obj.local_aabb
+	minimum = np.floor(aabb.min - padding).astype(int)
+	maximum = np.ceil(aabb.max + padding).astype(int)
+
+	size = maximum - minimum
+
+	if np.any(size <= 0):
+		return
+
+	# Create local drawing layers.
+	overlay = np.zeros((size[1], size[0], *image.shape[2:]), dtype=image.dtype)
+	mask = np.zeros((size[1], size[0]), dtype=np.uint8)
+
+	# Draw the geometry.
+	offset = -minimum
+	draw(overlay, bgr, offset)
+	draw(mask, 255, offset)
+
+	# Build the local-to-global transformation.
+	translation = np.eye(3)
+	translation[:2, 2] = minimum
+
+	matrix = obj.global_TRS[:2, :] @ translation
+
+	# Transform both layers.
+	dsize = (image.shape[1], image.shape[0])
+
+	overlay = cv2.warpAffine(
+		overlay, matrix, dsize,
+		flags=cv2.INTER_LINEAR
+	)
+
+	mask = cv2.warpAffine(
+		mask, matrix, dsize,
+		flags=cv2.INTER_LINEAR
+	)
+
+	# Blend using opacity and coverage.
+	weight = (mask.astype(np.float32) / 255) * alpha
+
+	if image.ndim == 3:
+		weight = weight[..., None]
+
+	image[:] = (
+		overlay.astype(np.float32) * weight +
+		image.astype(np.float32) * (1 - weight)
+	).clip(0, 255).astype(image.dtype)
 
 
 def cv2_stroke(obj):
@@ -101,6 +168,8 @@ def cv2_draw_polygon(image, points, color):
 	cv2.fillPoly(image, [points], color, lineType=cv2.LINE_AA)
 
 
+#DRAW SHAPES
+
 def draw_circle(self, image):
 	# Get the circle geometry and outline thickness.
 	center = cv2_point(self.center)
@@ -112,7 +181,7 @@ def draw_circle(self, image):
 		lambda img, color: cv2.circle(
 			img, center, radius, color, cv2.FILLED,
 			lineType=cv2.LINE_AA
-		)
+		), self
 	)
 
 	# Draw the outline, if a stroke color is defined.
@@ -120,7 +189,7 @@ def draw_circle(self, image):
 		lambda img, color: cv2.circle(
 			img, center, radius, color, max(1, round(width)),
 			lineType=cv2.LINE_AA
-		)
+		), self
 	)
 
 
@@ -132,7 +201,7 @@ def draw_arc(self, image):
 	cv2_paint(image, cv2_stroke(self),
 		lambda img, color: cv2_draw_curve(
 			img, points, color, cv2_stroke_width(self)
-		)
+		), self
 	)
 
 
@@ -151,14 +220,14 @@ def draw_polyline(self, image):
 		cv2_paint(image, cv2_fill(self),
 			lambda img, color: cv2_draw_polygon(
 				img, points, color
-			)
+			), self
 		)
 
 	# Draw the outline, closing the final segment when necessary.
 	cv2_paint(image, cv2_stroke(self),
 		lambda img, color: cv2_draw_curve(
 			img, points, color, cv2_stroke_width(self), closed
-		)
+		), self
 	)
 
 
