@@ -82,8 +82,16 @@ def cv2_paint(image, color, draw, obj=None, padding=2):
 
 	# Get the local bounding box.
 	aabb = obj.local_aabb
-	minimum = np.floor(aabb.min - padding).astype(int)
-	maximum = np.ceil(aabb.max + padding).astype(int)
+
+	# Transform the bounding box corners.
+	corners = aabb.corners()
+	corners = np.array([
+		obj.xform.apply(p) for p in corners
+	])
+
+	# Get the transformed bounding box.
+	minimum = np.floor(corners.min(axis=0) - padding).astype(int)
+	maximum = np.ceil(corners.max(axis=0) + padding).astype(int)
 
 	size = maximum - minimum
 
