@@ -37,35 +37,9 @@ def cv2_point(point):
 	# Convert a floating-point coordinate into an integer OpenCV point.
 	return tuple(np.round(point[:2]).astype(int))
 
-
 def cv2_color(color):
 	c = Color.parse(color)
 	return tuple(int(x) for x in c.rgb32[[2, 1, 0]]), c.a	# Convert RGB to BGR (OpenCV channel order) and return alpha
-	
-	# Ignore missing or transparent colors.
-	"""if color is None or color == 'none':
-		return None
-
-	# Convert named or hexadecimal colors into RGBA.
-	if isinstance(color, str):
-		r, g, b, a = ImageColor.getcolor(color, 'RGBA')
-	else:
-		values = list(color)
-
-		# RGB colors are assumed to be fully opaque.
-		if len(values) == 3:
-			r, g, b = values
-			a = 255
-		else:
-			r, g, b, a = values
-
-		# Support normalized color components in the range [0, 1].
-		if max(r, g, b, a) <= 1:
-			r, g, b, a = [int(x * 255) for x in (r, g, b, a)]
-
-	# OpenCV uses BGR instead of RGB.
-	return (int(b), int(g), int(r)), a / 255"""
-
 
 def cv2_paint(image, color, draw):
 	# Convert the color into OpenCV format and extract its opacity.
@@ -215,7 +189,7 @@ def draw_bezier(self, image):
 
 
 # Dynamically attach the corresponding drawing method to each geometry class.
-for cls in [geo.arc, geo.bezier, geo.circle, geo.line, geo.polyline]:
+for cls in [geo.arc, geo.bezier, geo.circle, geo.line, geo.polyline, geo.rect]:
 	name = cls.__name__
 
 	# Capture the function name in the lambda default argument.
