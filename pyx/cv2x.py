@@ -84,7 +84,7 @@ def cv2_paint(image, color, draw, obj=None, padding=2):
 	aabb = obj.local_aabb
 
 	# Transform the bounding box corners.
-	corners = aabb.corners()
+	corners = aabb.corners
 	corners = np.array([
 		obj.xform.apply(p) for p in corners
 	])
