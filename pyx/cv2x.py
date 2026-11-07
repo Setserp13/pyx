@@ -63,7 +63,6 @@ def cv2_color(color):
 		cv2.addWeighted(overlay, alpha, image, 1 - alpha, 0, dst=image)"""
 
 def cv2_paint(image, color, draw, obj=None, padding=2):
-	# Convert the color into OpenCV format and extract its opacity.
 	result = cv2_color(color)
 
 	if result is None:
@@ -71,7 +70,6 @@ def cv2_paint(image, color, draw, obj=None, padding=2):
 
 	bgr, alpha = result
 
-	# Draw directly when there is no object transformation.
 	if obj is None:
 		if alpha >= 1:
 			draw(image, bgr, np.zeros(2))
@@ -81,88 +79,67 @@ def cv2_paint(image, color, draw, obj=None, padding=2):
 			cv2.addWeighted(overlay, alpha, image, 1 - alpha, 0, dst=image)
 		return
 
-	# Get the object's local bounding box.
+	# Local bounding box.
 	aabb = obj.local_aabb
+	minimum = np.floor(aabb.min - padding).astype(int)
+	maximum = np.ceil(aabb.max + padding).astype(int)
 
-	# Get the global transformation matrix.
-	global_TRS = obj.xform.global_TRS
-
-	# Transform the bounding box corners.
-	corners = aabb.corners
-
-	corners = np.concatenate([
-		corners,
-		np.ones((len(corners), 1))
-	], axis=1)
-
-	corners = corners @ global_TRS.T
-	corners = corners[:, :2]
-
-	# Calculate the transformed bounding box.
-	minimum = np.floor(corners.min(axis=0) - padding).astype(int)
-	maximum = np.ceil(corners.max(axis=0) + padding).astype(int)
-
-	# Clip the region to the image boundaries.
-	x1 = max(0, minimum[0])
-	y1 = max(0, minimum[1])
-	x2 = min(image.shape[1], maximum[0])
-	y2 = min(image.shape[0], maximum[1])
-
-	if x1 >= x2 or y1 >= y2:
-		return
-
-	# Create a local drawing layer.
 	size = maximum - minimum
 
+	if np.any(size <= 0):
+		return
+
+	# Local drawing layer.
 	overlay = np.zeros(
 		(size[1], size[0], *image.shape[2:]),
 		dtype=image.dtype
 	)
 
-	mask = np.zeros(
-		(size[1], size[0]),
-		dtype=np.uint8
-	)
+	mask = np.zeros((size[1], size[0]), dtype=np.uint8)
 
-	# Draw the geometry in local coordinates.
 	offset = -minimum
 
 	draw(overlay, bgr, offset)
 	draw(mask, 255, offset)
 
-	# Build the local-to-global transformation.
+	# Transform local layer into global coordinates.
+	matrix = obj.xform.global_TRS[:2, :].copy()
+
 	translation = np.eye(3)
 	translation[:2, 2] = minimum
 
-	matrix = global_TRS[:2, :] @ translation
+	matrix = matrix @ translation
 
-	# Warp only the visible region.
-	dsize = (x2 - x1, y2 - y1)
-
-	matrix[:2, 2] -= [x1, y1]
+	# Warp both layers.
+	dsize = (image.shape[1], image.shape[0])
 
 	overlay = cv2.warpAffine(
 		overlay, matrix, dsize,
-		flags=cv2.INTER_LINEAR
+		flags=cv2.INTER_LINEAR,
+		borderMode=cv2.BORDER_CONSTANT
 	)
 
 	mask = cv2.warpAffine(
 		mask, matrix, dsize,
-		flags=cv2.INTER_LINEAR
+		flags=cv2.INTER_LINEAR,
+		borderMode=cv2.BORDER_CONSTANT
 	)
 
-	# Blend using opacity and coverage.
-	weight = (mask.astype(np.float32) / 255) * alpha
+	# Composite.
+	weight = mask.astype(np.float32) / 255 * alpha
 
 	if image.ndim == 3:
 		weight = weight[..., None]
 
-	region = image[y1:y2, x1:x2]
+	np.multiply(overlay, weight, out=overlay, casting='unsafe')
 
-	region[:] = (
-		overlay.astype(np.float32) * weight +
-		region.astype(np.float32) * (1 - weight)
+	image[:] = (
+		overlay.astype(np.float32) +
+		image.astype(np.float32) * (1 - weight)
 	).clip(0, 255).astype(image.dtype)
+
+
+
 
 
 def cv2_stroke(obj):
