@@ -40,7 +40,7 @@ def cv2_point(point):
 
 def cv2_color(color):
 	c = Color.parse(color)
-	return tuple(c.rgb32[[2, 1, 0]]), c.a	# Convert RGB to BGR (OpenCV channel order) and return alpha
+	return tuple(int(x) for x in c.rgb32[[2, 1, 0]]), c.a	# Convert RGB to BGR (OpenCV channel order) and return alpha
 	
 	# Ignore missing or transparent colors.
 	"""if color is None or color == 'none':
