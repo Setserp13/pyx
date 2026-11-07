@@ -135,7 +135,7 @@ class curve:
 
 	def sample(self, steps=100):
 		return polyline(
-			[self.get_point01(t) for t in np.linspace(0., 1., steps)],
+			[self.get_point01(t) for t in np.linspace(0., 1., steps)],	#steps + 1)],
 			closed=False
 		)
 
