@@ -218,6 +218,6 @@ for cls in [geo.arc, geo.bezier, geo.circle, geo.line, geo.polyline]:
 	# This prevents every generated method from referencing the last class.
 	setattr(
 		cls,
-		f'draw_{name}',
+		f'draw',
 		lambda self, image, name=name: globals()[f'draw_{name}'](self, image)
 	)
