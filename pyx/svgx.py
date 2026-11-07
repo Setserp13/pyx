@@ -312,6 +312,9 @@ class path(list, shape):
 		segments = self.segments
 		return segments.aabb
 
+	@aabb.setter
+	def aabb(self, value):
+		geo.shape.aabb.fset(self, value)
 
 #generic.make_Element(path)
 
