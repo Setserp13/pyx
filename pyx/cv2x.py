@@ -178,7 +178,7 @@ def draw_circle(self, image):
 
 	# Draw the interior, if a fill color is defined.
 	cv2_paint(image, cv2_fill(self),
-		lambda img, color: cv2.circle(
+		lambda img, color, offset: cv2.circle(
 			img, center, radius, color, cv2.FILLED,
 			lineType=cv2.LINE_AA
 		), self
@@ -186,7 +186,7 @@ def draw_circle(self, image):
 
 	# Draw the outline, if a stroke color is defined.
 	cv2_paint(image, cv2_stroke(self),
-		lambda img, color: cv2.circle(
+		lambda img, color, offset: cv2.circle(
 			img, center, radius, color, max(1, round(width)),
 			lineType=cv2.LINE_AA
 		), self
@@ -199,7 +199,7 @@ def draw_arc(self, image):
 
 	# Arcs are open curves, so only their outline is drawn.
 	cv2_paint(image, cv2_stroke(self),
-		lambda img, color: cv2_draw_curve(
+		lambda img, color, offset: cv2_draw_curve(
 			img, points, color, cv2_stroke_width(self)
 		), self
 	)
@@ -218,14 +218,14 @@ def draw_polyline(self, image):
 	if closed:
 		# Only closed polylines can have a filled interior.
 		cv2_paint(image, cv2_fill(self),
-			lambda img, color: cv2_draw_polygon(
+			lambda img, color, offset: cv2_draw_polygon(
 				img, points, color
 			), self
 		)
 
 	# Draw the outline, closing the final segment when necessary.
 	cv2_paint(image, cv2_stroke(self),
-		lambda img, color: cv2_draw_curve(
+		lambda img, color, offset: cv2_draw_curve(
 			img, points, color, cv2_stroke_width(self), closed
 		), self
 	)
