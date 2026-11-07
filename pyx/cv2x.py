@@ -103,7 +103,7 @@ def cv2_paint(image, color, draw, obj=None, padding=2):
 	translation = np.eye(3)
 	translation[:2, 2] = minimum
 
-	matrix = obj.global_TRS[:2, :] @ translation
+	matrix = obj.xform.global_TRS[:2, :] @ translation
 
 	# Transform both layers.
 	dsize = (image.shape[1], image.shape[0])
