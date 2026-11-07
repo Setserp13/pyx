@@ -713,7 +713,12 @@ def rect_to_svg(obj, **kwargs): return lxmlx.element("rect", x=obj.min[0], y=obj
 def line_to_svg(obj, **kwargs): return lxmlx.element("line", x1=obj[0][0], y1=obj[0][1], x2=obj[1][0], y2=obj[1][1], **kwargs)
 def arc_to_svg(obj, **kwargs): return lxmlx.element("path", d=obj.d, **kwargs)
 def image_to_svg(obj, **kwargs):
-	return lxmlx.element("{http://www.w3.org/2000/svg}image", x=obj.min[0], y=obj.min[1], width=obj.size[0], height=obj.size[1], **{'{http://www.w3.org/1999/xlink}href': obj.filepath}, **kwargs)
+	embed = getattr(obj, 'attrib', {}).get('embed', False)
+	if embed:
+		href = f"{obj.data_uri}"
+	else:
+		href = obj.filepath
+	return lxmlx.element("{http://www.w3.org/2000/svg}image", x=obj.min[0], y=obj.min[1], width=obj.size[0], height=obj.size[1], **{'{http://www.w3.org/1999/xlink}href': href}, **kwargs)
 
 def group_to_svg(obj, **kwargs): return lxmlx.element("g", children=[x.to_svg() for x in obj], **kwargs)
 
