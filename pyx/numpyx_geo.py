@@ -90,9 +90,11 @@ class shape(Element):
 	
 		if transform is None:
 			transform = Transform.identity(self.ndim)
-			"""pivot = np.ones(self.ndim) * .5
+			
+			pivot = np.ones(self.ndim) * .5
 			transform.position = self.aabb.denormalize_point(pivot)
-			self.aabb = self.aabb.set_position(pivot, np.zeros(self.ndim))""" #group.aabb represents the combined bounds of its children. You shouldn't assign a modified AABB to a group as if it were a single primitive.
+			self.aabb = self.aabb.set_position(pivot, np.zeros(self.ndim))	#group.aabb represents the combined bounds of its children. You shouldn't assign a modified AABB to a group as if it were a single primitive.
+			
 			self.xform = transform
 	
 		return transform
@@ -972,6 +974,20 @@ class arc(circle, curve):
 		return arc(self.center, self.radius,
 			self.start + delta * start,
 			self.start + delta * end)
+
+	def __matmul__(self, M):
+		M = np.asarray(M, dtype=float)
+	
+		center = (M @ np.append(self.center, 1))[:2]
+		A = M[:2, :2]
+	
+		# Transform the ellipse's axis vectors.
+		axes = np.diag(self.radius)
+		axes = A @ axes
+	
+		# Preserve the transformed basis, including rotation and shear.
+		return arc(center, axes, self.start, self.end)
+
 
 class line(points, curve):	#start = self[0], end = self[1]
 	
@@ -2151,18 +2167,18 @@ class group(list, shape):
 	@property
 	def ndim(self): return self[0].ndim
 
-	@property
+	"""@property
 	def aabb(self):
 		return aabb([x.aabb for x in self])
 
-	"""@aabb.setter
+	@aabb.setter
 	def aabb(self, value):
 		cur = self.aabb
 		for x in self:
-			x.aabb = value.denormalize_rect(cur.normalize_rect(x.aabb))
+			x.aabb = value.denormalize_rect(cur.normalize_rect(x.aabb))"""
 
 	@property
-	def aabb(self): return aabb([x.global_aabb for x in self])"""
+	def aabb(self): return aabb([x.global_aabb for x in self])
 
 	@aabb.setter
 	def aabb(self, value):
