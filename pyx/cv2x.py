@@ -143,8 +143,14 @@ def cv2_composite(image, overlay, mask, alpha=1.):
 
 
 def cv2_aabb_matrix(source, target):
-	source = np.asarray(source, dtype=float)
-	target = np.asarray(target, dtype=float)
+	source = np.asarray(list(source), dtype=float).reshape(-1)
+	target = np.asarray(list(target), dtype=float).reshape(-1)
+
+	if source.size != 4 or target.size != 4:
+		raise ValueError('Expected AABBs in [x, y, width, height] format.')
+
+	if np.any(np.isclose(source[2:], 0)):
+		raise ValueError('Cannot transform an AABB with zero width or height.')
 
 	scale = target[2:] / source[2:]
 
