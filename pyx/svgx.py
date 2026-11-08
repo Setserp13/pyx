@@ -128,8 +128,8 @@ class path_command:
 
 class path(list, shape):
 	def __init__(self, *commands):
+		super().__init__(commands)
 		self.attrib = {}
-		list.__init__(self, commands)
 	
 	@property
 	def ndim(self): return 2
