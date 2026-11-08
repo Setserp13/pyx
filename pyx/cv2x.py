@@ -156,7 +156,7 @@ def cv2_paint(image, color, draw, obj=None, padding=2):
 
 	# Transform the bounding box, keeping the geometry axis-aligned.
 	if XFORM_MODE == XFORM_AABB:
-		aabb = transform_aabb(aabb, matrix)
+		aabb = aabb @ matrix
 
 	minimum = np.floor(aabb.min - padding).astype(int)
 	maximum = np.ceil(aabb.max + padding).astype(int)
