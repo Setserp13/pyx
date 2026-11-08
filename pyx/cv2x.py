@@ -142,6 +142,19 @@ def cv2_composite(image, overlay, mask, alpha=1.):
 	).clip(0, 255).astype(image.dtype)
 
 
+def cv2_aabb_matrix(source, target):
+	source = np.asarray(source, dtype=float)
+	target = np.asarray(target, dtype=float)
+
+	scale = target[2:] / source[2:]
+
+	matrix = np.eye(3)
+	matrix[:2, :2] = np.diag(scale)
+	matrix[:2, 2] = target[:2] - source[:2] * scale
+
+	return matrix
+
+
 def cv2_paint(image, color, draw, obj=None, padding=2):
 	result = cv2_color(color)
 
@@ -172,13 +185,12 @@ def cv2_paint(image, color, draw, obj=None, padding=2):
 
 	aabb = obj.aabb
 	matrix = obj.xform.global_TRS
-
-	# Get the layer's local bounding box.
-	layer_aabb = aabb
-
+	
 	if XFORM_MODE == XFORM_AABB:
-		layer_aabb = aabb @ matrix
-
+		transformed_aabb = aabb @ matrix
+		matrix = cv2_aabb_matrix(aabb, transformed_aabb)
+		aabb = transformed_aabb
+	layer_aabb = aabb
 	# Render the temporary layer.
 	result = cv2_layer(image, layer_aabb, draw, bgr, padding)
 
