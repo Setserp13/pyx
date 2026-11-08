@@ -158,8 +158,10 @@ def cv2_paint(image, color, draw, obj=None, padding=2):
 	if XFORM_MODE == XFORM_AABB:
 		aabb = aabb @ matrix
 
-	minimum = np.floor(aabb.min - padding).astype(int)
-	maximum = np.ceil(aabb.max + padding).astype(int)
+	minimum = np.floor(aabb[:2] - padding).astype(int)
+	maximum = np.ceil(aabb[:2] + aabb[2:] + padding).astype(int)
+	#minimum = np.floor(aabb.min - padding).astype(int)
+	#maximum = np.ceil(aabb.max + padding).astype(int)
 
 	size = maximum - minimum
 
