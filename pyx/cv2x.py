@@ -450,22 +450,25 @@ def draw_image(self, image):
 	def draw(img, color, offset):
 		x, y = np.round(self.min + offset).astype(int)
 		h, w = resized.shape[:2]
-
-		# Clip to the drawing layer.
+	
 		x1, y1 = max(0, x), max(0, y)
 		x2, y2 = min(img.shape[1], x + w), min(img.shape[0], y + h)
-
+	
 		if x1 >= x2 or y1 >= y2:
 			return
-
+	
 		roi = resized[y1-y:y2-y, x1-x:x2-x]
-
+	
+		if img.ndim == 2:
+			img[y1:y2, x1:x2] = roi[:, :, 3]
+			return
+	
 		alpha = roi[:, :, 3:4].astype(np.float32) / 255
 		alpha *= opacity
-
+	
 		foreground = roi[:, :, :3].astype(np.float32)
 		background = img[y1:y2, x1:x2].astype(np.float32)
-
+	
 		img[y1:y2, x1:x2] = (
 			foreground * alpha +
 			background * (1 - alpha)
