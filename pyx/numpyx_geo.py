@@ -29,7 +29,29 @@ def safe_divide(a, b):
 	#b = np.where(b == 0, 1, b)
 	#return a / b
 
+def aabb_xform(source, target):
+	"""
+	Returns a transformation that maps a source AABB (rect) onto a target AABB.
 
+	The transformation consists of scaling and translation:
+	- Scaling adjusts the source dimensions to match the target dimensions.
+	- Translation aligns the scaled source position with the target position.
+
+	Args:
+		source (rect): The original AABB.
+		target (rect): The destination AABB.
+
+	Returns:
+		Transform: A transformation that maps the source AABB onto the target AABB.
+	"""
+
+	# Calculate the scale needed to match the source size to the target size.
+	scale = safe_divide(target.size, source.size)
+
+	# Calculate the translation needed to match the source min to the target min.
+	translation = target.min - source.min * scale	#offset
+
+	return Transform.axis_aligned(translation, scale)
 
 class shape(Element):
 	@property
@@ -75,15 +97,16 @@ class shape(Element):
 
 	@aabb.setter
 	def aabb(self, value):
-		current = self.aabb
+		"""current = self.aabb
 
 		scale = safe_divide(value.size, current.size)
 		offset = value.min - current.min * scale
 
 		adjustment = Transform.axis_aligned(offset, scale)
 		
-		self.set(transform=adjustment)
-	
+		self.set(transform=adjustment)"""
+		self.set(transform=aabb_xform(self.aabb, value))
+
 	@property
 	def xform(self):
 		transform = getattr(self, 'attrib', {}).get('transform')
