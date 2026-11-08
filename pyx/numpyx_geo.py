@@ -933,7 +933,7 @@ class arc(circle, curve):
 	def aabb(self, value):
 		cur = self.aabb
 	
-		scale = value.size / cur.size
+		scale = safe_divide(value.size, cur.size)	#value.size / cur.size
 	
 		# arcs must remain circular → use uniform scale
 		s = min(scale)
