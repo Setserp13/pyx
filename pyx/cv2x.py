@@ -56,7 +56,12 @@ def cv2_layer(image, aabb, draw, color, padding=2):
 	minimum = np.floor(aabb[:2] - padding).astype(int)
 	maximum = np.ceil(aabb[:2] + aabb[2:] + padding).astype(int)
 
-	width, height = maximum - minimum
+	size = np.asarray(maximum - minimum, dtype=int).reshape(-1)
+
+	if size.size != 2 or np.any(size <= 0):
+		return None
+
+	width, height = size
 
 	if width <= 0 or height <= 0:
 		return None
