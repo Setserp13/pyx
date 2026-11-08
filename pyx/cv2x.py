@@ -174,7 +174,7 @@ def cv2_paint(image, color, draw, obj=None, padding=2):
 	transformed_aabb = aabb @ obj.xform.global_TRS
 	
 	if XFORM_MODE == XFORM_AABB:
-		matrix = aabb_xform(aabb, transformed_aabb).TRS
+		matrix = geo.aabb_xform(aabb, transformed_aabb).TRS
 	else:
 		matrix = obj.xform.global_TRS
 	# Render the temporary layer.
