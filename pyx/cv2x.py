@@ -42,27 +42,8 @@ def cv2_color(color):
 	c = Color.parse(color)
 	return tuple(int(x) for x in c.rgb32[[2, 1, 0]]), c.a	# Convert RGB to BGR (OpenCV channel order) and return alpha
 
-"""def cv2_paint(image, color, draw):
-	# Convert the color into OpenCV format and extract its opacity.
-	result = cv2_color(color)
-
-	if result is None:
-		return
-
-	bgr, alpha = result
-
-	if alpha >= 1:
-		# Fully opaque colors can be drawn directly.
-		draw(image, bgr)
-	else:
-		# Draw translucent colors on a temporary image.
-		overlay = image.copy()
-		draw(overlay, bgr)
-
-		# Blend the overlay with the original image.
-		cv2.addWeighted(overlay, alpha, image, 1 - alpha, 0, dst=image)"""
-
 def cv2_paint(image, color, draw, obj=None, padding=2):
+	# Convert the color into OpenCV format and extract its opacity.
 	result = cv2_color(color)
 
 	if result is None:
