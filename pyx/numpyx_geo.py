@@ -2144,6 +2144,10 @@ def angle_vector_plane(v, p1, p2):	#p1 and p2 are vectors that define the plane
 
 
 class group(list, shape):
+	def __init__(self, items=None):
+		super().__init__(items or [])
+		self.attrib = {}
+	
 	@property
 	def ndim(self): return self[0].ndim
 
