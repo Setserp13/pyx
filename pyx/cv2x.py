@@ -142,25 +142,6 @@ def cv2_composite(image, overlay, mask, alpha=1.):
 	).clip(0, 255).astype(image.dtype)
 
 
-def cv2_aabb_matrix(source, target):
-	source = np.asarray(list(source), dtype=float).reshape(-1)
-	target = np.asarray(list(target), dtype=float).reshape(-1)
-
-	if source.size != 4 or target.size != 4:
-		raise ValueError('Expected AABBs in [x, y, width, height] format.')
-
-	if np.any(np.isclose(source[2:], 0)):
-		raise ValueError('Cannot transform an AABB with zero width or height.')
-
-	scale = target[2:] / source[2:]
-
-	matrix = np.eye(3)
-	matrix[:2, :2] = np.diag(scale)
-	matrix[:2, 2] = target[:2] - source[:2] * scale
-
-	return matrix
-
-
 def cv2_paint(image, color, draw, obj=None, padding=2):
 	result = cv2_color(color)
 
@@ -190,15 +171,14 @@ def cv2_paint(image, color, draw, obj=None, padding=2):
 		raise ValueError(f'Invalid XFORM_MODE: {XFORM_MODE}')
 
 	aabb = obj.aabb
-	matrix = obj.xform.global_TRS
+	transformed_aabb = aabb @ obj.xform.global_TRS
 	
 	if XFORM_MODE == XFORM_AABB:
-		transformed_aabb = aabb @ matrix
-		matrix = cv2_aabb_matrix(aabb, transformed_aabb)
-		aabb = transformed_aabb
-	layer_aabb = aabb
+		matrix = aabb_xform(aabb, transformed_aabb).TRS
+	else:
+		matrix = obj.xform.global_TRS
 	# Render the temporary layer.
-	result = cv2_layer(image, layer_aabb, draw, bgr, padding)
+	result = cv2_layer(image, aabb, draw, bgr, padding)
 
 	if result is None:
 		return
