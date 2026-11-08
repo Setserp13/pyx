@@ -56,7 +56,8 @@ class Animation:
 		generic.set(self.target, self.property, value)
 
 		if time > self.end_time:
-			self.finish()	#one-time callback
+			if self.finish:
+				self.finish()	#one-time callback
 			self.finished = True
 
 
