@@ -53,8 +53,8 @@ XFORM_MODE = XFORM_AFFINE
 def cv2_layer(image, aabb, draw, color, padding=2):
 	"""Render a drawing into a temporary layer and return its mask and origin."""
 
-	minimum = np.floor(aabb[:2] - padding).astype(int)
-	maximum = np.ceil(aabb[:2] + aabb[2:] + padding).astype(int)
+	minimum = np.floor(aabb.min - padding).astype(int)
+	maximum = np.ceil(aabb.max + padding).astype(int)
 
 	size = np.asarray(maximum - minimum, dtype=int).reshape(-1)
 
@@ -171,7 +171,7 @@ def cv2_paint(image, color, draw, obj=None, padding=2):
 		raise ValueError(f'Invalid XFORM_MODE: {XFORM_MODE}')
 
 	aabb = obj.aabb
-	transformed_aabb = (aabb @ obj.xform.global_TRS).aabb
+	transformed_aabb = obj.global_aabb	#(aabb @ obj.xform.global_TRS).aabb
 	
 	if XFORM_MODE == XFORM_AABB:
 		matrix = geo.aabb_xform(aabb, transformed_aabb).TRS
