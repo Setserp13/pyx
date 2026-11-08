@@ -4,14 +4,9 @@ import pyx.generic.generic as generic
 
 
 def fade(scene, obj, end, start_time, duration, ease=None):
-	scene.animate(
-		target=obj,
-		property='attrib/opacity',
-		end=end,
-		start_time=start_time,
-		duration=duration,
-		ease=ease
-	)
+	k = 'attrib/opacity'
+	generic.set(obj, k, generic.get(obj, k, 0))	# Initialize opacity to avoid None
+	scene.animate(target=obj, property=k, end=end, start_time=start_time, duration=duration, ease=ease)
 
 
 def fade_in(scene, obj, start_time, duration, ease=None):
