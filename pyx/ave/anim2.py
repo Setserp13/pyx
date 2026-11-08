@@ -12,7 +12,7 @@ import pyx.generic.generic as generic
 
 class Animation:
 	def __init__(self, target, property, start=None, end=None, start_time=0,
-			duration=1, ease=None, value_function=None, on_update=None):
+			duration=1, ease=None, value_function=None, update=None, finish=None):
 
 		self.target = target
 		self.property = property
@@ -22,12 +22,22 @@ class Animation:
 		self.start_time = start_time
 		self.ease = ease or (lambda t: t)
 		self.value_function = value_function
-		self.on_update = on_update
+		self.update = update
+		self.finish = finish
 
+	@property
+	def end_time(self): return self.start_time + self.duration
+	
 	def apply(self, time):
 		if time < self.start_time:
 			return
 
+		if time >= self.end_time:
+			if self.finish:
+				self.finish()	#one-time callback
+				self.finish = None
+			return
+		
 		if self.start is None:
 			self.start = generic.get(self.target, self.property)	#self.target.get_value(self.property)
 		
@@ -39,8 +49,8 @@ class Animation:
 		else:
 			value = npx.lerp(self.start, self.end, t)
 
-		if self.on_update:
-			self.on_update(t)
+		if self.update:
+			self.update(t)
 		
 		generic.set(self.target, self.property, value)
 
