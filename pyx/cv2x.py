@@ -171,13 +171,14 @@ def cv2_paint(image, color, draw, obj=None, padding=2):
 		raise ValueError(f'Invalid XFORM_MODE: {XFORM_MODE}')
 
 	aabb = obj.aabb
-	transformed_aabb = obj.global_aabb	#(aabb @ obj.xform.global_TRS).aabb
-	
+	transformed_aabb = obj.global_aabb
+
 	if XFORM_MODE == XFORM_AABB:
 		matrix = geo.aabb_xform(aabb, transformed_aabb).TRS
 	else:
 		matrix = obj.xform.global_TRS
-	# Render the temporary layer.
+
+	# Render using the original, local AABB.
 	result = cv2_layer(image, aabb, draw, bgr, padding)
 
 	if result is None:
@@ -185,12 +186,11 @@ def cv2_paint(image, color, draw, obj=None, padding=2):
 
 	overlay, mask, origin = result
 
-	# Apply the complete affine transformation.
-	if XFORM_MODE == XFORM_AFFINE:
-		overlay, mask, origin = cv2_transform_layer(
-			overlay, mask, matrix, origin,
-			(image.shape[1], image.shape[0])
-		)
+	# Apply the transformation in both modes.
+	overlay, mask, origin = cv2_transform_layer(
+		overlay, mask, matrix, origin,
+		(image.shape[1], image.shape[0])
+	)
 
 	# Clip to the destination image.
 	result = cv2_clip_layer(overlay, mask, origin, image)
@@ -202,6 +202,7 @@ def cv2_paint(image, color, draw, obj=None, padding=2):
 
 	# Composite.
 	cv2_composite(image_region, overlay, mask, alpha)
+
 
 def draw_image(self, image):
 	if self.array is None:
