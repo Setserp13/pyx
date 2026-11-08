@@ -42,85 +42,7 @@ def cv2_color(color):
 	c = Color.parse(color)
 	return tuple(int(x) for x in c.rgb32[[2, 1, 0]]), c.a	# Convert RGB to BGR (OpenCV channel order) and return alpha
 
-"""APPLY_XFORMS = True
 
-def cv2_paint(image, color, draw, obj=None, padding=2):
-	# Convert the color into OpenCV format and extract its opacity.
-	result = cv2_color(color)
-
-	if result is None:
-		return
-
-	bgr, alpha = result
-
-	if obj is None or not APPLY_XFORMS:
-		if alpha >= 1:
-			draw(image, bgr, np.zeros(2))
-		else:
-			overlay = image.copy()
-			draw(overlay, bgr, np.zeros(2))
-			cv2.addWeighted(overlay, alpha, image, 1 - alpha, 0, dst=image)
-		return
-
-	# Apply affine transformation
-	# original local geometry bounding box.
-	aabb = obj.aabb
-	minimum = np.floor(aabb.min - padding).astype(int)
-	maximum = np.ceil(aabb.max + padding).astype(int)
-
-	size = maximum - minimum
-
-	if np.any(size <= 0):
-		return
-
-	# Local drawing layer.
-	overlay = np.zeros(
-		(size[1], size[0], *image.shape[2:]),
-		dtype=image.dtype
-	)
-
-	mask = np.zeros((size[1], size[0]), dtype=np.uint8)
-
-	offset = -minimum
-
-	draw(overlay, bgr, offset)
-	draw(mask, 255, offset)
-
-	# Transform local layer into global coordinates.
-	matrix = obj.xform.global_TRS[:2, :].copy()
-
-	translation = np.eye(3)
-	translation[:2, 2] = minimum
-
-	matrix = matrix @ translation
-
-	# Warp both layers.
-	dsize = (image.shape[1], image.shape[0])
-
-	overlay = cv2.warpAffine(
-		overlay, matrix, dsize,
-		flags=cv2.INTER_LINEAR,
-		borderMode=cv2.BORDER_CONSTANT
-	)
-
-	mask = cv2.warpAffine(
-		mask, matrix, dsize,
-		flags=cv2.INTER_LINEAR,
-		borderMode=cv2.BORDER_CONSTANT
-	)
-
-	# Composite.
-	weight = mask.astype(np.float32) / 255 * alpha
-
-	if image.ndim == 3:
-		weight = weight[..., None]
-
-	np.multiply(overlay, weight, out=overlay, casting='unsafe')
-
-	image[:] = (
-		overlay.astype(np.float32) +
-		image.astype(np.float32) * (1 - weight)
-	).clip(0, 255).astype(image.dtype)"""
 
 XFORM_NONE = 0
 XFORM_AABB = 1
@@ -128,7 +50,208 @@ XFORM_AFFINE = 2
 
 XFORM_MODE = XFORM_AFFINE
 
+def cv2_layer(image, aabb, draw, color, padding=2):
+	"""Render a drawing into a temporary layer and return its mask and origin."""
+
+	minimum = np.floor(aabb[:2] - padding).astype(int)
+	maximum = np.ceil(aabb[:2] + aabb[2:] + padding).astype(int)
+
+	width, height = maximum - minimum
+
+	if width <= 0 or height <= 0:
+		return None
+
+	overlay = np.zeros(
+		(height, width, *image.shape[2:]),
+		dtype=image.dtype
+	)
+
+	mask = np.zeros((height, width), dtype=np.uint8)
+
+	offset = -minimum
+
+	draw(overlay, color, offset)
+	draw(mask, 255, offset)
+
+	return overlay, mask, minimum
+
+
+def cv2_transform_layer(overlay, mask, matrix, origin, image_size):
+	"""Apply an affine transformation to a temporary drawing layer."""
+
+	translation = np.eye(3)
+	translation[:2, 2] = origin
+
+	warp_matrix = matrix[:2, :] @ translation
+
+	width, height = image_size
+
+	dsize = (width, height)
+
+	overlay = cv2.warpAffine(
+		overlay, warp_matrix, dsize,
+		flags=cv2.INTER_LINEAR,
+		borderMode=cv2.BORDER_CONSTANT
+	)
+
+	mask = cv2.warpAffine(
+		mask, warp_matrix, dsize,
+		flags=cv2.INTER_LINEAR,
+		borderMode=cv2.BORDER_CONSTANT
+	)
+
+	return overlay, mask, np.zeros(2, dtype=int)
+
+
+def cv2_clip_layer(overlay, mask, origin, image):
+	"""Clip a temporary layer to the destination image."""
+
+	x, y = origin
+	h, w = mask.shape
+
+	x1 = max(0, x)
+	y1 = max(0, y)
+	x2 = min(image.shape[1], x + w)
+	y2 = min(image.shape[0], y + h)
+
+	if x1 >= x2 or y1 >= y2:
+		return None
+
+	overlay = overlay[y1-y:y2-y, x1-x:x2-x]
+	mask = mask[y1-y:y2-y, x1-x:x2-x]
+
+	return overlay, mask, image[y1:y2, x1:x2]
+
+
+def cv2_composite(image, overlay, mask, alpha=1.):
+	"""Composite a masked layer onto an image."""
+
+	weight = mask.astype(np.float32) / 255 * alpha
+
+	if image.ndim == 3:
+		weight = weight[..., None]
+
+	image[:] = (
+		overlay.astype(np.float32) * weight +
+		image.astype(np.float32) * (1 - weight)
+	).clip(0, 255).astype(image.dtype)
+
+
 def cv2_paint(image, color, draw, obj=None, padding=2):
+	result = cv2_color(color)
+
+	if result is None:
+		return
+
+	bgr, alpha = result
+
+	if alpha <= 0:
+		return
+
+	# No transformation.
+	if obj is None or XFORM_MODE == XFORM_NONE:
+		if alpha >= 1:
+			draw(image, bgr, np.zeros(2))
+		else:
+			overlay = image.copy()
+			draw(overlay, bgr, np.zeros(2))
+			cv2.addWeighted(
+				overlay, alpha,
+				image, 1 - alpha,
+				0, dst=image
+			)
+		return
+
+	if XFORM_MODE not in (XFORM_AABB, XFORM_AFFINE):
+		raise ValueError(f'Invalid XFORM_MODE: {XFORM_MODE}')
+
+	aabb = obj.aabb
+	matrix = obj.xform.global_TRS
+
+	# Get the layer's local bounding box.
+	layer_aabb = aabb
+
+	if XFORM_MODE == XFORM_AABB:
+		layer_aabb = aabb @ matrix
+
+	# Render the temporary layer.
+	result = cv2_layer(image, layer_aabb, draw, bgr, padding)
+
+	if result is None:
+		return
+
+	overlay, mask, origin = result
+
+	# Apply the complete affine transformation.
+	if XFORM_MODE == XFORM_AFFINE:
+		overlay, mask, origin = cv2_transform_layer(
+			overlay, mask, matrix, origin,
+			(image.shape[1], image.shape[0])
+		)
+
+	# Clip to the destination image.
+	result = cv2_clip_layer(overlay, mask, origin, image)
+
+	if result is None:
+		return
+
+	overlay, mask, image_region = result
+
+	# Composite.
+	cv2_composite(image_region, overlay, mask, alpha)
+
+def draw_image(self, image):
+	if self.array is None:
+		return
+
+	source = np.asarray(self.array).transpose(1, 0, 2)
+
+	if source.ndim == 2:
+		source = cv2.cvtColor(source, cv2.COLOR_GRAY2BGRA)
+	elif source.shape[2] == 3:
+		source = cv2.cvtColor(source, cv2.COLOR_RGB2BGRA)
+	elif source.shape[2] == 4:
+		source = cv2.cvtColor(source, cv2.COLOR_RGBA2BGRA)
+
+	size = np.asarray(self.size, dtype=float)
+
+	if np.any(size <= 0):
+		return
+
+	resized = cv2.resize(
+		source,
+		tuple(np.round(size).astype(int)),
+		interpolation=cv2.INTER_LINEAR
+	)
+
+	opacity = self.attrib.get('opacity', 1.0)
+
+	def draw(img, color, offset):
+		x, y = np.round(self.min + offset).astype(int)
+		h, w = resized.shape[:2]
+
+		x1, y1 = max(0, x), max(0, y)
+		x2, y2 = min(img.shape[1], x + w), min(img.shape[0], y + h)
+
+		if x1 >= x2 or y1 >= y2:
+			return
+
+		roi = resized[y1-y:y2-y, x1-x:x2-x]
+
+		if img.ndim == 2:
+			img[y1:y2, x1:x2] = roi[:, :, 3] * opacity
+		else:
+			img[y1:y2, x1:x2] = roi[:, :, :3]
+
+	cv2_paint(
+		image,
+		(255, 255, 255, opacity),
+		draw,
+		self,
+		padding=0
+	)
+
+"""def cv2_paint(image, color, draw, obj=None, padding=2):
 	result = cv2_color(color)
 
 	if result is None:
@@ -234,7 +357,7 @@ def cv2_paint(image, color, draw, obj=None, padding=2):
 	image_region[:] = (
 		overlay.astype(np.float32) * weight +
 		image_region.astype(np.float32) * (1 - weight)
-	).clip(0, 255).astype(image.dtype)
+	).clip(0, 255).astype(image.dtype)"""
 
 
 
@@ -374,57 +497,9 @@ def draw_bezier(self, image):
 	)
 
 
+
+
 """def draw_image(self, image):
-	if self.array is None:
-		return
-
-	source = np.asarray(self.array).transpose(1, 0, 2)	#OpenCV expects arrays in (height, width, channels)
-
-	if source.ndim == 2:
-		source = cv2.cvtColor(source, cv2.COLOR_GRAY2BGRA)
-	elif source.shape[2] == 3:
-		source = cv2.cvtColor(source, cv2.COLOR_RGB2BGRA)
-	elif source.shape[2] == 4:
-		source = cv2.cvtColor(source, cv2.COLOR_RGBA2BGRA)
-
-	size = np.asarray(self.size, dtype=float)
-
-	if np.any(size <= 0):
-		return
-
-	resized = cv2.resize(
-		source,
-		tuple(np.round(size).astype(int)),
-		interpolation=cv2.INTER_LINEAR
-	)
-
-	x, y = np.round(self.min).astype(int)
-	h, w = resized.shape[:2]
-
-	# Clip to image boundaries
-	x1, y1 = max(0, x), max(0, y)
-	x2, y2 = min(image.shape[1], x + w), min(image.shape[0], y + h)
-
-	if x1 >= x2 or y1 >= y2:
-		return
-
-	roi = resized[y1-y:y2-y, x1-x:x2-x]
-
-	# Apply global opacity
-	opacity = self.attrib.get('opacity', 1.0)
-
-	alpha = roi[:, :, 3:4].astype(np.float32) / 255
-	alpha *= opacity
-
-	foreground = roi[:, :, :3].astype(np.float32)
-	background = image[y1:y2, x1:x2].astype(np.float32)
-
-	image[y1:y2, x1:x2] = (
-		foreground * alpha +
-		background * (1 - alpha)
-	).clip(0, 255).astype(np.uint8)"""
-
-def draw_image(self, image):
 	if self.array is None:
 		return
 
@@ -483,7 +558,7 @@ def draw_image(self, image):
 		draw,
 		self,
 		padding=0
-	)
+	)"""
 
 
 
