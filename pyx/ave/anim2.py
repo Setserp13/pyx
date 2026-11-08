@@ -32,7 +32,7 @@ class Animation:
 		if time < self.start_time:
 			return
 
-		if time >= self.end_time:
+		if time > self.end_time:
 			if self.finish:
 				self.finish()	#one-time callback
 				self.finish = None
