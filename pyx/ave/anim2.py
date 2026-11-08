@@ -22,8 +22,8 @@ class Animation:
 		self.start_time = start_time
 		self.ease = ease or (lambda t: t)
 		self.value_function = value_function
-		self.update = update
-		self.finish = finish
+		self.update = generic.Event(update)
+		self.finish = generic.Event(finish)
 		self.finished = False
 
 	@property
@@ -50,14 +50,12 @@ class Animation:
 		else:
 			value = npx.lerp(self.start, self.end, t)
 
-		if self.update:
-			self.update(t)
+		self.update.invoke(t)
 		
 		generic.set(self.target, self.property, value)
 
 		if time > self.end_time:
-			if self.finish:
-				self.finish()	#one-time callback
+			self.finish.invoke()	#one-time callback
 			self.finished = True
 
 
