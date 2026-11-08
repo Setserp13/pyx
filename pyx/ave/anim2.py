@@ -41,7 +41,10 @@ class Animation:
 		if self.start is None:
 			self.start = generic.get(self.target, self.property)	#self.target.get_value(self.property)
 		
-		t = np.clip((time - self.start_time) / self.duration, 0, 1)
+		if self.duration == 0:
+			t = 1. if time >= self.start_time else 0.
+		else:
+			t = np.clip((time - self.start_time) / self.duration, 0, 1)
 		t = self.ease(t)
 
 		if self.value_function:
@@ -116,6 +119,28 @@ class Scene:
 			Animation(*args, **kwargs)
 		)
 
+	def assign(self, target, property, value, time):
+		"""Set a property to a value at a specific time."""
+		self.animate(
+			target=target,
+			property=property,
+			start=value,
+			end=value,
+			start_time=time,
+			duration=0
+		)
+	
+	def hold(self, target, property, value, start_time, duration):
+		"""Keep a property at a value during a time interval."""
+		self.animate(
+			target=target,
+			property=property,
+			start=value,
+			end=value,
+			start_time=start_time,
+			duration=duration
+		)
+	
 	def sequence(self, target, property, start, animations, start_time=0):
 		result = []
 
