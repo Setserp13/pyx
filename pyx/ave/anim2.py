@@ -12,7 +12,7 @@ import pyx.generic.generic as generic
 
 class Animation:
 	def __init__(self, target, property, start=None, end=None, start_time=0,
-			duration=1, ease=None, value_function=None, update=None, finish=None):
+			duration=1, ease=None, value_function=None):
 
 		self.target = target
 		self.property = property
@@ -22,10 +22,18 @@ class Animation:
 		self.start_time = start_time
 		self.ease = ease or (lambda t: t)
 		self.value_function = value_function
-		self.update = generic.Event(update)
-		self.finish = generic.Event(finish)
+		self.update = generic.Event()
+		self.finish = generic.Event()
 		self.finished = False
 
+	def on_update(self, method):
+		self.update.append(method)
+		return self
+
+	def on_finish(self, method):
+		self.finish.append(method)
+		return self
+	
 	@property
 	def end_time(self): return self.start_time + self.duration
 	
