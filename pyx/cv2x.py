@@ -171,7 +171,7 @@ def cv2_paint(image, color, draw, obj=None, padding=2):
 		raise ValueError(f'Invalid XFORM_MODE: {XFORM_MODE}')
 
 	aabb = obj.aabb
-	transformed_aabb = aabb @ obj.xform.global_TRS
+	transformed_aabb = (aabb @ obj.xform.global_TRS).aabb
 	
 	if XFORM_MODE == XFORM_AABB:
 		matrix = geo.aabb_xform(aabb, transformed_aabb).TRS
