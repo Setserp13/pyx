@@ -24,6 +24,7 @@ class Animation:
 		self.value_function = value_function
 		self.update = update
 		self.finish = finish
+		self.finished = False
 
 	@property
 	def end_time(self): return self.start_time + self.duration
@@ -32,10 +33,7 @@ class Animation:
 		if time < self.start_time:
 			return
 
-		if time > self.end_time:
-			if self.finish:
-				self.finish()	#one-time callback
-				self.finish = None
+		if self.finished:
 			return
 		
 		if self.start is None:
@@ -56,6 +54,10 @@ class Animation:
 			self.update(t)
 		
 		generic.set(self.target, self.property, value)
+
+		if time > self.end_time:
+			self.finish()	#one-time callback
+			self.finished = True
 
 
 class Timeline:
