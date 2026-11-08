@@ -981,11 +981,12 @@ class arc(circle, curve):
 		center = (M @ np.append(self.center, 1))[:2]
 		A = M[:2, :2]
 	
-		# Transform the ellipse's axis vectors.
-		axes = np.diag(self.radius)
+		# Original circular basis.
+		axes = np.eye(2) * self.radius
+	
+		# Transform the basis.
 		axes = A @ axes
 	
-		# Preserve the transformed basis, including rotation and shear.
 		return arc(center, axes, self.start, self.end)
 
 
