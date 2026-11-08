@@ -163,18 +163,19 @@ def cv2_paint(image, color, draw, obj=None, padding=2):
 	#minimum = np.floor(aabb.min - padding).astype(int)
 	#maximum = np.ceil(aabb.max + padding).astype(int)
 
-	size = maximum - minimum
-
-	if np.any(size <= 0):
+	size = np.asarray(maximum - minimum, dtype=int).reshape(-1)
+	
+	if size.size != 2 or np.any(size <= 0):
 		return
-
-	# Create local drawing layers.
+	
+	width, height = size
+	
 	overlay = np.zeros(
-		(size[1], size[0], *image.shape[2:]),
+		(height, width, *image.shape[2:]),
 		dtype=image.dtype
 	)
-
-	mask = np.zeros((size[1], size[0]), dtype=np.uint8)
+	
+	mask = np.zeros((height, width), dtype=np.uint8)
 
 	offset = -minimum
 
