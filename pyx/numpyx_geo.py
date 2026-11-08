@@ -982,12 +982,18 @@ class arc(circle, curve):
 		A = M[:2, :2]
 	
 		# Original circular basis.
-		axes = np.eye(2) * self.radius
+		axes = A * self.radius
 	
-		# Transform the basis.
-		axes = A @ axes
+		# Calculate the transformed axis lengths.
+		size = 2 * np.linalg.norm(axes, axis=0)
 	
-		return arc(center, axes, self.start, self.end)
+		if np.isclose(size[0], size[1]) and np.allclose(axes.T @ axes, np.eye(2) * size[0]**2 / 4):
+			return arc(center, size[0] / 2, self.start, self.end)
+	
+		result = arc(center, size / 2, self.start, self.end)
+		result.axes = axes
+	
+		return result
 
 
 class line(points, curve):	#start = self[0], end = self[1]
