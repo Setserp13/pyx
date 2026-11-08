@@ -90,9 +90,9 @@ class shape(Element):
 	
 		if transform is None:
 			transform = Transform.identity(self.ndim)
-			pivot = np.ones(self.ndim) * .5
+			"""pivot = np.ones(self.ndim) * .5
 			transform.position = self.aabb.denormalize_point(pivot)
-			self.aabb = self.aabb.set_position(pivot, np.zeros(self.ndim))
+			self.aabb = self.aabb.set_position(pivot, np.zeros(self.ndim))""" #group.aabb represents the combined bounds of its children. You shouldn't assign a modified AABB to a group as if it were a single primitive.
 			self.xform = transform
 	
 		return transform
