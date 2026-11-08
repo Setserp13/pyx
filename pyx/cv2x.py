@@ -32,7 +32,7 @@ cv2.VideoCapture.width = width
 cv2.VideoCapture.duration = duration
 
 
-
+APPLY_XFORMS = True
 
 def cv2_point(point):
 	# Convert a floating-point coordinate into an integer OpenCV point.
@@ -70,7 +70,7 @@ def cv2_paint(image, color, draw, obj=None, padding=2):
 
 	bgr, alpha = result
 
-	if obj is None:
+	if obj is None or not APPLY_XFORMS:
 		if alpha >= 1:
 			draw(image, bgr, np.zeros(2))
 		else:
@@ -79,6 +79,7 @@ def cv2_paint(image, color, draw, obj=None, padding=2):
 			cv2.addWeighted(overlay, alpha, image, 1 - alpha, 0, dst=image)
 		return
 
+	# Apply affine transformation
 	# original local geometry bounding box.
 	aabb = obj.aabb
 	minimum = np.floor(aabb.min - padding).astype(int)
