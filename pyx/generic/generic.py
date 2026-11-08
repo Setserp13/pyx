@@ -94,6 +94,11 @@ class Event(list):
 		for x in self:
 			x(*args, **kwargs)
 
+	#def __call__(self, *args, **kwargs):
+	#	self.invoke(*args, **kwargs)
+
+	__call__ = invoke
+
 class Invoker:
 	def __init__(self, func, *args, **kwargs):
 		self.func = func
