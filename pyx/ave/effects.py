@@ -3,18 +3,19 @@ import numpy as np
 import pyx.generic.generic as generic
 
 
-def fade(scene, obj, end, start_time, duration, ease=None):
+def fade(scene, obj, end, start_time, duration, start=None, ease=None):
 	k = 'attrib/opacity'
-	generic.set(obj, k, generic.get(obj, k, 1.))	# Initialize opacity to avoid None
-	scene.animate(target=obj, property=k, end=end, start_time=start_time, duration=duration, ease=ease)
+	if start is None:
+		generic.set(obj, k, generic.get(obj, k, 1.))	# Initialize opacity to avoid None
+	scene.animate(target=obj, property=k, start=start, end=end, start_time=start_time, duration=duration, ease=ease)
 
 
-def fade_in(scene, obj, start_time, duration, ease=None):
-	return fade(scene, obj, 1., start_time, duration, ease)
+def fade_in(scene, obj, start_time, duration, ease=None):	#alpha from 0 to 1
+	return fade(scene, obj, start=0, end=1, start_time=start_time, duration=duration, ease=ease)
 
 
-def fade_out(scene, obj, start_time, duration, ease=None):
-	return fade(scene, obj, 0., start_time, duration, ease)
+def fade_out(scene, obj, start_time, duration, ease=None):	#alpha from 1 to 0
+	return fade(scene, obj, start=1, end=0, start_time=start_time, duration=duration, ease=ease)
 
 
 def scale_from(scene, obj, point=None, start_time=0, duration=1, ease=None,
