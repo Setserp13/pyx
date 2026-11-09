@@ -11,7 +11,8 @@ def fade(scene, obj, end, start_time, duration, start=None, ease=None):
 
 
 def fade_in(scene, obj, start_time, duration, ease=None):	#alpha from 0 to 1
-	generic.set(obj, 'attrib/opacity', generic.get(obj, k, 0.))
+	k = 'attrib/opacity'
+	generic.set(obj, k, generic.get(obj, k, 0.))
 	return fade(scene, obj, start=0., end=1., start_time=start_time, duration=duration, ease=ease)
 
 
