@@ -11,11 +11,11 @@ def fade(scene, obj, end, start_time, duration, start=None, ease=None):
 
 
 def fade_in(scene, obj, start_time, duration, ease=None):	#alpha from 0 to 1
-	return fade(scene, obj, start=0, end=1, start_time=start_time, duration=duration, ease=ease)
+	return fade(scene, obj, start=0., end=1., start_time=start_time, duration=duration, ease=ease)
 
 
 def fade_out(scene, obj, start_time, duration, ease=None):	#alpha from 1 to 0
-	return fade(scene, obj, start=1, end=0, start_time=start_time, duration=duration, ease=ease)
+	return fade(scene, obj, start=1., end=0., start_time=start_time, duration=duration, ease=ease)
 
 
 def scale_from(scene, obj, point=None, start_time=0, duration=1, ease=None,
