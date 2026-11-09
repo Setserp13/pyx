@@ -501,75 +501,15 @@ def draw_bezier(self, image):
 		image
 	)
 
-
-
-
-"""def draw_image(self, image):
-	if self.array is None:
-		return
-
-	source = np.asarray(self.array).transpose(1, 0, 2)
-
-	if source.ndim == 2:
-		source = cv2.cvtColor(source, cv2.COLOR_GRAY2BGRA)
-	elif source.shape[2] == 3:
-		source = cv2.cvtColor(source, cv2.COLOR_RGB2BGRA)
-	elif source.shape[2] == 4:
-		source = cv2.cvtColor(source, cv2.COLOR_RGBA2BGRA)
-
-	size = np.asarray(self.size, dtype=float)
-
-	if np.any(size <= 0):
-		return
-
-	resized = cv2.resize(
-		source,
-		tuple(np.round(size).astype(int)),
-		interpolation=cv2.INTER_LINEAR
-	)
-
-	opacity = self.attrib.get('opacity', 1.0)
-
-	def draw(img, color, offset):
-		x, y = np.round(self.min + offset).astype(int)
-		h, w = resized.shape[:2]
-	
-		x1, y1 = max(0, x), max(0, y)
-		x2, y2 = min(img.shape[1], x + w), min(img.shape[0], y + h)
-	
-		if x1 >= x2 or y1 >= y2:
-			return
-	
-		roi = resized[y1-y:y2-y, x1-x:x2-x]
-	
-		if img.ndim == 2:
-			img[y1:y2, x1:x2] = roi[:, :, 3]
-			return
-	
-		alpha = roi[:, :, 3:4].astype(np.float32) / 255
-		alpha *= opacity
-	
-		foreground = roi[:, :, :3].astype(np.float32)
-		background = img[y1:y2, x1:x2].astype(np.float32)
-	
-		img[y1:y2, x1:x2] = (
-			foreground * alpha +
-			background * (1 - alpha)
-		).clip(0, 255).astype(img.dtype)
-
-	cv2_paint(
-		image,
-		(255, 255, 255, 255),
-		draw,
-		self,
-		padding=0
-	)"""
+def draw_group(self, image):
+	for x in self:
+		x.draw(image)
 
 
 
 
 # Dynamically attach the corresponding drawing method to each geometry class.
-for cls in [geo.arc, geo.bezier, geo.circle, geo.line, geo.polyline, geo.rect, PILx.image]:
+for cls in [geo.arc, geo.bezier, geo.circle, geo.group, geo.line, geo.polyline, geo.rect, PILx.image]:
 	name = cls.__name__
 
 	# Capture the function name in the lambda default argument.
