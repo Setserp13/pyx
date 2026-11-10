@@ -1602,18 +1602,29 @@ class polyline(points, curve):
 
 	def _subcurve(self, start, end):
 	    v = np.concatenate(([0.], np.cumsum([x.length for x in self.edges])))
+	    
+	    if v[-1] == 0:
+	        return polyline([])
+	
 	    v /= v[-1]
 	
 	    points = [self.get_point01(start)]
 	
-	    indices = np.where((v > start) & (v < end))[0]
-	    points.extend(self[i] for i in indices)
+	    indices = np.where((v[1:-1] > start) & (v[1:-1] < end))[0] + 1
+	
+	    points.extend(np.asarray(self)[i] for i in indices)
 	
 	    points.append(self.get_point01(end))
 	
-	    closed = self.closed and np.isclose(start, 0) and np.isclose(end, 1)
+	    points = np.asarray(points)
 	
-	    return polyline(points, closed=closed)	
+	    closed = (
+	        self.closed
+	        and np.isclose(start, 0)
+	        and np.isclose(end, 1)
+	    )
+	
+	    return polyline(points, closed=closed)
 
 	def subdivide(p, n):
 		result = []
