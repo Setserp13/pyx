@@ -2,6 +2,7 @@
 import numpy as np
 import pyx.generic.generic as generic
 import copy
+import pyx.numpyx_geo as geo
 
 def fade(scene, obj, end, start_time, duration, start=None, ease=None):
 	k = 'attrib/opacity'
