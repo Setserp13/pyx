@@ -42,7 +42,29 @@ def cv2_color(color):
 	c = Color.parse(color)
 	return tuple(int(x) for x in c.rgb32[[2, 1, 0]]), c.a	# Convert RGB to BGR (OpenCV channel order) and return alpha
 
+def cv2_paint_color(obj, key):
+    color = obj.attrib.get(key)
 
+    if color is None:
+        return None
+
+    result = cv2_color(color)
+
+    if result is None:
+        return None
+
+    bgr, alpha = result
+    opacity = obj.attrib.get('opacity', 1.)
+
+    return bgr, alpha * opacity
+
+
+def cv2_stroke(obj):
+    return cv2_paint_color(obj, 'stroke')
+
+
+def cv2_fill(obj):
+    return cv2_paint_color(obj, 'fill')
 
 XFORM_NONE = 0
 XFORM_AABB = 1
@@ -143,7 +165,7 @@ def cv2_composite(image, overlay, mask, alpha=1.):
 
 
 def cv2_paint(image, color, draw, obj=None, padding=2):
-	result = cv2_color(color)
+	result = color	#cv2_color(color)
 
 	if result is None:
 		return
@@ -256,124 +278,15 @@ def draw_image(self, image):
 		padding=0
 	)
 
-"""def cv2_paint(image, color, draw, obj=None, padding=2):
-	result = cv2_color(color)
 
-	if result is None:
-		return
-
-	bgr, alpha = result
-
-	# No transformation.
-	if obj is None or XFORM_MODE == XFORM_NONE:
-		if alpha >= 1:
-			draw(image, bgr, np.zeros(2))
-		else:
-			overlay = image.copy()
-			draw(overlay, bgr, np.zeros(2))
-			cv2.addWeighted(
-				overlay, alpha,
-				image, 1 - alpha,
-				0, dst=image
-			)
-		return
-
-	# Get the local bounding box.
-	aabb = obj.aabb
-	matrix = obj.xform.global_TRS
-
-	# Transform the bounding box, keeping the geometry axis-aligned.
-	if XFORM_MODE == XFORM_AABB:
-		aabb = aabb @ matrix
-
-	minimum = np.floor(aabb[:2] - padding).astype(int)
-	maximum = np.ceil(aabb[:2] + aabb[2:] + padding).astype(int)
-	#minimum = np.floor(aabb.min - padding).astype(int)
-	#maximum = np.ceil(aabb.max + padding).astype(int)
-
-	size = np.asarray(maximum - minimum, dtype=int).reshape(-1)
-	
-	if size.size != 2 or np.any(size <= 0):
-		return
-	
-	width, height = size
-	
-	overlay = np.zeros(
-		(height, width, *image.shape[2:]),
-		dtype=image.dtype
-	)
-	
-	mask = np.zeros((height, width), dtype=np.uint8)
-
-	offset = -minimum
-
-	draw(overlay, bgr, offset)
-	draw(mask, 255, offset)
-
-	# Apply the complete affine transformation.
-	if XFORM_MODE == XFORM_AFFINE:
-		translation = np.eye(3)
-		translation[:2, 2] = minimum
-
-		warp_matrix = matrix[:2, :] @ translation
-
-		dsize = (image.shape[1], image.shape[0])
-
-		overlay = cv2.warpAffine(
-			overlay, warp_matrix, dsize,
-			flags=cv2.INTER_LINEAR,
-			borderMode=cv2.BORDER_CONSTANT
-		)
-
-		mask = cv2.warpAffine(
-			mask, warp_matrix, dsize,
-			flags=cv2.INTER_LINEAR,
-			borderMode=cv2.BORDER_CONSTANT
-		)
-
-		x, y = 0, 0
-
-	else:
-		# Position the untransformed layer at the transformed AABB.
-		x, y = minimum
-
-	# Clip the drawing to the image boundaries.
-	h, w = mask.shape
-
-	x1 = max(0, x)
-	y1 = max(0, y)
-	x2 = min(image.shape[1], x + w)
-	y2 = min(image.shape[0], y + h)
-
-	if x1 >= x2 or y1 >= y2:
-		return
-
-	overlay = overlay[y1-y:y2-y, x1-x:x2-x]
-	mask = mask[y1-y:y2-y, x1-x:x2-x]
-
-	# Composite.
-	weight = mask.astype(np.float32) / 255 * alpha
-
-	if image.ndim == 3:
-		weight = weight[..., None]
-
-	image_region = image[y1:y2, x1:x2]
-
-	image_region[:] = (
-		overlay.astype(np.float32) * weight +
-		image_region.astype(np.float32) * (1 - weight)
-	).clip(0, 255).astype(image.dtype)"""
-
-
-
-def cv2_stroke(obj):
+"""def cv2_stroke(obj):
 	# Get the outline color from the shape attributes.
 	return obj.attrib.get('stroke')
 
 
 def cv2_fill(obj):
 	# Get the interior color from the shape attributes.
-	return obj.attrib.get('fill')
+	return obj.attrib.get('fill')"""
 
 
 def cv2_stroke_width(obj):
