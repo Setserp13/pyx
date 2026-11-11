@@ -1575,7 +1575,7 @@ class polyline(points, curve):
 	@property
 	def dual(p): return polyline([x.midpoint for x in p.edges], closed=p.closed)	#midpoint polygon
 	
-	def get_point01(self, t):	#point_from_proportion
+	"""def get_point01(self, t):	#point_from_proportion
 		p = self.perimeter
 		a = 0.0
 		for x in self.edges:
@@ -1583,7 +1583,7 @@ class polyline(points, curve):
 			if a <= t and t <= b:
 				return x.get_point01((t - a) / (b - a))
 			a = b
-		return None
+		return None"""
 
 	"""def _subcurve(self, start, end):
 		v = np.concatenate(([0.], np.cumsum([x.length for x in self.edges])))
@@ -1599,6 +1599,29 @@ class polyline(points, curve):
 		closed = np.allclose(points[0], points[-1], atol=1e-6)
 		
 		return polyline(points, closed=closed)"""
+
+	def get_point01(self, t):
+		if not self.edges:
+			return None
+	
+		t = np.clip(t, 0., 1.)
+	
+		p = self.perimeter
+	
+		if p == 0:
+			return self[0]
+	
+		distance = t * p
+	
+		for x in self.edges:
+			length = x.length
+	
+			if distance <= length:
+				return x.get_point01(distance / length)
+	
+			distance -= length
+	
+		return self.edges[-1].get_point01(1.)
 
 	def _subcurve(self, start, end):
 	    v = np.concatenate(([0.], np.cumsum([x.length for x in self.edges])))
