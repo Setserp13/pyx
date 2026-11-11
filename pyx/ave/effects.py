@@ -132,12 +132,13 @@ def scale_in_place(scene, obj, factor=2, start_time=0, duration=1, ease=None,
 
 def draw_curve(scene, obj, start_time=0, duration=1, ease=None):
 	curve = copy.deepcopy(obj)
-	group = geo.group([obj])
+	group = geo.group()
 	scene.add(group)
 
 	def update(t):
 		#print(t)
-		group[0] = curve.subcurve(0, t).set(**getattr(curve, 'attrib', {}))
+		group.clear()
+		group.append(curve.subcurve(0, t).set(**getattr(curve, 'attrib', {})))
 
 	return scene.animate(
 		target=group,
