@@ -278,17 +278,6 @@ def draw_image(self, image):
 		padding=0
 	)
 
-
-"""def cv2_stroke(obj):
-	# Get the outline color from the shape attributes.
-	return obj.attrib.get('stroke')
-
-
-def cv2_fill(obj):
-	# Get the interior color from the shape attributes.
-	return obj.attrib.get('fill')"""
-
-
 def cv2_stroke_width(obj):
 	# Get the outline thickness, defaulting to one pixel.
 	return obj.attrib.get('stroke-width', 1)
