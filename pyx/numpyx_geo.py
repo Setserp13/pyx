@@ -105,10 +105,15 @@ class shape(Element):
 		adjustment = Transform.axis_aligned(offset, scale)
 		
 		self.set(transform=adjustment)"""
-		self.set(transform=aabb_xform(self.aabb, value))
-		#scale = safe_divide(value.size, current.size)
-		#offset = value.min - current.min * scale
-		#self = self * scale + offset
+		#self.set(transform=aabb_xform(self.aabb, value))
+
+		current = self.aabb
+
+		scale = safe_divide(value.size, current.size)
+		offset = value.min - current.min * scale
+
+		result = self * scale + offset
+		self.__dict__.update(copy.deepcopy(result.__dict__))
 	
 	@property
 	def xform(self):
