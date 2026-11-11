@@ -2310,7 +2310,18 @@ class group(list, shape):
 					x.set(**{k: v})
 		return self
 
-
+	def __add__(self, vector):
+	    obj = copy.deepcopy(self)
+	    for i, child in enumerate(obj):
+	        obj[i] = child + vector
+	    return obj
+	
+	
+	def __mul__(self, value):
+	    obj = copy.deepcopy(self)
+	    for i, child in enumerate(obj):
+	        obj[i] = child * value
+	    return obj
 
 
 def distribute(arr, axis=0, align=.5, gap=0.0):
