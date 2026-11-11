@@ -272,7 +272,7 @@ def draw_image(self, image):
 
 	cv2_paint(
 		image,
-		(255, 255, 255, opacity),
+		cv2_color((255, 255, 255, opacity)),
 		draw,
 		self,
 		padding=0
