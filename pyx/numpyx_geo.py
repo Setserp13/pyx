@@ -106,7 +106,10 @@ class shape(Element):
 		
 		self.set(transform=adjustment)"""
 		self.set(transform=aabb_xform(self.aabb, value))
-
+		#scale = safe_divide(value.size, current.size)
+		#offset = value.min - current.min * scale
+		#self = self * scale + offset
+	
 	@property
 	def xform(self):
 		transform = getattr(self, 'attrib', {}).get('transform')
@@ -257,6 +260,8 @@ class rect_like(shape):	#interval
 		self.size = value.size
 
 	def __add__(self, vector): return type(self).min_size(self.min + vector, self.size)
+
+	def __mul__(self, value): return type(self).min_size(self.min, self.size * vector)
 	
 	@property
 	def ndim(self): return len(self.min)
@@ -664,6 +669,10 @@ class ball(shape):
 		obj.center += vector
 		return obj
 
+	def __mul__(self, value):
+		obj = copy.deepcopy(self)
+		obj.radius *= value
+		return obj
 
 class circle(ball, curve):	#disk
 
