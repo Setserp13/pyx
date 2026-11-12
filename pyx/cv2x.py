@@ -69,6 +69,7 @@ def cv2_fill(obj):
 XFORM_NONE = 0
 XFORM_AABB = 1
 XFORM_AFFINE = 2
+XFORM_TRS = 3
 
 XFORM_MODE = XFORM_AFFINE
 
@@ -308,8 +309,36 @@ def cv2_draw_polygon(image, points, color):
 
 #DRAW SHAPES
 
+def draw_ellipse(self, image):
+	if if XFORM_MODE == XFORM_TRS:
+		self = self.apply_matrix(self.xform.global_matrix)
+    center = cv2_point(self.center)
+    axes = tuple(np.round(self.size / 2).astype(int))
+    angle = np.degrees(self.xform.rotation)
+    width = cv2_stroke_width(self)
+
+    cv2_paint(image, cv2_fill(self),
+        lambda img, color, offset: cv2.ellipse(
+            img, tuple(center + offset), axes, angle,
+            0, 360, color, cv2.FILLED,
+            lineType=cv2.LINE_AA
+        ), self
+    )
+
+    cv2_paint(image, cv2_stroke(self),
+        lambda img, color, offset: cv2.ellipse(
+            img, tuple(center + offset), axes, angle,
+            0, 360, color, max(1, round(width)),
+            lineType=cv2.LINE_AA
+        ), self
+    )
+
 def draw_circle(self, image):
-	center = cv2_point(self.center)
+	draw_ellipse(
+		geo.ellipse(self.center, self.radius * np.ones(2)).set(**getattr(self, 'attrib', {})),
+		image
+	)
+	"""center = cv2_point(self.center)
 	radius = round(self.radius)
 	width = cv2_stroke_width(self)
 
@@ -326,7 +355,7 @@ def draw_circle(self, image):
 			max(1, round(width)),
 			lineType=cv2.LINE_AA
 		), self
-	)
+	)"""
 
 
 def draw_arc(self, image):
@@ -352,6 +381,8 @@ def draw_arc(self, image):
 
 
 def draw_polyline(self, image):
+	if if XFORM_MODE == XFORM_TRS:
+		self = self.apply_matrix(self.xform.global_matrix)
 	# Get the polyline vertices.
 	points = np.asarray(self)
 
