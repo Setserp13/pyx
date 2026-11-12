@@ -177,7 +177,7 @@ def cv2_paint(image, color, draw, obj=None, padding=2):
 		return
 
 	# No transformation.
-	if obj is None or XFORM_MODE == XFORM_NONE:
+	if obj is None or XFORM_MODE == XFORM_NONE	or XFORM_MODE == XFORM_TRS:
 		if alpha >= 1:
 			draw(image, bgr, np.zeros(2))
 		else:
@@ -190,6 +190,7 @@ def cv2_paint(image, color, draw, obj=None, padding=2):
 			)
 		return
 
+	
 	if XFORM_MODE not in (XFORM_AABB, XFORM_AFFINE):
 		raise ValueError(f'Invalid XFORM_MODE: {XFORM_MODE}')
 
