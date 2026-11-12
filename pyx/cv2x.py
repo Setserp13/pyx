@@ -442,7 +442,7 @@ def draw_group(self, image):
 
 
 # Dynamically attach the corresponding drawing method to each geometry class.
-for cls in [geo.arc, geo.bezier, geo.circle, geo.group, geo.line, geo.polyline, geo.rect, PILx.image]:
+for cls in [geo.arc, geo.bezier, geo.circle, geo.ellipse, geo.group, geo.line, geo.polyline, geo.rect, PILx.image]:
 	name = cls.__name__
 
 	# Capture the function name in the lambda default argument.
