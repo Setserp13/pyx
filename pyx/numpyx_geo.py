@@ -66,15 +66,18 @@ class shape(Element):
 	def __truediv__(self, value): return self.__mul__(1. / value)
 
 	def __matmul__(self, value):	# raise NotImplementedError
-		obj = copy.deepcopy(self)
+		"""obj = copy.deepcopy(self)
 		#print(value, obj.xform)
 		obj.xform.matrix = value @ obj.xform.matrix
-		return obj
+		return obj"""
+		return self.apply_matrix(value)
 	
 	__rmul__ = __mul__
 	
 	__rmatmul__ = __matmul__
-	
+
+	def apply_matrix(self, matrix): raise NotImplementedError
+
 	def scale(self, factor, pivot=None):
 		if pivot is None:
 			pivot = np.zeros(self.ndim)
@@ -423,10 +426,12 @@ class rect(rect_like):
 	
 		return polyline(points, closed=True)
 
-	def __matmul__(self, M):
+	"""def __matmul__(self, M):
 		M = np.asarray(M, dtype=float)
 		return self.corners @ M
-		#return self.corners.transform(M)
+		#return self.corners.transform(M)"""
+
+	def apply_matrix(self, matrix): return self.corners.apply_matrix(matrix)
 
 class rect2(rect):
 	def __init__(self, x, y, width, height):
@@ -582,17 +587,17 @@ class points(np.ndarray, shape):
 	def aabb(self, value):
 		self[:] = set_aabb(self, value)
 
+	def apply_matrix(self, matrix):
+		res = self.deepcopy()
+		res[:] = npx.affine_transform(matrix, self)
+		return res
 	"""def transform(self, M):
-		pts = npx.affine_transform(M, self)
-		return type(self)(pts, **self.__dict__)"""
-	
-	def transform(self, M):
 		res = self.deepcopy()
 		res[:] = npx.affine_transform(M, self)
 		return res
 	
 	def __matmul__(self, M):
-		return self.transform(M)
+		return self.transform(M)"""
 
 	def __repr__(self):
 		name = type(self).__name__
@@ -701,7 +706,7 @@ class circle(ball, curve):	#disk
 		t = np.array([-r[1], r[0]])  # 90° rotation
 		return line([p, p + t])
 	
-	def __matmul__(self, M):
+	"""def __matmul__(self, M):
 		M = np.asarray(M, dtype=float)
 
 		center = (M @ np.append(self.center, 1))[:2]
@@ -713,8 +718,9 @@ class circle(ball, curve):	#disk
 		if np.isclose(sx, sy):
 			return circle(center, self.radius * sx)
 
-		return ellipse(center, 2 * self.radius * np.array([sx, sy]))
-
+		return ellipse(center, 2 * self.radius * np.array([sx, sy]))"""
+	def apply_matrix(self, matrix):
+		return ellipse(self.center, self.radius * np.ones(2)).apply_matrix(matrix)
 
 
 class ellipse(rect_like):
@@ -904,7 +910,7 @@ class ellipse(rect_like):
 	
 		return theta0 % (2*np.pi), theta_end
 
-	def __matmul__(self, M):	#this loses rotation/shear of the ellipse.
+	"""def __matmul__(self, M):	#this loses rotation/shear of the ellipse.
 		M = np.asarray(M, dtype=float)
 
 		center = (M @ np.append(self.center, 1))[:2]
@@ -918,9 +924,38 @@ class ellipse(rect_like):
 		if np.isclose(size[0], size[1]):
 			return circle(center, size[0] / 2)
 
-		return ellipse(center, size)
+		return ellipse(center, size)"""
 
-
+	def apply_matrix(self, matrix):
+	    M = np.asarray(matrix, dtype=float)
+	
+	    center = (M @ np.append(self.center, 1))[:2]
+	    A = M[:2, :2]
+	
+	    # Original ellipse axes, including its current rotation.
+	    angle = self.xform.rotation
+	    c, s = np.cos(angle), np.sin(angle)
+	
+	    R = np.array([
+	        [c, -s],
+	        [s,  c]
+	    ])
+	
+	    axes = R @ np.diag(self.size / 2)
+	
+	    # Apply the matrix to the axes.
+	    axes = A @ axes
+	
+	    # Recover the principal axes.
+	    U, S, _ = np.linalg.svd(axes)
+	
+	    size = 2 * S
+	    angle = np.arctan2(U[1, 0], U[0, 0])
+	
+	    result = ellipse(center, size)
+	    result.xform.rotation = angle
+	
+	    return result
 
 
 class arc(circle, curve):
@@ -2316,17 +2351,23 @@ class group(list, shape):
 		return self
 
 	def __add__(self, vector):
-	    obj = copy.deepcopy(self)
-	    for i, child in enumerate(obj):
-	        obj[i] = child + vector
-	    return obj
+		obj = copy.deepcopy(self)
+		for i, child in enumerate(obj):
+			obj[i] = child + vector
+		return obj
 	
 	
 	def __mul__(self, value):
-	    obj = copy.deepcopy(self)
-	    for i, child in enumerate(obj):
-	        obj[i] = child * value
-	    return obj
+		obj = copy.deepcopy(self)
+		for i, child in enumerate(obj):
+			obj[i] = child * value
+		return obj
+
+	def apply_matrix(self, matrix):
+		obj = copy.deepcopy(self)
+		for i, child in enumerate(obj):
+			obj[i] = obj[i].apply_matrix(matrix)
+		return obj
 
 
 def distribute(arr, axis=0, align=.5, gap=0.0):
