@@ -934,7 +934,7 @@ class ellipse(rect_like):
 	
 		result.center = xform.matrix @ self.center
 		result.size *= xform.scale
-		result.xform.rotation = xform.rotation
+		result.xform = Node2D(rotation = xform.rotation)
 	
 		return result
 
