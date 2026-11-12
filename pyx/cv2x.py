@@ -311,12 +311,13 @@ def cv2_draw_polygon(image, points, color):
 #DRAW SHAPES
 
 def draw_ellipse(self, image):
-	global XFORM_MODE
 	angle = 0
+
 	if XFORM_MODE == XFORM_TRS:
 		self = self.apply_matrix(self.xform.global_matrix)
 		angle = float(np.degrees(self.xform.rotation))
-		XFORM_MODE = XFORM_NONE
+		print(angle, self.xform.rotation)
+
 	center = cv2_point(self.center)
 	axes = tuple(int(v) for v in np.round(self.size / 2))
 	width = cv2_stroke_width(self)
