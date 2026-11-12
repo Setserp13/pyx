@@ -310,7 +310,7 @@ def cv2_draw_polygon(image, points, color):
 #DRAW SHAPES
 
 def draw_ellipse(self, image):
-	if if XFORM_MODE == XFORM_TRS:
+	if XFORM_MODE == XFORM_TRS:
 		self = self.apply_matrix(self.xform.global_matrix)
     center = cv2_point(self.center)
     axes = tuple(np.round(self.size / 2).astype(int))
@@ -381,7 +381,7 @@ def draw_arc(self, image):
 
 
 def draw_polyline(self, image):
-	if if XFORM_MODE == XFORM_TRS:
+	if XFORM_MODE == XFORM_TRS:
 		self = self.apply_matrix(self.xform.global_matrix)
 	# Get the polyline vertices.
 	points = np.asarray(self)
