@@ -312,26 +312,26 @@ def cv2_draw_polygon(image, points, color):
 def draw_ellipse(self, image):
 	if XFORM_MODE == XFORM_TRS:
 		self = self.apply_matrix(self.xform.global_matrix)
-    center = cv2_point(self.center)
-    axes = tuple(np.round(self.size / 2).astype(int))
-    angle = np.degrees(self.xform.rotation)
-    width = cv2_stroke_width(self)
+	center = cv2_point(self.center)
+	axes = tuple(np.round(self.size / 2).astype(int))
+	angle = np.degrees(self.xform.rotation)
+	width = cv2_stroke_width(self)
 
-    cv2_paint(image, cv2_fill(self),
-        lambda img, color, offset: cv2.ellipse(
-            img, tuple(center + offset), axes, angle,
-            0, 360, color, cv2.FILLED,
-            lineType=cv2.LINE_AA
-        ), self
-    )
+	cv2_paint(image, cv2_fill(self),
+		lambda img, color, offset: cv2.ellipse(
+			img, tuple(center + offset), axes, angle,
+			0, 360, color, cv2.FILLED,
+			lineType=cv2.LINE_AA
+		), self
+	)
 
-    cv2_paint(image, cv2_stroke(self),
-        lambda img, color, offset: cv2.ellipse(
-            img, tuple(center + offset), axes, angle,
-            0, 360, color, max(1, round(width)),
-            lineType=cv2.LINE_AA
-        ), self
-    )
+	cv2_paint(image, cv2_stroke(self),
+		lambda img, color, offset: cv2.ellipse(
+			img, tuple(center + offset), axes, angle,
+			0, 360, color, max(1, round(width)),
+			lineType=cv2.LINE_AA
+		), self
+	)
 
 def draw_circle(self, image):
 	draw_ellipse(
