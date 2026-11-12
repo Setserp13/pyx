@@ -932,7 +932,7 @@ class ellipse(rect_like):
 	
 		result = copy.deepcopy(self)
 	
-		result.center = xform.matrix @ self.center
+		result.center += xform.position
 		result.size *= xform.scale
 		result.xform = Node2D(rotation = xform.rotation)
 	
