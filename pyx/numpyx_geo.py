@@ -927,35 +927,16 @@ class ellipse(rect_like):
 		return ellipse(center, size)"""
 
 	def apply_matrix(self, matrix):
-	    M = np.asarray(matrix, dtype=float)
+		xform = Node2D()
+		xform.matrix = matrix
 	
-	    center = (M @ np.append(self.center, 1))[:2]
-	    A = M[:2, :2]
+		result = copy.deepcopy(self)
 	
-	    # Original ellipse axes, including its current rotation.
-	    angle = self.xform.rotation
-	    c, s = np.cos(angle), np.sin(angle)
+		result.center = xform.matrix @ self.center
+		result.size *= xform.scale
+		result.xform.rotation = xform.rotation
 	
-	    R = np.array([
-	        [c, -s],
-	        [s,  c]
-	    ])
-	
-	    axes = R @ np.diag(self.size / 2)
-	
-	    # Apply the matrix to the axes.
-	    axes = A @ axes
-	
-	    # Recover the principal axes.
-	    U, S, _ = np.linalg.svd(axes)
-	
-	    size = 2 * S
-	    angle = np.arctan2(U[1, 0], U[0, 0])
-	
-	    result = ellipse(center, size)
-	    result.xform.rotation = angle
-	
-	    return result
+		return result
 
 
 class arc(circle, curve):
