@@ -310,6 +310,7 @@ def cv2_draw_polygon(image, points, color):
 #DRAW SHAPES
 
 def draw_ellipse(self, image):
+	global XFORM_MODE
 	angle = 0
 	if XFORM_MODE == XFORM_TRS:
 		self = self.apply_matrix(self.xform.global_matrix)
