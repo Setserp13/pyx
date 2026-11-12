@@ -313,23 +313,28 @@ def draw_ellipse(self, image):
 	if XFORM_MODE == XFORM_TRS:
 		self = self.apply_matrix(self.xform.global_matrix)
 	center = cv2_point(self.center)
-	axes = tuple(np.round(self.size / 2).astype(int))
-	angle = np.degrees(self.xform.rotation)
+	axes = tuple(int(v) for v in np.round(self.size / 2))
+	angle = float(np.degrees(self.xform.rotation))
 	width = cv2_stroke_width(self)
 
-	cv2_paint(image, cv2_fill(self),
-		lambda img, color, offset: cv2.ellipse(
-			img, tuple(center + offset), axes, angle,
-			0, 360, color, cv2.FILLED,
+	def draw(img, color, offset, thickness):
+		point = tuple(int(v) for v in center + offset)
+
+		cv2.ellipse(
+			img, point, axes, angle,
+			0, 360, color, thickness,
 			lineType=cv2.LINE_AA
+		)
+
+	cv2_paint(image, cv2_fill(self),
+		lambda img, color, offset: draw(
+			img, color, offset, cv2.FILLED
 		), self
 	)
 
 	cv2_paint(image, cv2_stroke(self),
-		lambda img, color, offset: cv2.ellipse(
-			img, tuple(center + offset), axes, angle,
-			0, 360, color, max(1, round(width)),
-			lineType=cv2.LINE_AA
+		lambda img, color, offset: draw(
+			img, color, offset, max(1, round(width))
 		), self
 	)
 
