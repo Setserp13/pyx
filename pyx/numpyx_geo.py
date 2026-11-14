@@ -2331,7 +2331,7 @@ class group(list, shape):
 				if not x:
 					self.pop(i)
 
-	@local_aabb.setter
+	"""@local_aabb.setter
 	def local_aabb(self, value):
 		cur = self.local_aabb
 		for x in self:
@@ -2341,7 +2341,25 @@ class group(list, shape):
 	def global_aabb(self, value):
 		cur = self.global_aabb
 		for x in self:
-			x.global_aabb = value.denormalize_rect(cur.normalize_rect(x.global_aabb))
+			x.global_aabb = value.denormalize_rect(cur.normalize_rect(x.global_aabb))"""
+
+
+	@local_aabb.setter
+	def local_aabb(self, value):
+		cur = self.local_aabb
+		rects = [x.local_aabb for x in self]
+	
+		for x, rect in zip(self, rects):
+			x.local_aabb = value.denormalize_rect(cur.normalize_rect(rect))
+	
+	
+	@global_aabb.setter
+	def global_aabb(self, value):
+		cur = self.global_aabb
+		rects = [x.global_aabb for x in self]
+	
+		for x, rect in zip(self, rects):
+			x.global_aabb = value.denormalize_rect(cur.normalize_rect(rect))
 
 	def set_children(self, **kwargs):	# Set attributes on each child using a function, an indexed collection, or a shared value.
 		for i, x in enumerate(self):
