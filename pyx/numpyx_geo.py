@@ -143,8 +143,8 @@ class shape(Element):
 	@property
 	def global_aabb(self): return self.apply_matrix(self.xform.global_matrix).aabb	#return (self @ self.xform.global_matrix).aabb
 
-	def _set_aabb(self, value, xform=None):
-		current = self.aabb if xform is None else (self @ xform).aabb
+	def _set_aabb(self, value, matrix=None):
+		current = self.aabb if matrix is None else self.apply_matrix(matrix).aabb
 		
 		scale = safe_divide(value.size, current.size)
 		offset = value.min - current.min * scale
@@ -152,7 +152,7 @@ class shape(Element):
 		adjustment = Transform.axis_aligned(offset, scale)
 	
 		if xform is not None:
-			adjustment.matrix = adjustment.matrix @ xform
+			adjustment.matrix = adjustment.matrix @ matrix
 	
 		self.set(transform=adjustment)
 	
