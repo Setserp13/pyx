@@ -138,10 +138,10 @@ class shape(Element):
 	def xform(self, value): self.set(transform=value)
 	
 	@property
-	def local_aabb(self): return (self @ self.xform.matrix).aabb
+	def local_aabb(self): return self.apply_matrix(self.xform.matrix).aabb	#return (self @ self.xform.matrix).aabb
 
 	@property
-	def global_aabb(self): return (self @ self.xform.global_matrix).aabb
+	def global_aabb(self): return self.apply_matrix(self.xform.global_matrix).aabb	#return (self @ self.xform.global_matrix).aabb
 
 	def _set_aabb(self, value, xform=None):
 		current = self.aabb if xform is None else (self @ xform).aabb
