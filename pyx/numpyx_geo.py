@@ -151,7 +151,7 @@ class shape(Element):
 	
 		adjustment = Transform.axis_aligned(offset, scale)
 	
-		if xform is not None:
+		if matrix is not None:
 			adjustment.matrix = adjustment.matrix @ matrix
 	
 		self.set(transform=adjustment)
