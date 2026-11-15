@@ -607,7 +607,7 @@ class point(np.ndarray, shape):
 
 	def apply_matrix(self, matrix):
 		res = self.deepcopy()
-		res[:] = npx.affine_transform(matrix, [self])[0]
+		res[:] = npx.affine_transform(matrix, self)[0]
 		return res
 
 	def __repr__(self):
