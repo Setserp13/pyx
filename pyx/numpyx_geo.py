@@ -575,7 +575,53 @@ def set_aabb(p, value):	#p is a list of points
 	return [value.denormalize_point(current.normalize_point(x)) for x in p]
 
 
+#point([x, y]) → one coordinate.
+#points([[x1, y1], [x2, y2]]) → collection of coordinates.
 
+class point(np.ndarray, shape):
+
+	def __new__(cls, input_array, **attrs):
+		input_array = np.array(input_array, copy=True)
+		obj = np.ndarray.__new__(cls, input_array.shape, dtype=input_array.dtype)
+		obj[...] = input_array
+
+		return Element.init(obj, **attrs)
+
+	def __array_finalize__(self, obj):
+		if obj is None:
+			return
+
+		for k, v in getattr(obj, "__dict__", {}).items():
+			setattr(self, k, v)
+
+	@property
+	def aabb(self):
+		return aabb(self)
+
+	@aabb.setter
+	def aabb(self, value):
+		self[:] = set_aabb(self, value)
+
+	def apply_matrix(self, matrix):
+		res = self.deepcopy()
+		res[:] = npx.affine_transform(matrix, self)
+		return res
+
+	def __repr__(self):
+		name = type(self).__name__
+		return f"{name}({np.asarray(self)}, attrs={self.__dict__})"
+
+	@property
+	def vertex_centroid(self):
+		return self.copy()
+
+	@vertex_centroid.setter
+	def vertex_centroid(self, value):
+		self[:] = value
+
+	def swizzle(self, axes):
+		self[:] = self[axes]
+		return self
 
 class points(np.ndarray, shape):
 
