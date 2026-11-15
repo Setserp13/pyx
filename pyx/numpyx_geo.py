@@ -962,7 +962,7 @@ class ellipse(rect_like):
 		return result
 
 
-class arc(circle, curve):
+class arc(curve):	#circle, curve):
 	def __init__(self, center, radius, start, end): #start is start angle and end is end angle
 		super().__init__(center, radius)
 		self.start = start
@@ -1041,13 +1041,13 @@ class arc(circle, curve):
 		)
 
 		return [
-			arc(self.center, self.radius, a, b)
+			type(self)(self.center, self.radius, a, b)
 			for a, b in zip(angles, angles[1:])
 		]
 
 	def _subcurve(self, start, end):
 		delta = self.end - self.start
-		return arc(self.center, self.radius,
+		return type(self)(self.center, self.radius,
 			self.start + delta * start,
 			self.start + delta * end)
 
@@ -1070,6 +1070,17 @@ class arc(circle, curve):
 		result.axes = axes
 	
 		return result
+
+
+class circular_arc(circle, arc):
+	pass
+
+class elliptical_arc(ellipse, arc):
+	pass
+
+
+
+
 
 
 class line(points, curve):	#start = self[0], end = self[1]
@@ -1154,7 +1165,7 @@ class chord(line):
 		elif end_angle > start_angle and dir == 1:
 			start_angle += 2 * np.pi
 			#end_angle -= 2 * np.pi
-		return arc(self.center, self.radius, start_angle, end_angle)
+		return circular_arc(self.center, self.radius, start_angle, end_angle)
 
 
 
@@ -1593,7 +1604,7 @@ class angle(points):	#list):
 
 	def to_arc(self, radius):
 		start, end = [math.atan2(x[1], x[0]) for x in self.directions]
-		return arc(self[1], radius, start, end)
+		return circular_arc(self[1], radius, start, end)
 
 	def round(self, r):	#r > 0
 		half = self.size / 2.
@@ -1601,7 +1612,7 @@ class angle(points):	#list):
 		p = [self[1] + x * d for x in self.directions]
 		center = self[1] + self.bisector * (r / math.sin(half))
 		start, end = [math.atan2(x[1] - center[1], x[0] - center[0]) for x in p]
-		return arc(center, r, start, end)
+		return circular_arc(center, r, start, end)
 
 class polyline(points, curve):
 
