@@ -553,8 +553,10 @@ def aabb(a, b): return rect.min_max(np.minimum(a.min, b.min), np.maximum(a.max, 
 @dispatch(list)
 def aabb(args): #args can contain np.ndarray and rect
 	if len(args) == 1:
-		return args[0]
-
+		if isinstance(args[0], rect):
+			return args[0]
+		else:	#1d numpy
+			return rect(args[0], np.zeros(len(args[0])))
 	result = aabb(args[0], args[1])
 	for i in range(2, len(args)):
 		result = aabb(result, args[i])
