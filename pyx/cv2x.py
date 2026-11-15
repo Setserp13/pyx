@@ -316,7 +316,7 @@ def draw_ellipse(self, image):
 	if XFORM_MODE == XFORM_TRS:
 		self = self.apply_matrix(self.xform.global_matrix)
 		angle = float(np.degrees(self.xform.rotation))
-		print(angle, self.xform.rotation)
+		#print(angle, self.xform.rotation)
 
 	center = cv2_point(self.center)
 	axes = tuple(int(v) for v in np.round(self.size / 2))
@@ -348,24 +348,6 @@ def draw_circle(self, image):
 		geo.ellipse(self.center, self.radius * np.ones(2)).set(**getattr(self, 'attrib', {})),
 		image
 	)
-	"""center = cv2_point(self.center)
-	radius = round(self.radius)
-	width = cv2_stroke_width(self)
-
-	cv2_paint(image, cv2_fill(self),
-		lambda img, color, offset: cv2.circle(
-			img, tuple(center + offset), radius, color, cv2.FILLED,
-			lineType=cv2.LINE_AA
-		), self
-	)
-
-	cv2_paint(image, cv2_stroke(self),
-		lambda img, color, offset: cv2.circle(
-			img, tuple(center + offset), radius, color,
-			max(1, round(width)),
-			lineType=cv2.LINE_AA
-		), self
-	)"""
 
 
 def draw_arc(self, image):
