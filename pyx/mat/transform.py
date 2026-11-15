@@ -242,7 +242,7 @@ class Basis(np.ndarray):
 		pass
 
 	@property
-	def ndim(self): return self.shape[0]
+	def dim(self): return self.shape[0]
 
 	@classmethod
 	def identity(cls, n): return cls(np.eye(n))
@@ -370,7 +370,7 @@ class Transform(Node):
 		self.scale = np.array(scale)
 
 	@property
-	def ndim(self): return len(self.position)
+	def dim(self): return len(self.position)
 
 	@classmethod
 	def identity(cls, ndim):
