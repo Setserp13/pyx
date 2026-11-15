@@ -1149,7 +1149,7 @@ class elliptical_arc(arc, ellipse):
 	@classmethod
 	def start_end(cls, start, end, radius, rotation, large_arc_flag, sweep_flag):
 		start, end = np.asarray([start, end], dtype=float)
-		rx, ry = abs(radius[0]), abs(radius[1])
+		rx, ry = np.abs(radius)
 	
 		if rx == 0 or ry == 0 or np.allclose(start, end):
 			return None
@@ -1163,8 +1163,12 @@ class elliptical_arc(arc, ellipse):
 		rx, ry = rx * scale, ry * scale
 	
 		rx2, ry2 = rx**2, ry**2
-		k = np.sqrt(max(0., (rx2 * ry2 - rx2 * y1p**2 - ry2 * x1p**2) /
-			(rx2 * y1p**2 + ry2 * x1p**2)))
+		denom = rx2 * y1p**2 + ry2 * x1p**2
+	
+		if np.isclose(denom, 0):
+			return None
+	
+		k = np.sqrt(max(0., (rx2 * ry2 - rx2 * y1p**2 - ry2 * x1p**2) / denom))
 	
 		if large_arc_flag == sweep_flag:
 			k = -k
@@ -1183,7 +1187,7 @@ class elliptical_arc(arc, ellipse):
 		else:
 			delta = -(-delta % math.tau)
 	
-		return cls(center, radius, start_angle, start_angle + delta)
+		return cls(center, np.array([rx, ry]), start_angle, start_angle + delta)
 
 
 
