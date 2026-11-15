@@ -2372,24 +2372,58 @@ class group(list, shape):
 					x.set(**{k: v})
 		return self
 
-	def __add__(self, vector):
+	def _apply(self, method, *args):
 		obj = copy.deepcopy(self)
 		for i, child in enumerate(obj):
-			obj[i] = child + vector
+			obj[i] = getattr(child, method)(*args)
 		return obj
 	
+	def __add__(self, value):
+		return self._apply('__add__', value)
 	
 	def __mul__(self, value):
-		obj = copy.deepcopy(self)
-		for i, child in enumerate(obj):
-			obj[i] = child * value
-		return obj
-
+		return self._apply('__mul__', value)
+	
 	def apply_matrix(self, matrix):
-		obj = copy.deepcopy(self)
-		for i, child in enumerate(obj):
-			obj[i] = obj[i].apply_matrix(matrix)
-		return obj
+		return self._apply('apply_matrix', matrix)
+
+
+class path(group):
+	def __init__(self, items=None, closed=False):
+		super().__init__(items or [])
+		self.closed = closed
+
+	@property
+	def last_point(self):
+		if not self:
+			return None
+
+		item = self[-1]
+
+		if isinstance(item, np.ndarray) and item.ndim == 1:
+			return item
+		elif isinstance(item, curve):
+			return item.get_point01(1.)
+
+		raise TypeError(f'Unsupported path item: {type(item).__name__}')
+
+	def line_to(self, v):
+		self.append(line([self.last_point, v]))
+		return self
+
+	def line_by(self, v):
+		return self.line_to(self.last_point + v)
+
+	def bezier_to(self, *v):
+		self.append(bezier([self.last_point, *v]))
+		return self
+
+	def close(self):
+		self.closed = True
+		return self
+
+
+
 
 
 def distribute(arr, axis=0, align=.5, gap=0.0):
