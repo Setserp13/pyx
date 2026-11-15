@@ -2539,7 +2539,7 @@ class path(group):
 
 		item = self[-1]
 
-		if isinstance(item, np.ndarray) and item.dim == 1:
+		if isinstance(item, np.ndarray) and item.ndim == 1:
 			return item
 		elif isinstance(item, curve):
 			return item.get_point01(1.)
