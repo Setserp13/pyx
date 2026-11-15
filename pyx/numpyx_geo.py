@@ -160,17 +160,20 @@ class shape(Element):
 	def local_aabb(self, value): self._set_aabb(value, self.xform.matrix)
 	
 	@global_aabb.setter
-	def global_aabb(self, value): self._set_aabb(value, self.xform.global_matrix)"""
+	def global_aabb(self, value): self._set_aabb(value, self.xform.global_matrix)
 
 	@property
 	def global_aabb(self):
-		return self.apply_matrix(self.xform.global_matrix).aabb
+		return self.apply_matrix(self.xform.global_matrix).aabb"""
 	
 	@global_aabb.setter
 	def global_aabb(self, value):
 		self.xform.global_matrix = self._get_aabb_transform(value, self.xform.global_matrix)
 	
-	
+	@local_aabb.setter
+	def local_aabb(self, value):
+		self.xform.matrix = self._get_aabb_transform(value, self.xform.matrix)
+
 	def _get_aabb_transform(self, value, matrix=None):
 		current = self.aabb if matrix is None else self.apply_matrix(matrix).aabb
 	
@@ -2483,7 +2486,7 @@ class group(list, shape):
 			x.global_aabb = value.denormalize_rect(cur.normalize_rect(x.global_aabb))"""
 
 
-	@local_aabb.setter
+	"""@local_aabb.setter
 	def local_aabb(self, value):
 		cur = self.local_aabb
 		rects = [x.local_aabb for x in self]
@@ -2498,7 +2501,7 @@ class group(list, shape):
 		rects = [x.global_aabb for x in self]
 	
 		for x, rect in zip(self, rects):
-			x.global_aabb = value.denormalize_rect(cur.normalize_rect(rect))
+			x.global_aabb = value.denormalize_rect(cur.normalize_rect(rect))"""
 
 	def set_children(self, **kwargs):	# Set attributes on each child using a function, an indexed collection, or a shared value.
 		for i, x in enumerate(self):
