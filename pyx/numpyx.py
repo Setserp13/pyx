@@ -154,6 +154,7 @@ def affine_transform(M, arr):
 	n = arr.shape[1]
 
 	if M.shape != (n + 1, n + 1):
+		print("Affine matrix is ", M)
 		raise ValueError(f"Expected {(n+1)}x{(n+1)} affine matrix")
 
 	# Homogeneous coordinates
