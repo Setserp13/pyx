@@ -595,6 +595,9 @@ class point(np.ndarray, shape):
 			setattr(self, k, v)
 
 	@property
+	def ndim(self): return self.shape[0]
+
+	@property
 	def aabb(self):
 		return aabb(self)
 
@@ -650,6 +653,9 @@ class points(np.ndarray, shape):
 		for k, v in getattr(obj, "__dict__", {}).items():
 			setattr(self, k, v)
 
+	@property
+	def ndim(self): return self.shape[1]
+	
 	@property
 	def aabb(self):
 		return aabb(self)
