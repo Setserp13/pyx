@@ -345,7 +345,7 @@ def draw_ellipse(self, image):
 
 def draw_circle(self, image):
 	draw_ellipse(
-		geo.ellipse(self.center, self.radius * np.ones(2) * 2.).set(**getattr(self, 'attrib', {})),
+		geo.ellipse(self.center, self.diameter * np.ones(2)).set(**getattr(self, 'attrib', {})),
 		image
 	)
 
