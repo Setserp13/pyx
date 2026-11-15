@@ -1072,10 +1072,10 @@ class arc(curve):	#circle, curve):
 		return result
 
 
-class circular_arc(circle, arc):
+class circular_arc(arc, circle):
 	pass
 
-class elliptical_arc(ellipse, arc):
+class elliptical_arc(arc, ellipse):
 
 	@classmethod
 	def start_end(cls, start, end, radius, rotation, large_arc_flag, sweep_flag):
