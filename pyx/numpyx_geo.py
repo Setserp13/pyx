@@ -1077,7 +1077,7 @@ class circular_arc(arc, circle):
 
 class elliptical_arc(arc, ellipse):
 	def __init__(self, center, radius, start, end): #start is start angle and end is end angle
-		ellipse.__init__(self, center, radius)
+		ellipse.__init__(self, center, radius * 2)
 		self.start = start
 		self.end = end
 
