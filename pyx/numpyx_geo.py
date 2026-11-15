@@ -65,12 +65,7 @@ class shape(Element):
 
 	def __truediv__(self, value): return self.__mul__(1. / value)
 
-	def __matmul__(self, value):	# raise NotImplementedError
-		"""obj = copy.deepcopy(self)
-		#print(value, obj.xform)
-		obj.xform.matrix = value @ obj.xform.matrix
-		return obj"""
-		return self.apply_matrix(value)
+	def __matmul__(self, value): return self.apply_matrix(value)
 	
 	__rmul__ = __mul__
 	
@@ -100,15 +95,6 @@ class shape(Element):
 
 	@aabb.setter
 	def aabb(self, value):
-		"""current = self.aabb
-
-		scale = safe_divide(value.size, current.size)
-		offset = value.min - current.min * scale
-
-		adjustment = Transform.axis_aligned(offset, scale)
-		
-		self.set(transform=adjustment)"""
-		#self.set(transform=aabb_xform(self.aabb, value))
 
 		current = self.aabb
 
@@ -143,29 +129,6 @@ class shape(Element):
 	@property
 	def global_aabb(self): return self.apply_matrix(self.xform.global_matrix).aabb	#return (self @ self.xform.global_matrix).aabb
 
-	"""def _set_aabb(self, value, matrix=None):
-		current = self.aabb if matrix is None else self.apply_matrix(matrix).aabb
-		
-		scale = safe_divide(value.size, current.size)
-		offset = value.min - current.min * scale
-	
-		adjustment = Transform.axis_aligned(offset, scale)
-	
-		if matrix is not None:
-			adjustment.matrix = adjustment.matrix @ matrix
-	
-		self.set(transform=adjustment)
-	
-	@local_aabb.setter
-	def local_aabb(self, value): self._set_aabb(value, self.xform.matrix)
-	
-	@global_aabb.setter
-	def global_aabb(self, value): self._set_aabb(value, self.xform.global_matrix)
-
-	@property
-	def global_aabb(self):
-		return self.apply_matrix(self.xform.global_matrix).aabb"""
-	
 	@global_aabb.setter
 	def global_aabb(self, value):
 		self.xform.global_matrix = self._get_aabb_transform(value, self.xform.global_matrix)
@@ -679,13 +642,6 @@ class points(np.ndarray, shape):
 		res = self.deepcopy()
 		res[:] = npx.affine_transform(matrix, self)
 		return res
-	"""def transform(self, M):
-		res = self.deepcopy()
-		res[:] = npx.affine_transform(M, self)
-		return res
-	
-	def __matmul__(self, M):
-		return self.transform(M)"""
 
 	def __repr__(self):
 		name = type(self).__name__
@@ -793,20 +749,7 @@ class circle(ball, curve):	#disk
 		r = p - self.center
 		t = np.array([-r[1], r[0]])  # 90° rotation
 		return line([p, p + t])
-	
-	"""def __matmul__(self, M):
-		M = np.asarray(M, dtype=float)
 
-		center = (M @ np.append(self.center, 1))[:2]
-		A = M[:2, :2]
-
-		sx = np.linalg.norm(A[:, 0])
-		sy = np.linalg.norm(A[:, 1])
-
-		if np.isclose(sx, sy):
-			return circle(center, self.radius * sx)
-
-		return ellipse(center, 2 * self.radius * np.array([sx, sy]))"""
 	def apply_matrix(self, matrix):
 		return ellipse(self.center, self.radius * np.ones(2)).apply_matrix(matrix)
 
@@ -998,21 +941,6 @@ class ellipse(rect_like):
 	
 		return theta0 % (2*np.pi), theta_end
 
-	"""def __matmul__(self, M):	#this loses rotation/shear of the ellipse.
-		M = np.asarray(M, dtype=float)
-
-		center = (M @ np.append(self.center, 1))[:2]
-		A = M[:2, :2]
-
-		axes = np.diag(self.size / 2)
-		axes = A @ axes
-
-		size = 2 * np.linalg.norm(axes, axis=0)
-
-		if np.isclose(size[0], size[1]):
-			return circle(center, size[0] / 2)
-
-		return ellipse(center, size)"""
 
 	def apply_matrix(self, matrix):
 		xform = Node2D()
@@ -1589,11 +1517,6 @@ class Mesh(points):	#):
 			for i in range(len(self.indices) - 5, len(self.indices)):
 				self.flip_normal(i)
 
-	"""def translate(self, vector):
-		self.vertices = [x + vector for x in self.vertices]
-
-	def scale(self, vector):
-		self.vertices = [x * vector for x in self.vertices]"""
 
 	@property
 	def pivot(self): return self.aabb.normalize_point(np.zeros(self.dim))
@@ -1770,31 +1693,6 @@ class polyline(points, curve):
 	@property
 	def dual(p): return polyline([x.midpoint for x in p.edges], closed=p.closed)	#midpoint polygon
 	
-	"""def get_point01(self, t):	#point_from_proportion
-		p = self.perimeter
-		a = 0.0
-		for x in self.edges:
-			b = a + x.length / p
-			if a <= t and t <= b:
-				return x.get_point01((t - a) / (b - a))
-			a = b
-		return None"""
-
-	"""def _subcurve(self, start, end):
-		v = np.concatenate(([0.], np.cumsum([x.length for x in self.edges])))
-		v /= v[-1]
-	
-		points = [self.get_point01(start)]
-	
-		indices = np.where((v > start) & (v < end))[0]
-		points.extend(self[i] for i in indices)
-	
-		points.append(self.get_point01(end))
-
-		closed = np.allclose(points[0], points[-1], atol=1e-6)
-		
-		return polyline(points, closed=closed)"""
-
 	def get_point01(self, t):
 		if not self.edges:
 			return None
@@ -2236,15 +2134,6 @@ class bezier(points, curve):
 		derivative_points = [n * (p[i + 1] - p[i]) for i in range(n)]
 		return get_point(t, *derivative_points)
 
-	"""def sample(p, steps): return polyline([p.get_point(t) for t in np.linspace(0.0, 1.0, steps)], closed=False)
-
-	def length(p, resolution=100): return p.sample(resolution).perimeter
-
-	def sample_by_size(p, size, resolution=100):
-		length = p.length(resolution)
-		steps = max(2, int(math.ceil(length / size)))	#minimum 2 samples
-		#print(length, size, steps)
-		return p.sample(steps)"""
 
 class polybezier(points):	#composite Bézier curve or Bézier spline
 
@@ -2435,15 +2324,6 @@ class group(list, shape):
 	def aabb(self):
 		return aabb([x.aabb for x in self])
 
-	"""@aabb.setter
-	def aabb(self, value):
-		cur = self.aabb
-		for x in self:
-			x.aabb = value.denormalize_rect(cur.normalize_rect(x.aabb))
-
-	@property
-	def aabb(self): return aabb([x.global_aabb for x in self])"""
-
 	@aabb.setter
 	def aabb(self, value):
 		shape.aabb.fset(self, value)
@@ -2457,6 +2337,7 @@ class group(list, shape):
 	@global_aabb.setter
 	def global_aabb(self, value):
 		shape.global_aabb.fset(self, value)
+
 	@local_aabb.setter
 	def local_aabb(self, value):
 		shape.local_aabb.fset(self, value)
@@ -2479,36 +2360,6 @@ class group(list, shape):
 	
 				if not x:
 					self.pop(i)
-
-	"""@local_aabb.setter
-	def local_aabb(self, value):
-		cur = self.local_aabb
-		for x in self:
-			x.local_aabb = value.denormalize_rect(cur.normalize_rect(x.local_aabb))
-
-	@global_aabb.setter
-	def global_aabb(self, value):
-		cur = self.global_aabb
-		for x in self:
-			x.global_aabb = value.denormalize_rect(cur.normalize_rect(x.global_aabb))"""
-
-
-	"""@local_aabb.setter
-	def local_aabb(self, value):
-		cur = self.local_aabb
-		rects = [x.local_aabb for x in self]
-	
-		for x, rect in zip(self, rects):
-			x.local_aabb = value.denormalize_rect(cur.normalize_rect(rect))
-	
-	
-	@global_aabb.setter
-	def global_aabb(self, value):
-		cur = self.global_aabb
-		rects = [x.global_aabb for x in self]
-	
-		for x, rect in zip(self, rects):
-			x.global_aabb = value.denormalize_rect(cur.normalize_rect(rect))"""
 
 	def set_children(self, **kwargs):	# Set attributes on each child using a function, an indexed collection, or a shared value.
 		for i, x in enumerate(self):
