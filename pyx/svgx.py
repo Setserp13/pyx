@@ -50,7 +50,7 @@ def replace_all(root, replacements, exact_match=False):
 
 from pyx.mat.transform import R2
 
-def svg_arc_to_center(start, end, rx, ry, rotation, large_arc_flag, sweep_flag):
+"""def svg_arc_to_center(start, end, rx, ry, rotation, large_arc_flag, sweep_flag):
 	start, end = np.asarray([start, end], dtype=float)
 	rx, ry = abs(rx), abs(ry)
 
@@ -86,7 +86,7 @@ def svg_arc_to_center(start, end, rx, ry, rotation, large_arc_flag, sweep_flag):
 	else:
 		delta = -(-delta % math.tau)
 
-	return center, start_angle, start_angle + delta
+	return center, start_angle, start_angle + delta"""
 
 
 
@@ -263,25 +263,12 @@ class path(list, shape):
 						"Only circular arcs without rotation are supported"
 					)
 
-				result = svg_arc_to_center(
-					current,
-					end,
-					rx,
-					ry,
-					rotation,
-					int(large),
-					int(sweep)
+				result = elliptical_arc.start_end(
+					current, end, np.array([rx, ry]), rotation, int(large), int(sweep)
 				)
 
 				if result is not None:
-					center, start_angle, end_angle = result
-
-					segments.append(arc(
-						center,
-						rx,
-						start_angle,
-						end_angle
-					))
+					segments.append(result)
 				else:
 					segments.append(bezier([
 						current.copy(), end.copy()
