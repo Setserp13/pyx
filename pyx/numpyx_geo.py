@@ -1064,9 +1064,9 @@ class arc(curve):	#circle, curve):
 		size = 2 * np.linalg.norm(axes, axis=0)
 	
 		if np.isclose(size[0], size[1]) and np.allclose(axes.T @ axes, np.eye(2) * size[0]**2 / 4):
-			return arc(center, size[0] / 2, self.start, self.end)
+			return type(self)(center, size[0] / 2, self.start, self.end)
 	
-		result = arc(center, size / 2, self.start, self.end)
+		result = type(self)(center, size / 2, self.start, self.end)
 		result.axes = axes
 	
 		return result
