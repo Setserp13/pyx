@@ -599,11 +599,11 @@ class point(np.ndarray, shape):
 
 	@property
 	def aabb(self):
-		return aabb(self)
+		return aabb([self])
 
 	@aabb.setter
 	def aabb(self, value):
-		self[:] = set_aabb(self, value)[0]
+		self[:] = set_aabb([self], value)[0]
 
 	def apply_matrix(self, matrix):
 		res = self.deepcopy()
@@ -653,6 +653,14 @@ class points(np.ndarray, shape):
 		for k, v in getattr(obj, "__dict__", {}).items():
 			setattr(self, k, v)
 
+	def __getitem__(self, key):
+		result = super().__getitem__(key)
+	
+		if isinstance(result, np.ndarray) and result.ndim == 1:
+			return result.view(point)
+	
+		return result
+	
 	@property
 	def ndim(self): return len(self[0])
 	
