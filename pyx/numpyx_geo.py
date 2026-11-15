@@ -595,7 +595,7 @@ class point(np.ndarray, shape):
 			setattr(self, k, v)
 
 	@property
-	def ndim(self): return self.shape[0]
+	def ndim(self): return len(self)
 
 	@property
 	def aabb(self):
@@ -654,7 +654,7 @@ class points(np.ndarray, shape):
 			setattr(self, k, v)
 
 	@property
-	def ndim(self): return self.shape[1]
+	def ndim(self): return len(self[0])
 	
 	@property
 	def aabb(self):
