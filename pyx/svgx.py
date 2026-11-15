@@ -776,7 +776,7 @@ def get_attrib(obj):
 				attrib[k] = attrib[k].hex[:-2]
 
 	xform = attrib.get('transform')
-	if xform is not None and xform.ndim == 2:
+	if xform is not None and xform.dim == 2:
 		attrib['transform'] = transform_to_svg(xform.astype(Node2D))
 
 	for k in attrib:
