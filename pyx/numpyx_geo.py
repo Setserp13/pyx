@@ -1076,7 +1076,14 @@ class circular_arc(arc, circle):
 	pass
 
 class elliptical_arc(arc, ellipse):
+	def __init__(self, center, radius, start, end): #start is start angle and end is end angle
+		ellipse.__init__(self, center, radius)
+		self.start = start
+		self.end = end
 
+	@property
+	def radius(self): return self.extents
+	
 	@classmethod
 	def start_end(cls, start, end, radius, rotation, large_arc_flag, sweep_flag):
 		start, end = np.asarray([start, end], dtype=float)
