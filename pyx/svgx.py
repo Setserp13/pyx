@@ -17,7 +17,7 @@ from pyx.lxmlx import *	#localname
 import numpy as np
 import pyx.numpyx as npx
 import pyx.numpyx_geo as geo
-from pyx.numpyx_geo import curve, arc, bezier, line, polyline
+from pyx.numpyx_geo import curve, arc, circular_arc, elliptical_arc, bezier, line, polyline
 import pyx.lxmlx as lxmlx
 from pyx.mat.transform import Node2D, Transform
 import pyx.mat.transform as xf
