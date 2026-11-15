@@ -318,8 +318,10 @@ class path(list, shape):
 
 #generic.make_Element(path)
 
-def path_to_svg(obj, **kwargs): return lxmlx.element("path", d=obj.d, **kwargs)
-path.to_svg = lambda self: path_to_svg(self, **get_attrib(self))
+#def path_to_svg(obj, **kwargs): return lxmlx.element("path", d=obj.d, **kwargs)
+#path.to_svg = lambda self: path_to_svg(self, **get_attrib(self))
+def path_to_svg(obj, **kwargs): return lxmlx.element("path", d=join_curves(obj, obj.closed).d, **kwargs)
+geo.path.to_svg = lambda self: path_to_svg(self, **get_attrib(self))
 
 def path_from_svg(obj): return path.parse(obj.get('d'))
 
