@@ -349,7 +349,7 @@ bezier.d_command = property(
 	)
 )
 
-circular_arc.d_command = property(lambda self: (
+"""circular_arc.d_command = property(lambda self: (
 	f'A {self.radius} {self.radius} 0 '
 	f'{int(abs(self.sweep) > math.pi)} '
 	f'{int(self.sweep >= 0)} '
@@ -362,7 +362,25 @@ elliptical_arc.d_command = property(lambda self: (
 	f'{int(self.sweep >= 0)} '
 	f'{self.get_point(self.end)[0]} '
 	f'{self.get_point(self.end)[1]}'
+))"""
+
+
+def elliptical_arc_d_command(self):
+	return (
+		f'A {self.radius[0]} {self.radius[1]} '
+		f'{math.degrees(math.atan2(self.axes[1, 0], self.axes[0, 0]))} '
+		f'{int(abs(self.delta) > math.pi)} '
+		f'{int(self.delta >= 0)} '
+		f'{self.get_point(self.end)[0]} '
+		f'{self.get_point(self.end)[1]}'
+	)
+
+elliptical_arc.d_command = property(elliptical_arc_d_command)
+
+circular_arc.d_command = property(lambda self: elliptical_arc_d_command(
+	elliptical_arc(self.center, np.ones(2) * self.radius, self.start, self.end)
 ))
+
 def join_curves(curves, closed=False):	# Join curves and points into a single continuous SVG path, inserting straight lines wherever consecutive elements are disconnected and optionally closing the path.
 	if not curves:
 		return path()
