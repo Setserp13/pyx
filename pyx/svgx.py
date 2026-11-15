@@ -367,8 +367,7 @@ elliptical_arc.d_command = property(lambda self: (
 
 def elliptical_arc_d_command(self):
 	return (
-		f'A {self.radius[0]} {self.radius[1]} '
-		f'{math.degrees(math.atan2(self.axes[1, 0], self.axes[0, 0]))} '
+		f'A {self.radius[0]} {self.radius[1]} 0'	#f'{math.degrees(math.atan2(self.axes[1, 0], self.axes[0, 0]))} '
 		f'{int(abs(self.delta) > math.pi)} '
 		f'{int(self.delta >= 0)} '
 		f'{self.get_point(self.end)[0]} '
