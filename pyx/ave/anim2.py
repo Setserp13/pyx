@@ -66,6 +66,39 @@ class Animation:
 			self.finish.invoke()	#one-time callback
 			self.finished = True
 
+class FunctionAnimation(Animation):
+	def __init__(self, target, property, value_function, start_time=0,
+			duration=1, **kwargs):
+
+		super().__init__(
+			target,
+			property,
+			start_time=start_time,
+			duration=duration,
+			value_function=value_function,
+			**kwargs
+		)
+
+	def apply(self, time):
+		if time < self.start_time or self.finished:
+			return
+
+		if self.start is None:
+			self.start = generic.get(self.target, self.property)
+
+		t = np.clip(time - self.start_time, 0, self.duration)
+
+		value = self.value_function(t)
+
+		self.update.invoke(t)
+		generic.set(self.target, self.property, value)
+
+		if time >= self.end_time:
+			self.finish.invoke()
+			self.finished = True
+
+
+
 
 class Timeline:
 	def __init__(self, fps=30, duration=None):
@@ -128,6 +161,11 @@ class Scene:
 			Animation(*args, **kwargs)
 		)
 
+	def animate_function(self, *args, **kwargs):
+		return self.timeline.add(
+			FunctionAnimation(*args, **kwargs)
+		)
+	
 	def assign(self, target, property, value, time):
 		"""Set a property to a value at a specific time."""
 		self.animate(
