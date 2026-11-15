@@ -1146,48 +1146,65 @@ class elliptical_arc(arc, ellipse):
 	@property
 	def radius(self): return self.extents
 	
+class elliptical_arc(arc, ellipse):
+
+	def __init__(self, center, radius, start, end, rotation=0):
+		ellipse.__init__(self, center, radius * 2)
+		self.start = start
+		self.end = end
+		self.rotation = rotation
+
+	@property
+	def radius(self):
+		return self.extents
+
 	@classmethod
 	def start_end(cls, start, end, radius, rotation, large_arc_flag, sweep_flag):
 		start, end = np.asarray([start, end], dtype=float)
 		rx, ry = np.abs(radius)
-	
+
 		if rx == 0 or ry == 0 or np.allclose(start, end):
 			return None
-	
+
 		phi = math.radians(rotation)
 		R = R2(phi)
-	
+
 		x1p, y1p = R @ ((start - end) / 2)
-	
+
 		scale = max(1., np.sqrt(x1p**2 / rx**2 + y1p**2 / ry**2))
 		rx, ry = rx * scale, ry * scale
-	
+
 		rx2, ry2 = rx**2, ry**2
 		denom = rx2 * y1p**2 + ry2 * x1p**2
-	
+
 		if np.isclose(denom, 0):
 			return None
-	
+
 		k = np.sqrt(max(0., (rx2 * ry2 - rx2 * y1p**2 - ry2 * x1p**2) / denom))
-	
+
 		if large_arc_flag == sweep_flag:
 			k = -k
-	
+
 		cxp, cyp = k * rx * y1p / ry, -k * ry * x1p / rx
 		center = R.T @ [cxp, cyp] + (start + end) / 2
-	
+
 		u = np.array([(x1p - cxp) / rx, (y1p - cyp) / ry])
 		v = np.array([(-x1p - cxp) / rx, (-y1p - cyp) / ry])
-	
+
 		start_angle = np.arctan2(u[1], u[0])
 		delta = np.arctan2(np.cross(u, v), np.dot(u, v))
-	
+
 		if sweep_flag:
 			delta %= math.tau
 		else:
 			delta = -(-delta % math.tau)
-	
-		return cls(center, np.array([rx, ry]), start_angle, start_angle + delta)
+
+		return cls(
+			center,
+			np.array([rx, ry]),
+			start_angle,
+			start_angle + delta
+		).set(transform=Node2D(rotation=phi))
 
 
 
