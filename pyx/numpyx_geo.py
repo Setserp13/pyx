@@ -55,7 +55,7 @@ def aabb_xform(source, target):
 
 class shape(Element):
 	@property
-	def ndim(self): raise NotImplementedError
+	def dim(self): raise NotImplementedError
 	
 	def __add__(self, value): raise NotImplementedError
 
@@ -80,7 +80,7 @@ class shape(Element):
 
 	def scale(self, factor, pivot=None):
 		if pivot is None:
-			pivot = np.zeros(self.ndim)
+			pivot = np.zeros(self.dim)
 
 		result = copy.deepcopy(self)
 		return pivot + (result - pivot) * factor
@@ -123,16 +123,16 @@ class shape(Element):
 		transform = getattr(self, 'attrib', {}).get('transform')
 	
 		if transform is None:
-			transform = Transform.identity(self.ndim)
+			transform = Transform.identity(self.dim)
 			
-			"""pivot = np.ones(self.ndim) * .5
+			"""pivot = np.ones(self.dim) * .5
 			transform.position = self.aabb.denormalize_point(pivot)
-			self.aabb = self.aabb.set_position(pivot, np.zeros(self.ndim))"""	#group.aabb represents the combined bounds of its children. You shouldn't assign a modified AABB to a group as if it were a single primitive.
+			self.aabb = self.aabb.set_position(pivot, np.zeros(self.dim))"""	#group.aabb represents the combined bounds of its children. You shouldn't assign a modified AABB to a group as if it were a single primitive.
 			
 			self.xform = transform
 	
 		return transform
-	#def xform(self): return getattr(self, 'attrib', {}).get('transform', Transform.identity(self.ndim))	#, None)
+	#def xform(self): return getattr(self, 'attrib', {}).get('transform', Transform.identity(self.dim))	#, None)
 
 	@xform.setter
 	def xform(self, value): self.set(transform=value)
@@ -295,7 +295,7 @@ class rect_like(shape):	#interval
 	def __mul__(self, value): return type(self).min_size(self.min, self.size * vector)
 	
 	@property
-	def ndim(self): return len(self.min)
+	def dim(self): return len(self.min)
 
 	def __repr__(self): return f'{type(self).__name__}(min={self.min}, size={self.size})'
 
@@ -421,13 +421,13 @@ class rect(rect_like):
 		return rect.center_size(rect.face_center(axis, dir), size)
 
 	def ndface_centers(self, axes):	#The faces are parallel to the Euclidean space defined by the axes
-		p = [[0.5] if i in axes else [0.0, 1.0] for i in range(self.ndim)]
+		p = [[0.5] if i in axes else [0.0, 1.0] for i in range(self.dim)]
 		#print(p)
 		return [self.denormalize_point(np.array(x)) for x in product(*p)]
 
 	def ndfaces(self, axes):
 		centers = self.ndface_centers(axes)
-		return [rect.center_size(center, np.array([self.size[i] if i in axes else 0.0 for i in range(self.ndim)])) for center in centers]
+		return [rect.center_size(center, np.array([self.size[i] if i in axes else 0.0 for i in range(self.dim)])) for center in centers]
 
 	@property
 	def vertices(self): return points(list(product(*zip(self.min, self.max)))).set(**getattr(self, 'attrib', {}))
@@ -436,7 +436,7 @@ class rect(rect_like):
 	def corners(self):
 		# Generate corners in Gray-code order:
 		# consecutive corners differ in exactly one coordinate.
-		n = self.ndim
+		n = self.dim
 	
 		points = [
 			[
@@ -735,24 +735,24 @@ class ball(shape):
 		self.radius = radius
 
 	@property
-	def ndim(self): return self.center.size	#dim(self):
+	def dim(self): return self.center.size
 
 	@property
 	def diameter(self): return self.radius * 2
 
 	@property
 	def surface_area(self):
-		n = self.ndim
+		n = self.dim
 		return 2 * np.pi ** (n / 2) * self.radius ** (n - 1) / math.gamma(n / 2)
 
 	@property
 	def volume(self):
-		n = self.ndim
+		n = self.dim
 		return np.pi ** (n / 2) * self.radius ** n / math.gamma(n / 2 + 1)
 
 	@property
 	def aabb(self):
-		return rect.center_size(self.center, np.ones(self.ndim) * self.diameter)
+		return rect.center_size(self.center, np.ones(self.dim) * self.diameter)
 
 	@aabb.setter
 	def aabb(self, value):
@@ -1547,7 +1547,7 @@ class Mesh(points):	#):
 		old_size = self.shape[0]
 		new_size = old_size + len(vertices)
 
-		self.resize((new_size, self.ndim), refcheck=False)
+		self.resize((new_size, self.dim), refcheck=False)
 		self[old_size:] = vertices
 
 		self.indices.append(np.arange(start_index, new_size))
@@ -1572,7 +1572,7 @@ class Mesh(points):	#):
 		self.vertices = [x * vector for x in self.vertices]"""
 
 	@property
-	def pivot(self): return self.aabb.normalize_point(np.zeros(self.ndim))
+	def pivot(self): return self.aabb.normalize_point(np.zeros(self.dim))
 
 	@pivot.setter	#pivot is normalized
 	def pivot(self, value): self.translate(-self.aabb.denormalize_point(value))
@@ -2405,7 +2405,7 @@ class group(list, shape):
 		self.attrib = {}
 	
 	@property
-	def ndim(self): return self[0].ndim
+	def dim(self): return self[0].dim
 
 	@property
 	def aabb(self):
@@ -2518,7 +2518,7 @@ class path(group):
 
 		item = self[-1]
 
-		if isinstance(item, np.ndarray) and item.ndim == 1:
+		if isinstance(item, np.ndarray) and item.dim == 1:
 			return item
 		elif isinstance(item, curve):
 			return item.get_point01(1.)
