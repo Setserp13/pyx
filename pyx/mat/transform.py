@@ -267,8 +267,8 @@ class Basis(np.ndarray):
 		U = self._upper
 		return np.array([
 			U[i, j] / U[j, j]
-			for i in range(self.ndim)
-			for j in range(i + 1, self.ndim)
+			for i in range(self.dim)
+			for j in range(i + 1, self.dim)
 		])
 
 	@scale.setter
@@ -373,11 +373,11 @@ class Transform(Node):
 	def dim(self): return len(self.position)
 
 	@classmethod
-	def identity(cls, ndim):
+	def identity(cls, dim):
 		return cls(
-			position=np.zeros(ndim),
-			rotation=np.eye(ndim),
-			scale=np.ones(ndim)
+			position=np.zeros(dim),
+			rotation=np.eye(dim),
+			scale=np.ones(dim)
 		)
 
 	@classmethod
@@ -432,14 +432,14 @@ class Transform(Node):
 
 	def to_local(self, point):
 		p = np.append(point, 1)
-		return (self.inv_global_TRS @ p)[:self.ndim]
+		return (self.inv_global_TRS @ p)[:self.dim]
 
 	def to_global(self, point):
 		p = np.append(point, 1)
-		return (self.global_TRS @ p)[:self.ndim]
+		return (self.global_TRS @ p)[:self.dim]
 
 	@property
-	def global_position(self): return self.global_TRS[:self.ndim, -1]
+	def global_position(self): return self.global_TRS[:self.dim, -1]
 
 	@global_position.setter
 	def global_position(self, value):
@@ -462,11 +462,11 @@ class Transform(Node):
 
 	@property
 	def basis(self):
-		return self.TRS[:self.ndim, :self.ndim]
+		return self.TRS[:self.dim, :self.dim]
 
 	@property
 	def global_basis(self):	# BASIS (n×n matrix of world axes) -> upper-left n×n
-		return self.global_TRS[:self.ndim, :self.ndim]
+		return self.global_TRS[:self.dim, :self.dim]
 	
 	@property
 	def matrix(self): return self.TRS
@@ -478,7 +478,7 @@ class Transform(Node):
 	def matrix(self, value):
 		value = np.asarray(value, dtype=float)
 	
-		n = self.ndim
+		n = self.dim
 	
 		if value.shape != (n + 1, n + 1):
 			raise ValueError("Matrix must be an (n+1) x (n+1) matrix")
@@ -528,7 +528,7 @@ class Transform(Node):
 			value = value.matrix
 	
 		value = np.asarray(value, dtype=float)
-		n = self.ndim + 1
+		n = self.dim + 1
 	
 		if value.ndim != 2 or value.shape[0] != value.shape[1] or value.shape[0] > n:
 			raise ValueError("Incompatible matrix dimensions")
