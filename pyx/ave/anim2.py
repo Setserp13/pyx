@@ -88,7 +88,7 @@ class FunctionAnimation(Animation):
 
 		t = np.clip(time - self.start_time, 0, self.duration)
 
-		value = self.value_function(t)
+		value = self.value_function(t)	#0 <= t <= duration
 
 		self.update.invoke(t)
 		generic.set(self.target, self.property, value)
