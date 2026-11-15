@@ -2454,6 +2454,13 @@ class group(list, shape):
 	@property
 	def global_aabb(self): return aabb([x.global_aabb for x in self])
 
+	@global_aabb.setter
+	def global_aabb(self, value):
+		shape.global_aabb.fset(self, value)
+	@local_aabb.setter
+	def local_aabb(self, value):
+		shape.local_aabb.fset(self, value)
+
 	def remove_if(self, cond):
 		for i in range(len(self) - 1, -1, -1):
 			x = self[i]
