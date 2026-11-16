@@ -10,7 +10,7 @@ import copy
 import pyx.numpyx as npx
 import pyx.generic.generic as generic
 
-class Animation:
+"""class Animation:
 	def __init__(self, target, property, start=None, end=None, start_time=0,
 			duration=1, ease=None, value_function=None):
 
@@ -64,40 +64,77 @@ class Animation:
 
 		if time > self.end_time:
 			self.finish.invoke()	#one-time callback
-			self.finished = True
+			self.finished = True"""
 
-class FunctionAnimation(Animation):
-	def __init__(self, target, property, value_function, start_time=0,
-			duration=1, **kwargs):
+class Animation:
+	def __init__(self, start_time=0, duration=1):
+		self.start_time = start_time
+		self.duration = duration
+		self.on_finish = generic.Event()
+		self.finished = False
 
-		super().__init__(
-			target,
-			property,
-			start_time=start_time,
-			duration=duration,
-			value_function=value_function,
-			**kwargs
-		)
+	@property
+	def end_time(self): return self.start_time + self.duration
 
-	def apply(self, time):
+	def on_finish(self, method):
+		self.finish.append(method)
+		return self
+
+	def _apply(self, time): raise NotImplementedError
+		
+	def apply(self, time):	#0 <= t <= duration
 		if time < self.start_time or self.finished:
 			return
 
-		if self.start is None:
-			self.start = generic.get(self.target, self.property)
-
-		t = np.clip(time - self.start_time, 0, self.duration)
-
-		value = self.value_function(t)	#0 <= t <= duration
-
-		self.update.invoke(t)
-		#generic.set(self.target, self.property, value)
+		self._apply(time)
 
 		if time >= self.end_time:
-			self.finish.invoke()
+			self.finish.invoke()	#one-time callback
 			self.finished = True
 
+class FunctionTweener(Animation):
+	def __init__(self, function, start_time=0, duration=1):
+		super().__init__(start_time, duration)
+		self.function = generic.Event([function])
 
+	def _apply(self, t):
+		t = np.clip(time - self.start_time, 0, self.duration)
+		self.function.invoke(t)
+
+class PropertyTweener(Animation):
+	def __init__(self, target, property, start=None, end=None, start_time=0, duration=1, ease=None, value_function=None):
+		super().__init__(start_time, duration)
+		self.target = target
+		self.property = property
+		self.start = start
+		self.end = end
+		self.ease = ease or (lambda t: t)
+		self.value_function = value_function
+		self.update = generic.Event()
+
+	def on_update(self, method):
+		self.update.append(method)
+		return self
+
+	def _apply(self, time):
+		
+		if self.start is None:
+			self.start = generic.get(self.target, self.property)	#self.target.get_value(self.property)
+		
+		if self.duration == 0:
+			t = 1. if time >= self.start_time else 0.
+		else:
+			t = np.clip((time - self.start_time) / self.duration, 0, 1)
+		t = self.ease(t)
+
+		if self.value_function:
+			value = self.value_function(t)
+		else:
+			value = npx.lerp(self.start, self.end, t)
+
+		self.update.invoke(t)
+		
+		generic.set(self.target, self.property, value)
 
 
 class Timeline:
@@ -158,12 +195,12 @@ class Scene:
 
 	def animate(self, *args, **kwargs):
 		return self.timeline.add(
-			Animation(*args, **kwargs)
+			PropertyTweener(*args, **kwargs)
 		)
 
 	def animate_function(self, *args, **kwargs):
 		return self.timeline.add(
-			FunctionAnimation(*args, **kwargs)
+			FunctionTweener(*args, **kwargs)
 		)
 	
 	def assign(self, target, property, value, time):
