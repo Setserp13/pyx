@@ -91,7 +91,7 @@ class FunctionAnimation(Animation):
 		value = self.value_function(t)	#0 <= t <= duration
 
 		self.update.invoke(t)
-		generic.set(self.target, self.property, value)
+		#generic.set(self.target, self.property, value)
 
 		if time >= self.end_time:
 			self.finish.invoke()
