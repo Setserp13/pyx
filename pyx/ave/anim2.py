@@ -70,7 +70,7 @@ class Animation:
 	def __init__(self, start_time=0, duration=1):
 		self.start_time = start_time
 		self.duration = duration
-		self.on_finish = generic.Event()
+		self.finish = generic.Event()
 		self.finished = False
 
 	@property
