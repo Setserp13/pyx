@@ -97,7 +97,7 @@ class FunctionTweener(Animation):
 		super().__init__(start_time, duration)
 		self.function = generic.Event([function])
 
-	def _apply(self, t):
+	def _apply(self, time):
 		t = np.clip(time - self.start_time, 0, self.duration)
 		self.function.invoke(t)
 
