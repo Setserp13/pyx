@@ -116,6 +116,8 @@ class Timeline:
 		for animation in self.animations:
 			animation.apply(time)
 
+	@property
+	def dt(self): return 1. / self.fps	#delta time
 
 class Scene:
 	def __init__(self, width=640, height=360, fps=30, duration=5):
