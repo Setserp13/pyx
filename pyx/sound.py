@@ -1,6 +1,7 @@
 import numpy as np
 import librosa
 import soundfile as sf
+from pyx.timeline import Interval, Time
 
 def noise(n):
 	return np.random.randn(n)
@@ -238,3 +239,80 @@ def periodic_wave(
 		signal = np.repeat(signal[:, None], channels, axis=1)
 
 	return audio(signal.astype(dtype), sr=sr)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def overlay(audio1, audio2, start_time=0):
+	print(type(audio1), type(audio2))
+	assert audio1.sr == audio2.sr, 'Sample rates must match'
+
+	start = int(start_time * audio1.sr)
+	end = max(len(audio1), start + len(audio2))
+
+	shape = (end,) + audio1.shape[1:]
+	result = np.zeros(shape, dtype=np.result_type(audio1, audio2, np.float32))
+
+	result[:len(audio1)] += audio1
+	result[start:start + len(audio2)] += audio2
+
+	return audio(result, sr=audio1.sr)
+
+class audio_clip(Interval):
+	def __init__(self, media, start=0, media_start=0, duration=None):
+		if duration is None:
+			duration = media.duration - media_start
+
+		super().__init__(start, start + duration)
+
+		self.media = media
+		self.media_start = Time(media_start)
+
+	@property
+	def media_end(self):
+		return Time(self.media_start + self.duration)
+
+	@property
+	def segment(self):
+		return self.media.segment(self.media_start, self.media_end)
+
+class audio_track:
+	def __init__(self, sr=44100):
+		self.sr = sr
+		self.items = []
+
+	def add(self, audio, start=0, media_start=0, duration=None):
+		clip = audio_clip(audio, start, media_start, duration)
+		self.items.append(clip)
+		return clip
+
+	def append(self, audio, media_start=0, duration=None):
+		return self.add(
+			audio,
+			start=self.duration,
+			media_start=media_start,
+			duration=duration
+		)
+
+	@property
+	def duration(self):
+		return max((x.end for x in self.items), default=Time(0))
+
+	@property
+	def audio(self):
+		result = silence(float(self.duration), sr=self.sr)
+
+		for clip in self.items:
+			result = overlay(result, clip.segment, start_time=clip.start)
+
+		return result
