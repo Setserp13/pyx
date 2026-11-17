@@ -258,7 +258,7 @@ class rect_like(shape):	#interval
 
 	def __add__(self, vector): return type(self).min_size(self.min + vector, self.size)
 
-	def __mul__(self, value): return type(self).min_size(self.min, self.size * vector)
+	def __mul__(self, value): return type(self).min_size(self.min, self.size * value)
 	
 	@property
 	def dim(self): return len(self.min)
