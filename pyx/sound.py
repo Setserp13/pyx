@@ -21,9 +21,11 @@ def silence(duration, sr=22050, channels=1, dtype=np.float32):
 	samples = int(duration * sr)
 
 	if channels == 1:
-		return np.zeros(samples, dtype=dtype)
+		data = np.zeros(samples, dtype=dtype)
 	else:
-		return np.zeros((samples, channels), dtype=dtype)
+		data = np.zeros((samples, channels), dtype=dtype)
+
+	return audio(data, sr=sr)
 
 class audio(np.ndarray):
 	def __new__(cls, input_array, sr=44100):
