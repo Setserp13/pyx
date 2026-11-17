@@ -254,7 +254,6 @@ def periodic_wave(
 
 
 def overlay(audio1, audio2, start_time=0):
-	print(type(audio1), type(audio2))
 	assert audio1.sr == audio2.sr, 'Sample rates must match'
 
 	start = int(start_time * audio1.sr)
