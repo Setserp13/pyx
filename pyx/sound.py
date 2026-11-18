@@ -142,6 +142,37 @@ class audio(np.ndarray):
 	
 		return self.apply(lambda f: np.fft.rfft(f * w, axis=1), frame_length, hop_length)
 
+	def spectrogram(audio, n_fft=2048, hop_length=512):
+		samples = np.asarray(audio.to_mono(), dtype=np.float32)
+	
+		if len(samples) == 0:
+			raise ValueError('Audio is empty')
+	
+		window = np.hanning(n_fft)
+		spectra = []
+	
+		for start in range(0, len(samples), hop_length):
+			frame = samples[start:start + n_fft]
+	
+			if len(frame) < n_fft:
+				frame = np.pad(frame, (0, n_fft - len(frame)))
+	
+			spectrum = np.abs(np.fft.rfft(frame * window))
+			spectrum /= max(window.sum(), 1e-12)
+	
+			if n_fft % 2 == 0:
+				spectrum[1:-1] *= 2
+			else:
+				spectrum[1:] *= 2
+	
+			spectra.append(spectrum)
+	
+		times = np.arange(len(spectra)) * hop_length / audio.sr
+		frequencies = np.fft.rfftfreq(n_fft, 1 / audio.sr)
+	
+		magnitudes = np.asarray(spectra).T
+	
+		return times, frequencies, magnitudes
 
 def concatenate(ls, gap_seconds=0.0):
 	arrays = []
