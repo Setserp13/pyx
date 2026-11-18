@@ -118,22 +118,38 @@ class audio(np.ndarray):
 	
 		return audio(samples, sr=self.sr)
 
-	def frames(y, frame_length, hop_length):	#Slice a data array into (overlapping) frames.
-		
-		if y.ndim == 1:
-			n_frames = 1 + (len(y) - frame_length) // hop_length
-			shape = (n_frames, frame_length)
-			strides = (y.strides[0] * hop_length, y.strides[0])
+	def frames(y, frame_length, hop_length, center=False):
+		"""Slice an array into overlapping frames."""
 	
-		else:
-			n_samples, n_channels = y.shape
-			n_frames = 1 + (n_samples - frame_length) // hop_length
+		if frame_length <= 0 or hop_length <= 0:
+			raise ValueError('frame_length and hop_length must be positive')
 	
-			shape = (n_frames, frame_length, n_channels)
-			strides = (y.strides[0] * hop_length, y.strides[0], y.strides[1])
+		y = np.asarray(y)
 	
-		return np.lib.stride_tricks.as_strided(y, shape=shape, strides=strides)
+		if y.ndim not in (1, 2):
+			raise ValueError('Expected a 1D or 2D array')
+	
+		if center:
+			pad = frame_length // 2
+			padding = [(pad, pad)] + [(0, 0)] * (y.ndim - 1)
+			y = np.pad(y, padding)
+	
+		if len(y) < frame_length:
+			return np.empty((0, frame_length) + y.shape[1:], dtype=y.dtype)
+	
+		n_frames = 1 + (len(y) - frame_length) // hop_length
+	
+		shape = (n_frames, frame_length) + y.shape[1:]
+		strides = (y.strides[0] * hop_length,) + y.strides
+	
+		return np.lib.stride_tricks.as_strided(
+			y,
+			shape=shape,
+			strides=strides,
+			writeable=False
+		)
 
+	
 	def apply(self, func, frame_length, hop_length):
 		frames = self.frames(frame_length, hop_length)
 		values = func(frames)
@@ -177,25 +193,22 @@ class audio(np.ndarray):
 	
 		return magnitudes
 	
+	@staticmethod
+	def frequencies(sr, n_fft):
+		"""Return the frequency values (Hz) for each bin of a real FFT."""
+		if sr <= 0:
+			raise ValueError('sr must be positive')
+		if n_fft <= 0:
+			raise ValueError('n_fft must be positive')
 	
-	def _audio_frames(samples, n_fft, hop_length, center=True):
-		"""Generate window-sized audio frames."""
-		if center:
-			pad = n_fft // 2
-			samples = np.pad(samples, (pad, pad))
-	
-		for start in range(0, len(samples) - n_fft + 1, hop_length):
-			yield samples[start:start + n_fft]
-	
-	def _frequencies(sr, n_fft):
 		return np.fft.rfftfreq(n_fft, d=1 / sr)
 	
-	def spectrum(audio, n_fft=2048):
+	def spectrum(self, n_fft=2048):
 		"""Return (frequencies, magnitudes) for an audio signal."""
 		if n_fft <= 0:
 			raise ValueError('n_fft must be positive')
 	
-		samples = audio.to_mono()
+		samples = self.to_mono()
 	
 		if len(samples) == 0:
 			raise ValueError('Audio is empty')
@@ -208,9 +221,9 @@ class audio(np.ndarray):
 		window = np.hanning(n_fft)
 		magnitudes = _fft_magnitude(samples, window)
 	
-		return _frequencies(audio.sr, n_fft), magnitudes
+		return audio.frequencies(self.sr, n_fft), magnitudes
 	
-	def spectrogram(audio, n_fft=2048, hop_length=512, center=True):
+	def spectrogram(self, n_fft=2048, hop_length=512, center=True):
 		"""Return (times, frequencies, magnitudes) using STFT."""
 		if n_fft <= 0 or hop_length <= 0:
 			raise ValueError('n_fft and hop_length must be positive')
@@ -224,11 +237,11 @@ class audio(np.ndarray):
 	
 		spectra = [
 			_fft_magnitude(frame, window)
-			for frame in _audio_frames(samples, n_fft, hop_length, center)
+			for frame in self.frames(n_fft, hop_length, center)
 		]
 	
-		times = np.arange(len(spectra)) * hop_length / audio.sr
-		frequencies = _frequencies(audio.sr, n_fft)
+		times = np.arange(len(spectra)) * hop_length / self.sr
+		frequencies = audio.frequencies(self.sr, n_fft)
 		magnitudes = np.asarray(spectra).T
 	
 		return times, frequencies, magnitudes
