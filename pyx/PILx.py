@@ -308,3 +308,47 @@ class text(tspan):
 		return result
 
 #for x in [image, tspan, text]: generic.make_Element(x)
+
+
+#SCREEN_SIZES	#put it in screensizes module later
+
+# Standard definition (4:3)
+SD_240P = (320, 240)
+SD_480P = (640, 480)
+SD_576P = (720, 576)
+
+# Standard definition widescreen (16:9)
+SD_480P_WIDE = (854, 480)
+
+# High definition (16:9)
+HD_720P = (1280, 720)
+HD_1080P = (1920, 1080)
+
+# Quad HD (16:9)
+QHD_1440P = (2560, 1440)
+
+# Ultra HD (16:9)
+UHD_4K = (3840, 2160)
+UHD_8K = (7680, 4320)
+
+# DCI cinema
+DCI_2K = (2048, 1080)
+DCI_4K = (4096, 2160)
+
+# Ultrawide
+UW_1080P = (2560, 1080)
+UW_QHD = (3440, 1440)
+UW_4K = (5120, 2160)
+
+# Vertical video (9:16)
+VERTICAL_480P = (480, 854)
+VERTICAL_720P = (720, 1280)
+VERTICAL_1080P = (1080, 1920)
+VERTICAL_1440P = (1440, 2560)
+VERTICAL_4K = (2160, 3840)
+
+# Square video (1:1)
+SQUARE_480P = (480, 480)
+SQUARE_720P = (720, 720)
+SQUARE_1080P = (1080, 1080)
+SQUARE_4K = (2160, 2160)
