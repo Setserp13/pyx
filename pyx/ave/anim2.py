@@ -216,8 +216,8 @@ class Scene:
 
 	def draw(self, time=0):
 		self.timeline.apply(time)
-		return canvas(self.objects, self.size)
-
+		#return canvas(self.objects, self.size)
+		return geo.group(self.objects)
 
 class canvas(geo.group):
 	def __init__(self, items, size):
