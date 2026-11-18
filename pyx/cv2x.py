@@ -165,7 +165,7 @@ def cv2_clip_layer(overlay, mask, origin, image):
 	).clip(0, 255).astype(image.dtype)"""
 
 
-def cv2_paint(image, color, draw, obj=None, padding=2):
+"""def cv2_paint(image, color, draw, obj=None, padding=2):
 	result = color	#cv2_color(color)
 
 	if result is None:
@@ -226,6 +226,71 @@ def cv2_paint(image, color, draw, obj=None, padding=2):
 	overlay, mask, image_region = result
 
 	# Composite.
+	cv2_composite(image_region, overlay, mask, alpha)"""
+
+
+def cv2_paint(image, color, draw, obj=None, padding=2):
+	result = color
+
+	if result is None:
+		return
+
+	bgr, alpha = result
+	alpha = float(alpha)
+
+	if alpha <= 0:
+		return
+
+	if alpha >= 1 and image.shape[2] == 3:
+		if obj is None or XFORM_MODE in (XFORM_NONE, XFORM_TRS):
+			draw(image, bgr, np.zeros(2))
+			return
+
+	if obj is None or XFORM_MODE in (XFORM_NONE, XFORM_TRS):
+		if alpha >= 1 and image.shape[2] == 4:
+			draw(image, (*bgr, 255), np.zeros(2))
+			return
+
+		overlay = image[:, :, :3].copy()
+		draw(overlay, bgr, np.zeros(2))
+
+		# Recover the drawn pixels from the original image.
+		mask = np.any(overlay != image[:, :, :3], axis=2).astype(np.uint8) * 255
+
+		cv2_composite(image, overlay, mask, alpha)
+		return
+
+	if XFORM_MODE not in (XFORM_AABB, XFORM_AFFINE):
+		raise ValueError(f'Invalid XFORM_MODE: {XFORM_MODE}')
+
+	aabb = obj.aabb
+	global_matrix = obj.xform.global_TRS
+
+	if XFORM_MODE == XFORM_AABB:
+		transformed_aabb = (aabb @ global_matrix).aabb
+		matrix = geo.aabb_xform(aabb, transformed_aabb).TRS
+	else:
+		matrix = global_matrix
+
+	result = cv2_layer(image, aabb, draw, bgr, padding)
+
+	if result is None:
+		return
+
+	overlay, mask, origin = result
+
+	overlay, mask, origin = cv2_transform_layer(
+		overlay, mask, matrix, origin,
+		(image.shape[1], image.shape[0])
+	)
+
+	result = cv2_clip_layer(overlay, mask, origin, image)
+
+	if result is None:
+		return
+
+	overlay, mask, image_region = result
+
 	cv2_composite(image_region, overlay, mask, alpha)
 
 def cv2_composite(dst, src, mask, alpha=1.0):
