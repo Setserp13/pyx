@@ -65,6 +65,24 @@ class audio(np.ndarray):
 	def amp_at(self, t, channel=None):	#Return sample amplitude at time t (seconds).
 		return np.abs(self.sample_at(t, channel))
 
+	"""def amp_at(self, t, channel=None):
+		if not (0 <= t < self.duration):
+			raise ValueError("Time outside audio duration")
+	
+		idx = t * self.sr
+		i = int(idx)
+		f = idx - i
+	
+		if i + 1 >= len(self):
+			sample = self[i]
+		else:
+			sample = npx.lerp(self[i], self[i + 1], f)
+	
+		if channel is not None and self.ndim > 1:
+			sample = sample[channel]
+	
+		return np.abs(sample)"""
+		
 	def segment(self, t_start, t_end):
 		"""
 		Return an audio segment between t_start and t_end (seconds).
@@ -92,10 +110,12 @@ class audio(np.ndarray):
 			return audio(self.copy(), sr=self.sr)
 		return audio(self / peak, sr=self.sr)
 
-	def to_mono(self):
-		samples = self.copy()
-		if samples.ndim > 1:	# Convert stereo → mono if needed
+	def to_mono(self):	# Raw mono waveform
+		samples = self.astype(np.float32, copy=True)
+	
+		if samples.ndim > 1:
 			samples = samples.mean(axis=1)
+	
 		return audio(samples, sr=self.sr)
 
 	def frames(y, frame_length, hop_length):	#Slice a data array into (overlapping) frames.
@@ -142,37 +162,83 @@ class audio(np.ndarray):
 	
 		return self.apply(lambda f: np.fft.rfft(f * w, axis=1), frame_length, hop_length)
 
-	def spectrogram(audio, n_fft=2048, hop_length=512):
-		samples = np.asarray(audio.to_mono(), dtype=np.float32)
+	def _fft_magnitude(frame, window):
+		"""Calculate the normalized single-sided magnitude spectrum."""
+		n_fft = len(window)
+	
+		magnitudes = np.abs(np.fft.rfft(frame * window))
+	
+		magnitudes /= max(window.sum(), 1e-12)
+	
+		if n_fft % 2 == 0:
+			magnitudes[1:-1] *= 2
+		else:
+			magnitudes[1:] *= 2
+	
+		return magnitudes
+	
+	
+	def _audio_frames(samples, n_fft, hop_length, center=True):
+		"""Generate window-sized audio frames."""
+		if center:
+			pad = n_fft // 2
+			samples = np.pad(samples, (pad, pad))
+	
+		for start in range(0, len(samples) - n_fft + 1, hop_length):
+			yield samples[start:start + n_fft]
+	
+	def _frequencies(sr, n_fft):
+		return np.fft.rfftfreq(n_fft, d=1 / sr)
+	
+	def spectrum(audio, n_fft=2048):
+		"""Return (frequencies, magnitudes) for an audio signal."""
+		if n_fft <= 0:
+			raise ValueError('n_fft must be positive')
+	
+		samples = audio.to_mono()
+	
+		if len(samples) == 0:
+			raise ValueError('Audio is empty')
+	
+		if len(samples) < n_fft:
+			samples = np.pad(samples, (0, n_fft - len(samples)))
+		else:
+			samples = samples[:n_fft]
+	
+		window = np.hanning(n_fft)
+		magnitudes = _fft_magnitude(samples, window)
+	
+		return _frequencies(audio.sr, n_fft), magnitudes
+	
+	def spectrogram(audio, n_fft=2048, hop_length=512, center=True):
+		"""Return (times, frequencies, magnitudes) using STFT."""
+		if n_fft <= 0 or hop_length <= 0:
+			raise ValueError('n_fft and hop_length must be positive')
+	
+		samples = audio.to_mono()
 	
 		if len(samples) == 0:
 			raise ValueError('Audio is empty')
 	
 		window = np.hanning(n_fft)
-		spectra = []
 	
-		for start in range(0, len(samples), hop_length):
-			frame = samples[start:start + n_fft]
-	
-			if len(frame) < n_fft:
-				frame = np.pad(frame, (0, n_fft - len(frame)))
-	
-			spectrum = np.abs(np.fft.rfft(frame * window))
-			spectrum /= max(window.sum(), 1e-12)
-	
-			if n_fft % 2 == 0:
-				spectrum[1:-1] *= 2
-			else:
-				spectrum[1:] *= 2
-	
-			spectra.append(spectrum)
+		spectra = [
+			_fft_magnitude(frame, window)
+			for frame in _audio_frames(samples, n_fft, hop_length, center)
+		]
 	
 		times = np.arange(len(spectra)) * hop_length / audio.sr
-		frequencies = np.fft.rfftfreq(n_fft, 1 / audio.sr)
-	
+		frequencies = _frequencies(audio.sr, n_fft)
 		magnitudes = np.asarray(spectra).T
 	
 		return times, frequencies, magnitudes
+	
+	def envelope(audio, fps, spf=100):
+		"""Return RMS amplitude envelope."""
+		hop_length = max(1, round(audio.sr / (fps * spf)))
+	
+		return audio.to_mono().rms(hop_length=hop_length)
+
 
 def concatenate(ls, gap_seconds=0.0):
 	arrays = []
