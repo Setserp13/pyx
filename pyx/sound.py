@@ -228,7 +228,7 @@ class audio(np.ndarray):
 		if n_fft <= 0 or hop_length <= 0:
 			raise ValueError('n_fft and hop_length must be positive')
 	
-		samples = audio.to_mono()
+		samples = self.to_mono()
 	
 		if len(samples) == 0:
 			raise ValueError('Audio is empty')
