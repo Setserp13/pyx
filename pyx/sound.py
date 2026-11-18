@@ -178,7 +178,8 @@ class audio(np.ndarray):
 	
 		return self.apply(lambda f: np.fft.rfft(f * w, axis=1), frame_length, hop_length)
 
-	def _fft_magnitude(frame, window):
+	@staticmethod
+	def fft_magnitude(frame, window):
 		"""Calculate the normalized single-sided magnitude spectrum."""
 		n_fft = len(window)
 	
@@ -219,7 +220,7 @@ class audio(np.ndarray):
 			samples = samples[:n_fft]
 	
 		window = np.hanning(n_fft)
-		magnitudes = _fft_magnitude(samples, window)
+		magnitudes = audio.fft_magnitude(samples, window)
 	
 		return audio.frequencies(self.sr, n_fft), magnitudes
 	
@@ -236,7 +237,7 @@ class audio(np.ndarray):
 		window = np.hanning(n_fft)
 	
 		spectra = [
-			_fft_magnitude(frame, window)
+			audio.fft_magnitude(frame, window)
 			for frame in self.frames(n_fft, hop_length, center)
 		]
 	
