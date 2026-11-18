@@ -4,11 +4,36 @@ import pyx.osx as osx
 import os
 from pydub import AudioSegment, silence
 
-def merge_av(audio_path, video_path, output_path):
+"""def merge_av(audio_path, video_path, output_path):
 	output_path = osx.to_distinct(video_path) if output_path == None else output_path
 	audio = mp.AudioFileClip(audio_path)
 	video = mp.VideoFileClip(video_path)
-	video.set_audio(audio).write_videofile(output_path, fps=video.fps)
+	video.set_audio(audio).write_videofile(output_path, fps=video.fps)"""
+def merge_av(audio_path, video_path, output_path):
+	audio = AudioFileClip(audio_path)
+	video = VideoFileClip(video_path)
+
+	ext = os.path.splitext(output_path)[1].lower()
+
+	codecs = {
+		'.mp4': 'libx264',
+		'.mov': 'libx264',
+		'.avi': 'mpeg4',
+		'.webm': 'libvpx',
+	}
+
+	codec = codecs.get(ext)
+
+	if codec is None:
+		raise ValueError(f'Unsupported video format: {ext}')
+
+	video.set_audio(audio).write_videofile(
+		output_path,
+		fps=video.fps,
+		codec=codec,
+		audio_codec='aac'
+	)
+
 
 def set_duration(video, duration, speed_based=False): return video.fx(vfx.speedx, duration if speed_based else video.duration / duration)
 
