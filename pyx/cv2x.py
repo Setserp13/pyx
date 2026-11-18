@@ -162,7 +162,7 @@ def cv2_clip_layer(overlay, mask, origin, image):
 	image[:] = (
 		overlay.astype(np.float32) * weight +
 		image.astype(np.float32) * (1 - weight)
-	).clip(0, 255).astype(image.dtype)
+	).clip(0, 255).astype(image.dtype)"""
 
 
 def cv2_paint(image, color, draw, obj=None, padding=2):
@@ -226,7 +226,7 @@ def cv2_paint(image, color, draw, obj=None, padding=2):
 	overlay, mask, image_region = result
 
 	# Composite.
-	cv2_composite(image_region, overlay, mask, alpha)"""
+	cv2_composite(image_region, overlay, mask, alpha)
 
 def cv2_composite(dst, src, mask, alpha=1.0):
 	alpha = float(np.clip(alpha, 0, 1))
@@ -268,72 +268,7 @@ def cv2_composite(dst, src, mask, alpha=1.0):
 		255
 	).astype(np.uint8)
 
-def cv2_paint(image, color, draw, obj=None, padding=2):
-	result = color
 
-	if result is None:
-		return
-
-	bgr, alpha = result
-	alpha = float(np.clip(alpha, 0, 1))
-
-	if alpha <= 0:
-		return
-
-	if XFORM_MODE not in (XFORM_NONE, XFORM_TRS, XFORM_AABB, XFORM_AFFINE):
-		raise ValueError(f'Invalid XFORM_MODE: {XFORM_MODE}')
-
-	# No transformation.
-	if obj is None or XFORM_MODE in (XFORM_NONE, XFORM_TRS):
-		if image.shape[2] == 3 and alpha >= 1:
-			draw(image, bgr, np.zeros(2))
-			return
-
-		overlay = np.zeros_like(image[:, :, :3])
-		mask = np.zeros(image.shape[:2], dtype=np.uint8)
-
-		draw(overlay, bgr, np.zeros(2))
-
-		# The drawing callback must draw into the mask as well.
-		# Use a white color to generate its coverage.
-		mask_layer = np.zeros_like(mask)
-		draw(mask_layer, 255, np.zeros(2))
-
-		cv2_composite(image, overlay, mask_layer, alpha)
-		return
-
-	aabb = obj.aabb
-	global_matrix = obj.xform.global_TRS
-
-	if XFORM_MODE == XFORM_AABB:
-		transformed_aabb = (aabb @ global_matrix).aabb
-		matrix = geo.aabb_xform(aabb, transformed_aabb).TRS
-	else:
-		matrix = global_matrix
-
-	result = cv2_layer(image, aabb, draw, bgr, padding)
-
-	if result is None:
-		return
-
-	overlay, mask, origin = result
-
-	overlay, mask, origin = cv2_transform_layer(
-		overlay,
-		mask,
-		matrix,
-		origin,
-		(image.shape[1], image.shape[0])
-	)
-
-	result = cv2_clip_layer(overlay, mask, origin, image)
-
-	if result is None:
-		return
-
-	overlay, mask, image_region = result
-
-	cv2_composite(image_region, overlay, mask, alpha)
 
 
 
