@@ -120,20 +120,25 @@ class Timeline:
 	def dt(self): return 1. / self.fps	#delta time
 
 class Scene:
-	def __init__(self, width=640, height=360, fps=30, duration=5):
-		self.width = width
-		self.height = height
+	def __init__(self, size=[640, 360], fps=30, duration=5):
+		self.size = np.array(size)
 
 		self.timeline = Timeline(fps, duration)
 		self.objects = []
 
 	@property
-	def size(self): return np.array([self.width, self.height])
+	def rect(self): return geo.rect(np.zeros(2), self.size)
 
-	@size.setter
-	def size(self, value):
-		self.width = value[0]
-		self.height = value[1]
+	@property
+	def width(self): return self.size[0]
+	@property
+	def height(self): return self.size[1]
+	@width.setter
+	def width(self, value):
+		self.size[0] = value
+	@height.setter
+	def height(self, value):
+		self.size[1] = value
 
 	def add(self, *objects):
 		self.objects.extend(objects)
@@ -151,7 +156,11 @@ class Scene:
 	
 	def assign(self, target, property, value, time):
 		"""Set a property to a value at a specific time."""
-		self.animate(
+
+		def update(t):
+			setattr(target, property, value)
+
+		animation = self.animate(
 			target=target,
 			property=property,
 			start=value,
@@ -159,6 +168,9 @@ class Scene:
 			start_time=time,
 			duration=0
 		)
+
+		animation.value_function = update
+		return animation
 	
 	def hold(self, target, property, value, start_time, duration):
 		"""Keep a property at a value during a time interval."""
