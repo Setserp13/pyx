@@ -158,7 +158,7 @@ class Scene:
 		"""Set a property to a value at a specific time."""
 
 		def update(t):
-			setattr(target, property, value)
+			generic.set(target, property, value)
 
 		animation = self.animate(
 			target=target,
@@ -174,7 +174,11 @@ class Scene:
 	
 	def hold(self, target, property, value, start_time, duration):
 		"""Keep a property at a value during a time interval."""
-		self.animate(
+
+		def update(t):
+			setattr(target, property, value)
+
+		animation = self.animate(
 			target=target,
 			property=property,
 			start=value,
@@ -182,6 +186,9 @@ class Scene:
 			start_time=start_time,
 			duration=duration
 		)
+
+		animation.value_function = update
+		return animation
 	
 	def sequence(self, target, property, start, animations, start_time=0):
 		result = []
