@@ -256,7 +256,7 @@ class image(geo.rect_like):
 		return f'data:{mime};base64,{data}'
 
 
-class tspan(geo.shape):
+class tspan(geo.rect_like):
 	def __init__(self, inner_text, position, font='arial.ttf', font_size=12, pivot=np.ones(2) * 0.5):
 		self.inner_text = str(inner_text)
 		self.position = position
