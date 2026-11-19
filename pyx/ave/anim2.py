@@ -157,8 +157,7 @@ class Scene:
 	def assign(self, target, property, value, time):
 		"""Set a property to a value at a specific time."""
 
-		def update(t):
-			generic.set(target, property, value)
+		def update(t): return value
 
 		animation = self.animate(
 			target=target,
@@ -175,8 +174,7 @@ class Scene:
 	def hold(self, target, property, value, start_time, duration):
 		"""Keep a property at a value during a time interval."""
 
-		def update(t):
-			setattr(target, property, value)
+		def update(t): return value
 
 		animation = self.animate(
 			target=target,
