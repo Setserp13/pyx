@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-from PIL import ImageColor
+from PIL import Image, ImageColor, ImageDraw, ImageFont
 import pyx.numpyx_geo as geo
 import pyx.PILx as PILx
 from pyx.gamepy.color import Color
@@ -543,11 +543,49 @@ def draw_group(self, image):
 	for x in self:
 		x.draw(image)
 
+def draw_text(self, image):
+	if XFORM_MODE == XFORM_TRS:
+		self = self.apply_matrix(self.xform.global_matrix)
 
+	text = self.inner_text
+
+	if not text:
+		return
+
+	font = ImageFont.truetype(self.font, int(self.font_size))
+
+	lines = text.split('\n')
+	line_spacing = getattr(self, 'line_spacing', 4)
+	align = getattr(self, 'align', 0.5)
+
+	size = self.size
+	position = cv2_point(self.position)
+
+	x = int(round(position[0] - size[0] * self.pivot[0]))
+	y = int(round(position[1] - size[1] * self.pivot[1]))
+
+	def draw(img, color, offset):
+		offset = np.round(offset).astype(int)
+		ox, oy = offset
+
+		pil_image = Image.fromarray(img)
+
+		drawer = ImageDraw.Draw(pil_image)
+
+		for i, line in enumerate(lines):
+			line_width = drawer.textlength(line, font=font)
+			tx = x + ox + (size[0] - line_width) * align
+			ty = y + oy + i * (self.font_size + line_spacing)
+
+			drawer.text((tx, ty), line, font=font, fill=tuple(color))
+
+		img[:] = pil_image
+
+	cv2_paint(image, cv2_fill(self), draw, self)
 
 
 # Dynamically attach the corresponding drawing method to each geometry class.
-for cls in [geo.arc, geo.bezier, geo.circle, geo.ellipse, geo.group, geo.line, geo.polyline, geo.rect, PILx.image]:
+for cls in [geo.arc, geo.bezier, geo.circle, geo.ellipse, geo.group, geo.line, geo.polyline, geo.rect, PILx.image, PILx.text]:
 	name = cls.__name__
 
 	# Capture the function name in the lambda default argument.
