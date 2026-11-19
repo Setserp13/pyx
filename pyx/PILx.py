@@ -265,6 +265,9 @@ class tspan(geo.shape):
 		self.pivot = pivot
 
 	@property
+	def dim(self): return 2
+	
+	@property
 	def size(self):
 		return get_size(self.inner_text, self.font, self.font_size)
 
