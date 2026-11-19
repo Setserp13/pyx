@@ -6,6 +6,7 @@ import pyx.numpyx as npx
 import pyx.numpyx_geo as geo
 from pyx.collectionsx import merge_where
 import pyx.generic.generic as generic
+from pyx.mat.transform import Node2D
 
 from pyx.array_utility import find
 from matplotlib.font_manager import fontManager
