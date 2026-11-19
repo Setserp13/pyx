@@ -286,6 +286,19 @@ class tspan(geo.rect_like):
 	@property
 	def global_aabb(self): return self.aabb.vertices.global_aabb"""
 
+	def apply_matrix(self, matrix):
+		xform = Node2D()
+		xform.matrix = matrix
+	
+		result = copy.deepcopy(self)
+	
+		result.position = result.position.astype(float) + xform.position
+		result.font_size = float(result.font_size) * np.mean(xform.scale)
+	
+		result.xform = Node2D(rotation=xform.rotation)
+	
+		return result
+
 class text(tspan):
 	def __init__(self, inner_text, position, font='arial.ttf', font_size=12, pivot=np.ones(2) * 0.5, line_spacing=4, align=.5):
 		super().__init__(inner_text, position, font, font_size, pivot)
