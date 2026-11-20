@@ -50,48 +50,6 @@ def replace_all(root, replacements, exact_match=False):
 
 from pyx.mat.transform import R2
 
-"""def svg_arc_to_center(start, end, rx, ry, rotation, large_arc_flag, sweep_flag):
-	start, end = np.asarray([start, end], dtype=float)
-	rx, ry = abs(rx), abs(ry)
-
-	if rx == 0 or ry == 0 or np.allclose(start, end):
-		return None
-
-	phi = math.radians(rotation)
-	R = R2(phi)
-
-	x1p, y1p = R @ ((start - end) / 2)
-
-	scale = max(1., np.sqrt(x1p**2 / rx**2 + y1p**2 / ry**2))
-	rx, ry = rx * scale, ry * scale
-
-	rx2, ry2 = rx**2, ry**2
-	k = np.sqrt(max(0., (rx2 * ry2 - rx2 * y1p**2 - ry2 * x1p**2) /
-		(rx2 * y1p**2 + ry2 * x1p**2)))
-
-	if large_arc_flag == sweep_flag:
-		k = -k
-
-	cxp, cyp = k * rx * y1p / ry, -k * ry * x1p / rx
-	center = R.T @ [cxp, cyp] + (start + end) / 2
-
-	u = np.array([(x1p - cxp) / rx, (y1p - cyp) / ry])
-	v = np.array([(-x1p - cxp) / rx, (-y1p - cyp) / ry])
-
-	start_angle = np.arctan2(u[1], u[0])
-	delta = np.arctan2(np.cross(u, v), np.dot(u, v))
-
-	if sweep_flag:
-		delta %= math.tau
-	else:
-		delta = -(-delta % math.tau)
-
-	return center, start_angle, start_angle + delta"""
-
-
-
-
-
 
 
 from pyx.numpyx_geo import shape, line, arc, bezier
