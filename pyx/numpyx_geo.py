@@ -2422,7 +2422,114 @@ class path(group, curve):
 		self.closed = True
 		return self
 
-
+	def get_point01(self, t):
+	
+		if not self:
+			raise ValueError('Cannot evaluate an empty path.')
+	
+		t = np.clip(t, 0.0, 1.0)
+	
+		segments = []
+	
+		for item in self:
+	
+			if isinstance(item, np.ndarray) and item.ndim == 1:
+				start = self.last_point if not segments else segments[-1][2]
+				end = item
+	
+				if start is None:
+					continue
+	
+				segments.append((
+					line([start, end]),
+					start,
+					end,
+				))
+	
+			elif isinstance(item, curve):
+	
+				start = item.get_point01(0.0)
+				end = item.get_point01(1.0)
+	
+				if segments:
+					previous_end = segments[-1][2]
+	
+					if not np.allclose(previous_end, start):
+						segments.append((
+							line([previous_end, start]),
+							previous_end,
+							start,
+						))
+	
+				segments.append((item, start, end))
+	
+			else:
+				raise TypeError(
+					f'Unsupported path item: {type(item).__name__}'
+				)
+	
+		# Close the path.
+		if self.closed and segments:
+			start = segments[0][1]
+			end = segments[-1][2]
+	
+			if not np.allclose(end, start):
+				segments.append((
+					line([end, start]),
+					end,
+					start,
+				))
+	
+		if not segments:
+			raise ValueError('Path contains no valid segments.')
+	
+		# Calculate segment lengths.
+		lengths = np.array([
+			segment[0].approx_length(100)
+			for segment in segments
+		], dtype=float)
+	
+		total_length = lengths.sum()
+	
+		if total_length <= 0:
+			return segments[0][1].copy()
+	
+		# Find the segment corresponding to t.
+		distance = t * total_length
+	
+		for segment, length in zip(segments, lengths):
+	
+			if distance <= length or length == lengths[-1]:
+				local_t = distance / length if length > 0 else 0.0
+	
+				return segment[0].get_point01(
+					np.clip(local_t, 0.0, 1.0)
+				)
+	
+			distance -= length
+	
+		return segments[-1][0].get_point01(1.0)
+	
+	def sample(self, steps=100):
+		p = []
+		for item in self:
+			if isinstance(item, np.ndarray) and item.ndim == 1:
+				if len(p) < 1 or np.allclose(p[-1], item):
+					p.append(item)
+			elif isinstance(item, curve):
+				if isinstance(item, (line, polyline)):
+					p2 = item
+				else:
+					p2 = item.sample(steps=steps)
+				if len(p) < 1 or np.allclose(p[-1], p2[0]):
+					p.append(p2[0])
+				p.extend(p2[1:])	
+			else:
+				raise TypeError(
+					f'Unsupported path item: {type(item).__name__}'
+				)
+		#print(p)
+		return polyline(p, closed=self.closed)
 
 
 
