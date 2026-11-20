@@ -349,11 +349,11 @@ def draw_image(self, image):
 	source = np.asarray(self.array).transpose(1, 0, 2)
 
 	if source.ndim == 2:
-		source = cv2.cvtColor(source, cv2.COLOR_GRAY2BGRA)
+		source = cv2.cvtColor(source, cv2.COLOR_GRAY2RGBA)	#cv2.COLOR_GRAY2BGRA)
 	elif source.shape[2] == 3:
-		source = cv2.cvtColor(source, cv2.COLOR_RGB2BGRA)
-	elif source.shape[2] == 4:
-		source = cv2.cvtColor(source, cv2.COLOR_RGBA2BGRA)
+		source = cv2.cvtColor(source, cv2.COLOR_RGB2RGBA)	#cv2.COLOR_RGB2BGRA)
+	#elif source.shape[2] == 4:
+	#	source = cv2.cvtColor(source, cv2.COLOR_RGBA2BGRA)
 
 	size = np.asarray(self.size, dtype=float)
 
