@@ -207,110 +207,131 @@ class path(list, shape):
 
 
 	@property
-	def segments(self):
-		segments = []
-
+	def subpaths(self):
+	
+		result = geo.group()
+		result.append(geo.path())
+	
 		current = np.zeros(2, dtype=float)
 		start = current.copy()
-
+	
 		previous_type = None
 		previous_control = None
-		#print(self.normalized)
+	
 		for cmd in self.normalized:
-			#print(cmd)
+	
 			t = cmd.type.upper()
 			p = np.asarray(cmd.parameters, dtype=float)
 			relative = cmd.relative
-
+	
 			def points(v):
 				v = np.asarray(v, dtype=float).reshape(-1, 2)
 				return current + v if relative else v
-
+	
 			if t == 'M':
+	
 				current, = points(p)
 				start = current.copy()
-
+	
+				if len(result[-1]) > 0:
+					result.append(geo.path())
+	
+				previous_control = None
+	
 			elif t in 'HV':
+	
 				axis = 'HV'.index(t)
+	
 				end = current.copy()
-				end[axis] = current[axis] + p[0] if relative else p[0]
-				segments.append(bezier([current.copy(), end.copy()]))
+				end[axis] = (
+					current[axis] + p[0]
+					if relative else p[0]
+				)
+	
+				result[-1].append(
+					bezier([current.copy(), end.copy()])
+				)
+	
 				current = end
-
+	
 			elif t in 'LQCTS':
+	
 				v = points(p)
-				
+	
 				if t in 'TS':
+	
 					p1 = (
 						2 * current - previous_control
 						if previous_type in {'Q': 'QT', 'S': 'CS'}[t]
 						else current.copy()
 					)
-
+	
 					v = np.insert(v, 0, p1, axis=0)
-
-				segments.append(bezier([current.copy(), *v]))
-
+	
+				result[-1].append(
+					bezier([current.copy(), *v])
+				)
+	
 				current = v[-1]
 				previous_control = None if t == 'L' else v[-2]
-
+	
 			elif t == 'A':
+	
 				rx, ry, rotation, large, sweep, x, y = p
+	
 				end, = points([x, y])
-
+	
 				if not np.isclose(rx, ry) or not np.isclose(rotation, 0):
+	
 					raise NotImplementedError(
 						"Only circular arcs without rotation are supported"
 					)
-
-				result = elliptical_arc.start_end(
-					current, end, np.array([rx, ry]), rotation, int(large), int(sweep)
+	
+				arc = elliptical_arc.start_end(
+					current,
+					end,
+					np.array([rx, ry]),
+					rotation,
+					int(large),
+					int(sweep),
 				)
-
-				if result is not None:
-					segments.append(result)
+	
+				if arc is not None:
+					result[-1].append(arc)
 				else:
-					segments.append(bezier([
-						current.copy(), end.copy()
-					]))
-
+					result[-1].append(
+						bezier([current.copy(), end.copy()])
+					)
+	
 				current = end
-
+	
 			elif t == 'Z':
+	
 				if not np.allclose(current, start):
-					segments.append(bezier([
-						current.copy(), start.copy()
-					]))
-
+	
+					result[-1].append(
+						bezier([current.copy(), start.copy()])
+					)
+	
 				current = start.copy()
-
+	
 			else:
-				raise ValueError(f"Unsupported SVG command: {cmd.type}")
-
+	
+				raise ValueError(
+					f"Unsupported SVG command: {cmd.type}"
+				)
+	
 			if t not in ('C', 'S', 'Q', 'T'):
 				previous_control = None
-
+	
 			previous_type = t
+	
+		return result
 
-		return geo.group(segments)
-
-	@property
-	def aabb(self):
-		segments = self.segments
-		return segments.aabb
-
-	@aabb.setter
-	def aabb(self, value):
-		geo.shape.aabb.fset(self, value)
-
-#generic.make_Element(path)
-
-#def path_to_svg(obj, **kwargs): return lxmlx.element("path", d=obj.d, **kwargs)
-#path.to_svg = lambda self: path_to_svg(self, **get_attrib(self))
 def path_to_svg(obj, **kwargs): return lxmlx.element("path", d=join_curves(obj, obj.closed).d, **kwargs)
 geo.path.to_svg = lambda self: path_to_svg(self, **get_attrib(self))
 
-def path_from_svg(obj): return path.parse(obj.get('d'))
+def path_from_svg(obj): return path.parse(obj.get('d')).subpaths
 
 curve.d = property(
 	lambda self: (
@@ -336,20 +357,6 @@ bezier.d_command = property(
 	)
 )
 
-"""circular_arc.d_command = property(lambda self: (
-	f'A {self.radius} {self.radius} 0 '
-	f'{int(abs(self.sweep) > math.pi)} '
-	f'{int(self.sweep >= 0)} '
-	f'{self.get_point(self.end)[0]} '
-	f'{self.get_point(self.end)[1]}'
-))
-elliptical_arc.d_command = property(lambda self: (
-	f'A {self.radius[0]} {self.radius[1]} 0 '
-	f'{int(abs(self.sweep) > math.pi)} '
-	f'{int(self.sweep >= 0)} '
-	f'{self.get_point(self.end)[0]} '
-	f'{self.get_point(self.end)[1]}'
-))"""
 
 #f'{math.degrees(math.atan2(self.axes[1, 0], self.axes[0, 0]))} '	<- if ellipse has angle
 def elliptical_arc_d_command(self):
