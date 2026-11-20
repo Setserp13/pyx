@@ -2388,7 +2388,7 @@ class group(list, shape):
 		return self._apply('apply_matrix', matrix)
 
 
-class path(group):
+class path(group, curve):
 	def __init__(self, items=None, closed=False):
 		super().__init__(items or [])
 		self.closed = closed
