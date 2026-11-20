@@ -539,6 +539,12 @@ def draw_bezier(self, image):
 		image
 	)
 
+def draw_path(self, image):
+	draw_polyline(
+		self.sample(steps=100).set(**getattr(self, 'attrib', {})),
+		image
+	)
+
 def draw_group(self, image):
 	for x in self:
 		x.draw(image)
@@ -585,7 +591,7 @@ def draw_text(self, image):
 
 
 # Dynamically attach the corresponding drawing method to each geometry class.
-for cls in [geo.arc, geo.bezier, geo.circle, geo.ellipse, geo.group, geo.line, geo.polyline, geo.rect, PILx.image, PILx.text]:
+for cls in [geo.arc, geo.bezier, geo.circle, geo.ellipse, geo.group, geo.line, geo.path, geo.polyline, geo.rect, PILx.image, PILx.text]:
 	name = cls.__name__
 
 	# Capture the function name in the lambda default argument.
