@@ -221,7 +221,7 @@ import base64
 import mimetypes
 
 class image(geo.rect_like):
-	def __init__(self, filepath, min=np.zeros(2), size=None):
+	def __init__(self, filepath=None, min=np.zeros(2), size=None):
 		self.filepath = filepath
 		self.min = min
 		self.overwrite_size = size
@@ -233,6 +233,10 @@ class image(geo.rect_like):
 	@filepath.setter
 	def filepath(self, value):
 		self._filepath = value
+
+		if value is None:
+			self.array = None
+			return
 
 		try:
 			self.array = read_image(value)
