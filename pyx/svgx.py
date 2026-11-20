@@ -117,12 +117,12 @@ class path(list, shape):
 			for group in split_before(p.findall(s), str.isalpha)
 		])
 
-	@property
+	"""@property
 	def subpaths(self):
 		return [
 			path(*group)
 			for group in split_before(self, lambda cmd: cmd.type in 'Mm')
-		]
+		]"""
 
 
 	@property
