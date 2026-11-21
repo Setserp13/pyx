@@ -596,7 +596,7 @@ def get_presentation(obj):	#presentation attributes
 				value[3] = float(opacity)
 		except: pass
 		result[k] = value
-	for k in ('stroke-width'):
+	for k in ('stroke-width',):
 		value = style.get(k, obj.attrib.get(k))
 		if value is not None:
 			result[k] = float(value)
