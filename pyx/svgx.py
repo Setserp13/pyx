@@ -448,7 +448,7 @@ def from_svg(obj, asnode=False):
 		result = shape
 
 	result.id = obj.get('id')
-	if tag == 'path':
+	if tag == 'path' and not asnode:
 		result.set_children(**get_presentation(obj))
 	else:
 		result.set(**get_presentation(obj))
