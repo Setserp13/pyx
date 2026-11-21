@@ -95,14 +95,17 @@ class shape(Element):
 
 	@aabb.setter
 	def aabb(self, value):
-
 		current = self.aabb
-
+	
 		scale = safe_divide(value.size, current.size)
 		offset = value.min - current.min * scale
-
+	
 		result = (self * scale) + offset
-		self.__dict__.update(copy.deepcopy(result.__dict__))
+	
+		if isinstance(self, list):
+			self[:] = result
+		else:
+			self.__dict__.update(copy.deepcopy(result.__dict__))
 	
 	@property
 	def xform(self):
