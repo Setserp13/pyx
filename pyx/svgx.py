@@ -488,10 +488,10 @@ def rotate_page(svg, angle=90):	#angle is in degree
 	svg.append(g1)
 	return svg
 
-def circle_from_svg(obj): return geo.circle(get(obj, float, 'cx', 'cy'), *get(obj, float, 'r'))
-def ellipse_from_svg(obj): return geo.ellipse(np.array(get(obj, float, 'cx', 'cy')), np.array(get(obj, float, 'rx', 'ry')) * 2.)
-def rect_from_svg(obj): return geo.rect2(*get(obj, float, 'x', 'y', 'width', 'height'))
-def line_from_svg(obj): return geo.line([get(obj, float, 'x1', 'y1'), get(obj, float, 'x2', 'y2')])
+def circle_from_svg(obj): return geo.circle(getas(obj, float, 'cx', 'cy'), *getas(obj, float, 'r'))
+def ellipse_from_svg(obj): return geo.ellipse(np.array(getas(obj, float, 'cx', 'cy')), np.array(getas(obj, float, 'rx', 'ry')) * 2.)
+def rect_from_svg(obj): return geo.rect2(*getas(obj, float, 'x', 'y', 'width', 'height'))
+def line_from_svg(obj): return geo.line([getas(obj, float, 'x1', 'y1'), getas(obj, float, 'x2', 'y2')])
 def parse_points2(s):
 	matches = re.findall(r'(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)', s)
 	return np.array(matches, dtype=float)
