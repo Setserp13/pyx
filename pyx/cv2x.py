@@ -495,7 +495,7 @@ def draw_polyline(self, image):
 		return
 
 	# Check whether the polyline forms a closed contour.
-	closed = self.closed
+	"""closed = self.closed
 
 	if closed:
 		# Only closed polylines can have a filled interior.
@@ -503,7 +503,13 @@ def draw_polyline(self, image):
 			lambda img, color, offset: cv2_draw_polygon(
 				img, points + offset, color
 			), self
-		)
+		)"""
+
+	cv2_paint(image, cv2_fill(self),
+		lambda img, color, offset: cv2_draw_polygon(
+			img, points + offset, color
+		), self
+	)
 
 	# Draw the outline, closing the final segment when necessary.
 	cv2_paint(image, cv2_stroke(self),
