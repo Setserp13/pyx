@@ -147,6 +147,14 @@ def flatten(ls, times=None):	#1):
 		else:
 			yield item"""
 
+def walk(items):
+	yield items
+
+	for item in items:
+		if isinstance(item, (list, tuple)):
+			yield from walk(item)
+		else:
+			yield item
 
 class graph(list):
 	def __init__(self, *args):
