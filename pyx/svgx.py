@@ -310,7 +310,7 @@ polyline.d_command = property(
 )
 
 bezier.d_command = property(
-	lambda self: 'LQC'[len(self) - 1] + ' '.join(
+	lambda self: 'LQC'[len(self) - 2] + ' '.join(
 		f'{x[0]} {x[1]}' for x in self
 	)
 )
