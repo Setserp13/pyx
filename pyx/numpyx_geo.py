@@ -2362,11 +2362,8 @@ class group(list, shape):
 	def aabb(self, value):
 		current = self.aabb
 	
-		scale = safe_divide(value.size, current.size)
-		offset = value.min - current.min * scale
-	
-		for i, child in enumerate(self):
-			self[i] = (child - current.min) * scale + value.min
+		for x in self:
+			x.aabb = value.denormalize_rect(current.normalize_rect(x.aabb))
 	
 	@property
 	def local_aabb(self): return aabb([x.local_aabb for x in self])
