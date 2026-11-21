@@ -62,14 +62,22 @@ class shape(Element):
 		getattr(result, method)(*args)
 		return result
 
+	def scale(self, value): raise NotImplementedError
+
 	def translate(self, value): raise NotImplementedError
-	
-	def __add__(self, value):
-		return self._transform_copy('translate', value)
+
+	def scale_at(self, value, pivot=None):
+		if pivot is None:
+			pivot = np.zeros(self.dim)
+
+		result = copy.deepcopy(self)
+		return (result - pivot) * value + pivot
+
+	def __add__(self, value): return self._transform_copy('translate', value)
 
 	def __sub__(self, value): return self.__add__(-value)
 
-	def __mul__(self, value): raise NotImplementedError
+	def __mul__(self, value): return self._transform_copy('scale', value)
 
 	def __truediv__(self, value): return self.__mul__(1. / value)
 
@@ -80,13 +88,6 @@ class shape(Element):
 	__rmatmul__ = __matmul__
 
 	def apply_matrix(self, matrix): raise NotImplementedError
-
-	def scale(self, factor, pivot=None):
-		if pivot is None:
-			pivot = np.zeros(self.dim)
-
-		result = copy.deepcopy(self)
-		return pivot + (result - pivot) * factor
 
 	def copy(self): return copy.copy(self)
 
@@ -269,9 +270,12 @@ class rect_like(shape):	#interval
 
 	def translate(self, value):
 		self.min += value
+
+	def scale(self, value):
+		self.size *= value
 	#def __add__(self, vector): return type(self).min_size(self.min + vector, self.size)
 
-	def __mul__(self, value): return type(self).min_size(self.min, self.size * value)
+	#def __mul__(self, value): return type(self).min_size(self.min, self.size * value)
 	
 	@property
 	def dim(self): return len(self.min)
@@ -387,11 +391,6 @@ class rect(rect_like):
 		self.min[axis] -= delta * pivot
 		self.size[axis] = value
 	
-	def scale(self, value, pivot=np.full(2, 0.5)):
-		delta = value - self.size
-		self.min -= delta * pivot
-		self.size = value
-
 	def face_center(rect, axis, dir):  # dir -> -1: left/down/back and so on..., 1: right/up/front and so on...
 		return rect.center + rect.extents[axis] * ei(axis, len(rect.center)) * dir
 	
@@ -687,6 +686,8 @@ class points(np.ndarray, shape):
 	def translate(self, value):
 		self[:] += value
 
+	def scale(self, value):
+		self[:] *= value
 
 def elbow_connector1(start, end, x=0): return polyline([start, np.array([start[x], end[1 - x]]), end])
 
@@ -734,16 +735,27 @@ class ball(shape):
 		self.radius = min(*value.extents)
 
 	def translate(self, value):
-		obj.center += value
+		self.center += value
+
+	def scale(self, value):
+		value = np.asarray(value, dtype=float)
+	
+		if value.ndim > 0 and not np.allclose(value, value[0]):
+			self.__class__ = ellipsoid
+			self.size = np.full(self.dim, self.diameter) * value
+		else:
+			self.radius *= value[0] if value.ndim else value
+	
+		return self
 	"""def __add__(self, vector):
 		obj = copy.deepcopy(self)
 		obj.center += vector
-		return obj"""
+		return obj
 
 	def __mul__(self, value):
 		obj = copy.deepcopy(self)
 		obj.radius *= value
-		return obj
+		return obj"""
 
 class circle(ball, curve):	#disk
 
