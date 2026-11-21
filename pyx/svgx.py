@@ -262,7 +262,7 @@ class path(list, shape):
 					result[-1].append(
 						bezier([current.copy(), start.copy()])
 					)
-	
+				result[-1].close()
 				current = start.copy()
 	
 			else:
