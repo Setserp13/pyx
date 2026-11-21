@@ -448,7 +448,10 @@ def from_svg(obj, asnode=False):
 		result = shape
 
 	result.id = obj.get('id')
-	result.set(**get_presentation(obj))
+	if tag == 'path':
+		result.set_children(**get_presentation(obj))
+	else:
+		result.set(**get_presentation(obj))
 
 	desc = lxmlx.find(obj, lambda x: etree.QName(x).localname == "desc", iter=lambda e: e)
 	#print(desc)
