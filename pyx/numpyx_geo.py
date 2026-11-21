@@ -2409,17 +2409,14 @@ class group(list, shape):
 					x.set(**{k: v})
 		return self
 
-	"""def _apply(self, method, *args):
-		obj = copy.deepcopy(self)
-		for i, child in enumerate(obj):
-			obj[i] = getattr(child, method)(*args)
-		return obj"""
 	def _apply(self, method, *args):
-		return type(self)(
+		result = type(self)(
 			getattr(child, method)(*args)
 			for child in self
 		)
-
+		result.attrib = self.attrib.copy()
+		return result
+	
 	def __add__(self, value):
 		return self._apply('__add__', value)
 	
