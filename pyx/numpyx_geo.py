@@ -101,7 +101,7 @@ class shape(Element):
 		scale = safe_divide(value.size, current.size)
 		offset = value.min - current.min * scale
 
-		result = self * scale + offset
+		result = (self * scale) + offset
 		self.__dict__.update(copy.deepcopy(result.__dict__))
 	
 	@property
@@ -2372,12 +2372,17 @@ class group(list, shape):
 					x.set(**{k: v})
 		return self
 
-	def _apply(self, method, *args):
+	"""def _apply(self, method, *args):
 		obj = copy.deepcopy(self)
 		for i, child in enumerate(obj):
 			obj[i] = getattr(child, method)(*args)
-		return obj
-	
+		return obj"""
+	def _apply(self, method, *args):
+		return type(self)(
+			getattr(child, method)(*args)
+			for child in self
+		)
+
 	def __add__(self, value):
 		return self._apply('__add__', value)
 	
