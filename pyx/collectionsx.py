@@ -129,7 +129,7 @@ from itertools import product
 
 from collections.abc import Iterable
 
-def flatten(ls, times=None):	#1):
+"""def flatten(ls, times=None):	#1):
 	if times is not None and times < 1:
 		return ls
 	result = []
@@ -140,12 +140,12 @@ def flatten(ls, times=None):	#1):
 			result.append(item)
 	return result
 
-"""def deepiter(items):
+def deepiter(items):
 	for item in items:
 		if isinstance(item, (list, tuple, group)):
 			yield from deep_iter(item)
 		else:
-			yield item"""
+			yield item
 
 def walk(items):
 	yield items
@@ -154,7 +154,65 @@ def walk(items):
 		if isinstance(item, (list, tuple)):
 			yield from walk(item)
 		else:
+			yield item"""
+
+
+from collections.abc import Iterable
+
+
+CONTAINER_TYPES = (list, tuple)
+
+
+def walk(items, depth=None, include_self=True, types=CONTAINER_TYPES):
+	if include_self:
+		yield items
+
+	if depth is not None and depth < 1:
+		return
+
+	for item in items:
+		if isinstance(item, types):
+			yield from walk(
+				item,
+				depth - 1 if depth is not None else None,
+				include_self,
+				types
+			)
+		else:
 			yield item
+
+
+def deepiter(items, depth=None, types=CONTAINER_TYPES):
+	yield from walk(items, depth, False, types)
+
+
+def flatten(items, times=None, types=CONTAINER_TYPES):
+	return list(deepiter(items, times, types))
+
+def find(items, predicate, include_self=False, types=CONTAINER_TYPES):
+	return next(
+		(
+			item for item in walk(
+				items, include_self=include_self, types=types
+			)
+			if predicate(item)
+		),
+		None
+	)
+
+def findall(items, predicate, include_self=False, types=CONTAINER_TYPES):
+	return [
+		item for item in walk(
+			items, include_self=include_self, types=types
+		)
+		if predicate(item)
+	]
+
+
+
+
+
+
 
 class graph(list):
 	def __init__(self, *args):
