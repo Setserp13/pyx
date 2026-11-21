@@ -562,24 +562,6 @@ def set_style(element, **kwargs):
 		style[k] = kwargs[k]
 	element.set("style", rex.strfdict(style))
 
-"""def get_colors(obj):
-	result = {}
-	style = get_style(obj)
-	dflt_values = {'fill': 'black', 'stroke': 'none'}
-	for k in ('fill', 'stroke', 'stop-color', 'flood-color', 'solid-color', 'lighting-color', 'color'):
-		value = style.get(k, obj.attrib.get(k, dflt_values.get(k)))	# style overwrites presentation attributes
-		if value is None:
-			continue
-		try:
-			value = Color.parse(value)
-			a = f"{k.replace('-color', '')}-opacity"
-			opacity = style.get(a, obj.attrib.get(a))
-			if opacity is not None:
-				value[3] = float(opacity)
-		except: pass
-		result[k] = value
-	return result"""
-
 def get_presentation(obj):	#presentation attributes
 	result = {}
 	style = get_style(obj)
