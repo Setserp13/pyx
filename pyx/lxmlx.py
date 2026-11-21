@@ -51,13 +51,13 @@ def find_ancestor(self, match, dflt_value=None):
 		parent = parent.getparent()
 	return dflt_value
 
-"""def get(obj, type, *keys): return [type(obj.get(x)) for x in keys]
+def getas(obj, type, *keys): return [type(obj.get(x)) for x in keys]
 
 #def get(obj, *keys): return [ast.literal_eval(obj.get(x)) for x in keys]
 
 #def get(obj, **kwargs): return [kwargs[k](obj.get(k)) for k in kwargs]
 
-def set(obj, **kwargs):
+"""def set(obj, **kwargs):
 	for k in kwargs:
 		obj.set(k, str(kwargs[k]))"""
 
