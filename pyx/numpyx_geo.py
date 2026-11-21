@@ -689,12 +689,10 @@ class points(np.ndarray, shape):
 	def scale(self, value):
 		self[:] *= value
 
-	def __add__(self, value):
-		return super().__add__(value)
-	
-	def __mul__(self, value):
-		return super().__mul__(value)
-
+	def __add__(self, value): return super().__add__(value)
+	def __mul__(self, value): return super().__mul__(value)
+	def __sub__(self, value): return super().__sub__(value)
+	def __truediv__(self, value): return super().__truediv__(value)
 
 def elbow_connector1(start, end, x=0): return polyline([start, np.array([start[x], end[1 - x]]), end])
 
