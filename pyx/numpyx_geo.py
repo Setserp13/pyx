@@ -57,7 +57,15 @@ class shape(Element):
 	@property
 	def dim(self): raise NotImplementedError
 	
-	def __add__(self, value): raise NotImplementedError
+	def _transform_copy(self, method, *args):
+		result = copy.deepcopy(self)
+		getattr(result, method)(*args)
+		return result
+
+	def translate(self, value): raise NotImplementedError
+	
+	def __add__(self, value):
+		return self._transform_copy('translate', value)
 
 	def __sub__(self, value): return self.__add__(-value)
 
@@ -259,9 +267,11 @@ class rect_like(shape):	#interval
 		self.min = value.min
 		self.size = value.size
 
-	def __add__(self, vector): return type(self).min_size(self.min + vector, self.size)
+	def translate(self, value):
+		self.min += value
+	#def __add__(self, vector): return type(self).min_size(self.min + vector, self.size)
 
-	def __mul__(self, value): return type(self).min_max(self.min * value, self.max * value)
+	def __mul__(self, value): return type(self).min_size(self.min, self.size * value)
 	
 	@property
 	def dim(self): return len(self.min)
@@ -674,6 +684,8 @@ class points(np.ndarray, shape):
 		self[:] = [x[axes] for x in self]
 		return self
 
+	def translate(self, value):
+		self[:] += value
 
 
 def elbow_connector1(start, end, x=0): return polyline([start, np.array([start[x], end[1 - x]]), end])
@@ -721,10 +733,12 @@ class ball(shape):
 		self.center = value.center
 		self.radius = min(*value.extents)
 
-	def __add__(self, vector):
+	def translate(self, value):
+		obj.center += value
+	"""def __add__(self, vector):
 		obj = copy.deepcopy(self)
 		obj.center += vector
-		return obj
+		return obj"""
 
 	def __mul__(self, value):
 		obj = copy.deepcopy(self)
@@ -2329,7 +2343,13 @@ class group(list, shape):
 
 	@aabb.setter
 	def aabb(self, value):
-		shape.aabb.fset(self, value)
+		current = self.aabb
+	
+		scale = safe_divide(value.size, current.size)
+		offset = value.min - current.min * scale
+	
+		for i, child in enumerate(self):
+			self[i] = (child - current.min) * scale + value.min
 	
 	@property
 	def local_aabb(self): return aabb([x.local_aabb for x in self])
