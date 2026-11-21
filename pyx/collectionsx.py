@@ -140,6 +140,13 @@ def flatten(ls, times=None):	#1):
 			result.append(item)
 	return result
 
+"""def deepiter(items):
+	for item in items:
+		if isinstance(item, (list, tuple, group)):
+			yield from deep_iter(item)
+		else:
+			yield item"""
+
 
 class graph(list):
 	def __init__(self, *args):
