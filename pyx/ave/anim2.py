@@ -347,7 +347,7 @@ class Scene:
 
 
 
-class canvas(geo.group):
+"""class canvas(geo.group):
 	def __init__(self, items, size):
 		super().__init__(items)
 
@@ -375,7 +375,7 @@ class canvas(geo.group):
 
 		lxmlx.save(result, path)
 
-		return path
+		return path"""
 
 
 def render_frames(scene, directory='frames'):
@@ -393,6 +393,7 @@ def render_frames(scene, directory='frames'):
 			f'frame_{i:05d}'
 		)
 		#for x in frame: print(x.aabb)
+		#frame.save_svg(filename)
 		frame.save_svg(filename)
 
 	return directory
