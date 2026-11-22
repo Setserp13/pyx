@@ -134,7 +134,7 @@ class Scene:
 		self.transparent = transparent
 
 	@property
-	def channels(self): return 4 if transparent else 3
+	def channels(self): return 4 if self.transparent else 3
 	
 	@property
 	def rect(self): return geo.rect(np.zeros(2), self.size)
