@@ -427,7 +427,7 @@ def draw_polyline(self, image):
 	)
 
 	if cv2_stroke_width(self) == 0:
-		print(cv2_stroke_width(self))
+		#print(cv2_stroke_width(self))
 		return
 	
 	# Draw the outline, closing the final segment when necessary.
