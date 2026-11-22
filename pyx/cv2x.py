@@ -152,83 +152,6 @@ def cv2_clip_layer(overlay, mask, origin, image):
 	return overlay, mask, image[y1:y2, x1:x2]
 
 
-"""def cv2_composite(image, overlay, mask, alpha=1.):
-	#Composite a masked layer onto an image.
-
-	weight = mask.astype(np.float32) / 255 * alpha
-
-	if image.ndim == 3:
-		weight = weight[..., None]
-
-	image[:] = (
-		overlay.astype(np.float32) * weight +
-		image.astype(np.float32) * (1 - weight)
-	).clip(0, 255).astype(image.dtype)"""
-
-
-"""def cv2_paint(image, color, draw, obj=None, padding=2):
-	result = color	#cv2_color(color)
-
-	if result is None:
-		return
-
-	bgr, alpha = result
-
-	if alpha <= 0:
-		return
-
-	# No transformation.
-	if obj is None or XFORM_MODE == XFORM_NONE	or XFORM_MODE == XFORM_TRS:
-		if alpha >= 1:
-			draw(image, bgr, np.zeros(2))
-		else:
-			overlay = image.copy()
-			draw(overlay, bgr, np.zeros(2))
-			cv2.addWeighted(
-				overlay, alpha,
-				image, 1 - alpha,
-				0, dst=image
-			)
-		return
-
-	
-	if XFORM_MODE not in (XFORM_AABB, XFORM_AFFINE):
-		raise ValueError(f'Invalid XFORM_MODE: {XFORM_MODE}')
-
-	aabb = obj.aabb
-	global_matrix = obj.xform.global_TRS
-	
-	if XFORM_MODE == XFORM_AABB:
-		transformed_aabb = (aabb @ global_matrix).aabb
-		matrix = geo.aabb_xform(aabb, transformed_aabb).TRS
-	else:
-		matrix = global_matrix
-
-	# Render using the original, local AABB.
-	result = cv2_layer(image, aabb, draw, bgr, padding)
-
-	if result is None:
-		return
-
-	overlay, mask, origin = result
-
-	# Apply the transformation in both modes.
-	overlay, mask, origin = cv2_transform_layer(
-		overlay, mask, matrix, origin,
-		(image.shape[1], image.shape[0])
-	)
-
-	# Clip to the destination image.
-	result = cv2_clip_layer(overlay, mask, origin, image)
-
-	if result is None:
-		return
-
-	overlay, mask, image_region = result
-
-	# Composite.
-	cv2_composite(image_region, overlay, mask, alpha)"""
-
 
 def cv2_paint(image, color, draw, obj=None, padding=2):
 	result = color
@@ -503,6 +426,10 @@ def draw_polyline(self, image):
 		), self
 	)
 
+	if cv2_stroke_width(self) == 0:
+		print(cv2_stroke_width(self))
+		return
+	
 	# Draw the outline, closing the final segment when necessary.
 	cv2_paint(image, cv2_stroke(self),
 		lambda img, color, offset: cv2_draw_curve(
