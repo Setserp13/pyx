@@ -10,6 +10,7 @@ import copy
 import pyx.numpyx as npx
 import pyx.generic.generic as generic
 from pathlib import Path
+import pyx.sound as sd
 
 import imageio.v2 as imageio
 from tqdm import tqdm
@@ -133,6 +134,8 @@ class Scene:
 
 		self.transparent = transparent
 
+		self.audio = sd.audio_track()
+	
 	@property
 	def channels(self): return 4 if self.transparent else 3
 	
@@ -306,8 +309,40 @@ class Scene:
 	
 		return output
 
+	def render(self, path='animation'):
+		ext = '.mov' if self.transparent else '.mp4'
+		path = Path(path)
+	
+		video_path = str(path.with_suffix(ext))
+		self.render_video(video_path)
+	
+		a = self.audio.audio
+	
+		if a.size == 0:
+			print('Audio is empty')
+			return video_path
+	
+		audio_path = str(path.with_suffix('.wav'))
+		a.segment(0., min(self.timeline.duration, a.duration)).write(audio_path)
+	
+		output_path = str(path.with_name(path.stem + '_final').with_suffix(ext))
+		add_audio_to_video(video_path, audio_path, output_path)
+	
+		return output_path
 
 
+
+def add_audio_to_video(video_path, audio_path, output_path):
+	subprocess.run([
+		"ffmpeg",
+		"-y",			# overwrite if exists
+		"-i", video_path,
+		"-i", audio_path,
+		"-c:v", "copy",		# don't re-encode video
+		"-c:a", "aac",		# encode audio to AAC
+		"-shortest",		# stop when shortest stream ends
+		output_path
+	])
 
 def render_video(scene, output='animation.mp4', directory='frames'):
 	render_frames(scene, directory)
