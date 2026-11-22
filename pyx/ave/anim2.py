@@ -260,7 +260,7 @@ class Scene:
 				frame.draw(img)
 	
 				filename = f'{prefix}{i:0{digits}d}.png'
-				imageio.imwrite(output_dir / filename, img)
+				imageio.imwrite(str(output_dir / filename), img)
 	
 		finally:
 			print('Frame rendering complete.')
@@ -316,7 +316,7 @@ class Scene:
 		try:
 			for i, frame in scene.iter_frames():
 				filename = f'{prefix}{i:0{digits}d}.svg'
-				frame.save_svg(output_dir / filename, size=scene.size, fit_to_content=False)
+				frame.save_svg(str(output_dir / filename), size=scene.size, fit_to_content=False)
 	
 		finally:
 			print('SVG frame generation complete.')
