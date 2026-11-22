@@ -2423,9 +2423,18 @@ class group(list, shape):
 	def __mul__(self, value):
 		return self._apply('__mul__', value)
 	
-	def apply_matrix(self, matrix):
-		return self._apply('apply_matrix', matrix)
+	#def apply_matrix(self, matrix):
+	#	return self._apply('apply_matrix', matrix)
 
+	def apply_matrix(self, matrix):
+		result = type(self)()
+	
+		for child in self:
+			child_matrix = matrix @ child.xform.matrix
+			transformed = child.apply_matrix(child_matrix)
+			result.append(transformed)
+	
+		return result
 
 class path(group, curve):
 	def __init__(self, items=None, closed=False):
