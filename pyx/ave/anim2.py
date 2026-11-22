@@ -164,23 +164,6 @@ class Scene:
 			FunctionTweener(*args, **kwargs)
 		)
 	
-	def assign(self, target, property, value, time):
-		"""Set a property to a value at a specific time."""
-
-		def update(t): return value
-
-		animation = self.animate(
-			target=target,
-			property=property,
-			start=value,
-			end=value,
-			start_time=time,
-			duration=0
-		)
-
-		animation.value_function = update
-		return animation
-	
 	def hold(self, target, property, value, start_time, duration):
 		"""Keep a property at a value during a time interval."""
 
@@ -197,7 +180,12 @@ class Scene:
 
 		animation.value_function = update
 		return animation
-	
+
+	def assign(self, target, property, value, time):
+		"""Set a property to a value at a specific time."""
+
+		return self.hold(target=target, property=property, value=value, start_time=time, duration=0)
+
 	def sequence(self, target, property, start, animations, start_time=0):
 		result = []
 
