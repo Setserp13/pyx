@@ -394,7 +394,7 @@ def render_frames(scene, directory='frames'):
 		)
 		#for x in frame: print(x.aabb)
 		#frame.save_svg(filename)
-		frame.save_svg(filename)
+		frame.save_svg(filename, size=scene.size, fit_to_content=False)
 
 	return directory
 
