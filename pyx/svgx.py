@@ -780,7 +780,10 @@ def save_svg(obj, path='drawing.svg', overwrite=True):
 
 	lxmlx.save(draw(obj), path)
 
-	return path"""
+	return path
+
+geo.group.save_svg = lambda self, path='drawing.svg', overwrite=True: save_svg(self, path, overwrite)
+"""
 
 def save_svg(obj, path='drawing.svg', overwrite=True, size=None, fit_to_content=True):
 	if not path.lower().endswith('.svg'):
@@ -803,8 +806,9 @@ def save_svg(obj, path='drawing.svg', overwrite=True, size=None, fit_to_content=
 
 	return path
 
-
-geo.group.save_svg = lambda self, path='drawing.svg', overwrite=True: save_svg(self, path, overwrite)
+geo.group.save_svg = lambda self, path='drawing.svg', overwrite=True, size=None, fit_to_content=True: save_svg(
+	self, path, overwrite, size, fit_to_content
+)
 
 def load_svg(filepath, asnode=False):
 	root = etree.parse(filepath).getroot()
