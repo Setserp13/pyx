@@ -238,10 +238,94 @@ class Scene:
 
 	def draw(self, time=0):
 		self.timeline.apply(time)
-		#return canvas(self.objects, self.size)
 		return geo.group(self.objects)
 
-	def render_frame(scene, time, transparent=False):
+	def iter_frames(scene):
+		for i in tqdm(range(scene.timeline.frame_count), desc='Iterating frames'):
+			time = i / scene.timeline.fps
+			yield i, scene.draw(time)
+	
+	
+	def render_frames(scene, output_dir='frames', transparent=False, prefix='frame_', digits=5):
+		output_dir = Path(output_dir)
+		output_dir.mkdir(parents=True, exist_ok=True)
+	
+		channels = 4 if transparent else 3
+	
+		print('Generating frames...')
+	
+		try:
+			for i, frame in scene.iter_frames():
+				img = np.zeros((scene.height, scene.width, channels), dtype=np.uint8)
+				frame.draw(img)
+	
+				filename = f'{prefix}{i:0{digits}d}.png'
+				imageio.imwrite(output_dir / filename, img)
+	
+		finally:
+			print('Frame rendering complete.')
+	
+		return output_dir
+	
+	
+	def render_video(scene, output='animation.mp4', transparent=False, codec=None):
+		if output is None:
+			output = 'animation.mov' if transparent else 'animation.mp4'
+	
+		codec = codec or ('png' if transparent else 'libx264')
+	
+		output_params = (
+			['-pix_fmt', 'rgba']
+			if transparent else
+			['-pix_fmt', 'yuv420p']
+		)
+	
+		writer = imageio.get_writer(
+			output,
+			format='FFMPEG',
+			mode='I',
+			fps=scene.timeline.fps,
+			codec=codec,
+			output_params=output_params,
+		)
+	
+		channels = 4 if transparent else 3
+	
+		print('Generating video...')
+	
+		try:
+			for i, frame in scene.iter_frames():
+				img = np.zeros((scene.height, scene.width, channels), dtype=np.uint8)
+				frame.draw(img)
+				writer.append_data(img)
+	
+		finally:
+			writer.close()
+	
+		print('Video encoding complete.')
+	
+		return output
+	
+	
+	def render_frames_svg(scene, output_dir='frames', prefix='frame_', digits=5):
+		output_dir = Path(output_dir)
+		output_dir.mkdir(parents=True, exist_ok=True)
+	
+		print('Generating SVG frames...')
+	
+		try:
+			for i, frame in scene.iter_frames():
+				filename = f'{prefix}{i:0{digits}d}.svg'
+				frame.save_svg(output_dir / filename, size=scene.size, fit_to_content=False)
+	
+		finally:
+			print('SVG frame generation complete.')
+	
+		return output_dir
+
+
+	
+	"""def render_frame(scene, time, transparent=False):
 		channels = 4 if transparent else 3
 	
 		img = np.zeros(
@@ -331,13 +415,13 @@ class Scene:
 	
 		print('Video encoding complete.')
 	
-		return output
+		return output"""
 
 
 
 
 
-def render_frames(scene, directory='frames'):
+"""def render_frames(scene, directory='frames'):
 	os.makedirs(directory, exist_ok=True)
 
 	timeline = scene.timeline
@@ -355,7 +439,7 @@ def render_frames(scene, directory='frames'):
 		#frame.save_svg(filename)
 		frame.save_svg(filename, size=scene.size, fit_to_content=False)
 
-	return directory
+	return directory"""
 
 
 def render_video(scene, output='animation.mp4', directory='frames'):
