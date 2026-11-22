@@ -337,47 +337,6 @@ class Scene:
 
 
 
-
-
-
-
-
-
-
-
-
-
-"""class canvas(geo.group):
-	def __init__(self, items, size):
-		super().__init__(items)
-
-		self.rect = geo.rect(np.zeros(2), size).set(fill='black', stroke='none')
-
-		self.insert(0, self.rect)
-
-	def draw(self):
-		objects = copy.deepcopy(self)
-
-		#for x in objects[1:]:
-		#	x.global_aabb = self.rect.denormalize_rect(x.global_aabb)	# Use global_aabb to preserve the effects of parent and local transforms.
-	
-		return objects
-
-	def save_svg(self, path='drawing.svg', overwrite=True):
-		if not path.lower().endswith('.svg'):
-			path += '.svg'
-
-		if not overwrite:
-			path = osx.to_distinct(path)
-
-		result = svgx.svg(*self.rect.size)
-		result.extend(x.to_svg() for x in self.draw())
-
-		lxmlx.save(result, path)
-
-		return path"""
-
-
 def render_frames(scene, directory='frames'):
 	os.makedirs(directory, exist_ok=True)
 
