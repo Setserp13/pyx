@@ -125,12 +125,17 @@ class Timeline:
 	def dt(self): return 1. / self.fps	#delta time
 
 class Scene:
-	def __init__(self, size=[640, 360], fps=30, duration=5):
+	def __init__(self, size=[640, 360], fps=30, duration=None, transparent=False):
 		self.size = np.array(size)
 
 		self.timeline = Timeline(fps, duration)
 		self.objects = []
 
+		self.transparent = transparent
+
+	@property
+	def channels(self): return 4 if transparent else 3
+	
 	@property
 	def rect(self): return geo.rect(np.zeros(2), self.size)
 
@@ -245,8 +250,36 @@ class Scene:
 			time = i / scene.timeline.fps
 			yield i, scene.draw(time)
 	
+	def render_frames(scene, output_dir='frames', prefix='frame_', digits=5, format='png'):
+		output_dir = Path(output_dir)
+		output_dir.mkdir(parents=True, exist_ok=True)
 	
-	def render_frames(scene, output_dir='frames', transparent=False, prefix='frame_', digits=5):
+		format = format.lower()
+	
+		if format not in ('png', 'svg'):
+			raise ValueError(f'Unsupported frame format: {format}')
+	
+		print(f'Generating {format.upper()} frames...')
+	
+		try:
+			for i, frame in scene.iter_frames():
+				filename = f'{prefix}{i:0{digits}d}.{format}'
+				filepath = str(output_dir / filename)
+	
+				if format == 'png':
+					img = np.zeros((scene.height, scene.width, scene.channels), dtype=np.uint8)
+					frame.draw(img)
+					imageio.imwrite(filepath, img)
+	
+				elif format == 'svg':
+					frame.save_svg(filepath, size=scene.size, fit_to_content=False)
+	
+		finally:
+			print('Frame rendering complete.')
+	
+		return output_dir
+
+	"""def render_frames(scene, output_dir='frames', transparent=False, prefix='frame_', digits=5):
 		output_dir = Path(output_dir)
 		output_dir.mkdir(parents=True, exist_ok=True)
 	
@@ -266,7 +299,22 @@ class Scene:
 			print('Frame rendering complete.')
 	
 		return output_dir
+
+	def render_frames_svg(scene, output_dir='frames', prefix='frame_', digits=5):
+		output_dir = Path(output_dir)
+		output_dir.mkdir(parents=True, exist_ok=True)
 	
+		print('Generating SVG frames...')
+	
+		try:
+			for i, frame in scene.iter_frames():
+				filename = f'{prefix}{i:0{digits}d}.svg'
+				frame.save_svg(str(output_dir / filename), size=scene.size, fit_to_content=False)
+	
+		finally:
+			print('SVG frame generation complete.')
+	
+		return output_dir"""
 	
 	def render_video(scene, output='animation.mp4', transparent=False, codec=None):
 		if output is None:
@@ -305,23 +353,7 @@ class Scene:
 		print('Video encoding complete.')
 	
 		return output
-	
-	
-	def render_frames_svg(scene, output_dir='frames', prefix='frame_', digits=5):
-		output_dir = Path(output_dir)
-		output_dir.mkdir(parents=True, exist_ok=True)
-	
-		print('Generating SVG frames...')
-	
-		try:
-			for i, frame in scene.iter_frames():
-				filename = f'{prefix}{i:0{digits}d}.svg'
-				frame.save_svg(str(output_dir / filename), size=scene.size, fit_to_content=False)
-	
-		finally:
-			print('SVG frame generation complete.')
-	
-		return output_dir
+
 
 
 
