@@ -764,7 +764,7 @@ PILx.text.to_svg = lambda self: text_to_svg(self, **get_attrib(self))
 PILx.image.to_svg = lambda self: image_to_svg(self, **get_attrib(self))
 
 
-def draw(obj):
+"""def draw(obj):
 	size = obj.global_aabb.size
 	obj.global_aabb = geo.rect(np.zeros(2), size)
 	result = svg(*size)
@@ -780,7 +780,29 @@ def save_svg(obj, path='drawing.svg', overwrite=True):
 
 	lxmlx.save(draw(obj), path)
 
+	return path"""
+
+def save_svg(obj, path='drawing.svg', overwrite=True, size=None, fit_to_content=True):
+	if not path.lower().endswith('.svg'):
+		path += '.svg'
+
+	if not overwrite:
+		path = osx.to_distinct(path)
+
+	if fit_to_content:
+		aabb = obj.global_aabb
+		size = aabb.size
+		obj.global_aabb = geo.rect(np.zeros(2), size)
+	else:
+		size = np.asarray(size if size is not None else obj.global_aabb.max)
+
+	result = svg(*size)
+	result.append(obj.to_svg())
+
+	lxmlx.save(result, path)
+
 	return path
+
 
 geo.group.save_svg = lambda self, path='drawing.svg', overwrite=True: save_svg(self, path, overwrite)
 
