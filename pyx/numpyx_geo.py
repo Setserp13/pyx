@@ -3018,3 +3018,49 @@ def on_sphere(radius=1.0, stacks=16, slices=32, center=np.zeros(3)):
 		for phi in npx.subdivide(0.0, math.pi * 2.0, slices):
 			v.append(npx.spherical_to_cartesian(radius, theta, phi) + center)
 	return v
+
+
+
+
+
+
+
+def propagate_transform(group):
+	for child in group:
+		group.xform.append(child.xform)
+
+		if isinstance(child, (group,)):
+			propagate_transform(child)
+
+def Transform_to_group(self):
+	g = group().set(transform=self)
+	g.id = getattr(self, 'id', None)
+
+	shape = getattr(self, 'shape', None)
+
+	if shape is not None:
+		if isinstance(shape, (group,)):	#multipath case
+			shape.set_children(**self.attrib)
+		else:
+			shape.set(**self.attrib)
+		g.append(shape)
+		propagate_transform(g)
+
+	for child in self.children:
+		child_group = child.to_group()
+
+		if child_group:
+			g.append(child_group)
+
+	return g
+
+Transform.to_group = Transform_to_group
+
+
+
+
+
+
+
+
+
