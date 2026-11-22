@@ -260,7 +260,7 @@ class Scene:
 	def iter_frames(scene, transparent=False):
 		for i in range(scene.timeline.frame_count):
 			time = i / scene.timeline.fps
-			yield render_frame(scene, time, transparent)
+			yield scene.render_frame(time, transparent)
 	
 	
 	def render_frames(
@@ -277,7 +277,7 @@ class Scene:
 	
 		try:
 			for i, img in enumerate(tqdm(
-				iter_frames(scene, transparent),
+				scene.iter_frames(transparent),
 				total=scene.timeline.frame_count,
 				desc='Rendering frames'
 			)):
@@ -320,7 +320,7 @@ class Scene:
 	
 		try:
 			for img in tqdm(
-				iter_frames(scene, transparent),
+				scene.iter_frames(transparent),
 				total=scene.timeline.frame_count,
 				desc='Rendering frames'
 			):
