@@ -9,6 +9,11 @@ from pyx.mat.easing import *
 import copy
 import pyx.numpyx as npx
 import pyx.generic.generic as generic
+from pathlib import Path
+
+import imageio.v2 as imageio
+from tqdm import tqdm
+
 
 class Animation:
 	def __init__(self, start_time=0, duration=1):
@@ -235,6 +240,112 @@ class Scene:
 		self.timeline.apply(time)
 		#return canvas(self.objects, self.size)
 		return geo.group(self.objects)
+
+	def render_frame(scene, time, transparent=False):
+		channels = 4 if transparent else 3
+	
+		img = np.zeros(
+			(scene.height, scene.width, channels),
+			dtype=np.uint8
+		)
+	
+		frame = scene.draw(time)
+	
+		for obj in frame:
+			obj.draw(img)
+	
+		return img
+	
+	
+	def iter_frames(scene, transparent=False):
+		for i in range(scene.timeline.frame_count):
+			time = i / scene.timeline.fps
+			yield render_frame(scene, time, transparent)
+	
+	
+	def render_frames(
+		scene,
+		output_dir='frames',
+		transparent=False,
+		prefix='frame_',
+		digits=5,
+	):
+		output_dir = Path(output_dir)
+		output_dir.mkdir(parents=True, exist_ok=True)
+	
+		print('Generating frames...')
+	
+		try:
+			for i, img in enumerate(tqdm(
+				iter_frames(scene, transparent),
+				total=scene.timeline.frame_count,
+				desc='Rendering frames'
+			)):
+				filename = f'{prefix}{i:0{digits}d}.png'
+				imageio.imwrite(output_dir / filename, img)
+	
+		finally:
+			print('Frame rendering complete.')
+	
+		return output_dir
+	
+	
+	def render_video(
+		scene,
+		output='animation.mp4',
+		transparent=False,
+		codec=None,
+	):
+		if output is None:
+			output = 'animation.mov' if transparent else 'animation.mp4'
+	
+		codec = codec or ('png' if transparent else 'libx264')
+	
+		output_params = (
+			['-pix_fmt', 'rgba']
+			if transparent else
+			['-pix_fmt', 'yuv420p']
+		)
+	
+		writer = imageio.get_writer(
+			output,
+			format='FFMPEG',
+			mode='I',
+			fps=scene.timeline.fps,
+			codec=codec,
+			output_params=output_params,
+		)
+	
+		print('Generating video...')
+	
+		try:
+			for img in tqdm(
+				iter_frames(scene, transparent),
+				total=scene.timeline.frame_count,
+				desc='Rendering frames'
+			):
+				writer.append_data(img)
+	
+		finally:
+			writer.close()
+	
+		print('Video encoding complete.')
+	
+		return output
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 class canvas(geo.group):
 	def __init__(self, items, size):
