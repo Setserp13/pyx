@@ -15,6 +15,72 @@ import pyx.sound as sd
 import imageio.v2 as imageio
 from tqdm import tqdm
 
+from pyx.mat.transform import Node3D
+
+class Camera:
+	def __init__(self, fov=60, near=0.1, far=1000):
+		self.transform = Node3D()
+		self.fov = fov
+		self.near = near
+		self.far = far
+
+	@property
+	def view_matrix(self):
+		return np.linalg.inv(self.transform.global_transform)
+
+	def projection_matrix(self, viewport):
+		width, height = viewport
+		aspect = width / height
+
+		f = 1 / np.tan(np.radians(self.fov) / 2)
+
+		return np.array([
+			[f / aspect, 0, 0, 0],
+			[0, f, 0, 0],
+			[0, 0, (self.far + self.near) / (self.near - self.far),
+				(2 * self.far * self.near) / (self.near - self.far)],
+			[0, 0, -1, 0]
+		])
+
+	def project(self, point, viewport):
+		matrix = self.projection_matrix(viewport) @ self.view_matrix
+
+		point = matrix @ np.append(point, 1)
+
+		if point[3] <= 0:
+			return None
+
+		point = point[:3] / point[3]
+
+		x = (point[0] + 1) * 0.5 * viewport[0]
+		y = (1 - point[1]) * 0.5 * viewport[1]
+
+		return np.array([x, y, point[2]])
+
+	def unproject(self, point, viewport, depth=1):
+		matrix = self.projection_matrix(viewport) @ self.view_matrix
+		inverse = np.linalg.inv(matrix)
+
+		point = np.array([
+			point[0] / viewport[0] * 2 - 1,
+			1 - point[1] / viewport[1] * 2,
+			depth * 2 - 1,
+			1
+		])
+
+		point = inverse @ point
+
+		return point[:3] / point[3]
+
+	def ray(self, point, viewport):
+		near = self.unproject(point, viewport, 0)
+		far = self.unproject(point, viewport, 1)
+
+		direction = far - near
+		direction /= np.linalg.norm(direction)
+
+		return near, direction
+
 
 class Animation:
 	def __init__(self, start_time=0, duration=1):
