@@ -12,6 +12,7 @@ import pyx.mat.mat as mat
 import pyx.rex as rex
 from pyx.generic.node import Node
 from pyx.generic.generic import get, set
+from pyx.ave.anim2 import PropertyTweener
 
 #MESH INDICES
 
