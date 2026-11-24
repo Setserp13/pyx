@@ -486,7 +486,7 @@ def rotate_page(svg, angle=90):	#angle is in degree
 
 def circle_from_svg(obj): return geo.circle(getas(obj, float, 'cx', 'cy'), *getas(obj, float, 'r'))
 def ellipse_from_svg(obj): return geo.ellipse(np.array(getas(obj, float, 'cx', 'cy')), np.array(getas(obj, float, 'rx', 'ry')) * 2.)
-def image_from_svg(obj): return PILx.image(getas(obj, str, 'href'), getas(obj, float, 'x', 'y'), getas(obj, float, 'width', 'height'))
+def image_from_svg(obj): return PILx.image(getas(obj, str, 'href')[0], getas(obj, float, 'x', 'y'), getas(obj, float, 'width', 'height'))
 def rect_from_svg(obj): return geo.rect2(*getas(obj, float, 'x', 'y', 'width', 'height'))
 def line_from_svg(obj): return geo.line([getas(obj, float, 'x1', 'y1'), getas(obj, float, 'x2', 'y2')])
 def parse_points2(s):
