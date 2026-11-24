@@ -398,9 +398,12 @@ class GLB:
 			# Sampler.
 			sampler_index = len(samplers)
 	
+			input_index = len(self.gltf()['accessors']) - 2
+			output_index = len(self.gltf()['accessors']) - 1
+			
 			samplers.append({
-				'input': input_accessor.siblingIndex,
-				'output': output_accessor.siblingIndex,
+				'input': input_index,
+				'output': output_index,
 				'interpolation': interpolation
 			})
 	
