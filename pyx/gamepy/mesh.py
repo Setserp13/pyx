@@ -129,12 +129,14 @@ class Accessor(Node):
 		"MAT4": 16
 	}
 
-	def __init__(self, component_type, type, byte_offset=0, normalized=False):
+	def __init__(self, component_type, type, byte_offset=0, normalized=False, min=None, max=None):
 		super().__init__()
-		self.component_type = component_type
-		self.type = type
-		self.byte_offset = byte_offset
-		self.normalized = normalized
+		self.component_type = component_type	# Data type of each component (e.g. FLOAT, UNSIGNED_SHORT).
+		self.type = type						# Number and arrangement of components (e.g. SCALAR, VEC2, VEC3, VEC4, MAT4).
+		self.byte_offset = byte_offset			# Offset in bytes from the beginning of the buffer view.
+		self.normalized = normalized			# Whether integer values should be normalized to the [0, 1] or [-1, 1] range.
+		self.min = min							# Minimum value of the accessor's elements, per component.
+		self.max = max							# Maximum value of the accessor's elements, per component.
 
 	@property
 	def size(self): return self.COMPONENT_SIZE[self.component_type] * self.TYPE_SIZE[self.type]
@@ -153,7 +155,9 @@ class Accessor(Node):
 				{"normalized": True}
 				if self.normalized
 				else {}
-			)
+			),
+			**({'min': self.min} if self.min is not None else {}),
+			**({'max': self.max} if self.max is not None else {})
 		}
 
 
@@ -170,9 +174,10 @@ class GLB:
 			'materials': [],
 			'textures': [],
 			'images': [],
-			'samplers': []
+			'samplers': [],
+			'animations': []
 		}
-
+		
 		self.scene = None
 
 	@property
@@ -248,6 +253,174 @@ class GLB:
 		result = GLBElement(self.buffer, joints=[x.index for x in skin.joints])
 		self.resources['skins'].append(result.add('inverseBindMatrices', [x.inv_TRS_to(skin.joints[0]).T for x in skin.joints], 5126, 'MAT4'))
 
+	def add_animation(self, animations, fps=30, interpolation='CUBICSPLINE', name='Animation'):
+		"""
+		Export PropertyTweener objects into a glTF animation.
+	
+		Supported properties:
+			position / translation
+			scale
+		"""
+	
+		property_map = {
+			'position': ('translation', 'VEC3'),
+			'translation': ('translation', 'VEC3'),
+			'scale': ('scale', 'VEC3')
+		}
+	
+		samplers = []
+		channels = []
+	
+		animations = [
+			a for a in animations
+			if isinstance(a, PropertyTweener)
+		]
+	
+		if not animations:
+			return None
+	
+		if interpolation not in ('LINEAR', 'STEP', 'CUBICSPLINE'):
+			raise ValueError('Invalid interpolation.')
+	
+		origin = min(a.start_time for a in animations)
+	
+		for animation in animations:
+	
+			target = animation.target
+			property = animation.property
+	
+			if property not in property_map:
+				raise ValueError(f'Unsupported property: {property}')
+	
+			path, value_type = property_map[property]
+	
+			# Resolve node index.
+			node_index = target.index
+	
+			# Generate timestamps.
+			count = max(1, int(np.ceil(animation.duration * fps)))
+	
+			local_times = (
+				np.linspace(0, animation.duration, count + 1)
+				if animation.duration > 0
+				else np.array([0.0])
+			)
+	
+			times = local_times + animation.start_time - origin
+	
+			# Resolve initial and final values.
+			start = animation.start
+	
+			if start is None:
+				start = generic.get(target, property)
+	
+			start = np.asarray(start, dtype=float)
+			end = np.asarray(animation.end, dtype=float)
+	
+			if start.shape != (3,) or end.shape != (3,):
+				raise ValueError(f'{property} must have 3 components.')
+	
+			# Sample animation.
+			values = []
+	
+			for t in local_times:
+	
+				if animation.duration == 0:
+					progress = 1.0
+				else:
+					progress = np.clip(
+						t / animation.duration,
+						0.0,
+						1.0
+					)
+	
+				progress = animation.ease(progress)
+	
+				if animation.value_function:
+					value = animation.value_function(progress)
+				else:
+					value = npx.lerp(start, end, progress)
+	
+				values.append(np.asarray(value, dtype=float))
+	
+			values = np.asarray(values)
+	
+			# Ensure float32 and little-endian representation.
+			times = np.asarray(times, dtype='<f4')
+			values = np.asarray(values, dtype='<f4')
+	
+			# Add timestamps.
+			input_data = times.tobytes()
+	
+			# Align buffer to 4 bytes.
+			padding = -len(self.buffer.bytes) % 4
+			if padding:
+				self.buffer.append(b'\x00' * padding)
+	
+			view = self.buffer.append(input_data)
+			input_accessor = view.append(5126, 'SCALAR')
+	
+			input_accessor.min = [float(times.min())]
+			input_accessor.max = [float(times.max())]
+	
+			# Prepare output.
+			if interpolation == 'CUBICSPLINE':
+	
+				if len(times) > 1:
+					tangents = np.gradient(
+						values,
+						times,
+						axis=0
+					)
+				else:
+					tangents = np.zeros_like(values)
+	
+				# glTF order:
+				# incoming tangent, value, outgoing tangent.
+				output = np.stack(
+					[tangents, values, tangents],
+					axis=1
+				).reshape(-1, 3)
+	
+			else:
+				output = values
+	
+			output = np.asarray(output, dtype='<f4')
+	
+			padding = -len(self.buffer.bytes) % 4
+			if padding:
+				self.buffer.append(b'\x00' * padding)
+	
+			view = self.buffer.append(output.tobytes())
+			output_accessor = view.append(5126, value_type)
+	
+			# Sampler.
+			sampler_index = len(samplers)
+	
+			samplers.append({
+				'input': input_accessor.siblingIndex,
+				'output': output_accessor.siblingIndex,
+				'interpolation': interpolation
+			})
+	
+			# Channel.
+			channels.append({
+				'sampler': sampler_index,
+				'target': {
+					'node': node_index,
+					'path': path
+				}
+			})
+	
+		result = {
+			'name': name,
+			'samplers': samplers,
+			'channels': channels
+		}
+	
+		self.resources['animations'].append(result)
+	
+		return result
 
 
 
