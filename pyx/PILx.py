@@ -261,6 +261,7 @@ class image(geo.rect_like):
 
 		return f'data:{mime};base64,{data}'
 
+	def apply_matrix(self, matrix): return geo.rect(self.min, self.size).corners.apply_matrix(matrix)
 
 class tspan(geo.rect_like):
 	def __init__(self, inner_text, position, font='arial.ttf', font_size=12, pivot=np.ones(2) * 0.5):
