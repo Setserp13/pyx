@@ -151,11 +151,17 @@ def resize(img, new_shape, interpolation=0):
 
 def scale(img, value, interpolation=0): return resize(img, img.shape[:2] * np.array(value), interpolation=interpolation)
 
-def resize_nearest(img, new_shape):
-	h, w = new_shape.astype(int)
+"""def resize_nearest(img, new_shape):
+	h, w = np.asarray(new_shape, dtype=int)
 	H, W = img.shape[:2]
 	y = (np.arange(h) * H / h).astype(int)
 	x = (np.arange(w) * W / w).astype(int)
+	return img[y[:, None], x]"""
+
+def resize_nearest(img, new_shape):	# new_shape accepts a ndarray, tuple, or list
+	# Calculate source pixel indices for each destination coordinate
+	y, x = [(np.arange(dst) * src / dst).astype(int) for src, dst in zip(img.shape[:2], np.asarray(new_shape, dtype=int))]
+	# Sample pixels using nearest-neighbor interpolation
 	return img[y[:, None], x]
 
 def resize_bilinear(img, new_shape):
