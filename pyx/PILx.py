@@ -28,54 +28,12 @@ IMAGE_FORMATS = [
 	"webp",
 ]
 
-
-
-
-
-
-
 def find_font(name): return find(fontManager.ttflist, lambda x: x.name == name)
 
 def extract_frames(anim):	#anim is a path or an Image
 	return [ x.copy().convert("RGBA") for x in ImageSequence.Iterator(Image.open(anim) if isinstance(anim, str) else anim) ]
 
 def to_spritesheet(anim): return concat(extract_frames(anim))
-
-"""def read_image(path, start_axis=0):
-	image = Image.open(path)
-	array = np.array(image)[::]	#-1]
-	array = np.transpose(array, (1 - start_axis, start_axis, *range(2, array.ndim)))
-	return array
-
-def concat(lst, axis=0, equal_sized=False, mode='RGBA'):
-	cell_size = lst[0].size if equal_sized else mat.arg(max, [x.size for x in lst])
-	size = list(cell_size)
-	size[axis] *= len(lst)
-	#print(size)
-	result = Image.new(mode, tuple(size))
-	for i, x in enumerate(lst):
-		pos = [0, 0]
-		pos[axis] = i * cell_size[axis]
-		#print(pos)
-		result.paste(x, tuple(pos))
-	return result
-	
-#grid(lst, 1, 0) concats vertically and grid(lst, 1, 1) concats horizontally
-def grid(lst, constraint_count, start_axis=0, equal_sized=False, mode='RGBA'):
-	cell_size = lst[0].size if equal_sized else mat.arg(max, [x.size for x in lst])
-	size = list(cell_size)
-	size[start_axis] *= constraint_count
-	axis2 = (start_axis+1)%2
-	size[axis2] *= math.ceil(len(lst) / constraint_count)
-	#print(size)
-	result = Image.new(mode, tuple(size))
-	for i, x in enumerate(lst):
-		pos = [0, 0]
-		pos[start_axis] = (i % constraint_count) * cell_size[start_axis]
-		pos[axis2] = (i // constraint_count) * cell_size[axis2]
-		#print(pos)
-		result.paste(x, tuple(pos))
-	return result"""
 
 def concat_images(imgs, axis=0, align=0):
 	imgs = geo.group(imgs)
@@ -151,14 +109,6 @@ def best_fit(line, size, font, leading=0, max_font_size=300):
 		if text_size[1] <= size[1]:
 			break
 	return lines, font_size
-
-"""def palette(image):
-	image = np.asarray(image)
-	pixels = image.reshape(-1, image.shape[-1])
-	#return list({tuple(p) for p in pixels})
-	return np.unique(pixels, axis=0)"""
-
-
 
 def resize(img, new_shape, interpolation=0):
 	return [
@@ -324,24 +274,6 @@ class image(geo.rect_like):
 	def zeros(cls, size, channels=3, dtype=np.uint8):
 		array = np.zeros((*size, *([channels] if channels > 1 else [])), dtype=dtype)
 		return cls(array)
-
-	"""@property
-	def filepath(self):
-		return self._filepath
-
-	@filepath.setter
-	def filepath(self, value):
-		self._filepath = value
-
-		if value is None:
-			self.array = None
-			return
-
-		try:
-			self.array = read_image(value)
-		except FileNotFoundError as e:
-			print(f'FileNotFoundError: {e}')
-			self.array = None"""
 
 	@property
 	def size(self):
