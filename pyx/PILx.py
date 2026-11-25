@@ -45,7 +45,7 @@ def to_spritesheet(anim): return concat(extract_frames(anim))
 	image = Image.open(path)
 	array = np.array(image)[::]	#-1]
 	array = np.transpose(array, (1 - start_axis, start_axis, *range(2, array.ndim)))
-	return array"""
+	return array
 
 def concat(lst, axis=0, equal_sized=False, mode='RGBA'):
 	cell_size = lst[0].size if equal_sized else mat.arg(max, [x.size for x in lst])
@@ -59,14 +59,7 @@ def concat(lst, axis=0, equal_sized=False, mode='RGBA'):
 		#print(pos)
 		result.paste(x, tuple(pos))
 	return result
-
-def sprites(img, regions): return [img.crop((*x.min, *x.max)) for x in regions]
-
-def slice_by_cell_count(img, cell_count): return slice_by_cell_size(img, np.array(img.size) // np.array(cell_count))
-
-def slice_by_cell_size(img, cell_size): return sprites(img, geo.rect2(0,0,*img.size).slice_by_cell_size(np.array(cell_size)))
-
-
+	
 #grid(lst, 1, 0) concats vertically and grid(lst, 1, 1) concats horizontally
 def grid(lst, constraint_count, start_axis=0, equal_sized=False, mode='RGBA'):
 	cell_size = lst[0].size if equal_sized else mat.arg(max, [x.size for x in lst])
@@ -82,7 +75,31 @@ def grid(lst, constraint_count, start_axis=0, equal_sized=False, mode='RGBA'):
 		pos[axis2] = (i // constraint_count) * cell_size[axis2]
 		#print(pos)
 		result.paste(x, tuple(pos))
+	return result"""
+
+def concat_images(imgs, axis=0, align=0):
+	imgs = geo.group(imgs)
+	geo.distribute(imgs, axis=axis, align=align)
+	result = PILx.image.zeros(imgs.aabb.size.astype(int), imgs[0].channels)
+
+	for img in imgs:
+		aabb = img.aabb.asint()
+		result.array[aabb.min[0]:aabb.max[0], aabb.min[1]:aabb.max[1]] = img.array
+
 	return result
+
+def grid_images(imgs, constraint_count, start_axis=0):
+	groups = [
+		concat_images(imgs[i:i + constraint_count], axis=start_axis)
+		for i in range(0, len(imgs), constraint_count)
+	]
+	return concat_images(groups, axis=1 - start_axis)
+
+def sprites(img, regions): return [img.crop((*x.min, *x.max)) for x in regions]
+
+def slice_by_cell_count(img, cell_count): return slice_by_cell_size(img, np.array(img.size) // np.array(cell_count))
+
+def slice_by_cell_size(img, cell_size): return sprites(img, geo.rect2(0,0,*img.size).slice_by_cell_size(np.array(cell_size)))
 
 def getsize(lines, font, font_size, leading=0):
 	width = max(get_size(line, font, font_size)[0] for line in lines)
