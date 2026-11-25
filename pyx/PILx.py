@@ -236,14 +236,19 @@ class image(geo.rect_like):
 			raise TypeError(f'Unsupported input type: {type(io).__name__}')
 
 	def load(self, path):
-		array = np.asarray(Image.open(path))
+		self.filepath = path
+		self.array = None
+	
+		try:
+			array = np.asarray(Image.open(path))
+		except FileNotFoundError:
+			print(f'Warning: Image file not found: {path}')
+			return self
 	
 		if self.start_axis == 0:
 			array = np.swapaxes(array, 0, 1)
 	
 		self.array = array
-		self.filepath = path
-	
 		return self
 	
 	
