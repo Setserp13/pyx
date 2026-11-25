@@ -221,10 +221,53 @@ import base64
 import mimetypes
 
 class image(geo.rect_like):
-	def __init__(self, filepath=None, min=np.zeros(2), size=None):
+	def __init__(self, filepath=None, min=np.zeros(2), size=None, start_axis=0):
 		self.filepath = filepath
 		self.min = min
 		self.overwrite_size = size
+		self.start_axis = start_axis
+
+	@classmethod
+	def read(cls, path, start_axis=0):
+		array = np.asarray(Image.open(path))
+	
+		if start_axis == 1:
+			array = np.swapaxes(array, 0, 1)
+	
+		result = cls(start_axis=start_axis)
+		result.array = array
+		result.filepath = path
+		return result
+
+	def write(self, path=None):
+		path = path or self.filepath
+	
+		array = self.array
+	
+		if self.start_axis == 1:
+			array = np.swapaxes(array, 0, 1)
+	
+		Image.fromarray(array).save(path)
+	
+		return path
+
+	#@classmethod
+	def crop(self, rect, normalized=False):
+		x, y = self.start_axis, 1 - self.start_axis
+	
+		if normalized:
+			size = (self.array.shape[x], self.array.shape[y])
+			rect = geo.rect(np.zeros(2), size).denormalize_rect(rect)
+	
+		rect = rect.asint()
+	
+		slices = [slice(None)] * self.array.ndim
+		slices[x] = slice(rect.min[0], rect.max[0])
+		slices[y] = slice(rect.min[1], rect.max[1])
+
+		result = self.array[tuple(slices)]
+		
+		return result	#cls(result)
 
 	@property
 	def filepath(self):
