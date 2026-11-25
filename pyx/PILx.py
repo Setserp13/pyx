@@ -80,7 +80,7 @@ def grid(lst, constraint_count, start_axis=0, equal_sized=False, mode='RGBA'):
 def concat_images(imgs, axis=0, align=0):
 	imgs = geo.group(imgs)
 	geo.distribute(imgs, axis=axis, align=align)
-	result = PILx.image.zeros(imgs.aabb.size.astype(int), imgs[0].channels)
+	result = image.zeros(imgs.aabb.size.astype(int), imgs[0].channels)
 
 	for img in imgs:
 		aabb = img.aabb.asint()
