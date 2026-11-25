@@ -135,11 +135,11 @@ def best_fit(line, size, font, leading=0, max_font_size=300):
 			break
 	return lines, font_size
 
-def palette(image):
+"""def palette(image):
 	image = np.asarray(image)
 	pixels = image.reshape(-1, image.shape[-1])
 	#return list({tuple(p) for p in pixels})
-	return np.unique(pixels, axis=0)
+	return np.unique(pixels, axis=0)"""
 
 
 
@@ -285,6 +285,14 @@ class image(geo.rect_like):
 		result.array = self.array[tuple(slices)].copy()
 	
 		return result
+
+	def palette(self):
+		if self.array is None:
+			return np.empty((0, 0), dtype=np.uint8)
+	
+		pixels = self.array.reshape(-1, 1) if self.array.ndim == 2 else self.array.reshape(-1, self.array.shape[-1])
+	
+		return np.unique(pixels, axis=0)
 
 	"""@property
 	def filepath(self):
