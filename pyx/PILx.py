@@ -251,7 +251,6 @@ class image(geo.rect_like):
 	
 		return path
 
-	#@classmethod
 	def crop(self, rect, normalized=False):
 		x, y = self.start_axis, 1 - self.start_axis
 	
@@ -264,10 +263,11 @@ class image(geo.rect_like):
 		slices = [slice(None)] * self.array.ndim
 		slices[x] = slice(rect.min[0], rect.max[0])
 		slices[y] = slice(rect.min[1], rect.max[1])
-
-		result = self.array[tuple(slices)]
-		
-		return result	#cls(result)
+	
+		result = copy.deepcopy(self)
+		result.array = self.array[tuple(slices)].copy()
+	
+		return result
 
 	@property
 	def filepath(self):
