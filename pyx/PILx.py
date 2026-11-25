@@ -303,6 +303,11 @@ class image(geo.rect_like):
 	@property
 	def channels(self): return 1 if self.array.ndim == 2 else self.array.shape[-1]
 
+	@classmethod
+	def zeros(cls, size, channels=3, dtype=np.uint8):
+		array = np.zeros((*size, *([channels] if channels > 1 else [])), dtype=dtype)
+		return cls(array)
+
 	"""@property
 	def filepath(self):
 		return self._filepath
