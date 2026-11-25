@@ -300,6 +300,9 @@ class image(geo.rect_like):
 	
 		return np.unique(pixels, axis=0)
 
+	@property
+	def channels(self): return 1 if self.array.ndim == 2 else self.array.shape[-1]
+
 	"""@property
 	def filepath(self):
 		return self._filepath
