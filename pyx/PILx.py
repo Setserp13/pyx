@@ -41,11 +41,11 @@ def extract_frames(anim):	#anim is a path or an Image
 
 def to_spritesheet(anim): return concat(extract_frames(anim))
 
-def read_image(path, start_axis=0):
+"""def read_image(path, start_axis=0):
 	image = Image.open(path)
 	array = np.array(image)[::]	#-1]
 	array = np.transpose(array, (1 - start_axis, start_axis, *range(2, array.ndim)))
-	return array
+	return array"""
 
 def concat(lst, axis=0, equal_sized=False, mode='RGBA'):
 	cell_size = lst[0].size if equal_sized else mat.arg(max, [x.size for x in lst])
