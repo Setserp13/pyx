@@ -221,23 +221,35 @@ import base64
 import mimetypes
 
 class image(geo.rect_like):
-	def __init__(self, filepath=None, min=np.zeros(2), size=None, start_axis=0):
-		self.filepath = filepath
-		self.min = min
+	def __init__(self, io=None, min=None, size=None, start_axis=0):
+		self.min = np.zeros(2) if min is None else min
 		self.overwrite_size = size
-		self.start_axis = start_axis	#NumPy arrays use (height, width, channels) by default
+		self.start_axis = start_axis
+		self.filepath = None
+		self.array = None
+	
+		if isinstance(io, str):
+			self.load(io)
+		elif isinstance(io, np.ndarray):
+			self.array = io
+		elif io is not None:
+			raise TypeError(f'Unsupported input type: {type(io).__name__}')
 
-	@classmethod
-	def read(cls, path, start_axis=0):
+	def load(self, path):
 		array = np.asarray(Image.open(path))
 	
-		if start_axis == 0:
+		if self.start_axis == 0:
 			array = np.swapaxes(array, 0, 1)
 	
-		result = cls(start_axis=start_axis)
-		result.filepath = path
-		result.array = array
-		return result
+		self.array = array
+		self.filepath = path
+	
+		return self
+	
+	
+	@classmethod
+	def read(cls, path, start_axis=0):
+		return cls(start_axis=start_axis).load(path)
 
 	def write(self, path=None):
 		path = path or self.filepath
@@ -269,7 +281,7 @@ class image(geo.rect_like):
 	
 		return result
 
-	@property
+	"""@property
 	def filepath(self):
 		return self._filepath
 
@@ -285,7 +297,7 @@ class image(geo.rect_like):
 			self.array = read_image(value)
 		except FileNotFoundError as e:
 			print(f'FileNotFoundError: {e}')
-			self.array = None
+			self.array = None"""
 
 	@property
 	def size(self):
