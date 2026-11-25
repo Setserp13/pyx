@@ -225,13 +225,13 @@ class image(geo.rect_like):
 		self.filepath = filepath
 		self.min = min
 		self.overwrite_size = size
-		self.start_axis = start_axis
+		self.start_axis = start_axis	#NumPy arrays use (height, width, channels) by default
 
 	@classmethod
 	def read(cls, path, start_axis=0):
 		array = np.asarray(Image.open(path))
 	
-		if start_axis == 1:
+		if start_axis == 0:
 			array = np.swapaxes(array, 0, 1)
 	
 		result = cls(start_axis=start_axis)
@@ -244,7 +244,7 @@ class image(geo.rect_like):
 	
 		array = self.array
 	
-		if self.start_axis == 1:
+		if self.start_axis == 0:
 			array = np.swapaxes(array, 0, 1)
 	
 		Image.fromarray(array).save(path)
