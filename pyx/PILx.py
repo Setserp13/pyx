@@ -235,8 +235,8 @@ class image(geo.rect_like):
 			array = np.swapaxes(array, 0, 1)
 	
 		result = cls(start_axis=start_axis)
-		result.array = array
 		result.filepath = path
+		result.array = array
 		return result
 
 	def write(self, path=None):
