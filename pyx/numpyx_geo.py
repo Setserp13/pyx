@@ -2100,6 +2100,19 @@ class polyline(points, curve):
 	
 		return triangle(faces[index]).random_point()
 
+	def remove_duplicates(self):	#remove consecutive duplicates
+		if len(self) < 2:
+			return self
+	
+		mask = np.ones(len(self), dtype=bool)
+		mask[1:] = np.any(self[1:] != self[:-1], axis=1)
+	
+		points = self[mask]
+		self.resize(points.shape, refcheck=False)
+		self[:] = points
+	
+		return self
+
 class polygon:
 	def internal_angle(n): return polyline.internal_angle_sum(n) / n
 
