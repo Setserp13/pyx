@@ -2579,6 +2579,9 @@ class path(group, curve):
 		#print(p)
 		return polyline(p, closed=self.closed)
 
+	@property
+	def vertices(self):
+		return polyline([p for x in self for p in (x.get_point01(0), x.get_point01(1))], closed=self.closed)
 
 
 def distribute(arr, axis=0, align=.5, gap=0.0):
