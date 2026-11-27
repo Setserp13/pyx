@@ -6,7 +6,7 @@ class Node(Element):
 		for k in kwargs:
 			setattr(self, k, kwargs[k])
 		self.parent = None #Declare self.parent
-		self.setParent(parent) #Node
+		self.set_parent(parent) #Node
 		self.children = []	#init children
 		self.extend([] if children is None else children)
 
@@ -19,31 +19,11 @@ class Node(Element):
 		if parent is not None:
 			parent.children.append(self)
 	
-	def setParent(self, value):	# <- REMOVE THIS LATER
-		if self.parent != value:
-			if self.parent != None:
-				self.parent.children.remove(self)
-			if value != None:
-				value.children.append(self)
-			self.parent = value
-
 	@property
-	def siblingIndex(self):
+	def sibling_index(self):
 		if self.parent != None:
 			return index_of(self.parent.children, self)
 		return 0
-
-	def selfAndSiblings(self):
-		if self.parent != None:
-			return self.parent.children
-	
-	def findSelfOrSiblings(self, match):
-		result = []
-		if self.parent != None:
-			for child in self.parent.children:
-				if match(child):
-					result.append(child)
-		return result
 
 	def siblings(self):
 		result = []
@@ -70,11 +50,10 @@ class Node(Element):
 		if value in self.children:
 			self.children.remove(value)
 			self.parent = None
-		#value.setParent(None)	#remove a child
 
-	def isRoot(self): return self.parent == None
+	def isroot(self): return self.parent == None
 
-	def isLeaf(self): return self.degree() == 0
+	def isleaf(self): return self.degree() == 0
 	
 	def neighbors(self):
 		if self.parent == None:
@@ -87,12 +66,6 @@ class Node(Element):
 			result.append(self.parent)
 			result.extend(self.parent.ancestors())
 		return result
-	
-	def forAncestors(self, func):
-		result = []
-		if self.parent != None:
-			func(self.parent)
-			self.parent.forAncestors(func)
 
 	def descendants(self):
 		result = []
@@ -107,10 +80,6 @@ class Node(Element):
 			result = result + child.size()
 		return result
 
-	def forSelfAndDescendants(self, func):
-		func(self)
-		for child in self.children:
-			child.forSelfAndDescendants(func)
 	
 	def nodesAtDistance(self, distance):
 		if distance == 0:
@@ -120,28 +89,21 @@ class Node(Element):
 			result = result + child.nodesAtDistance(distance - 1)
 		return result
 
-	def forDescendants(self, func):
-		for child in self.children:
-			func(child)
-			child.forDescendants(func)
-	
-	def forChildren(self, func):
-		for child in self.children:
-			func(child)
-
+	@property
 	def degree(self): return len(self.children)
 
 	def leaves(self):
 		result = []
-		if self.isLeaf():
+		if self.isleaf():
 			result.append(self)
 		else:
 			for child in self.children:
 				result = result + child.leaves()
 		return result	
-	
+
+	@property
 	def breadth(self):
-		if self.isLeaf():
+		if self.isleaf():
 			return 1
 		else:
 			result = 0
@@ -150,17 +112,12 @@ class Node(Element):
 			return result
 
 	def root(self):
-		if self.isRoot():
+		if self.isroot():
 			return self
 		return self.parent.root()
 
 	def level(self):
-		if self.isRoot():
+		if self.isroot():
 			return 0
 		return self.parent.level() + 1
 
-	def findChild(self, match):
-		for x in self.children:
-			if(match(x)):
-				return x
-		return None
