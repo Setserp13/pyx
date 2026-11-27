@@ -25,6 +25,7 @@ class Node(Element):
 			return index_of(self.parent.children, self)
 		return 0
 
+	@property
 	def siblings(self):
 		result = []
 		if self.parent != None:
@@ -49,38 +50,39 @@ class Node(Element):
 	def remove(self, value):
 		if value in self.children:
 			self.children.remove(value)
-			self.parent = None
+			value.parent = None
 
+	@property
 	def isroot(self): return self.parent == None
 
-	def isleaf(self): return self.degree() == 0
-	
+	@property
+	def isleaf(self): return self.degree == 0
+
+	@property
 	def neighbors(self):
 		if self.parent == None:
 			return self.children
 		return [self.parent] + self.children
 
+	@property
 	def ancestors(self):
 		result = []
 		if self.parent != None:
 			result.append(self.parent)
-			result.extend(self.parent.ancestors())
+			result.extend(self.parent.ancestors)
 		return result
 
+	@property
 	def descendants(self):
 		result = []
 		for child in self.children:
 			result.append(child)
-			result.extend(child.descendants())
-		return result
-	
-	def size(self):
-		result = 1
-		for child in self.children:
-			result = result + child.size()
+			result.extend(child.descendants)
 		return result
 
-	
+	@property
+	def size(self): return 1 + len(self.descendants)
+
 	def nodesAtDistance(self, distance):
 		if distance == 0:
 			return [self]
@@ -92,32 +94,15 @@ class Node(Element):
 	@property
 	def degree(self): return len(self.children)
 
-	def leaves(self):
-		result = []
-		if self.isleaf():
-			result.append(self)
-		else:
-			for child in self.children:
-				result = result + child.leaves()
-		return result	
+	@property
+	def leaves(self): return [x for x in [self, *self.descendants] if x.isleaf]
 
 	@property
-	def breadth(self):
-		if self.isleaf():
-			return 1
-		else:
-			result = 0
-			for child in self.children:
-				result = result + child.breadth()
-			return result
+	def breadth(self): return len(self.leaves)
 
-	def root(self):
-		if self.isroot():
-			return self
-		return self.parent.root()
+	@property
+	def root(self): return self if self.isroot else self.parent.root
 
-	def level(self):
-		if self.isroot():
-			return 0
-		return self.parent.level() + 1
+	@property
+	def level(self): return 0 if self.isroot else self.parent.level + 1
 
