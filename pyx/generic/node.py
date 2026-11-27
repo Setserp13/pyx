@@ -104,5 +104,12 @@ class Node(Element):
 	def root(self): return self if self.isroot else self.parent.root
 
 	@property
+	def levels(self):
+		result = [[self]]
+		while any(result[-1]):
+			result.append([x for node in result[-1] for x in node.children])
+		return result[:-1]
+
+	@property
 	def level(self): return 0 if self.isroot else self.parent.level + 1
 
