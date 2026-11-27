@@ -73,7 +73,7 @@ def skew(v):
 		[-y, x, 0]
 	])
 
-class Matrix:
+"""class Matrix:
 
 	@staticmethod
 	def decompose(matrix):	#decompose T R S
@@ -92,7 +92,7 @@ class Matrix:
 			rotation = u @ vt
 			scale = np.diag(rotation.T @ basis).copy()
 	
-		return position, rotation, scale	#(dim,), (dim, dim), (dim,)
+		return position, rotation, scale	#(dim,), (dim, dim), (dim,)"""
 
 
 class quaternion(np.ndarray):
@@ -595,8 +595,8 @@ class Node3D(Transform):
 
 
 
-def decompose_trs_shear(M, eps=1e-8):
-	"""
+"""def decompose_trs_shear(M, eps=1e-8):
+	
 	Decompose a homogeneous affine matrix into:
 	- translation vector T
 	- rotation matrix R
@@ -604,7 +604,7 @@ def decompose_trs_shear(M, eps=1e-8):
 	- shear matrix Sh
 
 	Works in any dimension.
-	"""
+	
 	M = np.asarray(M, dtype=float)
 	n = M.shape[0] - 1
 
@@ -695,7 +695,7 @@ def test_decompose_trs_shear():
 
 			assert np.allclose(M, M2, atol=1e-6), f"Failed in {n}D"	# Assertions
 
-	print("All decomposition tests passed ✅")
+	print("All decomposition tests passed ✅")"""
 
 #test_decompose_trs_shear()
 
