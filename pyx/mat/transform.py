@@ -399,7 +399,6 @@ class Transform(Node):
 	@property
 	def global_TRS(self):
 		return self.TRS if self.parent is None else self.parent.global_TRS @ self.TRS
-		#return functools.reduce(lambda acc, x: acc @ x, [x.TRS for x in reversed([self] + self.ancestors())])
 
 	@property
 	def inv_global_TRS(self): return np.linalg.inv(self.global_TRS)
