@@ -10,6 +10,18 @@ class Node(Element):
 		self.children = []	#init children
 		self.extend([] if children is None else children)
 
+	def preorder(self):	#pre-order walk
+		"""Iterate over nodes in pre-order (parent before children)."""
+		yield self
+		for child in self.children:
+			yield from child.preorder()
+	
+	def postorder(self):	#post-order walk
+		"""Iterate over nodes in post-order (children before parent)."""
+		for child in self.children:
+			yield from child.postorder()
+		yield self
+	
 	def set_parent(self, parent):
 		if self.parent is not None:
 			self.parent.children.remove(self)
@@ -73,12 +85,14 @@ class Node(Element):
 		return result
 
 	@property
+	def descendants(self): return list(self.preorder())[1:]
+	"""@property
 	def descendants(self):
 		result = []
 		for child in self.children:
 			result.append(child)
 			result.extend(child.descendants)
-		return result
+		return result"""
 
 	@property
 	def size(self): return 1 + len(self.descendants)
